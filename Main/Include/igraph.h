@@ -21,7 +21,7 @@
 #include <windows.h>
 
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
 
 class bitmap;
 
@@ -29,19 +29,20 @@ class igraph
 {
 public:
 	static void Init(HINSTANCE, HWND*);
-	static void DeInit(void);
-	static bitmap* GetLevelTerrainGraphic(void)	{ return Graphic[GLTERRAIN]; }
-	static bitmap* GetWorldMapTerrainGraphic(void)	{ return Graphic[GWTERRAIN]; }
-	static bitmap* GetItemGraphic(void)		{ return Graphic[GITEM]; }
-	static bitmap* GetCharacterGraphic(void)	{ return Graphic[GCHARACTER]; }
-	static bitmap* GetFOWGraphic(void)		{ return Graphic[GFOWGRAPHIC]; }
-	static bitmap* GetHumanGraphic(void)		{ return Graphic[GHUMAN]; }
-	static bitmap* GetFontRGraphic(void)		{ return Graphic[GFONTR]; }
-	static bitmap* GetFontBGraphic(void)		{ return Graphic[GFONTB]; }
-	static bitmap* GetFontWGraphic(void)		{ return Graphic[GFONTW]; }
-	static bitmap* GetSymbolGraphic(void)		{ return Graphic[GSYMBOL]; }
-	static bitmap* GetTileBuffer(void)		{ return TileBuffer; }
-	static void BlitTileBuffer(vector, ushort = 256, bool = false);
+	static void DeInit();
+	static bitmap* GetLevelTerrainGraphic()	{ return Graphic[GLTERRAIN]; }
+	static bitmap* GetWorldMapTerrainGraphic()	{ return Graphic[GWTERRAIN]; }
+	static bitmap* GetItemGraphic()		{ return Graphic[GITEM]; }
+	static bitmap* GetCharacterGraphic()	{ return Graphic[GCHARACTER]; }
+	static bitmap* GetFOWGraphic()		{ return Graphic[GFOWGRAPHIC]; }
+	static bitmap* GetHumanGraphic()		{ return Graphic[GHUMAN]; }
+	static bitmap* GetFontRGraphic()		{ return Graphic[GFONTR]; }
+	static bitmap* GetFontBGraphic()		{ return Graphic[GFONTB]; }
+	static bitmap* GetFontWGraphic()		{ return Graphic[GFONTW]; }
+	static bitmap* GetSymbolGraphic()		{ return Graphic[GSYMBOL]; }
+	static bitmap* GetTileBuffer()		{ return TileBuffer; }
+	static void BlitTileBuffer(vector2d, ushort = 256);
+	static void DrawCursor(vector2d);
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];
 	static bitmap* TileBuffer;

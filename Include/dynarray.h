@@ -6,15 +6,15 @@
 template <class Type, class SizeType = ushort> class dynarray
 {
 public:
-	dynarray(void);
+	dynarray();
 	dynarray(const dynarray<Type, SizeType>*);
-	~dynarray(void);
+	~dynarray();
 	void Add(Type);
 	void Add(const dynarray<Type, SizeType>*);
 	void Put(Type, SizeType);
 	Type Remove(SizeType);
 	Type& Access(SizeType) const;
-	SizeType Length(void) const;
+	SizeType Length() const;
 	Type& operator[](SizeType) const;
 	Type& operator<<(Type&);
 	SizeType Search(Type) const;
@@ -24,7 +24,7 @@ private:
 	SizeType Elements;
 };
 
-template <class Type, class SizeType> inline dynarray<Type, SizeType>::dynarray(void) : Data(0), Elements(0)
+template <class Type, class SizeType> inline dynarray<Type, SizeType>::dynarray() : Data(0), Elements(0)
 {
 }
 
@@ -32,7 +32,7 @@ template <class Type, class SizeType> inline dynarray<Type, SizeType>::dynarray(
 {
 }
 
-template <class Type, class SizeType> inline dynarray<Type, SizeType>::~dynarray(void)
+template <class Type, class SizeType> inline dynarray<Type, SizeType>::~dynarray()
 {
 	delete [] Data;
 }
@@ -42,7 +42,7 @@ template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::Acc
 	return Data[Index];
 }
 
-template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Length(void) const
+template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Length() const
 {
 	return Elements;
 }
@@ -51,7 +51,7 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Add(
 {
 	Type* TempData = new Type[Elements + 1];
 
-	for(SizeType c = 0; c < Elements; c++)
+	for(SizeType c = 0; c < Elements; ++c)
 		TempData[c] = Data[c];
 
 	delete [] Data;
@@ -69,14 +69,14 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Add(
 
 	Type* TempData = new Type[NewElements];
 
-	for(SizeType c = 0; c < Elements; c++)
+	for(SizeType c = 0; c < Elements; ++c)
 		TempData[c] = Data[c];
 
 	delete [] Data;
 
 	Data = TempData;
 
-	for(SizeType c = Elements; c < NewElements; c++)
+	for(SizeType c = Elements; c < NewElements; ++c)
 		Data[c] = DynArray->Data[c];
 
 	Elements = NewElements;
@@ -87,13 +87,13 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Put(
 	Type* TempData = new Type[Elements + 1];
 
 	{
-	for(SizeType c = 0; c < Position; c++)
+	for(SizeType c = 0; c < Position; ++c)
 		TempData[c] = Data[c];
 	}
 
 	TempData[Position] = Element;
 
-	for(SizeType c = Position; c < Elements; c++)
+	for(SizeType c = Position; c < Elements; ++c)
 		TempData[c + 1] = Data[c];
 
 	delete [] Data;
@@ -114,11 +114,11 @@ template <class Type, class SizeType> inline Type dynarray<Type, SizeType>::Remo
 		TempData = new Type[Elements - 1];
 
 		{
-			for(SizeType c = 0; c < Index; c++)
+			for(SizeType c = 0; c < Index; ++c)
 				TempData[c] = Data[c];
 		}
 
-		for(SizeType c = Index + 1; c < Elements; c++)
+		for(SizeType c = Index + 1; c < Elements; ++c)
 			TempData[c - 1] = Data[c];
 	}
 	else
@@ -147,7 +147,7 @@ template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::ope
 
 template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Search(Type Element) const
 {
-	for(SizeType c = 0; c < Elements; c++)
+	for(SizeType c = 0; c < Elements; ++c)
 		if(Data[c] == Element)
 			return c;
 
@@ -161,7 +161,7 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Resi
 	{
 		Type* TempData = new Type[NewSize];
 
-		for(SizeType c = 0; c < NewSize; c++)
+		for(SizeType c = 0; c < NewSize; ++c)
 			TempData[c] = Data[c];
 
 		delete [] Data;

@@ -1,41 +1,6 @@
-#include "char.h"
-#include "material.h"
+#include "materde.h"
+#include "charba.h"
 #include "message.h"
-#include "proto.h"
-
-std::string material::Name(uchar Case) const
-{
-	return Case & INDEFINEBIT ? Article() + " " + NameStem() : NameStem();
-}
-
-ushort material::TakeDipVolumeAway(void)
-{
-	ulong Amount = rand() % 100;
-
-	if(GetVolume() < Amount)
-		Amount = rand() % GetVolume();
-
-	SetVolume(GetVolume() - Amount);
-
-	return Amount;
-}
-
-void material::Save(std::ofstream& SaveFile) const
-{
-	ushort TypeVar = Type();
-	SaveFile.write((char*)&TypeVar, sizeof(TypeVar));
-	SaveFile.write((char*)&Volume, sizeof(Volume));
-}
-
-void material::Load(std::ifstream& SaveFile)
-{
-	SaveFile.read((char*)&Volume, sizeof(Volume));
-}
-
-void material::NormalFoodEffect(character* Eater, float Amount, float NPModifier)
-{
-	Eater->ReceiveNutrition(long(NutritionValue() * GetWeight() * NPModifier) * Amount / 100);
-}
 
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {

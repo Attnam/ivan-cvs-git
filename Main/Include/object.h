@@ -11,7 +11,6 @@
 #define	INDEFINITE		6	//0000110
 
 #include <string>
-#include <fstream>
 #include <vector>
 #include <list>
 
@@ -21,32 +20,35 @@
 #include "drawable.h"
 
 class material;
-class vector;
+class outputfile;
+class inputfile;
 
 class object : virtual public typeable, virtual public drawable
 {
 public:
 	object(bool);
-	virtual ~object(void);
-	virtual void Save(std::ofstream&) const;
-	virtual void Load(std::ifstream&);
+	virtual ~object();
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
 	virtual void InitMaterials(ushort, ...);
 	virtual void InitMaterials(material*);
 	virtual material* GetMaterial(ushort Index) const { return Material[Index]; }
-	virtual ushort GetEmitation(void) const;
+	virtual ushort GetEmitation() const;
 	virtual void SetSize(ushort Value) { Size = Value; }
-	virtual ushort GetSize(void) const { return Size; }
-	virtual void EraseMaterials(void);
-	virtual ushort GetMaterials(void) const { return Material.size(); }
+	virtual ushort GetSize() const { return Size; }
+	virtual void EraseMaterials();
+	virtual ushort GetMaterials() const { return Material.size(); }
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-	virtual std::string GetNameSingular(void) const { return NameSingular(); }
-	virtual std::string GetNamePlural(void) const { return NamePlural(); }
-	virtual void Be(void) {}
-	virtual std::list<object*>::iterator GetPoolIterator(void) { return PoolIterator; }
+	virtual std::string GetNameSingular() const { return NameSingular(); }
+	virtual std::string GetNamePlural() const { return NamePlural(); }
+	virtual void Be() {}
+	virtual std::list<object*>::iterator GetPoolIterator() { return PoolIterator; }
 	virtual void SetPoolIterator(std::list<object*>::iterator What) { PoolIterator = What; }
+	virtual bool GetExists() const { return Exists; }
+	virtual void SetExists(bool What) { Exists = What; }
 protected:
-	virtual std::string NameSingular(void) const = 0;
-	virtual std::string NamePlural(void) const = 0;
+	virtual std::string NameSingular() const = 0;
+	virtual std::string NamePlural() const = 0;
 	virtual std::string NameNormal(uchar, std::string) const;
 	virtual std::string NameProperNoun(uchar) const;
 	virtual std::string NameArtifact(uchar, uchar) const;
@@ -58,7 +60,7 @@ protected:
 	std::vector<material*> Material;
 	std::list<object*>::iterator PoolIterator;
 	ushort Size;
-	bool InPool;
+	bool InPool, Exists;
 };
 
 #endif

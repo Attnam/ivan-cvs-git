@@ -2,8 +2,6 @@
 
 #include "proto.h"
 
-//std::vector<typeable*> protosystem::ProtoData(2, 0);
-
 std::vector<material*>			protocontainer<material>::ProtoData(2, 0);
 std::vector<item*>			protocontainer<item>::ProtoData(2, 0);
 std::vector<character*>			protocontainer<character>::ProtoData(2, 0);
@@ -12,26 +10,17 @@ std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData(2, 0
 std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData(2, 0);
 std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData(2, 0);
 
-#include "material.h"
-#include "item.h"
-#include "char.h"
-#include "lterrain.h"
-#include "wterrain.h"
+#include "materde.h"
+#include "itemde.h"
+#include "charde.h"
+#include "lterrade.h"
+#include "wterrade.h"
 
 #include "error.h"
 
-/*ushort protosystem::Add(typeable* Proto)
-{
-	ProtoData.insert(ProtoData.end() - 1, Proto);
-
-	return ProtoData.size() - 2;
-}*/
-
 character* protosystem::BalancedCreateMonster(float Multiplier)
 {
-	//ushort Types = character::GetProtoIndexEnd() - character::GetProtoIndexBegin();
-
-	for(ushort c = 0; ; c++)
+	for(ushort c = 0; ; ++c)
 	{
 		ushort Chosen = 1 + rand() % protocontainer<character>::GetProtoAmount();
 
@@ -47,12 +36,12 @@ character* protosystem::BalancedCreateMonster(float Multiplier)
 	}
 }
 
-item* protosystem::BalancedCreateItem(void)
+item* protosystem::BalancedCreateItem()
 {
 	ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
 
 	{
-	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); c++)
+	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 	{
 		SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
 	}
@@ -60,7 +49,7 @@ item* protosystem::BalancedCreateItem(void)
 		
 	RandomOne = 1 + rand() % (SumOfPossibilities);
 	
-	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); c++)
+	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 	{
 		Counter += protocontainer<item>::GetProto(c)->Possibility();
 
@@ -87,7 +76,7 @@ item* protosystem::CreateItem(ushort Index)
 
 item* protosystem::CreateItem(std::string What)
 {
-	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); c++)
+	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 		if(protocontainer<item>::GetProto(c)->CanBeWished() && protocontainer<item>::GetProto(c)->GetNameSingular() == What)
 			return protocontainer<item>::GetProto(c)->CreateWishedItem();
 
@@ -96,8 +85,6 @@ item* protosystem::CreateItem(std::string What)
 
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
-	//ushort Materials = material::GetProtoIndexEnd() - material::GetProtoIndexBegin();
-
 	for(ushort c = 1 + rand() % protocontainer<material>::GetProtoAmount();; c = 1 + rand() % protocontainer<material>::GetProtoAmount())
 		if(protocontainer<material>::GetProto(c)->IsSolid())
 			return protocontainer<material>::GetProto(c)->Clone(Volume);

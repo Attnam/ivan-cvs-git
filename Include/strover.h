@@ -2,63 +2,35 @@
 #define __STROVER_H__
 
 #include <cstdio>
-#include <fstream>
 #include <string>
 
 #include "typedef.h"
 
-inline std::string operator+ (std::string String, const int& Int)
+inline std::string operator+ (std::string CppString, const int& Int)
 {
 	char Buffer[12];
 
 	sprintf(Buffer, "%d", Int);
 
-	String += Buffer;
+	CppString += Buffer;
 
-	return String;
+	return CppString;
 }
 
-inline std::string& operator+= (std::string& String, const int& Int)
+inline std::string& operator+= (std::string& CppString, const int& Int)
 {
 	char Buffer[12];
 
 	sprintf(Buffer, "%d", Int);
 
-	String += Buffer;
+	CppString += Buffer;
 
-	return String;
+	return CppString;
 }
 
-inline std::ofstream& operator<<(std::ofstream& SaveFile, std::string String)
+inline std::string operator+ (const char* CString, std::string CppString)
 {
-	uchar Length = String.length();
-
-	SaveFile.put(Length);
-
-	if(Length)
-		SaveFile.write(String.c_str(), Length);
-
-	return SaveFile;
-}
-
-inline std::ifstream& operator>>(std::ifstream& SaveFile, std::string& String)
-{
-	char Buffer[256];
-
-	uchar Length;
-
-	Length = SaveFile.get();
-
-	if(Length)
-	{
-		SaveFile.read(Buffer, Length);
-		Buffer[Length] = 0;
-		String = Buffer;
-	}
-	else
-		String = "";
-
-	return SaveFile;
+	return std::string(CString) + CppString;
 }
 
 #endif

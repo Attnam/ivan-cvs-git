@@ -1,67 +1,89 @@
 #include "strover.h"
 #include "wsquare.h"
 #include "igraph.h"
-#include "char.h"
+#include "charba.h"
 #include "worldmap.h"
-#include "wterrain.h"
+#include "wterraba.h"
 #include "proto.h"
-#include "material.h"
+#include "materba.h"
 #include "bitmap.h"
+#include "save.h"
 
-worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0)
+worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0), DescriptionChanged(true)
 {
 }
 
-worldmapsquare::~worldmapsquare(void)
+worldmapsquare::~worldmapsquare()
 {
 	delete GetGroundWorldMapTerrain();
 	delete GetOverWorldMapTerrain();
 }
 
-void worldmapsquare::Save(std::ofstream& SaveFile) const
+void worldmapsquare::Save(outputfile& SaveFile) const
 {
 	square::Save(SaveFile);
 
 	SaveFile << GroundWorldMapTerrain << OverWorldMapTerrain;
 }
 
-void worldmapsquare::Load(std::ifstream& SaveFile)
+void worldmapsquare::Load(inputfile& SaveFile)
 {
 	square::Load(SaveFile);
 
 	SaveFile >> GroundWorldMapTerrain >> OverWorldMapTerrain;
 }
 
-void worldmapsquare::DrawToTileBuffer(void) const
+void worldmapsquare::DrawToTileBuffer() const
 {
 	GetGroundWorldMapTerrain()->DrawToTileBuffer();
 	GetOverWorldMapTerrain()->DrawToTileBuffer();
 }
 
-void worldmapsquare::UpdateMemorizedAndDraw(void)
+void worldmapsquare::UpdateMemorizedAndDraw()
 {
-	SetKnown(true);
+	if(NewDrawRequested)
+	{
+		if(!GetKnown())
+		{
+			Memorized = new bitmap(16, 16);
 
-	DrawToTileBuffer();
+			SetKnown(true);
+		}
 
-	igraph::GetTileBuffer()->MaskedBlit(AreaUnder->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
-	igraph::GetFOWGraphic()->MaskedBlit(AreaUnder->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
+		DrawToTileBuffer();
 
-	if(GetCharacter())
-		GetCharacter()->DrawToTileBuffer();
+		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
 
-	ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 2);
+		igraph::GetTileBuffer()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+		if(GetCharacter())
+			GetCharacter()->DrawToTileBuffer();
+
+		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+
+		NewDrawRequested = false;
+	}
 }
 
 void worldmapsquare::ChangeWorldMapTerrain(groundworldmapterrain* NewGround, overworldmapterrain* NewOver)
 {
+	ChangeGroundWorldMapTerrain(NewGround);
+	ChangeOverWorldMapTerrain(NewOver);
+}
+
+void worldmapsquare::ChangeGroundWorldMapTerrain(groundworldmapterrain* NewGround)
+{
 	delete GetGroundWorldMapTerrain();
 	SetGroundWorldMapTerrain(NewGround);
+	DescriptionChanged = NewDrawRequested = true;
+}
+
+void worldmapsquare::ChangeOverWorldMapTerrain(overworldmapterrain* NewOver)
+{
 	delete GetOverWorldMapTerrain();
 	SetOverWorldMapTerrain(NewOver);
-	TerrainChanged = true;
+	DescriptionChanged = NewDrawRequested = true;
 }
 
 void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
@@ -86,47 +108,44 @@ void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
 	}
 }
 
-/*groundworldmapterrain* worldmapsquare::GetGroundWorldMapTerrain(void) const
+void worldmapsquare::UpdateMemorizedDescription()
 {
-	return (groundworldmapterrain*)GroundTerrain;
-}
-
-overworldmapterrain* worldmapsquare::GetOverWorldMapTerrain(void) const
-{
-	return (overworldmapterrain*)OverTerrain;
-}*/
-
-void worldmapsquare::UpdateMemorizedDescription(void)
-{
-	if(TerrainChanged)
+	if(DescriptionChanged)
 	{
-		if(GetOverTerrain()->Name(UNARTICLED) != "atmosphere")
-			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetWorldMapUnder()->GetContinentUnder(Pos) + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
-		else
-			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetWorldMapUnder()->GetContinentUnder(Pos) + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
+		std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? " of continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
 
-		TerrainChanged = false;
+		if(GetOverTerrain()->Name(UNARTICLED) != "atmosphere")
+			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
+		else
+			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
+
+		DescriptionChanged = false;
 	}
 }
 
-groundterrain* worldmapsquare::GetGroundTerrain(void) const
+groundterrain* worldmapsquare::GetGroundTerrain() const
 {
 	return GroundWorldMapTerrain;
 }
 
-overterrain* worldmapsquare::GetOverTerrain(void) const
+overterrain* worldmapsquare::GetOverTerrain() const
 {
 	return OverWorldMapTerrain;
 }
 
-void worldmapsquare::DrawCheat(void) const
+void worldmapsquare::DrawCheat()
 {
-	DrawToTileBuffer();
+	if(NewDrawRequested)
+	{
+		DrawToTileBuffer();
 
-	if(GetCharacter())
-		GetCharacter()->DrawToTileBuffer();
+		if(GetCharacter())
+			GetCharacter()->DrawToTileBuffer();
 
-	ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 2);
+		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+
+		NewDrawRequested = false;
+	}
 }

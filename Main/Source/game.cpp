@@ -1,12 +1,11 @@
 #include <cmath>
 #include <ctime>
-#include <io.h>
 
 #include "game.h"
 #include "level.h"
-#include "char.h"
+#include "charde.h"
 #include "error.h"
-#include "item.h"
+#include "itemde.h"
 #include "god.h"
 #include "igraph.h"
 #include "strover.h"
@@ -14,12 +13,15 @@
 #include "whandler.h"
 #include "lsquare.h"
 #include "stack.h"
-#include "lterrain.h"
+#include "lterraba.h"
 #include "worldmap.h"
 #include "message.h"
 #include "pool.h"
 #include "proto.h"
 #include "dungeon.h"
+#include "save.h"
+#include "feio.h"
+#include "graphics.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -27,13 +29,14 @@ bool game::InWilderness = false;
 worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
-dungeon* game::Dungeon;
+std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
 ushort game::PolymorphCounter = 0xFFFF;
+uchar game::CurrentDungeon;
 
 bool game::Flag;
 
-dynarray<character*> game::Hell;
+//dynarray<character*> game::Hell;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
@@ -80,11 +83,8 @@ command* game::Command[] = {	0,
 				new command(&character::Zap, "zap", 'z', false),
 				0};
 
-//int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x14D, 0x148, 0x150, 0x14B, 0x147, 0x149, 0x151, 0x14F};
-//const vector game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector(1, 0), vector(0, -1), vector(0, 1), vector(-1, 0), vector(-1, -1), vector(1, -1), vector(1, 1), vector(-1, 1)};
-
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
-const vector game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector(-1, -1), vector(0, -1), vector(1, -1), vector(-1, 0), vector(1, 0), vector(-1, 1), vector(0, 1), vector(1, 1)};
+const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
 
 std::string game::LevelMsg[] = {"", "", "", "", "", "", "", "", "", ""};
 game::panel game::Panel;
@@ -93,7 +93,7 @@ ushort*** game::LuxTable;
 ushort* game::LuxTableSize;
 bool game::Running;
 character* game::Player;
-vector game::Camera(0, 0);
+vector2d game::Camera(0, 0);
 bool game::WizardMode;
 bool game::SeeWholeMapCheat;
 uchar game::Gamma = 255;
@@ -125,7 +125,7 @@ void game::Init(std::string Name)
 	InWilderness = false;
 	PlayerBackup = 0;
 	PolymorphCounter = 0xFFFF;
-	srand(time(0));
+	srand(5);
 	game::CalculateGodNumber();
 
 	LevelMsg[3] = "You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
@@ -133,21 +133,25 @@ void game::Init(std::string Name)
 	LevelMsg[9] = "You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
 
 	if(Name == "")
-		SetPlayerName(StringQuestionWithClear("What is your name?", 30));
+	{
+		DOUBLEBUFFER->ClearToColor(0); //GGG
+		SetPlayerName(iosystem::StringQuestion(FONTW, "What is your name?", vector2d(30, 50), 30));
+	}
 	else
 		SetPlayerName(Name);
 
 	if(Load())
 	{
 		Flag = true;
+		GetCurrentArea()->SendNewDrawRequest();
 
 		ADD_MESSAGE("Game loaded successfully.");
 	}
 	else
 	{
-		StoryScreen("On the evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his throne room and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thou hast succeeded.\"");
+		iosystem::TextScreen(FONTW, "On the evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his throne room and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thou hast succeeded.\"");
 
-		StoryScreen("Generating game...\n\nThis may take some time, please wait.", false);
+		iosystem::TextScreen(FONTW, "Generating game...\n\nThis may take some time, please wait.", false);
 
 		SetPlayer(new human);
 
@@ -155,26 +159,23 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
+		game::GetPlayer()->GetStack()->FastAddItem(new lamp);
+
+		InitDungeons();
+
 		WorldMap = new worldmap(128, 128);
 		WorldMap->Generate();
 
 		InWilderness = true;
 
-		game::GetPlayer()->GetStack()->FastAddItem(new lamp);
-		WorldMap->GetSquare(vector(18, 18))->AddCharacter(game::GetPlayer());
-		game::GetPlayer()->SetSquareUnder(WorldMap->GetSquare(vector(18, 18)));
-
-		Dungeon = new dungeon(10);
-
-		Dungeon->Generate();
-
 		UpDateCameraX();
 		UpDateCameraY();
 
-		game::GetCurrentArea()->UpdateLOS();
+		GetCurrentArea()->UpdateLOS();
+		GetCurrentArea()->SendNewDrawRequest();
 
 		{
-		for(ushort c = 1; GetGod(c); c++)
+		for(ushort c = 1; GetGod(c); ++c)
 		{
 			GetGod(c)->SetRelation(0);
 			GetGod(c)->SetTimer(0);
@@ -187,34 +188,34 @@ void game::Init(std::string Name)
 	}
 }
 
-void game::DeInit(void)
+void game::DeInit()
 {
 	delete GetPlayerBackup();
 	delete WorldMap;
-	delete Dungeon;
 
-	BurnHellsContents();
+	for(uchar c = 0; c < Dungeon.size(); ++c)
+		delete Dungeon[c];
+
+	//BurnHellsContents();
 }
 
-void game::Run(void)
+void game::Run()
 {
 	while(GetRunning())
 	{
-		//game::GetPlayer()->Act();
-
 		if(!InWilderness)
-			Dungeon->GetLevel(Current)->HandleCharacters();	// Temporary
+			GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();	// Temporary
 
 		objectpool::Be();
 
 		if(!GetRunning())
 			break;
 
-		BurnHellsContents();
+		//BurnHellsContents();
 	}
 }
 
-void game::InitLuxTable(void)
+void game::InitLuxTable()
 {
 	static bool AlreadyInitialized = false;
 
@@ -226,7 +227,7 @@ void game::InitLuxTable(void)
 
 		LuxTableSize = new ushort[0x200];
 
-		for(ushort c = 0; c < 0x200; c++)
+		for(ushort c = 0; c < 0x200; ++c)
 		{
 			ushort MaxDist = c >= 64 ? ushort(sqrt(c - 64)) : 0, MaxSize = (MaxDist << 1) + 1;
 
@@ -251,18 +252,11 @@ void game::InitLuxTable(void)
 	}
 }
 
-/*
-c / (x^2 / 64 + 1) >= 64
-c >= x^2 + 64
-c - 64 >= x^2
-x <= sqrt(c - 64)
-*/
-
-void game::DeInitLuxTable(void)
+void game::DeInitLuxTable()
 {
 	if(LuxTable)
 	{
-		for(ushort c = 0; c < 0x200; c++)
+		for(ushort c = 0; c < 0x200; ++c)
 		{
 			for(ushort x = 0; x < LuxTableSize[c]; x++)
 				delete [] LuxTable[c][x];
@@ -278,7 +272,7 @@ void game::DeInitLuxTable(void)
 	}
 }
 
-void game::Quit(void)
+void game::Quit()
 {
 	Running = false;
 }
@@ -288,14 +282,15 @@ bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX =
 	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
 		return false;
 
-	GetCurrentArea()->GetSquare(vector(CX, CY))->SetFlag();
-	GetCurrentArea()->GetSquare(vector(CX, CY))->UpdateMemorizedDescription();
+	GetCurrentArea()->GetSquare(vector2d(CX, CY))->SetFlag();
+	GetCurrentArea()->GetSquare(vector2d(CX, CY))->UpdateMemorizedDescription();
+	GetCurrentArea()->GetSquare(vector2d(CX, CY))->SendNewDrawRequest();
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
 		if(!InWilderness)
-			return GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+			return GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 		else
 			return true;
 }
@@ -362,72 +357,78 @@ bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, u
 	return true;
 }
 
-void game::panel::Draw(void) const
+void game::panel::Draw() const
 {
+	DOUBLEBUFFER->ClearToColor(0, 512, 800, 88);
+
 	character* Player = game::GetPlayer();
 
-	FONTW->PrintfToDB(16, 524, "%s %s", game::GetPlayerName().c_str(), Player->CNAME(DEFINITE));
+	FONTW->Printf(DOUBLEBUFFER, 16, 524, "%s %s", game::GetPlayerName().c_str(), Player->CNAME(DEFINITE));
 
-	FONTW->PrintfToDB(16, 534, "Strength: %d", Player->GetStrength());
-	FONTW->PrintfToDB(16, 544, "Endurance: %d", Player->GetEndurance());
-	FONTW->PrintfToDB(16, 554, "Agility: %d", Player->GetAgility());
-	FONTW->PrintfToDB(16, 564, "Perception: %d", Player->GetPerception());
-	FONTW->PrintfToDB(16, 574, "Size: %d", Player->GetSize());
-	(Player->GetHP() < (Player->GetEndurance() << 1) / 3 ? FONTR : FONTW)->PrintfToDB(16, 584, "HP: %d/%d", Player->GetHP(), (Player->GetEndurance() << 1));
+	FONTW->Printf(DOUBLEBUFFER, 16, 534, "Strength: %d", Player->GetStrength());
+	FONTW->Printf(DOUBLEBUFFER, 16, 544, "Endurance: %d", Player->GetEndurance());
+	FONTW->Printf(DOUBLEBUFFER, 16, 554, "Agility: %d", Player->GetAgility());
+	FONTW->Printf(DOUBLEBUFFER, 16, 564, "Perception: %d", Player->GetPerception());
+	FONTW->Printf(DOUBLEBUFFER, 16, 574, "Size: %d", Player->GetSize());
+	(Player->GetHP() < (Player->GetEndurance() << 1) / 3 ? FONTR : FONTW)->Printf(DOUBLEBUFFER, 16, 584, "HP: %d/%d", Player->GetHP(), (Player->GetEndurance() << 1));
 
-	FONTW->PrintfToDB(160, 534, "Exp: %d", Player->GetStrengthExperience());
-	FONTW->PrintfToDB(160, 544, "Exp: %d", Player->GetEnduranceExperience());
-	FONTW->PrintfToDB(160, 554, "Exp: %d", Player->GetAgilityExperience());
-	FONTW->PrintfToDB(160, 564, "Exp: %d", Player->GetPerceptionExperience());
+	FONTW->Printf(DOUBLEBUFFER, 160, 534, "Exp: %d", Player->GetStrengthExperience());
+	FONTW->Printf(DOUBLEBUFFER, 160, 544, "Exp: %d", Player->GetEnduranceExperience());
+	FONTW->Printf(DOUBLEBUFFER, 160, 554, "Exp: %d", Player->GetAgilityExperience());
+	FONTW->Printf(DOUBLEBUFFER, 160, 564, "Exp: %d", Player->GetPerceptionExperience());
 
 	if(Player->GetWielded())
-		FONTW->PrintfToDB(160, 574, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
+		FONTW->Printf(DOUBLEBUFFER, 160, 574, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
         if(Player->GetTorsoArmor())
-		FONTW->PrintfToDB(160, 584, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
+		FONTW->Printf(DOUBLEBUFFER, 160, 584, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
 
-	FONTW->PrintfToDB(320, 534, "Speed: %d", Player->GetWielded() ? ushort(sqrt((ulong(Player->GetAgility() << 2) + Player->GetStrength()) * 20000 / Player->GetWielded()->GetWeight())) : ulong(Player->GetAgility() << 2) + Player->GetStrength());
-	FONTW->PrintfToDB(320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
-	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
-	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
-	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
-	FONTW->PrintfToDB(600, 554, "NP: %d", Player->GetNP());
-	FONTW->PrintfToDB(600, 564, "Turns: %d", game::GetTurns());
-	if(Player->GetNP() < CRITICALHUNGERLEVEL) FONTR->PrintfToDB(600, 574, "Fainting");
-	else if(Player->GetNP() < HUNGERLEVEL) FONTB->PrintfToDB(600, 574, "Hungry");
+	FONTW->Printf(DOUBLEBUFFER, 320, 534, "Speed: %d", Player->GetWielded() ? ushort(sqrt((ulong(Player->GetAgility() << 2) + Player->GetStrength()) * 20000 / Player->GetWielded()->GetWeight())) : ulong(Player->GetAgility() << 2) + Player->GetStrength());
+	FONTW->Printf(DOUBLEBUFFER, 320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
+	FONTW->Printf(DOUBLEBUFFER, 320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
+	FONTW->Printf(DOUBLEBUFFER, 320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
+	FONTW->Printf(DOUBLEBUFFER, 600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
+	FONTW->Printf(DOUBLEBUFFER, 600, 554, "NP: %d", Player->GetNP());
+	FONTW->Printf(DOUBLEBUFFER, 600, 564, "Turns: %d", game::GetTurns());
+	if(Player->GetNP() < CRITICALHUNGERLEVEL) FONTR->Printf(DOUBLEBUFFER, 600, 574, "Fainting");
+	else if(Player->GetNP() < HUNGERLEVEL) FONTB->Printf(DOUBLEBUFFER, 600, 574, "Hungry");
 	switch(Player->GetBurdenState())
 	{
 		case OVERLOADED:
-			FONTR->PrintfToDB(600, 584, "Overload!");
+			FONTR->Printf(DOUBLEBUFFER, 600, 584, "Overload!");
 		break;
 		case STRESSED:
-			FONTB->PrintfToDB(600, 584, "Stressed");
+			FONTB->Printf(DOUBLEBUFFER, 600, 584, "Stressed");
 		break;
 		case BURDENED:
-			FONTB->PrintfToDB(600, 584, "Burdened!");
+			FONTB->Printf(DOUBLEBUFFER, 600, 584, "Burdened!");
                 case UNBURDENED:
 		break;
 	}
 }
 
-void game::UpDateCameraX(void)
+void game::UpDateCameraX()
 {
 	if(Player->GetPos().X < 25)
 		Camera.X = 0;
 	else
 		Camera.X = Player->GetPos().X - 25;
+
+	GetCurrentArea()->SendNewDrawRequest();
 }
 
-void game::UpDateCameraY(void)
+void game::UpDateCameraY()
 {
 	if(Player->GetPos().Y < 18)
 		Camera.Y = 0;
 	else
 		Camera.Y = Player->GetPos().Y - 18;
+
+	GetCurrentArea()->SendNewDrawRequest();
 }
 
-const char* game::Insult(void)
+const char* game::Insult()
 {
-switch(rand()%16)
+switch(rand()%15)
 	{
 	case 0  : return "you moron";
 	case 1  : return "silly";
@@ -447,63 +448,6 @@ switch(rand()%16)
         default : return "hugger-mugger";
 	}
 }
-
-unsigned int game::CountChars(char cSF,std::string sSH) // (MENU)
-{
-	unsigned int iReturnCounter = 0;
-	for(unsigned int i = 0; i < sSH.length(); i++)
-		if(sSH[i] == cSF)
-			++iReturnCounter;
-	return iReturnCounter;
-}
-
-int game::Menu(std::string sMS) // (MENU)
-{
-	if(CountChars('\r',sMS) < 1)
-		return (-1);
-	bool bReady = false;
-	unsigned int iSelected = 0;
-	while(!bReady)
-	{
-		std::string sCopyOfMS = sMS;
-		graphics::ClearDBToColor(0);
-		for(unsigned int i = 0; i < CountChars('\r',sMS); i++)
-		{
-			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
-			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-			(i == iSelected ? FONTB : FONTW)->PrintfToDB(400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2),200+(i*50),"%d. %s",i + 1,HYVINEPAGURUPRINTF.c_str());
-		}
-
-		graphics::BlitDBToScreen();
-		int k;
-		switch (k = GETKEY())
-		{
-		// I don't know if you have included keys.h, so...
-			case 0x148:
-				if (iSelected > 0)
-					--iSelected;
-				else
-					iSelected = (CountChars('\r',sMS)-1);
-				break;
-			case 0x150:
-				if (iSelected < (CountChars('\r',sMS)-1))
-					++iSelected;
-				else
-					iSelected = 0;
-				break;
-			case 0x00D:
-				bReady = true;
-				break;
-			default:
-				if(k > 0x30 && k < int(0x31 + CountChars('\r',sMS)))
-					return signed(k - 0x31);
-
-				break;
-		}
-	}
-	return signed(iSelected);
-}
-
 
 bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForTrue)
 {
@@ -561,100 +505,53 @@ void game::DrawEverything(bool EmptyMsg)
 	graphics::BlitDBToScreen();
 }
 
+bool game::OnScreen(vector2d Pos)
+{
+	if(Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < game::GetCamera().X + 50 && Pos.Y < game::GetCamera().Y + 30)
+		return true;
+	else
+		return false;
+}
+
 void game::DrawEverythingNoBlit(bool EmptyMsg)
 {
-	graphics::ClearDBToColor(0);
 	game::GetCurrentArea()->Draw();
+	if(OnScreen(GetPlayer()->GetPos()))
+		igraph::DrawCursor((GetPlayer()->GetPos() - GetCamera() + vector2d(0,2)) << 4);
 	game::Panel.Draw();
 	DRAW_MESSAGES();
 	if(EmptyMsg) EMPTY_MESSAGES();
 }
 
-void game::StoryScreen(const char* Text, bool GKey)
-{
-	char Line[200];
-        ushort LastBeginningOfLine = 0;
-        ushort c;
-        ushort Lines = 0;
-	ushort LineNumber = 1;
-	
-	graphics::ClearDBToColor(0);
-	{
-        for(ushort cc = 0; cc < 200; cc++)
-		Line[cc] = 0;
-	}
-
-	for(ushort cc = 0; cc < strlen(Text); cc++)
-		if(Text[cc] == '\n') LineNumber++;
-
-	for(c = 0; Text[c] != 0; c++)
-	{
-		if(Text[c] == '\n')
-		{
-		FONTW->PrintfToDB(400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, "%s", Line);
-                        LastBeginningOfLine = c + 1;
-                        Lines++;
-                        for(ushort cc = 0; cc < 200; cc++)
-                        	Line[cc] = 0;
-                }
-		else
-			Line[c - LastBeginningOfLine] = Text[c];
-	}
-
-	FONTW->PrintfToDB(400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, "%s", Line);
-
-	graphics::BlitDBToScreen();
-
-	if(GKey)
-		GETKEY();
-}
-
 bool game::Save(std::string SaveName)
 {
-	std::ofstream SaveFile((SaveName + ".sav").c_str(), std::ios::out | std::ios::binary);
+	outputfile SaveFile(SaveName + ".sav");
 
-	if(!SaveFile.is_open())
+	if(!SaveFile.GetBuffer().is_open())
 		return false;
 
 	SaveFile << PlayerName;
-	SaveFile.write((char*)&Current, sizeof(Current));
-	SaveFile.write((char*)&Camera, sizeof(Camera));
-	SaveFile.write((char*)&WizardMode, sizeof(WizardMode));
-	SaveFile.write((char*)&SeeWholeMapCheat, sizeof(SeeWholeMapCheat));
-	SaveFile.write((char*)&Gamma, sizeof(Gamma));
-	SaveFile.write((char*)&GoThroughWallsCheat, sizeof(GoThroughWallsCheat));
-	SaveFile.write((char*)&BaseScore, sizeof(BaseScore));
-	SaveFile.write((char*)&Turns, sizeof(Turns));
-	SaveFile.write((char*)&SoftGamma, sizeof(SoftGamma));
-	SaveFile.write((char*)&InWilderness, sizeof(InWilderness));
-	SaveFile.write((char*)&PolymorphCounter, sizeof(PolymorphCounter));
+	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat << Gamma;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << PolymorphCounter;
 
-	time_t Time = time(0);
+	time_t Time = 5;//time(0);
 	srand(Time);
-	SaveFile.write((char*)&Time, sizeof(Time));
-
-	//Dungeon->Save(SaveFile);
+	SaveFile << Time;
 
 	SaveFile << Dungeon;
 
 	if(InWilderness)
 		SaveFile << WorldMap;
-		//WorldMap->Save(SaveFile);
 	else
-		Dungeon->SaveLevel(SaveName, Current, false);
+		GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
 
-	{
-	for(ushort c = 1; GetGod(c); c++)
+	for(ushort c = 1; GetGod(c); ++c)
 		SaveFile << GetGod(c);
-		//GetGod(c)->Save(SaveFile);
-	}
 
-	vector Pos = game::GetPlayer()->GetPos();
+	SaveFile << game::GetPlayer()->GetPos();
 
-	SaveFile.write((char*)&Pos, sizeof(Pos));
-
-	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
-		SaveFile << LevelMsg[c];
+	//for(c = 0; c < Dungeon->GetLevels(); ++c)
+	//	SaveFile << LevelMsg[c];
 
 	SaveFile << PlayerBackup;
 
@@ -663,30 +560,20 @@ bool game::Save(std::string SaveName)
 
 bool game::Load(std::string SaveName)
 {
-	std::ifstream SaveFile((SaveName + ".sav").c_str(), std::ios::in | std::ios::binary);
+	inputfile SaveFile(SaveName + ".sav");
 
-	if(!SaveFile.is_open())
+	if(!SaveFile.GetBuffer().is_open())
 		return false;
 
 	SaveFile >> PlayerName;
-	SaveFile.read((char*)&Current, sizeof(Current));
-	SaveFile.read((char*)&Camera, sizeof(Camera));
-	SaveFile.read((char*)&WizardMode, sizeof(WizardMode));
-	SaveFile.read((char*)&SeeWholeMapCheat, sizeof(SeeWholeMapCheat));
-	SaveFile.read((char*)&Gamma, sizeof(Gamma));
-	SaveFile.read((char*)&GoThroughWallsCheat, sizeof(GoThroughWallsCheat));
-	SaveFile.read((char*)&BaseScore, sizeof(BaseScore));
-	SaveFile.read((char*)&Turns, sizeof(Turns));
-	SaveFile.read((char*)&SoftGamma, sizeof(SoftGamma));
-	SaveFile.read((char*)&InWilderness, sizeof(InWilderness));
-	SaveFile.read((char*)&PolymorphCounter, sizeof(PolymorphCounter));
+	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat >> Gamma;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> PolymorphCounter;
 
 	time_t Time;
-	SaveFile.read((char*)&Time, sizeof(Time));
+	SaveFile >> Time;
 	srand(Time);
 
-	Dungeon = new dungeon;
-	Dungeon->Load(SaveFile);
+	SaveFile >> Dungeon;
 
 	if(InWilderness)
 	{
@@ -694,32 +581,30 @@ bool game::Load(std::string SaveName)
 		WorldMap->Load(SaveFile);
 	}
 	else
-		Dungeon->LoadLevel(SaveName);
+		GetCurrentDungeon()->LoadLevel(SaveName);
 
-	{
-	for(ushort c = 1; GetGod(c); c++)
+	for(ushort c = 1; GetGod(c); ++c)
 		GetGod(c)->Load(SaveFile);
-	}
 
-	vector Pos;
+	vector2d Pos;
 
-	SaveFile.read((char*)&Pos, sizeof(Pos));
+	SaveFile >> Pos;
 
 	SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
 
-	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
-		SaveFile >> LevelMsg[c];
+	//for(c = 0; c < Dungeon->GetLevels(); ++c)
+	//	SaveFile >> LevelMsg[c];
 
 	SaveFile >> PlayerBackup;
 
 	return true;
 }
 
-std::string game::SaveName(void)
+std::string game::SaveName()
 {
 	std::string SaveName = std::string("Save/") + PlayerName;
 
-	for(ushort c = 0; c < SaveName.length(); c++)
+	for(ushort c = 0; c < SaveName.length(); ++c)
 		if(SaveName[c] == ' ')
 			SaveName[c] = '_';
 
@@ -731,7 +616,7 @@ std::string game::SaveName(void)
 
 bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
-	ushort Emit = GetLevel(Current)->GetLevelSquare(vector(OX, OY))->GetEmitation();
+	ushort Emit = GetLevel(Current)->GetLevelSquare(vector2d(OX, OY))->GetEmitation();
 
 	ushort MaxSize = (game::GetLuxTableSize()[Emit] >> 1);
 
@@ -740,22 +625,22 @@ bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 	else
 		Emit = game::GetLuxTable()[Emit][long(CX) - long(OX) + (game::GetLuxTableSize()[Emit] >> 1)][long(CY) - long(OY) + (game::GetLuxTableSize()[Emit] >> 1)];
 
-	Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->AlterLuminance(vector(OX, OY), Emit);
+	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->AlterLuminance(vector2d(OX, OY), Emit);
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
-	Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->NoxifyEmitter(vector(OX, OY));
+	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->NoxifyEmitter(vector2d(OX, OY));
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -764,6 +649,8 @@ void game::UpdateCameraXWithPos(ushort Coord)
 		Camera.X = 0;
 	else
                 Camera.X = Coord - 25;
+
+	GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraYWithPos(ushort Coord)
@@ -772,75 +659,33 @@ void game::UpdateCameraYWithPos(ushort Coord)
                 Camera.Y = 0;
 	else
                 Camera.Y = Coord - 25;
+
+	GetCurrentArea()->SendNewDrawRequest();
 }
 
-std::string game::StringQuestion(const char* String, ushort MaxLetters)
+int game::GetMoveCommandKey(vector2d A, vector2d B)
 {
-	char LastKey = 0;
-	std::string Input,Buffer;
-
-	while(LastKey != 13)
-	{
-		LastKey = 0;
-		Buffer = Input + "_";
-		game::DrawEverythingNoBlit();
-		FONTW->PrintfToDB(50, 50, "%s", Buffer.c_str());
-		FONTW->PrintfToDB(40, 35, "%s", String);
-		graphics::BlitDBToScreen();
-
-		while(!(game::KeyIsOK(LastKey) || LastKey == 8 || LastKey == 13) )
-		{
-			LastKey = GETKEY();
-		}
-
-		if(LastKey == 8)
-		{
-			if(Input.length()) Input.resize(Input.length() - 1);
-		}
-		else if(LastKey == 13)
-		{
-			break;
-		}
-		else
-		{
-			if(Input.length() < MaxLetters)
-				Input += LastKey;
-		}
-
-
-	}
-	return Input;
-}
-
-bool game::KeyIsOK(char Key)
-{
-        return Key >= 0x20;
-}
-
-int game::GetMoveCommandKey(vector A, vector B)
-{
-	for(uchar c = 0; c < 8; c++)
-	{
+	for(uchar c = 0; c < 8; ++c)
 		if((A + game::GetMoveVector(c)) == B)
 			return game::MoveCommandKey[c];
-	}
+
 	return 0xFF;
 }
 
 void game::ApplyDivineTick(ushort Turns)
 {
-	for(ushort c = 1; GetGod(c); c++)
+	for(ushort c = 1; GetGod(c); ++c)
 		GetGod(c)->ApplyDivineTick(Turns);
 }
 
 void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good)
 {
-	for(ushort c = 1; GetGod(c); c++)
+	for(ushort c = 1; GetGod(c); ++c)
 		if(GetGod(c) != CompareTarget)
 			GetGod(c)->AdjustRelation(CompareTarget, Good);
 }
 
-void game::BurnHellsContents(void)
+/*void game::BurnHellsContents()
 {
 	while(Hell.Length())
 		delete Hell.Remove(0);
@@ -848,68 +693,30 @@ void game::BurnHellsContents(void)
 
 void game::SendToHell(character* PassedAway)
 {
-	for(ushort c = 0; c < Hell.Length(); c++)
+	for(ushort c = 0; c < Hell.Length(); ++c)
 		if(Hell.Access(c) == PassedAway)
 			return;
 
 	Hell.Add(PassedAway);
-}
+}*/
 
-vector game::GetDirectionVectorForKey(ushort Key)
+vector2d game::GetDirectionVectorForKey(ushort Key)
 {
-	for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
+	for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 		if(Key == game::GetMoveCommandKey(c))
 			return game::GetMoveVector(c);
 
-	return vector(0,0);
+	return vector2d(0,0);
 }
 
-vector game::AskForDirectionVector(std::string String)
+vector2d game::AskForDirectionVector(std::string String)
 {
 	if(String != "")
 	{
-		FONTW->PrintfToDB(40, 35, "%s", String.c_str());
+		FONTW->Printf(DOUBLEBUFFER, 40, 35, "%s", String.c_str());
 		graphics::BlitDBToScreen();
 	}
 	return GetDirectionVectorForKey(GETKEY());
-}
-
-std::string game::StringQuestionWithClear(std::string String, ushort MaxLetters)
-{
-	char LastKey = 0;
-	std::string Input,Buffer;
-
-	while(true)
-	{
-		LastKey = 0;
-		Buffer = Input + "_";
-		graphics::ClearDBToColor(0);
-		FONTW->PrintfToDB(50, 50, "%s", Buffer.c_str());
-		FONTW->PrintfToDB(40, 35, "%s", String.c_str());
-		graphics::BlitDBToScreen();
-
-		while(!(game::KeyIsOK(LastKey) || LastKey == 8 || LastKey == 13) )
-		{
-			LastKey = GETKEY();
-		}
-
-		if(LastKey == 8)
-		{
-			if(Input.length()) Input.resize(Input.length() - 1);
-		}
-		else if(LastKey == 13)
-		{
-			if(Input.length()) break;
-		}
-		else
-		{
-			if(Input.length() < MaxLetters)
-				Input += LastKey;
-		}
-
-
-	}
-	return Input;
 }
 
 bool game::EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)  // CurrentX = CX, CurrentY = CY
@@ -917,23 +724,21 @@ bool game::EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)  // CurrentX =
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
-long game::GodScore(void)
+long game::GodScore()
 {
 	long Score = -1000;
 
-	for(ushort c = 1; GetGod(c); c++)
-	{
+	for(ushort c = 1; GetGod(c); ++c)
 		if(GetGod(c)->GetRelation() > Score)
 			Score = GetGod(c)->GetRelation();
-	}
 
 	return Score;
 }
 
-float game::Difficulty(void)
+float game::Difficulty()
 {
 	float Base = game::GetPlayer()->GetDifficulty() * (Current + 1);
 
@@ -959,7 +764,7 @@ float game::Difficulty(void)
 	}
 }
 
-void game::ShowLevelMessage(void)
+void game::ShowLevelMessage()
 {
 	if(LevelMsg[GetCurrent()].length())
 		ADD_MESSAGE(LevelMsg[GetCurrent()].c_str());
@@ -967,27 +772,27 @@ void game::ShowLevelMessage(void)
 	LevelMsg[GetCurrent()] = "";
 }
 
-void game::TriggerQuestForMaakotkaShirt(void)
+void game::TriggerQuestForMaakotkaShirt()
 {
 	ADD_MESSAGE("The dungeon underneath vibrates violently.");
 
-	Dungeon->LoadLevel(SaveName(), 6);
-	Dungeon->LoadLevel(SaveName(), 7);
+	GetCurrentDungeon()->LoadLevel(SaveName(), 6);
+	GetCurrentDungeon()->LoadLevel(SaveName(), 7);
 
-	vector Pos = GetLevel(6)->CreateDownStairs();
+	vector2d Pos = GetLevel(6)->CreateDownStairs();
 
 	GetLevel(7)->PutStairs(Pos);
 	GetLevel(7)->AttachPos(Pos);
 
 	LevelMsg[6] = "You feel something has changed since you were last here...";
 
-	Dungeon->SaveLevel(SaveName(), 6);
-	Dungeon->SaveLevel(SaveName(), 7);
+	GetCurrentDungeon()->SaveLevel(SaveName(), 6);
+	GetCurrentDungeon()->SaveLevel(SaveName(), 7);
 }
 
-void game::CalculateGodNumber(void)
+void game::CalculateGodNumber()
 {
-	for(ushort c = 1;; c++)
+	for(ushort c = 1;; ++c)
 	{
 		if(game::GetGod(c) == 0)
 		{
@@ -995,43 +800,6 @@ void game::CalculateGodNumber(void)
 			break;
 		}
 	}
-}
-
-void game::WhatToLoadMenu(void) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
-{
-	struct _finddata_t Found;
-	long hFile;
-	int Check = 0;
-	list Buffer("Chooseth a file and be sorry");
-	std::string Name;
-	hFile = _findfirst("Save/*.sav", &Found);
-	if(hFile == -1L)
-	{
-		graphics::ClearDBToColor(0);
-		FONTW->PrintfToDB(260, 200, "You don't have any previous saves.");
-		graphics::BlitDBToScreen();
-		GETKEY();
-		return;
-	}
-	while(!Check)
-	{
-		Buffer.AddString(Found.name);
-		Check = _findnext(hFile, &Found);
-	}
-
-	Check = 0xFFFF;
-	while(Check > 0xFFFD)
-	{
-		graphics::ClearDBToColor(0);
-		Check = Buffer.Draw();
-	}
-	if(Check == 0xFFFD)
-		return;
-	Name = Buffer.GetString(Check);
-	Name.resize(Name.size() - 4);
-	game::Init(Name);
-	game::Run();
-	game::DeInit();
 }
 
 uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
@@ -1049,7 +817,7 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 		int Key = GETKEY();
 		if(AcceptYourself && Key == '.')
 			return '.';
-		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
+		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 			if(Key == game::GetMoveCommandKey(c))
 				return c;
 
@@ -1059,16 +827,17 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 
 }
 
-void game::RemoveSaves(void)
+void game::RemoveSaves()
 {
 	remove((SaveName() + ".sav").c_str());
 	remove((AutoSaveFileName + ".sav").c_str());
 
-	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
-	{
-		remove((SaveName() + ".l" + c).c_str());
-		remove((AutoSaveFileName + ".l" + c).c_str());
-	}
+	for(ushort i = 0; i < Dungeon.size(); ++i)
+		for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
+		{
+			remove((SaveName() + ".d" + i + "-" + c).c_str());
+			remove((AutoSaveFileName + ".d" + i + "-" + c).c_str());
+		}
 }
 
 void game::SetPlayer(character* NP)
@@ -1079,22 +848,41 @@ void game::SetPlayer(character* NP)
 		Player->SetIsPlayer(true);
 }
 
-area* game::GetCurrentArea(void)
+area* game::GetCurrentArea()
 {
-	return !InWilderness ? (area*)Dungeon->GetLevel(Current) : (area*)WorldMap;
+	return !InWilderness ? (area*)GetCurrentDungeon()->GetLevel(Current) : (area*)WorldMap;
 }
 
-level* game::GetCurrentLevel(void)
+level* game::GetCurrentLevel()
 {
-	return Dungeon->GetLevel(Current);
+	return GetCurrentDungeon()->GetLevel(Current);
 }
 
 level* game::GetLevel(ushort Index)
 {
-	return Dungeon->GetLevel(Index);
+	return GetCurrentDungeon()->GetLevel(Index);
 }
 
-uchar game::GetLevels(void)
+uchar game::GetLevels()
 {
-	return Dungeon->GetLevels();
+	return GetCurrentDungeon()->GetLevels();
 }
+
+void game::SeeWholeMap()
+{
+	SeeWholeMapCheat = !SeeWholeMapCheat;
+
+	GetCurrentArea()->SendNewDrawRequest();
+}
+
+void game::InitDungeons()
+{
+	Dungeon.resize(2);
+
+	for(uchar c = 0; c < Dungeon.size(); ++c)
+	{
+		Dungeon[c] = new dungeon;
+		Dungeon[c]->SetIndex(c);
+	}
+}
+

@@ -15,7 +15,7 @@ ushort		graphics::YRes;
 uchar		graphics::ColorDepth;
 std::vector<bitmap*> graphics::BitmapContainer;
 
-void graphics::Init(void)
+void graphics::Init()
 {
 	static bool AlreadyInstalled = false;
 
@@ -27,7 +27,7 @@ void graphics::Init(void)
 	}
 }
 
-void graphics::DeInit(void)
+void graphics::DeInit()
 {
 }
 
@@ -60,7 +60,7 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 	ColorDepth = NewColorDepth;
 }
 
-void graphics::BlitDBToScreen(void)
+void graphics::BlitDBToScreen()
 {
 	DXDisplay->Present();
 }
@@ -212,27 +212,17 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
     return S_OK;
 }
 
-void graphics::ClearDBToColor(ushort Color)
-{
-	DOUBLEBUFFER->ClearToColor(Color);
-}
-
-void graphics::ClearDBToColor(ushort X, ushort Y, ushort XSize, ushort YSize, ushort Color)
-{
-	DOUBLEBUFFER->ClearToColor(X, Y, XSize, YSize, Color);
-}
-
-void graphics::UpdateBounds(void)
+void graphics::UpdateBounds()
 {
 	if(DXDisplay)
 		DXDisplay->UpdateBounds();
 }
 
-void graphics::SwitchMode(void)
+void graphics::SwitchMode()
 {
 	FullScreen = !FullScreen;
 
-	for(ulong c = 0; c < BitmapContainer.size(); c++)
+	for(ulong c = 0; c < BitmapContainer.size(); ++c)
 		BitmapContainer[c]->Backup();
 
 	DoubleBuffer->Backup(XRes, YRes, false);
@@ -258,10 +248,11 @@ void graphics::SwitchMode(void)
 
 	DoubleBuffer->AttachSurface(DXDisplay->GetBackBuffer());
 
-	for(c = 0; c < BitmapContainer.size(); c++)
+	for(c = 0; c < BitmapContainer.size(); ++c)
 		BitmapContainer[c]->Restore();
 
 	DoubleBuffer->Restore(XRes, YRes, false);
 
 	BlitDBToScreen();
 }
+

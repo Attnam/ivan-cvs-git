@@ -8,9 +8,9 @@ class rectangle;
 class program
 {
  public:
-  static void Init(void);
-  static void Run(void);
-  static void DeInit(void);
+  static void Init();
+  static void Run();
+  static void DeInit();
   static void SetRunning(bool What) { Running = What; }
   static std::string ReadNextWord(ifstream*);
  private:
@@ -18,3 +18,4 @@ class program
 };
 
 #endif
+

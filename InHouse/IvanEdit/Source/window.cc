@@ -177,13 +177,13 @@ std::string editpersonwindow::GetSaveName(void)
  Buffer.resize(8);
 
  for(int x = 0; x < 8; x++)
-  if(Buffer[x] == ' ') Buffer[x] = 'a';
+  if(Buffer[x] == ' ') Buffer[x] = '_';
  Buffer += ".gol";
  for(int x = 0; x < 10; x++)
  {
   Buffer[7] = char(x + 48);
   ifstream Temp(Buffer.c_str());
-  if(!Temp)
+  if(!Temp.is_open())
   {
    Temp.close();
    break;
@@ -225,7 +225,7 @@ void window::Close(window* Caller)
 {
 
  //windowhandler::GetWindowList().clear();
- find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller);
+ windowhandler::GetWindowList().erase(find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller));
  delete Caller;
 }
 

@@ -7,42 +7,40 @@
 #include "typedef.h"
 
 #include "area.h"
-#include "wterrain.h"
+#include "wterraba.h"
 #include "cont.h"
 
 class worldmapsquare;
+class outputfile;
+class inputfile;
 
 class worldmap : public area
 {
 public:
 	worldmap(ushort, ushort);
-	worldmap(void) {}
-	virtual ~worldmap(void);
-	virtual void Generate(void);
-	virtual void Draw(void) const;
-	virtual void Save(std::ofstream&) const;
-	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
+	worldmap() {}
+	virtual ~worldmap();
+	virtual void Generate();
+	virtual void Draw() const;
+	virtual void Save(outputfile&) const;
+	virtual worldmapsquare* GetWorldMapSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual worldmapsquare* GetWorldMapSquare(ushort x, ushort y) const {return Map[x][y];}
-	virtual void GenerateClimate(void);
-	virtual void Load(std::ifstream&);
+	virtual void GenerateClimate();
+	virtual void Load(inputfile&);
 	virtual ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort, ushort);
-	virtual void CalculateContinents(void);
-	//virtual void GenerateClimate(void);
-	virtual void SmoothAltitude(void);
-	virtual void SmoothClimate(void);
-	virtual void RandomizeAltitude(void);
-	virtual uchar GetContinentUnder(vector Pos) const { return ContinentBuffer[Pos.X][Pos.Y]; }
-	virtual void RemoveEmptyContinents(void);
-	virtual short GetAltitude(vector Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
+	virtual void CalculateContinents();
+	virtual void SmoothAltitude();
+	virtual void SmoothClimate();
+	virtual void RandomizeAltitude();
+	virtual continent* GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
+	virtual void RemoveEmptyContinents();
+	virtual short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 protected:
 	worldmapsquare*** Map;
-	//std::vector<char*> ContinentName;
-	//uchar Continents;
-	std::vector<continent> Continent;
+	std::vector<continent*> Continent;
 	ushort** TypeBuffer, ** OldTypeBuffer;
 	short** AltitudeBuffer;
 	uchar** ContinentBuffer;
-	//friend class worldmapterrain;
 };
 
 #endif

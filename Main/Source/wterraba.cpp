@@ -1,15 +1,16 @@
 #include <queue>
 
 #include "area.h"
-#include "wterrain.h"
+#include "wterraba.h"
 #include "wsquare.h"
 #include "igraph.h"
 #include "bitmap.h"
 #include "object.h"
-#include "material.h"
+#include "materba.h"
 #include "proto.h"
 #include "worldmap.h"
 #include "game.h"
+#include "save.h"
 
 std::string worldmapterrain::Name(uchar Case) const
 {
@@ -31,25 +32,20 @@ std::string worldmapterrain::Name(uchar Case) const
 				return NameStem() + " terrains";
 }
 
-vector worldmapterrain::GetPos(void) const
+vector2d worldmapterrain::GetPos() const
 {
 	return GetWorldMapSquareUnder()->GetPos();
 }
 
-/*void groundworldmapterrain::DrawNeighbour(vector Pos, uchar NeighbourIndex) const
-{
-	
-}*/
-
 struct prioritypair
 {
-	prioritypair(uchar Priority, vector BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) {}
+	prioritypair(uchar Priority, vector2d BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) {}
 	bool operator < (const prioritypair& AnotherPair) const { return Priority > AnotherPair.Priority; }
 	uchar Priority;
-	vector BitmapPos;
+	vector2d BitmapPos;
 };
 
-void groundworldmapterrain::DrawToTileBuffer(void) const
+void groundworldmapterrain::DrawToTileBuffer() const
 {
 	igraph::GetWorldMapTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
 
@@ -70,52 +66,29 @@ void groundworldmapterrain::DrawToTileBuffer(void) const
 	}
 }
 
-/*void groundworldmapterrain::DrawToTileBuffer(void) const
-{
-	igraph::GetWorldMapTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
-
-	//std::priority_queue<prioritypair> Neighbour;
-
-	DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(GetWorldMapSquareUnder()->GetPos().X, GetWorldMapSquareUnder()->GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
-	{
-		vector NeighbourBitmap = GetWorldMapUnder()->GetWorldMapSquare(DoX, DoY)->GetGroundWorldMapTerrain()->GetBitmapPos() - (game::GetMoveVector(DoIndex) << 4);
-
-		igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), NeighbourBitmap.X, NeighbourBitmap.Y, 0, 0, 16, 16);
-
-		//if(DoNeighbour->Priority() > Priority())
-		//	Neighbour.push(prioritypair(DoNeighbour->Priority(), ));
-	}, ;, ;)
-
-	/while(Neighbour.size())
-	{
-		igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), Neighbour.top().BitmapPos.X, Neighbour.top().BitmapPos.Y, 0, 0, 16, 16);
-		Neighbour.pop();
-	}/
-}*/
-
-void overworldmapterrain::DrawToTileBuffer(void) const
+void overworldmapterrain::DrawToTileBuffer() const
 {
 	igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
-void overworldmapterrain::Save(std::ofstream& SaveFile) const
+void overworldmapterrain::Save(outputfile& SaveFile) const
 {
 	typeable::Save(SaveFile);
 	overterrain::Save(SaveFile);
 }
 
-void overworldmapterrain::Load(std::ifstream& SaveFile)
+void overworldmapterrain::Load(inputfile& SaveFile)
 {
 	typeable::Load(SaveFile);
 	overterrain::Load(SaveFile);
 }
 
-worldmapsquare* worldmapterrain::GetWorldMapSquareUnder(void) const
+worldmapsquare* worldmapterrain::GetWorldMapSquareUnder() const
 {
 	return (worldmapsquare*)SquareUnder;
 }
 
-worldmap* worldmapterrain::GetWorldMapUnder(void) const
+worldmap* worldmapterrain::GetWorldMapUnder() const
 {
 	return (worldmap*)AreaUnder;
 }

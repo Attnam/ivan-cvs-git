@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GR /GX /O1 /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -52,7 +52,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib ddraw.lib FEEL/Release/FEEL.lib FELL/Release/FELL.lib FeDX/Release/FeDX.lib FeWin/Release/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 dxguid.lib ddraw.lib FEEL/Release/FEEL.lib FeFile/Release/FeFile.lib FELL/Release/FELL.lib FeDX/Release/FeDX.lib FeWin/Release/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
@@ -72,8 +73,8 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /Ze /W3 /Gm /GR /GX /Zi /Od /Ob1 /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /I /" " /c
-# SUBTRACT CPP /X
+# ADD CPP /nologo /W3 /Gm /GR /GX /Zi /Ob1 /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /I /" " /c
+# SUBTRACT CPP /Gf
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "_DEBUG"
@@ -83,7 +84,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib ddraw.lib FEEL/Debug/FEEL.lib FELL/Debug/FELL.lib FeDX/Debug/FeDX.lib FeWin/Debug/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 dxguid.lib ddraw.lib FEEL/Debug/FEEL.lib FeFile/Debug/FeFile.lib FELL/Debug/FELL.lib FeDX/Debug/FeDX.lib FeWin/Debug/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Debug\Main.exe IVAN.exe
@@ -104,7 +105,11 @@ SOURCE=.\Main\Source\area.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\char.cpp
+SOURCE=.\Main\Source\charba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\charde.cpp
 # End Source File
 # Begin Source File
 
@@ -128,7 +133,11 @@ SOURCE=.\Main\Source\igraph.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\item.cpp
+SOURCE=.\Main\Source\itemba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\itemde.cpp
 # End Source File
 # Begin Source File
 
@@ -140,7 +149,11 @@ SOURCE=.\Main\Source\lsquare.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\lterrain.cpp
+SOURCE=.\Main\Source\lterraba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\lterrade.cpp
 # End Source File
 # Begin Source File
 
@@ -148,7 +161,11 @@ SOURCE=.\Main\Source\main.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\material.cpp
+SOURCE=.\Main\Source\materba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\materde.cpp
 # End Source File
 # Begin Source File
 
@@ -168,6 +185,10 @@ SOURCE=.\Main\Source\proto.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\script.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\square.cpp
 # End Source File
 # Begin Source File
@@ -176,7 +197,7 @@ SOURCE=.\Main\Source\stack.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\terrain.cpp
+SOURCE=.\Main\Source\terra.cpp
 # End Source File
 # Begin Source File
 
@@ -192,7 +213,11 @@ SOURCE=.\Main\Source\wsquare.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\wterrain.cpp
+SOURCE=.\Main\Source\wterraba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\wterrade.cpp
 # End Source File
 # End Group
 # Begin Group "Include"
@@ -204,7 +229,11 @@ SOURCE=.\Main\Include\area.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\char.h
+SOURCE=.\Main\Include\charba.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\charde.h
 # End Source File
 # Begin Source File
 
@@ -236,7 +265,11 @@ SOURCE=.\Main\Include\igraph.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\item.h
+SOURCE=.\Main\Include\itemba.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\itemde.h
 # End Source File
 # Begin Source File
 
@@ -248,11 +281,19 @@ SOURCE=.\Main\Include\lsquare.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\lterrain.h
+SOURCE=.\Main\Include\lterraba.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\material.h
+SOURCE=.\Main\Include\lterrade.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\materba.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\materde.h
 # End Source File
 # Begin Source File
 
@@ -272,7 +313,7 @@ SOURCE=.\Main\Include\proto.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\save.h
+SOURCE=.\Main\Include\script.h
 # End Source File
 # Begin Source File
 
@@ -284,7 +325,7 @@ SOURCE=.\Main\Include\stack.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\terrain.h
+SOURCE=.\Main\Include\terra.h
 # End Source File
 # Begin Source File
 
@@ -300,7 +341,11 @@ SOURCE=.\Main\Include\wsquare.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\wterrain.h
+SOURCE=.\Main\Include\wterraba.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\wterrade.h
 # End Source File
 # End Group
 # End Target

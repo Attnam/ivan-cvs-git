@@ -1,6 +1,9 @@
+#include <ctime>
+
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
+#include "save.h"
 
 int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int nCmdShow)
 {
@@ -9,12 +12,25 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false);
 
 	bitmap Font("Graphics/FontR.pcx");
-
 	bitmap Pertti("Graphics/Char.pcx");
+
+	inputfile IFile("Script/dungeon.dat");
+
+	std::string Buffer;
+
+	srand(time(0));
+
+	std::map<std::string, long> Map;
+
+	long Value = IFile.ReadNumber(Map);
+
+	Buffer += IFile.ReadWord();
+	Buffer += IFile.ReadWord();
+	Buffer += IFile.ReadWord();
 
 	DOUBLEBUFFER->ClearToColor(0xFFFF);
 	DOUBLEBUFFER->ClearToColor(50, 350, 700, 200, 0xF81F);
-	Font.Printf(DOUBLEBUFFER, 212, 16, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
+	Font.Printf(DOUBLEBUFFER, 212, 16, "Valpuri rulaa!!! Ja muuten, %d * %d on %d. 0x%X %s", 42, 666, 42 * 666, Value, Buffer.c_str());
 
 	for(uchar x = 0; x < 8; x++)
 	{
@@ -47,7 +63,9 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 		}
 	}
 
-	DOUBLEBUFFER->Save("Scrshot.bmp");
+	outputfile O("p.bmp");
+
+	Font.Save(O);
 
 	GETKEY();
 

@@ -52,7 +52,7 @@ void program::Run(void)
 std::string program::ReadNextWord(ifstream* From)
 {
  char ch = 0;
- std::string Buffer;
+ std::string Buffer = "";
 
  while(ch != ',')
  {
@@ -61,3 +61,4 @@ std::string program::ReadNextWord(ifstream* From)
  }
  return Buffer;
 }
+

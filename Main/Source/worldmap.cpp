@@ -2,25 +2,23 @@
 
 #include "worldmap.h"
 #include "wsquare.h"
-#include "wterrain.h"
-#include "char.h"
+#include "wterrade.h"
+#include "charba.h"
 #include "allocate.h"
 #include "level.h"
-#include "material.h"
+#include "materba.h"
 #include "proto.h"
 #include "error.h"
 #include "save.h"
 
-uchar** continent::ContinentBuffer;
-
-worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize), Continent(1, continent(0))
+worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize), Continent(1, 0)
 {
 	Map = (worldmapsquare***)area::Map;
 
 	for(ushort x = 0; x < XSize; x++)
 		for(ulong y = 0; y < YSize; y++)
 		{
-			Map[x][y] = new worldmapsquare(this, vector(x, y));
+			Map[x][y] = new worldmapsquare(this, vector2d(x, y));
 			Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
 		}
 
@@ -28,34 +26,33 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize), Continent(1
 	AltitudeBuffer = Alloc2D<short>(XSize, YSize);
 	ContinentBuffer = Alloc2D<uchar>(XSize, YSize, 0);
 
+	continent::TypeBuffer = TypeBuffer;
+	continent::AltitudeBuffer = AltitudeBuffer;
 	continent::ContinentBuffer = ContinentBuffer;
 }
 
-worldmap::~worldmap(void)
+worldmap::~worldmap()
 {
 	delete [] TypeBuffer;
 	delete [] AltitudeBuffer;
 	delete [] ContinentBuffer;
 }
 
-void worldmap::Save(std::ofstream& SaveFile) const
+void worldmap::Save(outputfile& SaveFile) const
 {
 	area::Save(SaveFile);
 
-	for(ulong c = 0; c < XSizeTimesYSize; c++)
+	for(ulong c = 0; c < XSizeTimesYSize; ++c)
 		Map[0][c]->Save(SaveFile);
 
-	SaveFile.write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-	SaveFile.write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-	SaveFile.write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+	SaveFile.GetBuffer().write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.GetBuffer().write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
+	SaveFile.GetBuffer().write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
-	SaveFile << Continent;
-
-	//for(uchar i = 0; i < Continent.size(); i++)
-	//	 
+	SaveFile << Continent;	 
 }
 
-void worldmap::Load(std::ifstream& SaveFile)
+void worldmap::Load(inputfile& SaveFile)
 {
 	area::Load(SaveFile);
 
@@ -64,7 +61,7 @@ void worldmap::Load(std::ifstream& SaveFile)
 	for(ushort x = 0; x < XSize; x++)
 		for(ulong y = 0; y < YSize; y++)
 		{
-			Map[x][y] = new worldmapsquare(this, vector(x, y));
+			Map[x][y] = new worldmapsquare(this, vector2d(x, y));
 			Map[x][y]->Load(SaveFile);
 		}
 
@@ -72,16 +69,16 @@ void worldmap::Load(std::ifstream& SaveFile)
 	AltitudeBuffer = Alloc2D<short>(XSize, YSize);
 	ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
 
-	SaveFile.read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-	SaveFile.read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-	SaveFile.read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+	SaveFile.GetBuffer().read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.GetBuffer().read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
+	SaveFile.GetBuffer().read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
 	continent::ContinentBuffer = ContinentBuffer;
 
 	SaveFile >> Continent;
 }
 
-void worldmap::Draw(void) const
+void worldmap::Draw() const
 {
 	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
 	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
@@ -110,34 +107,51 @@ void worldmap::Draw(void) const
 			}
 }
 
-void worldmap::Generate(void)
+void worldmap::Generate()
 {
 	RandomizeAltitude();
 	SmoothAltitude();
-	CalculateContinents();
 	GenerateClimate();
 	SmoothClimate();
+	CalculateContinents();
+
+	std::vector<continent*> PerfectForAttnam;
+
+	for(uchar c = 1; c < Continent.size(); ++c)
+		if(Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) > 1)
+			PerfectForAttnam.push_back(Continent[c]);
+
+	continent* PerttuLikes = PerfectForAttnam[rand() % PerfectForAttnam.size()];
+
+	vector2d AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
+
+	for(vector2d ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()); ElpuriCavePos == AttnamPos; ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()));
+
+	GetWorldMapSquare(AttnamPos)->ChangeOverWorldMapTerrain(new attnam);
+	GetWorldMapSquare(ElpuriCavePos)->ChangeOverWorldMapTerrain(new elpuricave);
+
+	GetWorldMapSquare(AttnamPos)->AddCharacter(game::GetPlayer());
 }
 
-void worldmap::RandomizeAltitude(void)
+void worldmap::RandomizeAltitude()
 {
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
-			AltitudeBuffer[x][y] = rand() % 1001 - rand() % 1000;
+			AltitudeBuffer[x][y] = rand() % 3001 - rand() % 3000;
 }
 
-void worldmap::SmoothAltitude(void)
+void worldmap::SmoothAltitude()
 {
 	short** OldAltitudeBuffer = Alloc2D<short>(XSize, YSize);
 
-	for(uchar c = 0; c < 6; c++)
+	for(uchar c = 0; c < 6; ++c)
 	{
 		if(c < 4)
 		{
 			for(uchar c1 = 0; c1 < rand() % 20; c1++)
 			{
 				ushort PlaceX = 5 + rand() % (XSize-10), PlaceY = 5 + rand() % (YSize-10);
-				short Change = rand() % 5000 - rand() % 5000;
+				short Change = rand() % 10000 - rand() % 10000;
 
 				for(int c2 = 0; c2 < rand() % 50; c2++)
 					AltitudeBuffer[(PlaceX + rand() % 5 - rand() % 5)][(PlaceY + rand() % 5 - rand() % 5)] += Change;
@@ -161,17 +175,16 @@ void worldmap::SmoothAltitude(void)
 	delete [] OldAltitudeBuffer;
 }
 
-//#define CLIMATE_RANDOMNESS		0.2		//0 = mathematic, 1 = random
 #define MAX_TEMPERATURE			27		//increase for more tropical world
 #define LATITUDE_EFFECT			40		//increase for more effect
-#define ALTITUDE_EFFECT			0.06
+#define ALTITUDE_EFFECT			0.02
 
 #define COLD				10
 #define NORMAL				12
 #define WARM				17
 #define HOT				19
 
-void worldmap::GenerateClimate(void)
+void worldmap::GenerateClimate()
 {
 	for(ushort y = 0; y < YSize; y++)
 	{
@@ -184,15 +197,10 @@ void worldmap::GenerateClimate(void)
 			if(AltitudeBuffer[x][y] <= 0)
 			{
 				TypeBuffer[x][y] = ocean::StaticType();
-				//Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
-				//TypeBuffer[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType();// - groundworldmapterrain::GetProtoIndexBegin();
 				continue;
 			}
 
 			bool Rainy = LatitudeRainy;
-
-			//if(rand() % 10 < 10 * CLIMATE_RANDOMNESS)
-			//	Rainy = rand() % 2 ? true : false;
 
 			if(!Rainy)
 				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, if(AltitudeBuffer[DoX][DoY] <= 0) { Rainy = true; break; })
@@ -232,11 +240,11 @@ void worldmap::GenerateClimate(void)
 	}
 }
 
-void worldmap::SmoothClimate(void)
+void worldmap::SmoothClimate()
 {
 	OldTypeBuffer = Alloc2D<ushort>(XSize, YSize);
 
-	for(ushort c = 0; c < 3; c++)
+	for(ushort c = 0; c < 3; ++c)
 		for(ushort y = 0; y < YSize; y++)
 			for(ushort x = 0, NewType; x < XSize; x++)
 				if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType() && (NewType = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y)))
@@ -251,7 +259,7 @@ void worldmap::SmoothClimate(void)
 
 ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort x, ushort y)
 {
-	static ushort Types = protocontainer<groundworldmapterrain>::GetProtoAmount() + 1;//groundworldmapterrain::GetProtoAmount();											
+	static ushort Types = protocontainer<groundworldmapterrain>::GetProtoAmount() + 1;
 	static uchar* Type = new uchar[Types];
 
 	for(ushort n = 0; n < Types; n++)
@@ -263,14 +271,14 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
 	uchar MostCommon = 0;
 
-	for(ushort c = 1; c < Types; c++)
+	for(ushort c = 1; c < Types; ++c)
 		if(Type[c] > Type[MostCommon] && c != ocean::StaticType())
 			MostCommon = c;
 
 	return MostCommon;
 }
 
-void worldmap::CalculateContinents(void)
+void worldmap::CalculateContinents()
 {
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
@@ -285,13 +293,13 @@ void worldmap::CalculateContinents(void)
 						if(ContinentBuffer[x][y])
 						{
 							if(ContinentBuffer[x][y] != ContinentBuffer[DoX][DoY])
-								if(Continent[ContinentBuffer[x][y]].Size() < Continent[ContinentBuffer[DoX][DoY]].Size())
-									Continent[ContinentBuffer[x][y]].AttachTo(Continent[ContinentBuffer[DoX][DoY]]);
+								if(Continent[ContinentBuffer[x][y]]->Size() < Continent[ContinentBuffer[DoX][DoY]]->Size())
+									Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[DoX][DoY]]);
 								else
-									Continent[ContinentBuffer[DoX][DoY]].AttachTo(Continent[ContinentBuffer[x][y]]);
+									Continent[ContinentBuffer[DoX][DoY]]->AttachTo(Continent[ContinentBuffer[x][y]]);
 						}
 						else
-							Continent[ContinentBuffer[DoX][DoY]].Add(vector(x, y));
+							Continent[ContinentBuffer[DoX][DoY]]->Add(vector2d(x, y));
 
 						Attached = true;
 					}
@@ -307,27 +315,34 @@ void worldmap::CalculateContinents(void)
 							ABORT("Valpuri shall not carry more continents!");
 					}
 
-					continent NewContinent(Continent.size());
-					NewContinent.Add(vector(x, y));
+					continent* NewContinent = new continent(Continent.size());
+					NewContinent->Add(vector2d(x, y));
 					Continent.push_back(NewContinent);
 				}
 			}
 
 	RemoveEmptyContinents();
+
+	for(uchar c = 1; c < Continent.size(); ++c)
+		Continent[c]->GenerateInfo();
 }
 
-void worldmap::RemoveEmptyContinents(void)
+void worldmap::RemoveEmptyContinents()
 {
-	for(uchar c = 1; c < Continent.size(); c++)
-		if(!Continent[c].Size())
+	for(uchar c = 1; c < Continent.size(); ++c)
+		if(!Continent[c]->Size())
 			for(uchar i = Continent.size() - 1; i >= c; i--)
-				if(Continent[i].Size())
+				if(Continent[i]->Size())
 				{
-					Continent[i].AttachTo(Continent[c]);
+					Continent[i]->AttachTo(Continent[c]);
+					delete Continent[i];
 					Continent.pop_back();
 					break;
 				}
 				else
+				{
+					delete Continent[i];
 					Continent.pop_back();
+				}
 }
 

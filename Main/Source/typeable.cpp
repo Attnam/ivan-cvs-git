@@ -1,14 +1,13 @@
 #include "typeable.h"
 #include "game.h"
+#include "save.h"
 
-void typeable::Save(std::ofstream& SaveFile) const
+void typeable::Save(outputfile& SaveFile) const
 {
-	ushort TypeVar = Type();
-
-	SaveFile.write((char*)&TypeVar, sizeof(TypeVar));
+	SaveFile << Type();
 }
 
-void typeable::Load(std::ifstream& SaveFile)
+void typeable::Load(inputfile& SaveFile)
 {
 	AreaUnder = game::GetAreaInLoad();
 	SquareUnder = game::GetSquareInLoad();

@@ -13,10 +13,10 @@ class globalmessagingsystem
 {
 public:
 	static void AddMessage(const char*, ...);
-	static void Draw(void);
-	static void Empty(void);
-	static void DrawMessageHistory(void);
-	static void Format(void);
+	static void Draw();
+	static void Empty();
+	static void DrawMessageHistory();
+	static void Format();
 private:
 	static char* MessageBuffer;
 	static ushort BufferLength;

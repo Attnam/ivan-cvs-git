@@ -3,47 +3,68 @@
 
 #include <vector>
 #include <string>
-#include <fstream>
 
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
+#include "save.h"
 
 class worldmap;
+class outputfile;
+class inputfile;
 
 class continent
 {
 public:
 	friend class worldmap;
-	continent(void) {}
+	continent() {}
 	continent(uchar Index) : Index(Index) {}
-	void AttachTo(continent&);
-	void Add(vector);
-	void Save(std::ofstream&) const;
-	void Load(std::ifstream&);
-	ulong Size(void) const { return Member.size(); }
-	uchar GetIndex(void) const { return Index; }
+	void AttachTo(continent*);
+	void Add(vector2d);
+	void Save(outputfile&) const;
+	void Load(inputfile&);
+	ulong Size() const { return Member.size(); }
+	uchar GetIndex() const { return Index; }
+	void GenerateInfo();
+	std::string GetName() const { return Name; }
+	ushort GetGroundTerrainAmount(ushort Type) { return GroundTerrainAmount[Type]; }
+	vector2d GetRandomMember(ushort);
 private:
+	static ushort** TypeBuffer;
+	static short** AltitudeBuffer;
 	static uchar** ContinentBuffer;
 	std::string Name;
-	std::vector<vector> Member;
+	std::vector<vector2d> Member;
+	std::vector<ushort> GroundTerrainAmount;
 	uchar Index;
 };
 
-inline void continent::Add(vector Pos)
+inline void continent::Add(vector2d Pos)
 {
 	Member.push_back(Pos);
 	ContinentBuffer[Pos.X][Pos.Y] = Index;
 }
 
-inline std::ofstream& operator<<(std::ofstream& SaveFile, continent& Continent)
+inline outputfile& operator<<(outputfile& SaveFile, continent* Continent)
 {
-	Continent.Save(SaveFile);
+	if(Continent)
+	{
+		SaveFile.GetBuffer().put(1);
+		Continent->Save(SaveFile);
+	}
+	else
+		SaveFile.GetBuffer().put(0);
+
 	return SaveFile;
 }
 
-inline std::ifstream& operator>>(std::ifstream& SaveFile, continent& Continent)
+inline inputfile& operator>>(inputfile& SaveFile, continent* Continent)
 {
-	Continent.Load(SaveFile);
+	if(SaveFile.GetBuffer().get())
+	{
+		Continent = new continent;
+		Continent->Load(SaveFile);
+	}
+
 	return SaveFile;
 }
 

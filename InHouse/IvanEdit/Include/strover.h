@@ -1,8 +1,8 @@
 #ifndef __STROVER_H__
 #define __STROVER_H__
 
-#include <cstdio>
 #include <fstream>
+#include <cstdio>
 #include <string>
 
 #include "typedef.h"
@@ -29,7 +29,7 @@ inline std::string& operator+= (std::string& String, const int& Int)
 	return String;
 }
 
-inline std::ofstream& operator<<(std::ofstream& SaveFile, std::string String)
+inline ofstream& operator<<(ofstream& SaveFile, std::string String)
 {
 	uchar Length = String.length();
 
@@ -41,7 +41,7 @@ inline std::ofstream& operator<<(std::ofstream& SaveFile, std::string String)
 	return SaveFile;
 }
 
-inline std::ifstream& operator>>(std::ifstream& SaveFile, std::string& String)
+inline ifstream& operator>>(ifstream& SaveFile, std::string& String)
 {
 	char Buffer[256];
 

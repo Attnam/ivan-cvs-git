@@ -14,8 +14,8 @@ class globalwindowhandler
 {
 public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	static int GetKey(void);
-	static bool GetKeyPressed(void) { return KeyPressed; }
+	static int GetKey();
+	static bool GetKeyPressed() { return KeyPressed; }
 	static void Init(HINSTANCE, HWND*, const char*);
 private:
 	static dynarray<int> KeyBuffer;

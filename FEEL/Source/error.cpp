@@ -6,7 +6,7 @@
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
 HWND* globalerrorhandler::hWnd;
 
-void globalerrorhandler::Install(void)
+void globalerrorhandler::Install()
 {
 	static bool AlreadyInstalled = false;
 
@@ -20,7 +20,7 @@ void globalerrorhandler::Install(void)
 	}
 }
 
-void globalerrorhandler::DeInstall(void)
+void globalerrorhandler::DeInstall()
 {
 	_set_new_handler(OldNewHandler);
 }

@@ -17,7 +17,7 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 
 		graphics::SetMode(hInst, hWnd, "IVAN 0.240a", 800, 600, 16, false);
 
-		for(uchar c = 0; c < GRAPHIC_TYPES; c++)
+		for(uchar c = 0; c < GRAPHIC_TYPES; ++c)
 			Graphic[c] = new bitmap(GraphicFileName[c]);
 
 		TileBuffer = new bitmap(16, 16);
@@ -26,20 +26,26 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 	}
 }
 
-void igraph::DeInit(void)
+void igraph::DeInit()
 {
-	for(uchar c = 0; c < GRAPHIC_TYPES; c++)
+	for(uchar c = 0; c < GRAPHIC_TYPES; ++c)
 		delete Graphic[c];
 }
 
-void igraph::BlitTileBuffer(vector Pos, ushort Luminance, bool WithCursor)
+void igraph::BlitTileBuffer(vector2d Pos, ushort Luminance)
 {
 	Luminance = ushort(Luminance * game::GetSoftGamma());
 
 	if(Luminance == 256)
-		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16);
+		TileBuffer->Blit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16);
 	else
-		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
-	if(WithCursor) 
-		igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16);
+		TileBuffer->Blit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
+
+void igraph::DrawCursor(vector2d Pos)
+{
+	ushort Luminance = ushort(256 * game::GetSoftGamma());
+
+	igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
+}
+

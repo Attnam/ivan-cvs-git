@@ -1,28 +1,17 @@
 #include <cmath>
-#include <ctime>
 
-#include "char.h"
-#include "error.h"
-#include "item.h"
+#include "itemde.h"
 #include "igraph.h"
-#include "strover.h"
+#include "message.h"
+#include "bitmap.h"
 #include "stack.h"
+#include "game.h"
+#include "charba.h"
 #include "level.h"
 #include "lsquare.h"
-#include "lterrain.h"
-#include "proto.h"
-#include "message.h"
-
-item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
-{
-	if(CreateMaterials || SetStats)
-		ABORT("Boo!");
-}
-
-void item::PositionedDrawToTileBuffer(uchar) const
-{
-	igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
-}
+#include "lterraba.h"
+#include "save.h"
+#include "feio.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
@@ -38,17 +27,6 @@ ushort can::TryToOpen(stack* Stack)
 	SetMaterial(1,0);
 
 	return x;
-}
-
-ulong item::GetWeight(void) const
-{
-	ulong TotalWeight = 0;
-
-	for(uchar c = 0; c < GetMaterials(); c++)
-		if(GetMaterial(c))
-			TotalWeight += GetMaterial(c)->GetWeight();
-
-	return TotalWeight;
 }
 
 bool corpse::Consume(character* Eater, float Amount)
@@ -127,7 +105,7 @@ bool scroll::CanBeRead(character* Reader) const
 
 bool scrollofcreatemonster::Read(character* Reader)
 {
-	vector TryToCreate;
+	vector2d TryToCreate;
 
 	for(;;) // Bug bug bug! This can cause an infinite loop if there's no walkable squares around.
 	{
@@ -152,7 +130,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 bool scrollofteleport::Read(character* Reader)
 {
-	vector Pos;
+	vector2d Pos;
 	for(;;)
 	{
 		Pos = game::GetCurrentLevel()->RandomSquare(true);
@@ -193,26 +171,9 @@ void meleeweapon::DipInto(item* DipTo)
 	ADD_MESSAGE("%s is now covered with %s.", CNAME(DEFINITE), GetMaterial(2)->CNAME(UNARTICLED));
 }
 
-material* lump::BeDippedInto(void)
+material* lump::BeDippedInto()
 {
 	return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
-}
-
-bool item::Consumable(character* Eater) const
-{
-	return Eater->ConsumeItemType(GetConsumeType());
-}
-
-ushort item::GetEmitation(void) const
-{
-	ushort Emitation = 0;
-
-	for(ushort c = 0; c < GetMaterials(); c++)
-		if(GetMaterial(c))
-			if(GetMaterial(c)->GetEmitation() > Emitation)
-				Emitation = GetMaterial(c)->GetEmitation();
-
-	return Emitation;
 }
 
 void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
@@ -220,7 +181,8 @@ void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenbottle);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
-	delete this;
+	//delete this;
+	SetExists(false);
 }
 
 
@@ -247,106 +209,6 @@ bool loaf::Consume(character* Eater, float Amount)
 	return (Amount > 99);
 }
 
-short item::CalculateOfferValue(char GodAlignment) const
-{
-	float OfferValue = 0;
-	for(ushort c = 0; c < GetMaterials(); c++)
-	{
-		if(GetMaterial(c))
-		{
-		if(GetMaterial(c)->Alignment() == EVIL)
-		{
-			if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
-				OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
-			else
-			if(GodAlignment == GOOD)
-				OfferValue -= Material[c]->GetVolume() * Material[c]->OfferValue();
-		}
-		else if(GetMaterial(c)->Alignment() == GOOD)
-		{
-			if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
-				OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
-			else
-			if(GodAlignment == EVIL)
-				OfferValue -= Material[c]->GetVolume() * Material[c]->OfferValue();
-		}
-		else
-			OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
-		}
-	}
-	return short(OfferValue * (OfferModifier() / 250));
-}
-
-bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
-{
-	vector StartingPos = Start->GetPos();
-	vector Pos = Start->GetPos();
-	bool Breaks = false;
-	float Speed = float(Force) / GetWeight() * 1500;
-
-	for(;;)
-	{
-		if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
-		{
-			Breaks = true;
-			break;
-		}
-		else
-		{
-			vector OldPos = Pos;
-			Pos += game::GetMoveVector(Direction);
-			Speed *= 0.7f;
-			if(Speed < 0.5)
-				break;
-			Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
-			clock_t StartTime = clock();
-			game::GetCurrentLevel()->GetLevelSquare(Pos)->ReEmitate();
-			game::GetCurrentLevel()->GetLevelSquare(OldPos)->ReEmitate();
-			game::DrawEverything(false);
-			Start = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack();
-
-			if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
-			{
-				if(Hostile)
-					game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->SetRelations(HOSTILE);
-				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen()))
-					break;
-			}
-			while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC)
-			{
-
-			}
-
-		}
-	}
-
-	Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
-
-	if(Breaks)
-		ImpactDamage(Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
-
-	if(Pos == StartingPos)
-		return false;
-	else
-		return true;
-}
-
-bool item::HitCharacter(character* Dude, float Speed, bool CanBeSeen)
-{
-	if(Dude->Catches(this, Speed, CanBeSeen))
-		return true;
-
-	if(Dude->DodgesFlyingItem(this, Speed, CanBeSeen)) // Insert better formula for dodge
-	{
-		if(CanBeSeen) ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
-		return false;
-	}
-
-	Dude->HasBeenHitByItem(this, Speed, CanBeSeen);
-
-	return true;
-}
-
 bool abone::Consume(character* Consumer, float Amount)
 {
 	if(Consumer == game::GetPlayer())
@@ -365,48 +227,16 @@ ushort can::PrepareForConsuming(character* Consumer, stack* Stack)
 		return 0xFFFF;
 }
 
-ushort item::PrepareForConsuming(character*, stack* Stack)
-{
-	return Stack->SearchItem(this);
-}
-
-float item::GetWeaponStrength(void) const
-{
-	return sqrt(float(GetFormModifier()) * Material[0]->GetHitValue() * GetWeight());
-}
-
-bool scrollofwishing::Read(character* Reader)
-{
-	std::string Temp = game::StringQuestion("What do you want to wish for?", 256);
-	item* TempItem = protosystem::CreateItem(Temp);
-
-	if(TempItem)
-	{
-		Reader->GetStack()->AddItem(TempItem);
-		ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CNAME(INDEFINITE));
-		return true;
-	}
-	else
-		ADD_MESSAGE("There is no such item.");
-
-	return false;
-}
-
-item* leftnutofperttu::CreateWishedItem(void) const
+item* leftnutofperttu::CreateWishedItem() const
 {
 	return new cheapcopyofleftnutofperttu;
 }
 
-void item::DrawToTileBuffer(void) const
-{
-	PositionedDrawToTileBuffer(CENTER);
-}
-
 bool pickaxe::Apply(character* User)
 {
-	vector Temp;
+	vector2d Temp;
 	
-	if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector(0,0))
+	if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
 	{
 
 		if(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp)->Dig(User, this))
@@ -420,19 +250,7 @@ bool pickaxe::Apply(character* User)
 	return false;
 }
 
-item* item::CreateWishedItem(void) const
-{
-	return protocontainer<item>::GetProto(Type())->Clone(); //GGG
-}
-
-bool item::Apply(character*)
-{
-	ADD_MESSAGE("You can't apply this!");
-
-	return false;
-}
-
-ushort platemail::GetArmorValue(void) const
+ushort platemail::GetArmorValue() const
 {
 	float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3;
 
@@ -445,7 +263,7 @@ ushort platemail::GetArmorValue(void) const
 	return ushort(Base);
 }
 
-ushort chainmail::GetArmorValue(void) const
+ushort chainmail::GetArmorValue() const
 {
 	float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2;
 
@@ -464,10 +282,10 @@ bool wand::Apply(character* StupidPerson)
 
 	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 
-	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->ReceiveFireDamage(5);
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby."));
+		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->ReceiveFireDamage(5);
+		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby."));
 	})
 
 	StupidPerson->ReceiveFireDamage(10);
@@ -477,9 +295,9 @@ bool wand::Apply(character* StupidPerson)
 }
 
 
-bool wandofpolymorph::Zap(vector Pos, uchar Direction)
+bool wandofpolymorph::Zap(vector2d Pos, uchar Direction)
 {
-	vector CurrentPos = Pos;
+	vector2d CurrentPos = Pos;
 
 	if(!GetCharge())
 	{
@@ -491,26 +309,17 @@ bool wandofpolymorph::Zap(vector Pos, uchar Direction)
 		for(ushort Length = 0;Length < 5;Length++)
 		{
 			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
-			{
 				break;
-			}
 			else
 			{
 				
 				CurrentPos += game::GetMoveVector(Direction);			
-				
-				clock_t StartTime = clock();
-				
-				
 
 				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->Polymorph();
 				
 				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
 					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
-				
-				
-
 			}
 		}
 	else
@@ -527,27 +336,31 @@ bool wandofpolymorph::Zap(vector Pos, uchar Direction)
 	return true;
 }
 
-
-bool item::Zap(vector, uchar)
+void wand::Save(outputfile& SaveFile) const
 {
-	 return false; 
+	SaveFile << Charge;
 }
 
-bool item::Polymorph(stack* CurrentStack)
+void wand::Load(inputfile& SaveFile)
 {
-	CurrentStack->AddItem(protosystem::BalancedCreateItem());
-	CurrentStack->RemoveItem(CurrentStack->SearchItem(this));
-	delete this;
-	return true;
+	SaveFile >> Charge;
 }
 
-void wand::Save(std::ofstream& SaveFile) const
+bool scrollofwishing::Read(character* Reader)
 {
-	SaveFile.put(Charge);
-}
+	std::string Temp = iosystem::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 256);
 
-void wand::Load(std::ifstream& SaveFile)
-{
-	Charge = SaveFile.get();
+	item* TempItem = protosystem::CreateItem(Temp);
+
+	if(TempItem)
+	{
+		Reader->GetStack()->AddItem(TempItem);
+		ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CNAME(INDEFINITE));
+		return true;
+	}
+	else
+		ADD_MESSAGE("There is no such item.");
+
+	return false;
 }
 

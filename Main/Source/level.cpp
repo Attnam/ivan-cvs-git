@@ -1,11 +1,12 @@
 #include "level.h"
-#include "char.h"
+#include "charba.h"
 #include "error.h"
-#include "item.h"
+#include "itemde.h"
 #include "lsquare.h"
 #include "stack.h"
-#include "lterrain.h"
+#include "lterrade.h"
 #include "proto.h"
+#include "save.h"
 
 level::level(ushort XSize, ushort YSize, ushort Index) : area(XSize, YSize), LevelIndex(Index)
 {
@@ -14,16 +15,9 @@ level::level(ushort XSize, ushort YSize, ushort Index) : area(XSize, YSize), Lev
 	for(ushort x = 0; x < XSize; x++)
 		for(ulong y = 0; y < YSize; y++)
 		{
-			Map[x][y] = new levelsquare(this, vector(x, y));
+			Map[x][y] = new levelsquare(this, vector2d(x, y));
 			Map[x][y]->ChangeLevelTerrain(new floor, new earth);
 		}
-
-	FluidBuffer = new bitmap(XSize << 4, YSize << 4);
-}
-
-level::~level(void)
-{
-	delete FluidBuffer;
 }
 
 #undef DRAW
@@ -34,8 +28,8 @@ level::~level(void)
 	for(ushort x = 0; x < XSize; x++)				\
 		for(ushort y = 0; y < YSize; y++)			\
 		{						\
-			Map[x][y]->GetGroundLevelTerrain()->Draw(DOUBLEBUFFER, vector((x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4), 256);			\
-			Map[x][y]->GetOverLevelTerrain()->Draw(DOUBLEBUFFER, vector((x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4), 256);			\
+			Map[x][y]->GetGroundLevelTerrain()->Draw(DOUBLEBUFFER, vector2d((x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4), 256);			\
+			Map[x][y]->GetOverLevelTerrain()->Draw(DOUBLEBUFFER, vector2d((x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4), 256);			\
 																					\
 			if(FlagMap[x][y] & FORBIDDEN)															\
 				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4, 16, 16, 0);	\
@@ -55,13 +49,13 @@ level::~level(void)
 	getkey();						\
 }*/
 
-void level::ExpandPossibleRoute(vector Origo, vector Target, bool XMode)
+void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
 	#define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
 
 	#define CALL_EXPAND(x, y)					\
 	{								\
-		ExpandPossibleRoute(vector(x, y), Target, XMode);	\
+		ExpandPossibleRoute(vector2d(x, y), Target, XMode);	\
 									\
 		if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)	\
 			return;						\
@@ -143,13 +137,13 @@ void level::ExpandPossibleRoute(vector Origo, vector Target, bool XMode)
 	#undef CALL_EXPAND
 }
 
-void level::ExpandStillPossibleRoute(vector Origo, vector Target, bool XMode)
+void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
 	#define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
 
 	#define CALL_EXPAND(x, y)						\
 	{									\
-		ExpandStillPossibleRoute(vector(x, y), Target, XMode);		\
+		ExpandStillPossibleRoute(vector2d(x, y), Target, XMode);		\
 										\
 		if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE)	\
 			return;							\
@@ -231,7 +225,7 @@ void level::ExpandStillPossibleRoute(vector Origo, vector Target, bool XMode)
 	#undef CALL_EXPAND
 }
 
-void level::GenerateTunnel(vector From, vector Target, bool XMode)
+void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 {
 	FlagMap[From.X][From.Y] |= ON_POSSIBLE_ROUTE;
 
@@ -257,7 +251,7 @@ void level::GenerateTunnel(vector From, vector Target, bool XMode)
 				{
 					FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
 
-					Map[x][y]->ChangeLevelTerrain(new floor, new empty);
+					Map[x][y]->ChangeOverLevelTerrain(new empty);
 				}
 
 				for(ushort X = 0; X < XSize; X++)
@@ -271,7 +265,7 @@ void level::GenerateTunnel(vector From, vector Target, bool XMode)
 			FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
-void level::PutStairs(vector Pos)
+void level::PutStairs(vector2d Pos)
 {
 	Map[Pos.X][Pos.Y]->ChangeLevelTerrain(new floor, new stairsup);
 
@@ -282,18 +276,18 @@ void level::PutStairs(vector Pos)
 	KeyPoint.Add(Pos);
 }
 
-void level::Generate(void)
+void level::Generate()
 {
 	DRAW;
 
 	ushort Rooms = 5 + rand() % 16;
 
 	{
-	for(ushort c = 0, i = 0; c < Rooms; c++, i++)
+	for(ushort c = 0, i = 0; c < Rooms; ++c, ++i)
 	{
 		ushort XPos = 2 + rand() % (XSize - 6), YPos = 2 + rand() % (YSize - 6), Width = 4 + rand() % 8, Height = 4 + rand() % 8;
 
-		if(!MakeRoom(vector(XPos, YPos), vector(Width, Height), LevelIndex ? true : false))
+		if(!MakeRoom(vector2d(XPos, YPos), vector2d(Width, Height), LevelIndex ? true : false))
 		{
 			if(i < 10)
 				c--;
@@ -305,7 +299,7 @@ void level::Generate(void)
 	}
 	}
 
-	for(ushort c = 0; c < KeyPoint.Length(); c++)
+	for(ushort c = 0; c < KeyPoint.Length(); ++c)
 		AttachPos(KeyPoint.Access(c));
 
 	DRAW
@@ -313,12 +307,12 @@ void level::Generate(void)
 	CreateItems(40);
 }
 
-void level::AttachPos(vector What)
+void level::AttachPos(vector2d What)
 {
-	vector Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	while(!(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-		Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	FlagMap[What.X][What.Y] &= ~FORBIDDEN;
 	FlagMap[What.X][What.Y] |= PREFERRED;
@@ -329,17 +323,17 @@ void level::AttachPos(vector What)
 	FlagMap[What.X][What.Y] &= ~PREFERRED;
 }
 
-void level::CreateRandomTunnel(void)
+void level::CreateRandomTunnel()
 {
-	vector Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	while(!(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-		Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
-	vector T(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d T(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	while(FlagMap[T.X][T.Y] & FORBIDDEN)
-		T = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		T = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	GenerateTunnel(Pos, T, rand() % 2 ? true : false);
 }
@@ -348,7 +342,7 @@ void level::CreateItems(ushort Amount)
 {
 	for(uchar x = 0; x < Amount; x++)
 	{
-		vector Pos = RandomSquare(true);
+		vector2d Pos = RandomSquare(true);
 
 		Map[Pos.X][Pos.Y]->Stack->FastAddItem(protosystem::BalancedCreateItem());
 	}
@@ -359,19 +353,19 @@ void level::CreateMonsters(ushort Amount)
 {
 	for(uchar x = 0; x < Amount; x++)
 	{
-		vector Pos = RandomSquare(true);
+		vector2d Pos = RandomSquare(true);
 
 		if(!Map[Pos.X][Pos.Y]->Character)
 			Map[Pos.X][Pos.Y]->FastAddCharacter(protosystem::BalancedCreateMonster());
 	}
 }
 
-vector level::CreateDownStairs(void)
+vector2d level::CreateDownStairs()
 {
-	vector Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN) || (game::GetLevel(LevelIndex + 1)->GetFlag(Pos) & FORBIDDEN))
-		Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	game::GetLevel(LevelIndex + 1)->PutStairs(Pos);
 
@@ -379,10 +373,10 @@ vector level::CreateDownStairs(void)
 
 	DownStairs = Pos;
 
-	vector Target = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Target = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	while(!(FlagMap[Target.X][Target.Y] & PREFERRED))
-		Target = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Target = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
 	GenerateTunnel(Pos, Target, rand() % 2 ? true : false);
 
@@ -392,7 +386,7 @@ vector level::CreateDownStairs(void)
 	return Pos;
 }
 
-bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOwner)
+bool level::MakeRoom(vector2d Pos, vector2d Size, bool AltarPossible, uchar DivineOwner)
 {
 	ushort XPos = Pos.X, YPos = Pos.Y, Width = Size.X, Height = Size.Y;
 
@@ -453,8 +447,8 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 
 	if(AltarPossible && !(rand() % 4))
 	{
-		vector Pos(XPos + 1 + rand() % (Width-2), YPos + 1 + rand() % (Height-2));
-		Map[Pos.X][Pos.Y]->ChangeLevelTerrain(new parquet, new altar);
+		vector2d Pos(XPos + 1 + rand() % (Width-2), YPos + 1 + rand() % (Height-2));
+		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new altar);
 
 		uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOverLevelTerrain())->GetOwnerGod();
 
@@ -470,14 +464,14 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 
 	if(Door.Length())
 	{
-		vector LPos = Door.Access(rand() % Door.Length());
+		vector2d LPos = Door.Access(rand() % Door.Length());
 
 		ushort LXPos = LPos.X, LYPos = LPos.Y;
 
 		FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
 		FlagMap[LXPos][LYPos] |= PREFERRED;
 
-		Map[LXPos][LYPos]->ChangeLevelTerrain(new parquet, new door);
+		Map[LXPos][LYPos]->ChangeOverLevelTerrain(new door);
 
 		Map[LXPos][LYPos]->Clean();
 
@@ -501,11 +495,11 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 		FlagMap[XPos][YPos] &= ~FORBIDDEN;
 		FlagMap[XPos][YPos] |= PREFERRED;
 
-		Map[XPos][YPos]->ChangeLevelTerrain(new parquet, new door);
+		Map[XPos][YPos]->ChangeOverLevelTerrain(new door);
 
 		Map[XPos][YPos]->Clean();
 
-		GenerateTunnel(vector(XPos, YPos), vector(LXPos, LYPos), rand() % 2 ? true : false);
+		GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), rand() % 2 ? true : false);
 
 		FlagMap[LXPos][LYPos] |= FORBIDDEN;
 		FlagMap[LXPos][LYPos] &= ~PREFERRED;
@@ -533,12 +527,12 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 			XPos += Width - 1;
 	}
 
-	Door.Add(vector(XPos, YPos));
+	Door.Add(vector2d(XPos, YPos));
 
 	return true;
 }
 
-void level::HandleCharacters(void)
+void level::HandleCharacters()
 {
 	Population = 0;
 
@@ -552,106 +546,100 @@ void level::HandleCharacters(void)
 		}
 	}
 
-	if(Population < CIdealPopulation() && LevelIndex != 9)
-		GenerateNewMonsters(CIdealPopulation() - Population);
+	if(Population < GetIdealPopulation() && LevelIndex != 9)
+		GenerateNewMonsters(GetIdealPopulation() - Population);
 }
 
 void level::PutPlayer(bool)
 {
-	vector Pos = RandomSquare(true);
+	vector2d Pos = RandomSquare(true);
 	Map[Pos.X][Pos.Y]->FastAddCharacter(game::GetPlayer());
 }
 
-void level::PutPlayerAround(vector Pos)
+void level::PutPlayerAround(vector2d Pos)
 {
 	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
 }
 
-void level::Save(std::ofstream& SaveFile) const
+void level::Save(outputfile& SaveFile) const
 {
 	area::Save(SaveFile);
 
 	{
-	for(ulong c = 0; c < XSizeTimesYSize; c++)
+	for(ulong c = 0; c < XSizeTimesYSize; ++c)
 		Map[0][c]->Save(SaveFile);
 	}
 
 	ushort Length = KeyPoint.Length();
 
-	SaveFile.write((char*)&Length, sizeof(Length));
+	SaveFile << Length;
 
-	for(ushort c = 0; c < Length; c++)
-		SaveFile.write((char*)&KeyPoint.Access(c), sizeof(KeyPoint.Access(c)));
+	for(ushort c = 0; c < Length; ++c)
+		SaveFile << KeyPoint.Access(c);
 
 	Length = Door.Length();
 
-	SaveFile.write((char*)&Length, sizeof(Length));
+	SaveFile << Length;
 
-	for(c = 0; c < Length; c++)
-		SaveFile.write((char*)&Door.Access(c), sizeof(Door.Access(c)));
+	for(c = 0; c < Length; ++c)
+		SaveFile << Door.Access(c);
 
-	SaveFile.write((char*)&LevelIndex, sizeof(LevelIndex));
-	SaveFile.write((char*)&UpStairs, sizeof(UpStairs));
-	SaveFile.write((char*)&DownStairs, sizeof(DownStairs));
+	SaveFile << LevelIndex << UpStairs << DownStairs;
 }
 
-void level::Load(std::ifstream& SaveFile)
+void level::Load(inputfile& SaveFile)
 {
 	area::Load(SaveFile);
 
 	Map = (levelsquare***)area::Map;
 
-	FluidBuffer = new bitmap(XSize << 4, YSize << 4);
-
 	for(ushort x = 0; x < XSize; x++)
 		for(ulong y = 0; y < YSize; y++)
 		{
-			Map[x][y] = new levelsquare(this, vector(x, y)); //GGG
+			Map[x][y] = new levelsquare(this, vector2d(x, y)); //GGG
 			Map[x][y]->Load(SaveFile);
 		}
 
 	ushort Length;
 
-	SaveFile.read((char*)&Length, sizeof(Length));
+	SaveFile >> Length;
 
-	for(ushort c = 0; c < Length; c++)
+	for(ushort c = 0; c < Length; ++c)
 	{
-		vector Pos;
+		vector2d Pos;
 
-		SaveFile.read((char*)&Pos, sizeof(Pos));
+		SaveFile >> Pos;
 
 		KeyPoint.Add(Pos);
 	}
 
-	SaveFile.read((char*)&Length, sizeof(Length));
+	SaveFile >> Length;
 
-	for(c = 0; c < Length; c++)
+	for(c = 0; c < Length; ++c)
 	{
-		vector Pos;
+		vector2d Pos;
 
-		SaveFile.read((char*)&Pos, sizeof(Pos));
+		SaveFile >> Pos;
 
 		Door.Add(Pos);
 	}
 
-	SaveFile.read((char*)&LevelIndex, sizeof(LevelIndex));
-	SaveFile.read((char*)&UpStairs, sizeof(UpStairs));
-	SaveFile.read((char*)&DownStairs, sizeof(DownStairs));
+	SaveFile >> LevelIndex >> UpStairs >> DownStairs;
 }
 
-void level::Luxify(void)
+void level::Luxify()
 {
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
 			Map[x][y]->Emitate();
 }
 
-void level::FastAddCharacter(vector Pos, character* Guy)
+void level::FastAddCharacter(vector2d Pos, character* Guy)
 {
 	Map[Pos.X][Pos.Y]->FastAddCharacter(Guy);
 }
 
-void level::Draw(void) const
+void level::Draw() const
 {
 	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
 	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
@@ -682,13 +670,13 @@ void level::Draw(void) const
 
 void level::GenerateNewMonsters(ushort HowMany)
 {
-	vector Pos;
+	vector2d Pos;
 
-	for(uchar c = 0; c < HowMany; c++)
+	for(uchar c = 0; c < HowMany; ++c)
 	{
-                Pos = vector(0,0);
+                Pos = vector2d(0,0);
 
-		for(uchar cc = 0; cc < 30; c++)
+		for(uchar cc = 0; cc < 30; ++c)
 		{
 			Pos = RandomSquare(true);
 
@@ -700,9 +688,9 @@ void level::GenerateNewMonsters(ushort HowMany)
 	}
 }
 
-vector level::RandomSquare(bool Walkablility) const
+vector2d level::RandomSquare(bool Walkablility) const
 {
-	vector Pos(rand() % XSize, rand() % YSize);
+	vector2d Pos(rand() % XSize, rand() % YSize);
 
 	while(Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility)
 	{
@@ -713,11 +701,10 @@ vector level::RandomSquare(bool Walkablility) const
 	return Pos;
 }
 
-void level::ParticleTrail(vector StartPos, vector EndPos)
+void level::ParticleTrail(vector2d StartPos, vector2d EndPos)
 {
 	if(StartPos.X != EndPos.X && StartPos.Y != EndPos.Y)
 		ABORT("666th rule of thermodynamics - Particles don't move the way you want them to move.");
 	// NEEDS SOME WORK!
 }
-
 

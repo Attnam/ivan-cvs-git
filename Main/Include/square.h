@@ -1,10 +1,10 @@
 #ifndef __SQUARE_H__
 #define __SQUARE_H__
 
-#include <fstream>
+#include <string>
 
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
 
 class area;
 class material;
@@ -13,54 +13,54 @@ class character;
 class levelterrain;
 class groundterrain;
 class overterrain;
+class outputfile;
+class inputfile;
 
 class square
 {
 public:
-	square(area*, vector);
-	virtual ~square(void);
-	virtual void Save(std::ofstream&) const;
-	virtual void Load(std::ifstream&);
-	//virtual void DrawCheat(void) const;
-	virtual void DrawMemorized(void) const;
-	virtual void UpdateMemorizedAndDraw(void) = 0;
-	virtual void DrawToTileBuffer(void) const = 0;
+	square(area*, vector2d);
+	virtual ~square();
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual void DrawMemorized() const;
+	virtual void UpdateMemorizedAndDraw() = 0;
+	virtual void DrawToTileBuffer() const = 0;
 	virtual void SetCharacter(character* What ) { Character = What; }
-	virtual void AddCharacter(character* Guy);
-	virtual void RemoveCharacter(void);
-	virtual character* GetCharacter(void) const		{ return Character; }
-	virtual bool GetKnown(void) const				{ return Known; }
-	virtual vector GetPos(void) const			{ return Pos; }
+	virtual void AddCharacter(character*);
+	virtual void RemoveCharacter();
+	virtual character* GetCharacter() const		{ return Character; }
+	virtual bool GetKnown() const				{ return Known; }
+	virtual vector2d GetPos() const			{ return Pos; }
 	virtual void SetKnown(bool What) { Known = What; }
-	virtual ushort GetPopulation(void) const { if(Character) return 1; else return 0; }
-	virtual area* GetAreaUnder(void) const { return AreaUnder; }
-	virtual void EmptyFlag(void)			{ Flag = false; }
-	virtual void SetFlag(void)			{ Flag = true; }
-	virtual bool RetrieveFlag(void) const		{ return Flag; }
-	virtual groundterrain* GetGroundTerrain(void) const = 0;// { return GroundTerrain; }
-	//virtual void SetGroundTerrain(groundterrain* What) = 0;// { GroundTerrain = What; }
-	virtual overterrain* GetOverTerrain(void) const = 0;// { return OverTerrain; }
-	//virtual void SetOverTerrain(overterrain* What) = 0;//{ OverTerrain = What; }
-	virtual std::string GetMemorizedDescription(void) { return MemorizedDescription; }
+	virtual ushort GetPopulation() const { if(Character) return 1; else return 0; }
+	virtual area* GetAreaUnder() const { return AreaUnder; }
+	virtual void EmptyFlag()			{ Flag = false; }
+	virtual void SetFlag()			{ Flag = true; }
+	virtual bool RetrieveFlag() const		{ return Flag; }
+	virtual groundterrain* GetGroundTerrain() const = 0;
+	virtual overterrain* GetOverTerrain() const = 0;
+	virtual std::string GetMemorizedDescription() { return MemorizedDescription; }
 	virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
-	virtual void UpdateMemorizedDescription(void) = 0;
-	virtual bool CanBeSeen(void) const;
-	virtual void DrawCheat(void) const = 0;
+	virtual void UpdateMemorizedDescription() = 0;
+	virtual bool CanBeSeen() const;
+	virtual void DrawCheat() = 0;
+	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
+	virtual bitmap* GetMemorized() const { return Memorized; }
+	virtual void SetDescriptionChanged(bool) {}
 protected:
 	std::string MemorizedDescription;
-	//groundterrain* GroundTerrain;
-	//overterrain* OverTerrain;
 	area* AreaUnder;
 	character* Rider, * Character, * Flyer;
-	vector Pos;
-	bool Known, Flag;
+	vector2d Pos;
+	bool Known, Flag, NewDrawRequested;
+	bitmap* Memorized;
 };
 
-inline std::ofstream& operator<<(std::ofstream& SaveFile, square* Square)
+inline outputfile& operator<<(outputfile& SaveFile, square* Square)
 {
 	Square->Save(SaveFile);
 	return SaveFile;
 }
 
 #endif
-

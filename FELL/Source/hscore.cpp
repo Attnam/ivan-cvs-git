@@ -3,12 +3,12 @@
 #include "bitmap.h"
 #include "strover.h"
 #include "hscore.h"
-#include "igraph.h"
 #include "whandler.h"
+#include "save.h"
 
 void highscore::Add(long NewScore, std::string NewEntry)
 {
-	for(ushort c = 0; c < Score.Length(); c++)
+	for(ushort c = 0; c < Score.Length(); ++c)
 		if(Score.Access(c) < NewScore)
 		{
 			Entry.Put(NewEntry, c);
@@ -25,30 +25,30 @@ void highscore::Add(long NewScore, std::string NewEntry)
 	}
 }
 
-void highscore::Draw(void) const
+void highscore::Draw(bitmap* TopicFont, bitmap* ListFont) const
 {
-	graphics::ClearDBToColor(0);
+	DOUBLEBUFFER->ClearToColor(0);
 
-	FONTW->PrintfToDB(30, 30, "Adventurers' Hall of Fame");
+	TopicFont->Printf(DOUBLEBUFFER, 30, 30, "Adventurers' Hall of Fame");
 
 	ushort Min = 0;
 
-	for(ushort c = 0; c < Score.Length(); c++)
+	for(ushort c = 0; c < Score.Length(); ++c)
 	{
 		if(c - Min == 50)
 		{
 			Min += 50;
 
-			FONTW->PrintfToDB(30, 560, "-- Press ESC to exit, any other key for next page --");
+			TopicFont->Printf(DOUBLEBUFFER, 30, 560, "-- Press ESC to exit, any other key for next page --");
 
 			graphics::BlitDBToScreen();
 
 			if(GETKEY() == 0x1B)
 				return;
 
-			graphics::ClearDBToColor(0);
+			DOUBLEBUFFER->ClearToColor(0);
 
-			FONTW->PrintfToDB(30, 30, "Adventurers' Hall of Fame");
+			TopicFont->Printf(DOUBLEBUFFER, 30, 30, "Adventurers' Hall of Fame");
 		}
 
 		std::string Desc;
@@ -63,7 +63,7 @@ void highscore::Draw(void) const
 
 		Desc += Entry.Access(c);
 
-		FONTB->PrintfToDB(30, 50 + (c - Min) * 10, "%s", Desc.c_str());
+		ListFont->Printf(DOUBLEBUFFER, 30, 50 + (c - Min) * 10, "%s", Desc.c_str());
 	}
 
 	graphics::BlitDBToScreen();
@@ -73,38 +73,35 @@ void highscore::Draw(void) const
 
 void highscore::Save(std::string File) const
 {
-	std::ofstream HighScore(File.c_str(), std::ios::out | std::ios::binary);
+	outputfile HighScore(File);
 
-	if(!HighScore.is_open())
+	if(!HighScore.GetBuffer().is_open())
 		ABORT("Can't save highscores! Disk write-protected?");
 
-	ushort EntryAmount = Score.Length();
+	HighScore << Score.Length();
 
-	HighScore.write((char*)&EntryAmount, sizeof(EntryAmount));
-
-	for(ushort c = 0; c < EntryAmount; c++)
+	for(ushort c = 0; c < Score.Length(); ++c)
 	{
-		HighScore.write((char*)&Score.Access(c), sizeof(Score.Access(c)));
-
+		HighScore << Score.Access(c);
 		HighScore << Entry.Access(c);
 	}
 }
 
 void highscore::Load(std::string File)
 {
-	std::ifstream HighScore(File.c_str(), std::ios::in | std::ios::binary);
+	inputfile HighScore(File);
 
-	if(!HighScore.is_open())
+	if(!HighScore.GetBuffer().is_open())
 		return;
 
 	ushort EntryAmount;
 
-	HighScore.read((char*)&EntryAmount, sizeof(EntryAmount));
+	HighScore >> EntryAmount;
 
-	for(ushort c = 0; c < EntryAmount; c++)
+	for(ushort c = 0; c < EntryAmount; ++c)
 	{
 		long LoadedScore;
-		HighScore.read((char*)&LoadedScore, sizeof(LoadedScore));
+		HighScore >> LoadedScore;
 		Score.Add(LoadedScore);
 
 		std::string LoadedEntry;
@@ -112,3 +109,4 @@ void highscore::Load(std::string File)
 		Entry.Add(LoadedEntry);
 	}
 }
+

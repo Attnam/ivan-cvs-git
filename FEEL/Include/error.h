@@ -10,8 +10,8 @@
 class globalerrorhandler
 {
 public:
-	static void Install(void);
-	static void DeInstall(void);
+	static void Install();
+	static void DeInstall();
 	static void Abort(const char*, ...);
 	static void SetWindow(HWND* NewhWnd) { hWnd = NewhWnd; }
 private:

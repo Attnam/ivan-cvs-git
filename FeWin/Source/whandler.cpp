@@ -77,11 +77,12 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-int globalwindowhandler::GetKey(void)
+int globalwindowhandler::GetKey()
 {	
 	bool Shift = false;
 	while(KeyBuffer.Length())
 		KeyBuffer.Remove(0); // Shift-key == 0x10
+				     // So what?
 
 	KeyPressed = false;
 

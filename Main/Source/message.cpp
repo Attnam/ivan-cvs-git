@@ -30,13 +30,13 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
 		char* TempBuffer = new char[NewLength];
 
 		{
-		for(ushort c = 0; c < BufferLength; c++)
+		for(ushort c = 0; c < BufferLength; ++c)
 			TempBuffer[c] = MessageBuffer[c];
 		}
 
 		TempBuffer[BufferLength] = ' ';
 
-		for(ushort c = BufferLength + 1, i = 0; c < NewLength; c++, i++)
+		for(ushort c = BufferLength + 1, i = 0; c < NewLength; ++c, ++i)
 			TempBuffer[c] = Message[i];
 
 		delete [] MessageBuffer;
@@ -51,7 +51,7 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
 
 		MessageBuffer = new char[BufferLength];
 
-		for(ushort c = 0; c < BufferLength; c++)
+		for(ushort c = 0; c < BufferLength; ++c)
 			MessageBuffer[c] = Message[c];
 	}
 
@@ -60,9 +60,9 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
 	MessageHistory.AddString(Buffer);
 }
 
-void globalmessagingsystem::Draw(void)
+void globalmessagingsystem::Draw()
 {
-	graphics::ClearDBToColor(0, 0, 800, 32);
+	DOUBLEBUFFER->ClearToColor(0, 0, 800, 32);
 
 	ulong Length = BufferLength, Pointer = 0;
 
@@ -77,12 +77,12 @@ void globalmessagingsystem::Draw(void)
 		{
 			if(Length <= 98)
 			{
-				for(ulong c = 0; c < Length; c++)
+				for(ulong c = 0; c < Length; ++c)
 					Buffer[c] = MessageBuffer[c + Pointer];
 
 				Buffer[Length] = 0;
 
-				FONTW->PrintfToDB(7, 7 + y * 10, "%s", Buffer);
+				FONTW->Printf(DOUBLEBUFFER, 7, 7 + y * 10, "%s", Buffer);
 
 				Length = 0;
 
@@ -95,7 +95,7 @@ void globalmessagingsystem::Draw(void)
 				for(; i; i--)
 					if(MessageBuffer[Pointer + i] == ' ')
 					{
-						for(ulong c = 0; c < i; c++)
+						for(ulong c = 0; c < i; ++c)
 							Buffer[c] = MessageBuffer[c + Pointer];
 
 						Buffer[i] = 0;
@@ -109,7 +109,7 @@ void globalmessagingsystem::Draw(void)
 
 				if(!i)
 				{
-					for(ulong c = 0; c < 98; c++)
+					for(ulong c = 0; c < 98; ++c)
 						Buffer[c] = MessageBuffer[c + Pointer];
 
 					Pointer += 98;
@@ -117,7 +117,7 @@ void globalmessagingsystem::Draw(void)
 					Length -= 98;
 				}
 
-				FONTW->PrintfToDB(7, 7 + y * 10, "%s", Buffer);
+				FONTW->Printf(DOUBLEBUFFER, 7, 7 + y * 10, "%s", Buffer);
 			}
 		}
 		if(Length)
@@ -126,12 +126,12 @@ void globalmessagingsystem::Draw(void)
 
 			GETKEY();
 
-			graphics::ClearDBToColor(0, 0, 800, 32);
+			DOUBLEBUFFER->ClearToColor(0, 0, 800, 32);
 		}
 	}
 }
 
-void globalmessagingsystem::Empty(void)
+void globalmessagingsystem::Empty()
 {
 	delete [] MessageBuffer;
 
@@ -140,12 +140,14 @@ void globalmessagingsystem::Empty(void)
 	BufferLength = 0;
 }
 
-void globalmessagingsystem::DrawMessageHistory(void)
+void globalmessagingsystem::DrawMessageHistory()
 {
-	MessageHistory.Draw(false);
+	MessageHistory.Draw(FONTW, FONTB, false);
 }
 
-void globalmessagingsystem::Format(void)
+void globalmessagingsystem::Format()
 {
 	MessageHistory.Empty();
 }
+
+

@@ -5,6 +5,8 @@
 
 #include "dynarray.h"
 
+class bitmap;
+
 class list
 {
 public:
@@ -12,11 +14,11 @@ public:
 	list(std::string Topic, ushort Maximum = 0) : Maximum(Maximum) { Description.Add(Topic); }
 	void AddString(std::string S);
 	void AddDescription(std::string S) { Description.Add(S); }
-	void DrawDescription(void) const;
-	ushort Draw(bool = true) const;
-	void Empty(void);
+	void DrawDescription(bitmap*) const;
+	ushort Draw(bitmap*, bitmap*, bool = true) const;
+	void Empty();
 	std::string GetString(ushort Index) { return String.Access(Index); }
-	ushort Length(void) const { return String.Length(); }
+	ushort Length() const { return String.Length(); }
 protected:
 	dynarray<std::string> String;
 	dynarray<std::string> Description;

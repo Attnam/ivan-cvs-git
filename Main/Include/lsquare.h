@@ -2,11 +2,10 @@
 #define __LSQUARE_H__
 
 #include <string>
-#include <fstream>
 
 #include "dynarray.h"
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
 
 #include "square.h"
 
@@ -17,10 +16,11 @@ class stack;
 class levelterrain;
 class groundlevelterrain;
 class overlevelterrain;
-class vector;
 class material;
 class square;
 class item;
+class outputfile;
+class inputfile;
 
 /* Presentation of the levelsquare class */
 
@@ -28,66 +28,68 @@ class levelsquare : public square
 {
 public:
 	friend class level;
-	levelsquare(level*, vector);
-	virtual ~levelsquare(void);
+	levelsquare(level*, vector2d);
+	virtual ~levelsquare();
 	virtual void FastAddCharacter(character* Guy);
 	virtual void AddCharacter(character* Guy);
-	//virtual void HandleCharacters(void);
-	virtual void RemoveCharacter(void);
-	virtual stack* GetStack(void) const		{ return Stack; }
-	virtual void AlterLuminance(vector, ushort);
-	virtual void Emitate(void);
-	virtual void ReEmitate(void);
+	virtual void RemoveCharacter();
+	virtual stack* GetStack() const		{ return Stack; }
+	virtual void AlterLuminance(vector2d, ushort);
+	virtual void Emitate();
+	virtual void ReEmitate();
 	virtual stack* GetSideStack(uchar Index) const	{ return SideStack[Index]; }
-	virtual void Clean(void);
+	virtual void Clean();
 	virtual bool Open(character*);
 	virtual bool Close(character*);
-	virtual void Save(std::ofstream&) const;
-	virtual void Load(std::ifstream&);
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
 	virtual void SpillFluid(uchar, ulong, ushort = 3, ushort = 32);
-	virtual ushort GetLuminance(void) const;
+	virtual ushort GetLuminance() const;
 	virtual void SignalEmitationIncrease(ushort);
 	virtual void SignalEmitationDecrease(ushort);
-	virtual ushort GetEmitation(void) const			{ return Emitation; }
-	virtual void ForceEmitterNoxify(void);
-	virtual void ForceEmitterEmitation(void);
-	virtual void Noxify(void);
-	virtual void NoxifyEmitter(vector);
-	virtual uchar CalculateBitMask(vector) const;
-	virtual std::string GetEngraved(void) const { return Engraved; }
+	virtual ushort GetEmitation() const			{ return Emitation; }
+	virtual void ForceEmitterNoxify();
+	virtual void ForceEmitterEmitation();
+	virtual void Noxify();
+	virtual void NoxifyEmitter(vector2d);
+	virtual uchar CalculateBitMask(vector2d) const;
+	virtual std::string GetEngraved() const { return Engraved; }
 	virtual bool Engrave(std::string What) { Engraved = What; return true; }
 	virtual void SetEmitation(ushort What) { Emitation = What; }
-	virtual void UpdateMemorizedDescription(void);
+	virtual void UpdateMemorizedDescription();
 	virtual void Kick(ushort,uchar);
-	virtual bool CanBeSeenFrom(vector) const;
-	virtual uchar GetDivineOwner(void) const { return DivineOwner; }
-	virtual void SetDivineOwner(uchar NDO) { DivineOwner = NDO; }
-	virtual void DrawToTileBuffer(void) const;
-	virtual void UpdateMemorizedAndDraw(void);
+	virtual bool CanBeSeenFrom(vector2d) const;
+	virtual uchar GetDivineOwner() const { return DivineOwner; }
+	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
+	virtual void DrawToTileBuffer() const;
+	virtual void UpdateMemorizedAndDraw();
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
-	virtual void HandleFluids(void);
+	virtual void HandleFluids();
 	virtual void SetGroundLevelTerrain(groundlevelterrain*);
 	virtual void SetOverLevelTerrain(overlevelterrain*);
-	virtual groundterrain* GetGroundTerrain(void) const;// { return GroundLevelTerrain; }
-	virtual overterrain* GetOverTerrain(void) const;// { return OverLevelTerrain; }
-	virtual groundlevelterrain* GetGroundLevelTerrain(void) const { return GroundLevelTerrain; }
-	virtual overlevelterrain* GetOverLevelTerrain(void) const { return OverLevelTerrain; }
+	virtual groundterrain* GetGroundTerrain() const;
+	virtual overterrain* GetOverTerrain() const;
+	virtual groundlevelterrain* GetGroundLevelTerrain() const { return GroundLevelTerrain; }
+	virtual overlevelterrain* GetOverLevelTerrain() const { return OverLevelTerrain; }
 	virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
-	virtual level* GetLevelUnder(void) const { return (level*)AreaUnder; }
+	virtual level* GetLevelUnder() const { return (level*)AreaUnder; }
 	virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
-	virtual void DrawCheat(void) const;
+	virtual void DrawCheat();
+	virtual void ChangeGroundLevelTerrain(groundlevelterrain*);
+	virtual void ChangeOverLevelTerrain(overlevelterrain*);
+	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;
-	ushort CalculateEmitation(void) const;
+	ushort CalculateEmitation() const;
 	struct emitter
 	{
-		emitter(vector Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) {}
-		emitter(void) {}
+		emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) {}
+		emitter() {}
 		bool operator==(emitter& AE) const {if(Pos == AE.Pos) return true; else return false; }
 		emitter& operator=(emitter& AE) {Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
-		vector Pos;
+		vector2d Pos;
 		ushort DilatedEmitation;
 	};
 	dynarray<emitter> Emitter;
@@ -97,7 +99,7 @@ protected:
 	uchar DivineOwner;
 	bool Fluided;
 	ushort TimeFromSpill;
+	bitmap* FluidBuffer;
 };
 
 #endif
-

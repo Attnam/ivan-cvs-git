@@ -1,17 +1,17 @@
 #ifndef __DRAWABLE_H__
 #define __DRAWABLE_H__
 
-#include "vector.h"
+#include "vector2d.h"
 
 class bitmap;
 
 class drawable
 {
 public:
-	virtual void DrawToTileBuffer(void) const = 0;
+	virtual void DrawToTileBuffer() const = 0;
 protected:
-	virtual bitmap* GetGraphicsContainer(void) const { return 0; } //GGG
-	virtual vector GetBitmapPos(void) const = 0;
+	virtual bitmap* GetGraphicsContainer() const { return 0; } //GGG
+	virtual vector2d GetBitmapPos() const = 0;
 };
 
 #endif

@@ -1,13 +1,14 @@
 #include "god.h"
 #include "level.h"
 #include "lsquare.h"
-#include "char.h"
-#include "item.h"
+#include "charde.h"
+#include "itemde.h"
 #include "stack.h"
 #include "message.h"
 #include "proto.h"
+#include "save.h"
 
-void god::Pray(void)
+void god::Pray()
 {
 	if(!Timer)
 		if(Relation > -(rand() % 501))
@@ -44,7 +45,7 @@ void god::Pray(void)
 		}
 }
 
-std::string god::CompleteDescription(void) const
+std::string god::CompleteDescription() const
 {
 	std::string Desc = game::CAlignment(Alignment());
 
@@ -66,12 +67,12 @@ std::string god::CompleteDescription(void) const
 	return Desc + "the " + Description();
 }
 
-void god::PrayGoodEffect(void)
+void god::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s doesn't know what good he could do to you for now.", GOD_NAME);
 }
 
-void god::PrayBadEffect(void)
+void god::PrayBadEffect()
 {
 	ADD_MESSAGE("%s doesn't know how to punish at the moment.", GOD_NAME);
 }
@@ -108,11 +109,11 @@ void god::AdjustTimer(long Amount)
 		Timer = 1000000000;
 }
 
-void consummo::PrayGoodEffect(void)
+void consummo::PrayGoodEffect()
 {
 	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement! You teleport away!");
 
-	vector Pos;
+	vector2d Pos;
 
 	for(;;)
 	{
@@ -125,7 +126,7 @@ void consummo::PrayGoodEffect(void)
 	game::GetPlayer()->Move(Pos, true);
 }
 
-void consummo::PrayBadEffect(void)
+void consummo::PrayBadEffect()
 {
 	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement! Some parts of you teleport away!");
 
@@ -134,7 +135,7 @@ void consummo::PrayBadEffect(void)
 	game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
 }
 
-void valpuri::PrayGoodEffect(void)
+void valpuri::PrayGoodEffect()
 {
 	ADD_MESSAGE("A valpurium curved two-handed sword drops on to the ground.");
 	item* Reward = new curvedtwohandedsword(false);
@@ -142,56 +143,56 @@ void valpuri::PrayGoodEffect(void)
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
 }
 
-void valpuri::PrayBadEffect(void)
+void valpuri::PrayBadEffect()
 {
 	ADD_MESSAGE("Valpuri smites you with a small hammer.");
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
 	game::GetPlayer()->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + Name());
 }
 
-void venius::PrayGoodEffect(void)
+void venius::PrayGoodEffect()
 {
 	ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge divine fire sweeps the surrounding area.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->ReceiveFireDamage(20);
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
+		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->ReceiveFireDamage(20);
+		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 	})
 }
 
-void venius::PrayBadEffect(void)
+void venius::PrayBadEffect()
 {
 	ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
 	game::GetPlayer()->ReceiveFireDamage(20);
 	game::GetPlayer()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 }
 
-void dulcis::PrayGoodEffect(void)
+void dulcis::PrayGoodEffect()
 {
 	ADD_MESSAGE("A beatiful melody echoes through the dungeon.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter();
+	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
 	if(Char && Char->GetRelations() == 0)
 	{
 		if(Char->Charmable())
 		{
 			Char->SetRelations(1);
-			ADD_MESSAGE("%s stops fighting.", game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
+			ADD_MESSAGE("%s stops fighting.", game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
 		}
 		else
-			ADD_MESSAGE("%s seems not affected.", game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
+			ADD_MESSAGE("%s seems not affected.", game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
 	})
 }
 
-void dulcis::PrayBadEffect(void)
+void dulcis::PrayBadEffect()
 {
 	ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 9 + 1);
 	game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
 }
 
-void inasnum::PrayGoodEffect(void)
+void inasnum::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
 	switch(rand() % 7)
@@ -222,7 +223,7 @@ void inasnum::PrayGoodEffect(void)
 	}
 }
 
-void inasnum::PrayBadEffect(void)
+void inasnum::PrayBadEffect()
 {
 	ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
 	switch(rand() % 3)
@@ -238,7 +239,7 @@ void inasnum::PrayBadEffect(void)
 	}
 }
 
-void seges::PrayGoodEffect(void)
+void seges::PrayGoodEffect()
 {
 	ADD_MESSAGE("Your stomach feels full again.");
 
@@ -246,7 +247,7 @@ void seges::PrayGoodEffect(void)
 		game::GetPlayer()->SetNP(1000);
 }
 
-void seges::PrayBadEffect(void)
+void seges::PrayBadEffect()
 {
 	ADD_MESSAGE("You suddenly feel more hungry.");
 	game::GetPlayer()->SetNP(game::GetPlayer()->GetNP() - 400);
@@ -257,7 +258,7 @@ void seges::PrayBadEffect(void)
 	}
 }
 
-void atavus::PrayGoodEffect(void)
+void atavus::PrayGoodEffect()
 {
 	ADD_MESSAGE("A mithril platemail drops on the ground.");
 	item* Reward = new platemail(false);
@@ -265,7 +266,7 @@ void atavus::PrayGoodEffect(void)
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
 }
 
-void atavus::PrayBadEffect(void)
+void atavus::PrayBadEffect()
 {
 	ADD_MESSAGE("You have not been good the whole year.");
 
@@ -278,7 +279,7 @@ void atavus::PrayBadEffect(void)
 			ADD_MESSAGE("Your %s disappears.", Disappearing->CNAME(UNARTICLED));
 			game::GetPlayer()->GetStack()->RemoveItem(ToBeDeleted);
 			if(game::GetPlayer()->GetWielded() == Disappearing) game::GetPlayer()->SetWielded(0);
-			if(game::GetPlayer()->GetTorsoArmor() == Disappearing) game::GetPlayer()->WearItem(0);
+			if(game::GetPlayer()->GetTorsoArmor() == Disappearing) game::GetPlayer()->SetTorsoArmor(0);
 			delete Disappearing;
 		}
 		else
@@ -299,7 +300,7 @@ void atavus::PrayBadEffect(void)
 	}
 }
 
-void loricatus::PrayGoodEffect(void)
+void loricatus::PrayGoodEffect()
 {
 	std::string OldName;
 	if(game::GetPlayer()->GetWielded())
@@ -310,7 +311,7 @@ void loricatus::PrayGoodEffect(void)
 	}
 }
 
-void loricatus::PrayBadEffect(void)
+void loricatus::PrayBadEffect()
 {
 	std::string OldName;
 	if(game::GetPlayer()->GetWielded())
@@ -324,13 +325,13 @@ void loricatus::PrayBadEffect(void)
 }
 
 
-void calamus::PrayGoodEffect(void)
+void calamus::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
 	game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() + 1);
 }
 
-void calamus::PrayBadEffect(void)
+void calamus::PrayBadEffect()
 {
 	if(game::GetPlayer()->GetAgility() > 5)
 	{
@@ -341,26 +342,24 @@ void calamus::PrayBadEffect(void)
 		ADD_MESSAGE("Suprisingly you feel nothing.");
 }
 
-void god::Save(std::ofstream& SaveFile) const
+void god::Save(outputfile& SaveFile) const
 {
-	SaveFile.write((char*)&Relation, sizeof(Relation));
-	SaveFile.write((char*)&Timer, sizeof(Timer));
+	SaveFile << Relation << Timer;
 }
 
-void god::Load(std::ifstream& SaveFile)
+void god::Load(inputfile& SaveFile)
 {
-	SaveFile.read((char*)&Relation, sizeof(Relation));
-	SaveFile.read((char*)&Timer, sizeof(Timer));
+	SaveFile >> Relation >> Timer;
 }
 
-void erado::PrayGoodEffect(void)
+void erado::PrayGoodEffect()
 {
 	ADD_MESSAGE("The air vibrates violently around you and a terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption falls on the ground.");
 
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new htaedfoneercseulb);
 }
 
-void erado::PrayBadEffect(void)
+void erado::PrayBadEffect()
 {
 	ADD_MESSAGE("A dark, booming voice shakes the walls: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
 
@@ -371,7 +370,7 @@ void erado::PrayBadEffect(void)
 	game::GetPlayer()->CheckDeath(std::string("obliterated by the unholy power of ") + Name());
 }
 
-void mellis::PrayGoodEffect(void)
+void mellis::PrayGoodEffect()
 {
 	bool Success = false;
 	ushort JustCreated;
@@ -383,7 +382,7 @@ void mellis::PrayGoodEffect(void)
 		while(Cont)
 		{
 			Cont = false;
-			for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); c++)
+			for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
 			{
 				if(game::GetPlayer()->GetStack()->GetItem(c) && game::GetPlayer()->GetStack()->GetItem(c)->BetterVersion())
 				{
@@ -393,7 +392,7 @@ void mellis::PrayGoodEffect(void)
 					Success = true;
 					ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CNAME(DEFINITE), game::GetPlayer()->GetStack()->GetItem(JustCreated)->CNAME(INDEFINITE));
 					if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
-					if(ToBeDeleted == game::GetPlayer()->GetTorsoArmor()) game::GetPlayer()->WearItem(0);
+					if(ToBeDeleted == game::GetPlayer()->GetTorsoArmor()) game::GetPlayer()->SetTorsoArmor(0);
 					delete ToBeDeleted;
 					Cont = true;
 					break;
@@ -404,9 +403,9 @@ void mellis::PrayGoodEffect(void)
 	if(!Success) ADD_MESSAGE("You have no good items for trade.");
 }
 
-void mellis::PrayBadEffect(void)
+void mellis::PrayBadEffect()
 {
-	for(ushort c = 1;; c++)
+	for(ushort c = 1;; ++c)
 		if(game::GetGod(c))
 		{
 			if(game::GetGod(c) != this)
@@ -418,20 +417,20 @@ void mellis::PrayBadEffect(void)
 	ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GOD_NAME);
 }
 
-void pestifer::PrayGoodEffect(void)
+void pestifer::PrayGoodEffect()
 {
 	ADD_MESSAGE("Suddenly a very ugly head appears beside you, groaning horribly into your ear!");
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new headofennerbeast);
 	game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() + 1);
 }
 
-void pestifer::PrayBadEffect(void)
+void pestifer::PrayBadEffect()
 {
 	game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(true))->AddCharacter(new ennerbeast);
 	ADD_MESSAGE("You hear the shouts of a new enner beast!");
 }
 
-void valpuri::Pray(void)
+void valpuri::Pray()
 {
 	if(!Timer && Relation == 1000)
 	{
@@ -451,7 +450,7 @@ void valpuri::Pray(void)
 	}
 }
 
-void atavus::Pray(void)
+void atavus::Pray()
 {
 	if(!Timer && Relation > 500 + rand() % 500)
 	{
@@ -471,7 +470,7 @@ void atavus::Pray(void)
 	}
 }
 
-void erado::Pray(void)
+void erado::Pray()
 {
 	if(!Timer && Relation == 1000)
 	{
@@ -491,7 +490,7 @@ void erado::Pray(void)
 	}
 }
 
-void infuscor::PrayBadEffect(void)
+void infuscor::PrayBadEffect()
 {
 	ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
 
@@ -499,7 +498,7 @@ void infuscor::PrayBadEffect(void)
 	game::GetPlayer()->SetNP(game::GetPlayer()->GetNP() - 200);
 }
 
-void macellarius::PrayGoodEffect(void)
+void macellarius::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
 	item* Reward = new potion(false);
@@ -508,7 +507,7 @@ void macellarius::PrayGoodEffect(void)
 	ADD_MESSAGE("%s drops on the ground.", Reward->CNAME(DEFINITE));
 }
 
-void macellarius::PrayBadEffect(void)
+void macellarius::PrayBadEffect()
 {
 	ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 7);
@@ -516,10 +515,10 @@ void macellarius::PrayBadEffect(void)
 	game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
 }
 
-void scabies::PrayGoodEffect(void)
+void scabies::PrayGoodEffect()
 {
 	ADD_MESSAGE("5 cans full of school food drop to on the ground.");
-	for(uchar c = 0; c < 5; c++)
+	for(uchar c = 0; c < 5; ++c)
 	{
 		item* Reward = new can(false);
 		Reward->InitMaterials(2, new iron(50), new schoolfood(600));
@@ -527,11 +526,11 @@ void scabies::PrayGoodEffect(void)
 	}
 }
 
-void scabies::PrayBadEffect(void)
+void scabies::PrayBadEffect()
 {
 	ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
 
-	for(uchar c = 0; c < 5; c++)
+	for(uchar c = 0; c < 5; ++c)
 	{
 		material* SchoolFood = new schoolfood(600);
 		SchoolFood->EatEffect(game::GetPlayer());
@@ -544,22 +543,22 @@ void scabies::PrayBadEffect(void)
 	game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
 }
 
-void infuscor::PrayGoodEffect(void)
+void infuscor::PrayGoodEffect()
 {
 	ADD_MESSAGE("5 scrolls drop to on the ground.");
-	for(uchar c = 0; c < 5; c++)
+	for(uchar c = 0; c < 5; ++c)
 	{
 		game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new scrollofteleport);
 	}
 }
 
-void cruentus::PrayGoodEffect(void)
+void cruentus::PrayGoodEffect()
 {
 	ADD_MESSAGE("Cruentus recommends you to its master, Erado.");
 	game::GetGod(16)->AdjustRelation(100);
 }
 
-void cruentus::PrayBadEffect(void)
+void cruentus::PrayBadEffect()
 {
 	item* ToBe;
 
@@ -585,7 +584,7 @@ void cruentus::PrayBadEffect(void)
 
 }
 
-void cruentus::Pray(void)
+void cruentus::Pray()
 {
 	if(!Timer && Relation > 500 + rand() % 500)
 	{
@@ -637,7 +636,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	}
 }
 
-void god::PrintRelation(void) const
+void god::PrintRelation() const
 {
 	std::string VerbalRelation;
 
@@ -661,3 +660,4 @@ void god::PrintRelation(void) const
 
 	ADD_MESSAGE("%s %s", GOD_NAME, VerbalRelation.c_str());
 }
+

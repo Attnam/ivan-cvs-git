@@ -174,7 +174,7 @@
 	}								\
 }
 
-#define DO_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoOne, DoTwo, DoThree, DoFour)		\
+#define DO_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoOne, DoTwo)				\
 {																\
 	long	Left    = (CenterX) - (Radius),											\
 		Top     = (CenterY) - (Radius),											\
@@ -188,23 +188,23 @@
 																\
 	if(Left < (ClipRigth) && Top < (ClipBottom) && Rigth > (ClipLeft) && Bottom > (ClipTop))				\
 	{															\
-		ushort XPointer, YPointer;												\
+		ushort XPointer, YPointer;											\
 																\
 		for(XPointer = Left; XPointer <= Rigth; XPointer++)								\
 		{														\
-			DoOne; DoTwo;												\
+			DoOne;													\
 		}														\
 																\
 		for(YPointer = Top; YPointer <= Bottom; YPointer++)								\
 		{														\
-			DoThree; DoFour;											\
+			DoTwo;													\
 		}														\
 	}															\
 }
 
 #define DO_BIG_RECTANGLE(ClipLeft, ClipTop, ClipRigth, ClipBottom, DoOne, DoTwo)						\
 {																\
-	ushort XPointer, YPointer;													\
+	ushort XPointer, YPointer;												\
 																\
 	for(XPointer = (ClipLeft); XPointer <= (ClipRigth); XPointer++)								\
 		DoOne;														\
@@ -227,7 +227,7 @@
 																\
 	if(Left < (ClipRigth) && Top < (ClipBottom) && Rigth > (ClipLeft) && Bottom > (ClipTop))				\
 	{															\
-		ushort XPointer, YPointer;												\
+		ushort XPointer, YPointer;											\
 																\
 		for(XPointer = Left; XPointer <= Rigth; XPointer++)								\
 			for(YPointer = Top; YPointer <= Bottom; YPointer++)							\
@@ -237,45 +237,44 @@
 	}															\
 }
 
-#include <fstream>
-
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
 
 class character;
 class square;
 class bitmap;
+class outputfile;
+class inputfile;
 
 class area
 {
 public:
 	area(ushort, ushort);
-	area(void) {}
-	virtual ~area(void);
-	virtual void Generate(void) = 0;
-	virtual void Draw(void) const = 0;
-	virtual void AddCharacter(vector, character*);
-	virtual void RemoveCharacter(vector);
-	virtual void Save(std::ofstream&) const;
-	virtual void Load(std::ifstream&);
-	virtual ushort GetFlag(vector Pos) const { return FlagMap[Pos.X][Pos.Y]; }
-	virtual square* operator [] (vector Pos) const { return Map[Pos.X][Pos.Y]; }
-	virtual square* GetSquare(vector Pos) const { return Map[Pos.X][Pos.Y]; }
+	area() {}
+	virtual ~area();
+	virtual void Generate() = 0;
+	virtual void Draw() const = 0;
+	virtual void AddCharacter(vector2d, character*);
+	virtual void RemoveCharacter(vector2d);
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual ushort GetFlag(vector2d Pos) const { return FlagMap[Pos.X][Pos.Y]; }
+	virtual square* operator [] (vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
+	virtual square* GetSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
 	virtual square* GetSquare(ushort x, ushort y) const { return Map[x][y]; }
-	virtual ushort GetXSize(void) const { return XSize; }
-	virtual ushort GetYSize(void) const { return YSize; }
-	virtual bitmap* GetMemorized(void) const { return Memorized; }
-	virtual void UpdateLOS(void);
-	virtual void EmptyFlags(void);
+	virtual ushort GetXSize() const { return XSize; }
+	virtual ushort GetYSize() const { return YSize; }
+	virtual void UpdateLOS();
+	virtual void EmptyFlags();
+	virtual void SendNewDrawRequest();
 protected:
 	square*** Map;
-	bitmap* Memorized;
 	ushort** FlagMap;
 	ushort XSize, YSize;
 	ulong XSizeTimesYSize;
 };
 
-inline std::ofstream& operator<<(std::ofstream& SaveFile, area* Area)
+inline outputfile& operator<<(outputfile& SaveFile, area* Area)
 {
 	Area->Save(SaveFile);
 	return SaveFile;

@@ -8,17 +8,16 @@
 
 #define CENTER 4
 
-#include <fstream>
-
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
 
 class item;
 class character;
 class levelsquare;
-class vector;
 class bitmap;
 class square;
+class outputfile;
+class inputfile;
 
 /* Presentation of the stack class */
 
@@ -26,41 +25,41 @@ class stack
 {
 public:
 	stack(square* = 0);
-	~stack(void);
-	void Load(std::ifstream&);
+	~stack();
+	void Load(inputfile&);
 	void PositionedDrawToTileBuffer(uchar = CENTER) const;
 	ushort AddItem(item*);
 	ushort FastAddItem(item*);
 	item* RemoveItem(ushort);
 	void FastRemoveItem(ushort);
 	item* GetItem(ushort I) const	{ return Item[I]; }
-	ushort GetItems(void) const	{ return Items; }
+	ushort GetItems() const	{ return Items; }
 	void SetSquareUnder(square*);
 	ushort DrawContents(const char*) const;
 	void DrawPartOfContents(ushort, ushort, bool, const char*) const;
 	ushort MoveItem(ushort, stack*);
-	ushort GetEmitation(void) const;
-	vector GetPos(void) const;
-	void Clean(void);
-	ulong SumOfMasses(void) const;
-	void Save(std::ofstream&) const;
+	ushort GetEmitation() const;
+	vector2d GetPos() const;
+	void Clean();
+	ulong SumOfMasses() const;
+	void Save(outputfile&) const;
 	ushort SearchItem(item*) const;
 	void Move(levelsquare*);
-	square* GetSquareUnder(void) const { return SquareUnder; }
-	levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
+	square* GetSquareUnder() const { return SquareUnder; }
+	levelsquare* GetLevelSquareUnder() const { return (levelsquare*)SquareUnder; }
 	void SetItem(ushort Where, item* What) { Item[Where] = What; }
 	void SetItems(ushort What) { Items = What; }
-	ushort CNonExistent(void) const { return NonExistent; }
+	ushort CNonExistent() const { return NonExistent; }
 	void SNonExistent(ushort What) { NonExistent = What; }
 	ushort ConsumableItems(character*);
 	void DrawItemData(ushort, ushort) const;
 	ushort DrawConsumableContents(const char*, character*) const;
-	void DeletePointers(void);
+	void DeletePointers();
 	void StackMerge(stack*);
 	ushort MultiselectDrawContents(const char*) const;
 	void Kick(ushort, bool, uchar);
-	long Score(void) const;
-	bool Polymorph(void);
+	long Score() const;
+	bool Polymorph();
 private:
 	void Optimize(ushort);
 	square* SquareUnder;

@@ -8,21 +8,21 @@ class functionbutton;
 class window
 {
  public:
-  virtual void Draw(void);
+  virtual void Draw();
   virtual void SetPos(rectangle What) { Pos = What; }
   window(rectangle Pos, unsigned short BackgroundColor, unsigned short BorderColor, unsigned short BarColor) : Pos(Pos), BackgroundColor(BackgroundColor), BorderColor(BorderColor), BarColor(BarColor) {}
-  void BringOnTop(void);
-  virtual void Click(vector2d);
-  virtual rectangle GetPos(void) { return Pos; }
-  window(void) {}
+  void BringOnTop();
+  virtual void Click(vector2d2d2d);
+  virtual rectangle GetPos() { return Pos; }
+  window() {}
   virtual void SetBackgroundColor(unsigned short What) { BackgroundColor = What; }
-  virtual void DrawBackground(void);
+  virtual void DrawBackground();
   virtual void MoveTo(rectangle What) { Pos = What; }
-  virtual vector<textbox*> GetTextBoxList(void) { return TextBoxList; }
-  virtual std::string GetSaveName(void) { return "jes.txt"; }
+  virtual vector2d2d<textbox*> GetTextBoxList() { return TextBoxList; }
+  virtual std::string GetSaveName() { return "jes.txt"; }
   static void Close(window*);
  protected:
-  vector<textbox*> TextBoxList;
+  vector2d2d<textbox*> TextBoxList;
   rectangle Pos;
   unsigned short BackgroundColor, BorderColor, BarColor;
 };
@@ -30,9 +30,9 @@ class window
 class editor : public window
 {
  public:
-  virtual void Draw(void);
+  virtual void Draw();
   editor::editor(rectangle, char*);
-  editor::~editor(void);
+  editor::~editor();
  protected:
   rectangle BitmapPos;
 };
@@ -40,10 +40,10 @@ class editor : public window
 class resultwindow : public window
 {
  public:
-  virtual void Draw(void);
-  resultwindow(rectangle, vector<string>, vector<unsigned int>, vector<unsigned int>);
-  resultwindow(void) {}
-  ~resultwindow(void);
+  virtual void Draw();
+  resultwindow(rectangle, vector2d2d<string>, vector2d2d<unsigned int>, vector2d2d<unsigned int>);
+  resultwindow() {}
+  ~resultwindow();
   virtual void MoveTo(rectangle);
 };
 
@@ -51,12 +51,12 @@ class editpersonwindow : public resultwindow
 {
  public:
   editpersonwindow(rectangle);
-  ~editpersonwindow(void);
-  void Click(vector2d Where);
+  ~editpersonwindow();
+  void Click(vector2d2d2d Where);
   static void Save(window*);
-  void Draw(void);
+  void Draw();
   void Load(ifstream*);
-  std::string GetSaveName(void);
+  std::string GetSaveName();
  protected:
   functionbutton* OKButton;
 };
@@ -64,9 +64,9 @@ class editpersonwindow : public resultwindow
 class whattoedit : public window
 {
  public:
-  void Draw(void);
-  whattoedit(void);
-  void Click(vector2d);
+  void Draw();
+  whattoedit();
+  void Click(vector2d2d2d);
  protected:
   functionbutton* OKButton;
   textbox* TextBox;
@@ -74,3 +74,4 @@ class whattoedit : public window
 };
 #endif
   
+

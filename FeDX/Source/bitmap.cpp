@@ -1,7 +1,10 @@
+#include <string>
+
 #include "bitmap.h"
 #include "graphics.h"
 #include "ddutil.h"
 #include "error.h"
+#include "save.h"
 
 char bitmap::BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
 				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),
@@ -24,13 +27,15 @@ bitmap::bitmap(const char* FileName) : BackupBuffer(0)
 
 	uchar Palette[768];
 
-	for(ulong c = 0; c < 768; c++)
+	for(ulong c = 0; c < 768; ++c)
 		Palette[c] = fgetc(Handle);
 
 	fseek(Handle, 8, SEEK_SET);
 
-	XSize = fgetc(Handle) + (fgetc(Handle) << 8) + 1;
-	YSize = fgetc(Handle) + (fgetc(Handle) << 8) + 1;
+	XSize  =  fgetc(Handle);
+	XSize += (fgetc(Handle) << 8) + 1;
+	YSize  =  fgetc(Handle);
+	YSize += (fgetc(Handle) << 8) + 1;
 
 	graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
 
@@ -86,7 +91,10 @@ bitmap::bitmap(const char* FileName) : BackupBuffer(0)
 
 bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupBuffer(0)
 {
-	graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
+	HRESULT hr = graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
+
+	if(hr != S_OK)
+		ABORT("Bitmap initialization failed with code 0x%x!", hr);
 
 	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
 	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
@@ -111,32 +119,47 @@ bitmap::bitmap(IDirectDrawSurface7* DDSurface) : BackupBuffer(0)
 	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
 }
 
-bitmap::~bitmap(void)
+bitmap::~bitmap()
 {
 	delete DXSurface;
 	delete [] BackupBuffer;
 
-	for(ulong c = 0; c < graphics::BitmapContainer.size(); c++)
+	for(ulong c = 0; c < graphics::BitmapContainer.size(); ++c)
 		if(graphics::BitmapContainer[c] == this)
 			graphics::BitmapContainer.erase(graphics::BitmapContainer.begin() + c);
 }
 
-void bitmap::Save(std::ofstream& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize) const
+void bitmap::Save(outputfile& SaveFile) const
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
 	ddsd.dwSize = sizeof(ddsd);
 	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
 
-	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
+	ulong Buffer = ulong(ddsd.lpSurface);
 
-	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
-		SaveFile.write((char*)Buffer, XSize << 1);
+	for(ushort y = 0; y < YSize; y++, Buffer += ddsd.lPitch)
+		SaveFile.GetBuffer().write((char*)Buffer, XSize << 1);
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
 
-void bitmap::Load(std::ifstream& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize)
+void bitmap::Load(inputfile& SaveFile)
+{
+	DDSURFACEDESC2 ddsd;
+	ZeroMemory( &ddsd,sizeof(ddsd) );
+	ddsd.dwSize = sizeof(ddsd);
+	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+	ulong Buffer = ulong(ddsd.lpSurface);
+
+	for(ushort y = 0; y < YSize; y++, Buffer += ddsd.lPitch)
+		SaveFile.GetBuffer().read((char*)Buffer, XSize << 1);
+
+	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+}
+
+void bitmap::Save(outputfile& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize) const
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -146,14 +169,29 @@ void bitmap::Load(std::ifstream& SaveFile, ushort XPos, ushort YPos, ushort XSiz
 	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
 
 	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
-		SaveFile.read((char*)Buffer, XSize << 1);
+		SaveFile.GetBuffer().write((char*)Buffer, XSize << 1);
+
+	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+}
+
+void bitmap::Load(inputfile& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize)
+{
+	DDSURFACEDESC2 ddsd;
+	ZeroMemory( &ddsd,sizeof(ddsd) );
+	ddsd.dwSize = sizeof(ddsd);
+	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
+
+	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
+		SaveFile.GetBuffer().read((char*)Buffer, XSize << 1);
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
 
 void bitmap::Save(std::string FileName) const
 {
-	std::ofstream SaveFile(FileName.c_str(), std::ios::out | std::ios::binary);
+	outputfile SaveFile(FileName);
 
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -167,7 +205,7 @@ void bitmap::Save(std::string FileName) const
 	BMPHeader[0x16] =  YSize       & 0xFF;
 	BMPHeader[0x17] = (YSize >> 8) & 0xFF;
 
-	SaveFile.write(BMPHeader, 0x36);
+	SaveFile.GetBuffer().write(BMPHeader, 0x36);
 
 	ulong Off = ulong(ddsd.lpSurface) + (((YSize - 1) * XSize) << 1);
 
@@ -176,9 +214,7 @@ void bitmap::Save(std::string FileName) const
 		{
 			ushort Pixel = *(ushort*)Off;
 
-			SaveFile.put(char(Pixel << 3));
-			SaveFile.put(char((Pixel >> 5) << 2));
-			SaveFile.put(char((Pixel >> 11) << 3));
+			SaveFile << char(Pixel << 3) << char((Pixel >> 5) << 2) << char((Pixel >> 11) << 3);
 		}
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
@@ -1030,26 +1066,6 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-void bitmap::BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height) const
-{
-	Blit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height);
-}
-
-void bitmap::BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Bright) const
-{
-	Blit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height, Bright);
-}
-
-void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height) const
-{
-	MaskedBlit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height);
-}
-
-void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
-{
-	MaskedBlit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height, Luminance);
-}
-
 void bitmap::FastBlit(bitmap* Bitmap) const
 {
 	Bitmap->GetDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT);
@@ -1069,34 +1085,12 @@ void bitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, const char* Format, ...)
 	vsprintf(Buffer, Format, AP);
 	va_end(AP);
 
-	for(uchar c = 0; c < strlen(Buffer); c++)
+	for(uchar c = 0; c < strlen(Buffer); ++c)
 	{
 		ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
 
 		MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8);
 	}
-}
-
-void bitmap::ReadFromDB(ushort X, ushort Y)
-{
-	DOUBLEBUFFER->Blit(this, X, Y, 0, 0, XSize, YSize);
-}
-
-void bitmap::WriteToDB(ushort X, ushort Y) const
-{
-	Blit(DOUBLEBUFFER, 0, 0, X, Y, XSize, YSize);
-}
-
-void bitmap::PrintfToDB(ushort X, ushort Y, const char* Format, ...) const
-{
-	char Buffer[256];
-
-	va_list AP;
-	va_start(AP, Format);
-	vsprintf(Buffer, Format, AP);
-	va_end(AP);
-
-	Printf(DOUBLEBUFFER, X, Y, Buffer);
 }
 
 void bitmap::Backup(ushort X, ushort Y, bool DestroySurface)
@@ -1174,3 +1168,4 @@ void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface)
 	XSize = ddsd.dwWidth;
 	YSize = ddsd.dwHeight;
 }
+

@@ -594,7 +594,7 @@ HRESULT CSurface::Create( LPDIRECTDRAWSURFACE7 pdds )
     return S_OK;
 }
 
-
+#include <cstdio>
 
 
 //-----------------------------------------------------------------------------
@@ -605,9 +605,38 @@ HRESULT CSurface::Create( LPDIRECTDRAW7 pDD, DDSURFACEDESC2* pddsd )
 {
     HRESULT hr;
 
+	HRESULT hra[] = {DDERR_INCOMPATIBLEPRIMARY,
+DDERR_INVALIDCAPS ,
+DDERR_INVALIDOBJECT, 
+DDERR_INVALIDPARAMS ,
+DDERR_INVALIDPIXELFORMAT ,
+DDERR_NOALPHAHW ,
+DDERR_NOCOOPERATIVELEVELSET ,
+DDERR_NODIRECTDRAWHW ,
+DDERR_NOEMULATION ,
+DDERR_NOEXCLUSIVEMODE ,
+DDERR_NOFLIPHW ,
+DDERR_NOMIPMAPHW ,
+DDERR_NOZBUFFERHW ,
+DDERR_OUTOFMEMORY ,
+DDERR_OUTOFVIDEOMEMORY ,
+DDERR_PRIMARYSURFACEALREADYEXISTS ,
+DDERR_UNSUPPORTEDMODE };
+
+	char Buffer[256];
+
+	sprintf(Buffer, "Alloc bit %d, %d", pddsd->dwWidth, pddsd->dwHeight);
+
+	//MessageBox(NULL, Buffer, "Message from FEP", MB_OK);
+
+	if(pddsd->dwWidth == 800)
+		int esko = 2;
+
     // Create the DDraw surface
     if( FAILED( hr = pDD->CreateSurface( pddsd, &m_pdds, NULL ) ) )
         return hr;
+
+	//MessageBox(NULL, "Ok", "Message from FEP", MB_OK);
 
     // Prepare the DDSURFACEDESC structure
     m_ddsd.dwSize = sizeof(m_ddsd);

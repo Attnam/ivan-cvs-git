@@ -1,84 +1,78 @@
-#include "char.h"
+#include "charba.h"
 #include "square.h"
-#include "lterrain.h"
+#include "lterraba.h"
 #include "igraph.h"
 #include "level.h"
 #include "proto.h"
-#include "material.h"
+#include "materba.h"
 #include "strover.h"
+#include "save.h"
 
-square::square(area* AreaUnder, vector Pos) : AreaUnder(AreaUnder), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos), NewDrawRequested(true), Memorized(0)
 {
 }
 
-square::~square(void)
+square::~square()
 {
 	delete Rider;
 	delete Character;
 	delete Flyer;
+	delete Memorized;
 }
 
-void square::Save(std::ofstream& SaveFile) const
+void square::Save(outputfile& SaveFile) const
 {
-	//SaveFile << GroundTerrain << OverTerrain;
-
-	SaveFile << Character;
-
-	SaveFile.write((char*)&Known, sizeof(Known));
+	SaveFile << Character << Known;
 
 	if(Known)
-		GetAreaUnder()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetMemorized()->Save(SaveFile);
 
-	SaveFile.write((char*)&Flag, sizeof(Flag));
-
-	SaveFile << MemorizedDescription;
+	SaveFile << Flag << MemorizedDescription;
 }
 
-void square::Load(std::ifstream& SaveFile)
+void square::Load(inputfile& SaveFile)
 {
 	game::SetSquareInLoad(this);
 
-	//SaveFile >> GroundTerrain >> OverTerrain;
-
-	SaveFile >> Character;
-
-	SaveFile.read((char*)&Known, sizeof(Known));
+	SaveFile >> Character >> Known;
 
 	if(Known)
-		GetAreaUnder()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
-
-	SaveFile.read((char*)&Flag, sizeof(Flag));
-
-	SaveFile >> MemorizedDescription;
-}
-
-void square::DrawMemorized(void) const
-{
-	if(GetKnown())
 	{
-		AreaUnder->GetMemorized()->Blit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16, 16);
-		igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+		Memorized = new bitmap(16, 16);
+		GetMemorized()->Load(SaveFile);
 	}
+
+	SaveFile >> Flag >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
 {
 	Character = Guy;
 	Guy->SetSquareUnder(this);
-}	//lisätkää aborttiii!!!
-
-void square::RemoveCharacter(void)
-{
-	SetCharacter(0);
+	NewDrawRequested = true;
 }
 
-bool square::CanBeSeen(void) const
+void square::DrawMemorized() const
+{
+	if(GetKnown())
+	{
+		GetMemorized()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+	}
+}
+
+void square::RemoveCharacter()
+{
+	SetCharacter(0);
+	NewDrawRequested = true;
+}
+
+bool square::CanBeSeen() const
 {
 	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
 
-	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare())
+	if((RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare()) || game::GetSeeWholeMapCheat())
 		return true;
 	else
 		return false;
 }
-

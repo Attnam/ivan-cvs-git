@@ -25,18 +25,16 @@ class graphics
 {
 public:
 	friend class bitmap;
-	static void Init(void);
-	static void DeInit(void);
+	static void Init();
+	static void DeInit();
 	static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool);
-	static void BlitDBToScreen(void);
-	static void ClearDBToColor(ushort = 0);
-	static void ClearDBToColor(ushort, ushort, ushort, ushort, ushort = 0);
-	static ushort GetXRes(void) { return XRes; }
-	static ushort GetYRes(void) { return YRes; }
-	static bitmap* GetDoubleBuffer(void) { return DoubleBuffer; }
-	static CDisplay* GetDXDisplay(void) { return DXDisplay; }
-	static void UpdateBounds(void);
-	static void SwitchMode(void);
+	static void BlitDBToScreen();
+	static ushort GetXRes() { return XRes; }
+	static ushort GetYRes() { return YRes; }
+	static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
+	static CDisplay* GetDXDisplay() { return DXDisplay; }
+	static void UpdateBounds();
+	static void SwitchMode();
 private:
 	static HWND hWnd;
 	static bool FullScreen;

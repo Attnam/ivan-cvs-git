@@ -1,16 +1,17 @@
 #include "object.h"
 #include "error.h"
 #include "proto.h"
-#include "material.h"
+#include "materba.h"
 #include "pool.h"
+#include "save.h"
 
-object::object(bool AddToPool) : InPool(AddToPool)
+object::object(bool AddToPool) : InPool(AddToPool), Exists(true)
 {
 	if(AddToPool)
 		SetPoolIterator(objectpool::Add(this));
 }
 
-object::~object(void)
+object::~object()
 {
 	EraseMaterials();
 
@@ -18,34 +19,18 @@ object::~object(void)
 		objectpool::Remove(GetPoolIterator());
 }
 
-void object::Save(std::ofstream& SaveFile) const
+void object::Save(outputfile& SaveFile) const
 {
 	typeable::Save(SaveFile);
 
-	ushort Materials = Material.size();
-
-	SaveFile.write((char*)&Materials, sizeof(Materials));
-
-	for(ushort c = 0; c < Materials; c++)
-		SaveFile << Material[c];
-
-	SaveFile.write((char*)&Size, sizeof(Size));
+	SaveFile << Material << Size;
 }
 
-void object::Load(std::ifstream& SaveFile)
+void object::Load(inputfile& SaveFile)
 {
 	typeable::Load(SaveFile);
 
-	ushort Materials;
-
-	SaveFile.read((char*)&Materials, sizeof(Materials));
-
-	Material.resize(Materials);
-
-	for(ushort c = 0; c < Materials; c++)
-		SaveFile >> Material[c];
-
-	SaveFile.read((char*)&Size, sizeof(Size));
+	SaveFile >> Material >> Size;
 }
 
 void object::InitMaterials(ushort Materials, ...)
@@ -54,7 +39,7 @@ void object::InitMaterials(ushort Materials, ...)
 
 	va_start(AP, Materials);
 
-	for(ushort c = 0; c < Materials; c++)
+	for(ushort c = 0; c < Materials; ++c)
 		Material.push_back(va_arg(AP, material*));
 
 	va_end(AP);
@@ -65,11 +50,11 @@ void object::InitMaterials(material* FirstMaterial)
 	Material.push_back(FirstMaterial);
 }
 
-ushort object::GetEmitation(void) const
+ushort object::GetEmitation() const
 {
 	ushort Emitation = 0;
 
-	for(ushort c = 0; c < Material.size(); c++)
+	for(ushort c = 0; c < Material.size(); ++c)
 		if(Material[c])
 			if(Material[c]->GetEmitation() > Emitation)
 				Emitation = Material[c]->GetEmitation();
@@ -242,10 +227,11 @@ std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) 
 				return NamePlural() + " of " + GetMaterial(0)->Name();
 }
 
-void object::EraseMaterials(void)
+void object::EraseMaterials()
 {
-	for(ushort c = 0; c < Material.size(); c++)
+	for(ushort c = 0; c < Material.size(); ++c)
 		delete Material[c];
 
 	Material.resize(0);
 }
+

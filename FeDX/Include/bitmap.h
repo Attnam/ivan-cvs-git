@@ -5,12 +5,15 @@
 #define FLIP 2
 #define ROTATE_90 4
 
-#include <fstream>
+#include <string>
 
 #include "typedef.h"
 
 class CSurface;
 struct IDirectDrawSurface7;
+
+class outputfile;
+class inputfile;
 
 class bitmap
 {
@@ -18,9 +21,11 @@ public:
 	friend class graphics;
 	bitmap(const char*);
 	bitmap(ushort, ushort);
-	~bitmap(void);
-	void Save(std::ofstream&, ushort, ushort, ushort, ushort) const;
-	void Load(std::ifstream&, ushort, ushort, ushort, ushort);
+	~bitmap();
+	void Save(outputfile&) const;
+	void Load(inputfile&);
+	void Save(outputfile&, ushort, ushort, ushort, ushort) const;
+	void Load(inputfile&, ushort, ushort, ushort, ushort);
 	void Save(std::string) const;
 	void PutPixel(ushort, ushort, ushort);
 	ushort GetPixel(ushort, ushort) const;
@@ -30,24 +35,17 @@ public:
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void BlitToDB(ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void BlitToDB(ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void MaskedBlitToDB(ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void MaskedBlitToDB(ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void ReadFromDB(ushort, ushort);
-	void WriteToDB(ushort, ushort) const;
 	void FastBlit(bitmap*) const;
 	void FastMaskedBlit(bitmap*) const;
 	void Printf(bitmap*, ushort, ushort, const char*, ...) const;
-	void PrintfToDB(ushort, ushort, const char*, ...) const;
-	ushort GetXSize(void) const { return XSize; }
-	ushort GetYSize(void) const { return YSize; }
+	ushort GetXSize() const { return XSize; }
+	ushort GetYSize() const { return YSize; }
 protected:
 	bitmap(IDirectDrawSurface7*);
 	void AttachSurface(IDirectDrawSurface7*);
 	void Backup(ushort = 0, ushort = 0, bool = true);
 	void Restore(ushort = 0, ushort = 0, bool = true);
-	CSurface* GetDXSurface(void) { return DXSurface; }
+	CSurface* GetDXSurface() { return DXSurface; }
 	static char BMPHeader[];
 	CSurface* DXSurface;
 	ushort XSize, YSize;

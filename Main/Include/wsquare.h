@@ -2,7 +2,7 @@
 #define __WSQUARE_H__
 
 #include "typedef.h"
-#include "vector.h"
+#include "vector2d.h"
 
 #include "square.h"
 
@@ -11,36 +11,36 @@ class material;
 class worldmap;
 class groundworldmapterrain;
 class overworldmapterrain;
+class outputfile;
+class inputfile;
 
 class worldmapsquare : public square
 {
 public:
-	worldmapsquare(worldmap*, vector);
-	virtual ~worldmapsquare(void);
-	virtual void Save(std::ofstream&) const;
-	virtual void Load(std::ifstream&);
-	virtual void DrawToTileBuffer(void) const;
-	virtual void UpdateMemorizedAndDraw(void);
+	worldmapsquare(worldmap*, vector2d);
+	virtual ~worldmapsquare();
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual void DrawToTileBuffer() const;
+	virtual void UpdateMemorizedAndDraw();
 	virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
 	virtual void SetOverWorldMapTerrain(overworldmapterrain*);
-	virtual groundworldmapterrain* GetGroundWorldMapTerrain(void) const { return GroundWorldMapTerrain; }
-	virtual overworldmapterrain* GetOverWorldMapTerrain(void) const { return OverWorldMapTerrain; }
+	virtual groundworldmapterrain* GetGroundWorldMapTerrain() const { return GroundWorldMapTerrain; }
+	virtual overworldmapterrain* GetOverWorldMapTerrain() const { return OverWorldMapTerrain; }
 	virtual void ChangeWorldMapTerrain(groundworldmapterrain*, overworldmapterrain*);
-	//virtual short GetAltitude(void) { return Altitude; };
-	//virtual void SetAltitude(short What) { Altitude = What; }
-	virtual worldmap* GetWorldMapUnder(void) const { return (worldmap*)AreaUnder; }
+	virtual worldmap* GetWorldMapUnder() const { return (worldmap*)AreaUnder; }
 	virtual void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
-	virtual void UpdateMemorizedDescription(void);
-	virtual groundterrain* GetGroundTerrain(void) const;// { return GroundWorldMapTerrain; }
-	virtual overterrain* GetOverTerrain(void) const;// { return OverWorldMapTerrain; }
-	virtual void DrawCheat(void) const;
+	virtual void UpdateMemorizedDescription();
+	virtual groundterrain* GetGroundTerrain() const;
+	virtual overterrain* GetOverTerrain() const;
+	virtual void DrawCheat();
+	virtual void ChangeGroundWorldMapTerrain(groundworldmapterrain*);
+	virtual void ChangeOverWorldMapTerrain(overworldmapterrain*);
+	virtual void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
 protected:
 	groundworldmapterrain* GroundWorldMapTerrain;
 	overworldmapterrain* OverWorldMapTerrain;
-	//worldmap* WorldMapUnder;
-	//short Altitude;
-	bool TerrainChanged;
+	bool DescriptionChanged;
 };
 
 #endif
-
