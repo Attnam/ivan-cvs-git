@@ -15,13 +15,13 @@ class globalwindowhandler
 public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static int GetKey(bool = true, bool = false);
-	static bool GetKeyPressed() { return KeyPressed; }
+	//static bool GetKeyPressed() { return KeyPressed; }
 	static void Init(HINSTANCE, HWND*, const char*);
 	static int ReadKey();
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); } 
 private:
 	static dynarray<int> KeyBuffer;
-	static bool KeyPressed;
+	//static bool KeyPressed;
 	static char KeyboardLayoutName[KL_NAMELENGTH];
 	static bool InGetKey;
 };

@@ -3,7 +3,6 @@ Kuvien flippailu (lis‰‰). (items etc.)
 Lowscore.
 Monsujen atribuuttien muuntelu pelaajan tason mukaan.
 Msgbuffer tiedostoon.
-Danger():lle defaultti.
 Hiscoreihin p‰iv‰m‰‰r‰.
 Listan voisi (jos haluaa) sorttia p‰iv‰m‰‰r‰n mukaan.
 Verest‰ voisi myˆs tehd‰ valuvaa.
@@ -33,12 +32,11 @@ Lamps should be white.
 Name too short message.
 Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
-Lamps on walls option to script.
 Teleport disabling.
 Teleport should bounce back from valpurium.
 It should be possible to determine line height as a felist draw function argument.
 Vomiting in a shop should have a special effect.
-Intelligent monsters should read scrolls of create monster.
+Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Lookmode should show item list.
 Highscores should be crypted somehow.
@@ -48,7 +46,7 @@ Golems should be able to eat things made of their material to increase size and 
 Golems shouldn't be able to eat anything else.
 Some kind of an option screen.
 Autosave interval as a user-defined option.
-Mellis should fill also intact empty bottles.
+Mellis should fill also intact empty bottles and empty cans.
 List of killed monsters and list of monsters killed by pets.
 Prepare bug-report functions that would make bug-reporting easier.
 Weapon name should be affected by dip material.
@@ -58,29 +56,30 @@ Dogs ought to be possible to name.
 Lookmode should show player's name as char description, not "a human".
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor
- but the strongest player-obtainable weapon/armor ever generated.
+ but the strongest player-obtainable weapon/armor ever generated?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 "Something dies" message would be nice when dark.
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 A tool for combining high score files.
 Lamps to some monsters.
-Dying in WMode doesn't yield a high score entry, but highlighting the last non-cheated game may make the player think so. Highlightion should be removed.
 Breaking potions of Omle urine should spill green fluid on the ground.
 Blood could be spilled to adjacent squares on critical hits.
 Additional short names to some weapons, that would be used in places where string space is limited. (e.g. "Justifier" instead of "the holy broadsword named Valpuri's Justifier")
 "Do you want to leave the city?" message to Attnam.
 Cannibalism and navastating should have relation effect limits.
-Bow:lle InHandsPic.
+InHandsPic to bow.
 Valpuri's Avatar should not look like a sword.
 Some artifacts should resist change material methods.
 A manual that would contain description of basic rules. (like why you can't hit dark frogs with two-handed swords etc.)
-Some variation to weapon materials.
-"The farmer looks faster" messages are annoying. They should be more scarce.
 LOS range should be higher in Attnam.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
 There shouldn't be any one square minimum in throw distance. (Elpuri's corpse can be moved limitless distances with that rule)
-"Your big bone changes into a big bone."
+"Your big bone changes into a big bone." message could be tweaked a bit.
 Reading in a too low luminance (<224 or so) should decrease perception experience.
 Savefiles should be deleted when the window is closed from the corner X.
 When wishing a forbidden item the game shouldn't say "There is no such item." but something else.
 A golem workshop. You carry raw materials there, and once enough is collected, the shopkeeper creates a golem to do your bidding.
+Altar's owner could change when it's hit by a polymorph ray.
+Vomiting on an altar should cause a special effect.
+Kicking an altar should anger its owner.
+A bank where you can store money.

@@ -412,9 +412,8 @@ void stack::StruckByWandOfStriking(void)
 		GetItem(x)->StruckByWandOfStriking(this);
 }
 
-void stack::CheckForStepOnEffect(character* Stepper, bool Teleported)
+void stack::CheckForStepOnEffect(character* Stepper)
 {
 	for(ushort c = 0; c < GetItems(); c++)
-		if(!(rand() % 10))
-			GetItem(c)->GetStepOnEffect(Stepper, Teleported);
+		GetItem(c)->GetStepOnEffect(Stepper);
 }

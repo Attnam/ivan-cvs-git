@@ -7,6 +7,8 @@
 #include "proto.h"
 #include "save.h"
 #include "graphics.h"
+#include "terra.h"
+#include "error.h"
 
 area::area(ushort InitXSize, ushort InitYSize)
 {
@@ -92,4 +94,63 @@ void area::MoveCharacter(vector2d From, vector2d To)
 	character* Backup = GetSquare(From)->GetCharacter();
 	GetSquare(From)->RemoveCharacter();
 	GetSquare(To)->AddCharacter(Backup);
+}
+
+vector2d area::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar MaxDistance)
+{
+	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+	{
+		vector2d Vector = vector2d(DoX, DoY);
+
+		if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && !GetSquare(Vector)->GetCharacter() && Vector != Prohibited)
+			return Vector;
+	})
+
+	if(MaxDistance)
+		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+		{
+			vector2d Vector = vector2d(DoX, DoY);
+
+			if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && Vector != Prohibited)
+			{
+				Vector = FreeSquareSeeker(Vector, StartPos, MaxDistance - 1);
+
+				if(Vector.X != 0xFFFF)
+					return Vector;
+			}
+		})
+
+	return vector2d(0xFFFF, 0xFFFF);
+}
+
+vector2d area::GetNearestFreeSquare(vector2d StartPos)
+{
+	if(GetSquare(StartPos)->GetOverTerrain()->GetIsWalkable() && !GetSquare(StartPos)->GetCharacter())
+		return StartPos;
+
+	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+	{
+		vector2d Vector = vector2d(DoX, DoY);
+
+		if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && !GetSquare(Vector)->GetCharacter())
+			return Vector;
+	})
+
+	for(ushort c = 0; c < 20; ++c)
+		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+		{
+			vector2d Vector = vector2d(DoX, DoY);
+
+			if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable())
+			{
+				Vector = FreeSquareSeeker(Vector, StartPos, c);
+
+				if(Vector.X != 0xFFFF)
+					return Vector;
+			}
+		})
+
+	ABORT("No room for character. Character unhappy.");
+
+	return vector2d(0xFFFF, 0xFFFF);
 }

@@ -53,6 +53,8 @@ void oree::CreateInitialEquipment()
 void swatcommando::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
+	GetStack()->FastAddItem(new lamp);
+	GetStack()->FastAddItem(new platemail);
 }
 
 void fallenvalpurist::CreateInitialEquipment()
@@ -280,27 +282,33 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasHeadOfElpuri() && !Triggered)
 	{
-		if(game::GetGod(1)->GetRelation() >= 500 && Talker->Danger() >= 100000 && game::BoolQuestion("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee. Dost thou wish to stay on duty for a while more and complete another quest for me?\" (Y/n)", 'y'))
+		if(game::GetGod(1)->GetRelation() >= 0 && Talker->Danger() >= 100000)
 		{
-			iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
-			game::GetCurrentArea()->SendNewDrawRequest();
+			ADD_MESSAGE("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog!");
+			ADD_MESSAGE("Elpuri is not a foe worthy for thee.");
 
-			game::TriggerQuestForMaakotkaShirt();
-
-			Triggered = true;
-		}
-		else
-		{
-			iosystem::TextScreen("Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
-			game::RemoveSaves();
-			game::Quit();
-
-			if(!game::GetWizardMode())
+			if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
 			{
-				AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
-				highscore HScore;
-				HScore.Draw();
+				iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+				game::GetCurrentArea()->SendNewDrawRequest();
+
+				game::TriggerQuestForMaakotkaShirt();
+
+				Triggered = true;
+
+				return;
 			}
+		}
+
+		iosystem::TextScreen("Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
+		game::RemoveSaves();
+		game::Quit();
+
+		if(!game::GetWizardMode())
+		{
+			AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
+			highscore HScore;
+			HScore.Draw();
 		}
 	}
 	else
@@ -565,7 +573,7 @@ float humanoid::GetAttackStrength() const
 bool humanoid::Hit(character* Enemy)
 {
 	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
-		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
 			return false;
 
 	GetTeam()->Hostility(Enemy->GetTeam());
@@ -733,4 +741,27 @@ void shopkeeper::CreateInitialEquipment()
 void farmer::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new axe)));
+}
+
+void perttu::AddHitMessage(character* Enemy, const bool Critical) const
+{
+	/*
+	 * This function is temporary. It prevents Perttu's hit messages becoming too long,
+	 * which would at present make the message history quite ugly.
+	 */
+
+	std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? "Perttu" : "something";
+	std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
+
+	if(Enemy->GetIsPlayer())
+		if(GetWielded() && GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s %s you with %s %s!", ThisDescription.c_str(), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
+		else
+			ADD_MESSAGE("%s %s you!", ThisDescription.c_str(), ThirdPersonMeleeHitVerb(Critical).c_str());
+	else
+		if(GetIsPlayer())
+			ADD_MESSAGE("You %s %s!", FirstPersonHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
+		else
+			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
 }

@@ -113,10 +113,11 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
 		game::GetCurrentDungeon()->PrepareLevel();
+		game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 
 		for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-			game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetDownStairs()), *c);
+			game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetDownStairs()), *c);
 
 		game::GetCurrentLevel()->Luxify();
 		game::SendLOSUpdateRequest();
@@ -196,7 +197,9 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 	{
 		if(game::GetCurrent() == 8)
 		{
-			if(!game::BoolQuestion("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further. Continue anyway? [y/N]"))
+			ADD_MESSAGE("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further.");
+
+			if(!game::BoolQuestion("Continue anyway? [y/N]"))
 				return false;
 
 			Who->GetLevelSquareUnder()->ChangeLevelTerrain(new parquet, new empty);
@@ -219,10 +222,11 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
 		game::GetCurrentDungeon()->PrepareLevel();
-		game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
+		game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
+		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 
 		for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-			game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetUpStairs()), *c);
+			game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetUpStairs()), *c);
 
 		game::GetCurrentLevel()->Luxify();
 		game::ShowLevelMessage();
@@ -285,4 +289,15 @@ void door::MakeNotWalkable()
 		game::SendLOSUpdateRequest();
 
 	UpdatePicture();
+}
+
+void altar::StepOn(character* Stepper)
+{
+	if(Stepper->GetIsPlayer() && OwnerGod && !game::GetGod(OwnerGod)->GetKnown())
+	{
+		ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them.");
+		ADD_MESSAGE("The altar is dedicated to %s, the %s.", game::GetGod(OwnerGod)->Name().c_str(), game::GetGod(OwnerGod)->Description().c_str());
+		ADD_MESSAGE("You now know the sacred rituals that allow you to contact this deity via prayers.");
+		game::GetGod(OwnerGod)->SetKnown(true);
+	}
 }

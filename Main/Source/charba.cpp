@@ -22,6 +22,7 @@
 #include "femath.h"
 #include "colorbit.h"
 #include "graphics.h"
+#include "script.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF)
 {
@@ -93,7 +94,7 @@ void character::Hunger(ushort Turns)
 bool character::Hit(character* Enemy)
 {
 	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
-		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
 			return false;
 
 	GetTeam()->Hostility(Enemy->GetTeam());
@@ -353,13 +354,13 @@ bool character::Drop()
 
 bool character::Consume()
 {
-	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [Y/N]"))
+	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
 	{
 		ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents("What do you wish to consume?", this);
 
 		if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 		{
-			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? (Y/N)"))
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
 				return false;
 
 			if(ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(Index), GetLevelSquareUnder()->GetStack()))
@@ -383,7 +384,7 @@ bool character::Consume()
 			if(!CheckIfConsumable(Index))
 				return false;
 
-			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? (Y/N)"))
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
 				return false;
 
 			if(ConsumeItem(GetStack()->GetItem(Index), GetStack()))
@@ -516,10 +517,10 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 				
 				if(game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "")
 					ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
-
-				GetLevelSquareUnder()->GetStack()->CheckForStepOnEffect(this, TeleportMove);
 			}
 		}
+
+		GetSquareUnder()->StepOn(this);
 
 		SetNP(GetNP() - 1);
 		SetAgilityExperience(GetAgilityExperience() + 10);
@@ -681,7 +682,7 @@ bool character::TryMove(vector2d MoveTo)
 				}
 				else
 					if(GetIsPlayer() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->CanBeOpened())
-						if(game::BoolQuestion("Do you want to open this door? [Y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+						if(game::BoolQuestion("Do you want to open this door? [y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
 						{
 							OpenPos(MoveTo);
 							return true;
@@ -774,7 +775,7 @@ bool character::PickUp()
 
 bool character::Quit()
 {
-	if(game::BoolQuestion("Thine Holy Quest is not yet compeleted! Really quit? [Y/N]"))
+	if(game::BoolQuestion("Thine Holy Quest is not yet compeleted! Really quit? [y/N]"))
 	{
 		game::Quit();
 
@@ -815,7 +816,7 @@ void character::Die()
 		{
 			game::DrawEverything(false);
 
-			if(!game::BoolQuestion("Do you want to do this, cheater? [Y/N]", 2, 'y'))
+			if(!game::BoolQuestion("Do you want to do this, cheater? [y/N]", 2, 'y'))
 			{
 				SetHP(GetMaxHP());
 				SetNP(1000);
@@ -826,15 +827,17 @@ void character::Die()
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
+
 	SetExists(false);
 
 	if(GetIsPlayer())
 	{
-		game::DrawEverything();
-		if(game::BoolQuestion("Do you want to see your inventory? [Y/N]", 2))
+		game::DrawEverything(false);
+
+		if(game::BoolQuestion("Do you want to see your inventory? [y/N]", 2))
 			GetStack()->DrawContents("Your inventory");
 
-		if(game::BoolQuestion("Do you want to see your message history? [Y/N]", 2))
+		if(game::BoolQuestion("Do you want to see your message history? [y/N]", 2))
 			DrawMessageHistory();
 	}
 
@@ -847,7 +850,7 @@ void character::Die()
 			GetStack()->GetItem(0)->SetExists(false);
 			GetStack()->RemoveItem(0);
 		}
-	
+
 	GetSquareUnder()->RemoveCharacter();
 
 	if(!game::GetInWilderness())
@@ -863,8 +866,11 @@ void character::Die()
 
 		game::RemoveSaves();
 
-		highscore HScore;
-		HScore.Draw();
+		if(!game::GetWizardMode())
+		{
+			highscore HScore;
+			HScore.Draw();
+		}
 	}
 }
 
@@ -948,7 +954,7 @@ void character::AddHitMessage(character* Enemy, const bool Critical) const
 
 	if(Enemy->GetIsPlayer())
 		if(GetWielded() && GetLevelSquareUnder()->CanBeSeen())
-			ADD_MESSAGE("%s %s you with %s %s!", CNAME(DEFINITE), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
+			ADD_MESSAGE("%s %s you with %s %s!", ThisDescription.c_str(), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
 		else
 			ADD_MESSAGE("%s %s you!", ThisDescription.c_str(), ThirdPersonMeleeHitVerb(Critical).c_str());
 	else
@@ -1144,7 +1150,7 @@ bool character::HasMaakotkaShirt() const
 
 bool character::Save()
 {
-	if(game::BoolQuestion("Dost thee truly wish to save and flee? [Y/N]"))
+	if(game::BoolQuestion("Dost thee truly wish to save and flee? [y/N]"))
 	{
 		game::Save();
 
@@ -1357,7 +1363,7 @@ bool character::WizardMode()
 {
 	if(!game::GetWizardMode())
 	{
-		if(game::BoolQuestion("Do you want to cheat, cheater? This action cannot be undone. [Y/N]"))
+		if(game::BoolQuestion("Do you want to cheat, cheater? This action cannot be undone. [y/N]"))
 		{
 			game::EnableWizardMode();
 
@@ -1554,6 +1560,8 @@ bool character::Look()
 
 			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
 				ADD_MESSAGE("%s is standing here.", game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()->CNAME(INDEFINITE));
+
+			/* This should also show whether the monster is hostile, neutral or friend! */
 		}
 		else
 			ADD_MESSAGE("You have no idea what might lie here.");
@@ -1634,11 +1642,22 @@ bool character::Pray()
 {
 	felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 0, true);
 
+	std::vector<uchar> KnownIndex;
+
 	if(!GetLevelSquareUnder()->GetDivineOwner())
+	{
 		for(ushort c = 1; game::GetGod(c); ++c)
-			Panthenon.AddEntry(game::GetGod(c)->CompleteDescription(), RED);
+			if(game::GetGod(c)->GetKnown())
+			{
+				Panthenon.AddEntry(game::GetGod(c)->CompleteDescription(), RED);
+				KnownIndex.push_back(c);
+			}
+	}
 	else
-		Panthenon.AddEntry(game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->CompleteDescription(), RED);
+		if(game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->GetKnown())
+			Panthenon.AddEntry(game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->CompleteDescription(), RED);
+		else
+			ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
 
 	ushort Select = Panthenon.Draw();
 
@@ -1650,7 +1669,7 @@ bool character::Pray()
 		{
 			if(!Select)
 			{
-				if(game::BoolQuestion("Do you really wish to pray? [Y/N]"))
+				if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->Name() + "? [y/N]"))
 					game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->Pray();
 				else
 					return false;
@@ -1660,8 +1679,8 @@ bool character::Pray()
 		}
 		else
 		{
-			if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(Select+1)->Name().c_str() + "? [Y/N]"))
-				game::GetGod(Select+1)->Pray();
+			if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(KnownIndex[Select])->Name() + "? [y/N]"))
+				game::GetGod(KnownIndex[Select])->Pray();
 			else
 				return false;
 		}
@@ -2383,7 +2402,7 @@ bool character::CheckForEnemies()
 	{
 		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
-		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), Char->LOSRangeSquare()))
+		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))
 		{
 			ulong ThisDistance = GetHypotSquare(long(XPointer) - GetPos().X, long(YPointer) - GetPos().Y);
 
@@ -2614,19 +2633,28 @@ ulong character::Danger() const
 
 bool character::RaiseGodRelations()
 {
-	for(ushort c = 1;; ++c)
-	{
+	for(ushort c = 1; game::GetGod(c); ++c)
 		game::GetGod(c)->AdjustRelation(50);
-	}
+
 	return false;
 }
 
 bool character::LowerGodRelations()
 {
-	for(ushort c = 1;; ++c)
-	{
+	for(ushort c = 1; game::GetGod(c); ++c)
 		game::GetGod(c)->AdjustRelation(-50);
-	}
-	return false;
 
+	return false;
+}
+
+ushort character::LOSRange() const
+{
+	return GetPerception() * game::GetCurrentArea()->GetLOSModifier() / 48;
+}
+
+ushort character::LOSRangeSquare() const
+{
+	ulong LOSModifier = game::GetCurrentArea()->GetLOSModifier();
+
+	return GetPerception() * GetPerception() * LOSModifier * LOSModifier / 2304;
 }

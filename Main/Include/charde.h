@@ -122,6 +122,7 @@ public:
 	virtual ushort Possibility() const RET(0)
 	virtual bool Polymorph() RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual void AddHitMessage(character*, const bool = false) const;
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
 	virtual void CreateCorpse();

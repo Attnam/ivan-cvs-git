@@ -30,7 +30,7 @@ class inputfile;
 class god
 {
 public:
-	god() : Relation(0), Timer(0) {}
+	god() : Relation(0), Timer(0), Known(false) {}
 	virtual void Pray();
 	virtual std::string Name() const = 0;
 	virtual std::string Description() const = 0;
@@ -48,11 +48,14 @@ public:
 	virtual uchar BasicAlignment() const { return NEUTRAL; }
 	virtual short GetRelation() const { return Relation; }
 	virtual void PrintRelation() const;
+	virtual void SetKnown(bool What) { Known = What; }
+	virtual bool GetKnown() const { return Known; }
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();
 	short Relation;
 	long Timer;
+	bool Known;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, god* God)

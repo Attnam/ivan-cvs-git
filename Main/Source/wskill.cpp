@@ -106,7 +106,8 @@ void gweaponskill::AddLevelUpMessage() const
 
 void gweaponskill::AddLevelDownMessage() const
 {
-	ADD_MESSAGE("You have not practised enough with %s lately and your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
+	ADD_MESSAGE("You have not practised enough with %s lately.");
+	ADD_MESSAGE("Your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
 }
 
 void sweaponskill::AddLevelUpMessage() const
@@ -116,7 +117,8 @@ void sweaponskill::AddLevelUpMessage() const
 
 void sweaponskill::AddLevelDownMessage() const
 {
-	ADD_MESSAGE("You have not practised enough with your %s lately and your skill level is reduced to %d!", WeaponName.c_str(), Level);
+	ADD_MESSAGE("You have not practised enough with your %s lately.");
+	ADD_MESSAGE("Your skill level is reduced to %d!", WeaponName.c_str(), Level);
 }
 
 void sweaponskill::Save(outputfile& SaveFile) const

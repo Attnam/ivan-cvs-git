@@ -49,7 +49,12 @@ bool banana::Consume(character* Eater, float Amount)
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
 	if(!GetMaterial(1)->GetVolume())
-		Eater->GetStack()->AddItem(new bananapeals);
+	{
+		item* Peals = new bananapeals(false);
+		Peals->InitMaterials(GetMaterial(0));
+		PreserveMaterial(0);
+		Eater->GetStack()->AddItem(Peals);
+	}
 
 	return GetMaterial(1)->GetVolume() ? false : true;
 }
@@ -195,7 +200,7 @@ bool abone::Consume(character* Consumer, float Amount)
 
 item* can::PrepareForConsuming(character* Consumer, stack* Stack)
 {
-	if(!Consumer->GetIsPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
+	if(!Consumer->GetIsPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/n]", 'y'))
 		return TryToOpen(Stack);
 	else
 		return 0;
@@ -211,18 +216,16 @@ bool pickaxe::Apply(character* User, stack*)
 	vector2d Temp;
 	
 	if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
-	{
 		if(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp)->CanBeDigged(User, this))
 		{
 			User->SetSquareBeingDigged(User->GetPos() + Temp);
 			User->SetOldWieldedItem(User->GetWielded());
 			User->SetWielded(this);
 			User->ActivateState(DIGGING);
-			User->SetStateCounter(DIGGING, 200 - User->GetStrength() * 2);
+			User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? (200 - (User->GetStrength() << 2)) : 2);
 			User->SetStrengthExperience(User->GetStrengthExperience() + 50);
 			return true;
-		}
-	}	
+		}	
 
 	return false;
 }
@@ -546,21 +549,19 @@ bool platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	return true;
 }
 
-
-void brokenbottle::GetStepOnEffect(character* Stepper, bool)
+void brokenbottle::GetStepOnEffect(character* Stepper)
 {
-	if(Stepper->GetIsPlayer())
+	if(!(rand() % 10))
 	{
-		
-		ADD_MESSAGE("Auch. You step on %s", CNAME(INDEFINITE));
-	}
-	else if(Stepper->GetSquareUnder()->CanBeSeen())
-	{
-		ADD_MESSAGE("%s steps on %s and is hurt.", Stepper->CNAME(DEFINITE), CNAME(INDEFINITE));
-	}
+		if(Stepper->GetIsPlayer())
+			ADD_MESSAGE("Auch. You step on sharp glass splinters.");
+		else
+			if(Stepper->GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CNAME(DEFINITE));
 
-	Stepper->SetHP(Stepper->GetHP() - rand() % 2 - 1);
-	Stepper->CheckDeath("stepped on a broken bottle.");
+		Stepper->SetHP(Stepper->GetHP() - rand() % 2 - 1);
+		Stepper->CheckDeath("stepped on a broken bottle");
+	}
 
 }
 

@@ -785,65 +785,6 @@ bool level::GetOnGround() const
 	return *LevelScript->GetOnGround();
 }
 
-vector2d level::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar MaxDistance)
-{
-	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
-	{
-		vector2d Vector = vector2d(DoX, DoY);
-
-		if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && !GetSquare(Vector)->GetCharacter() && Vector != Prohibited)
-			return Vector;
-	})
-
-	if(MaxDistance)
-		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
-		{
-			vector2d Vector = vector2d(DoX, DoY);
-
-			if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && Vector != Prohibited)
-			{
-				Vector = FreeSquareSeeker(Vector, StartPos, MaxDistance - 1);
-
-				if(Vector.X != 0xFFFF)
-					return Vector;
-			}
-		})
-
-	return vector2d(0xFFFF, 0xFFFF);
-}
-
-vector2d level::GetNearestFreeSquare(vector2d StartPos)
-{
-	if(GetSquare(StartPos)->GetOverTerrain()->GetIsWalkable() && !GetSquare(StartPos)->GetCharacter())
-		return StartPos;
-
-	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
-	{
-		vector2d Vector = vector2d(DoX, DoY);
-
-		if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && !GetSquare(Vector)->GetCharacter())
-			return Vector;
-	})
-
-	for(ushort c = 0; c < 20; ++c)
-		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
-		{
-			vector2d Vector = vector2d(DoX, DoY);
-
-			if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable())
-			{
-				Vector = FreeSquareSeeker(Vector, StartPos, c);
-
-				if(Vector.X != 0xFFFF)
-					return Vector;
-			}
-		})
-
-	ABORT("No room for character. Character unhappy.");
-
-	return vector2d(0xFFFF, 0xFFFF);
-}
-
 void level::MoveCharacter(vector2d From, vector2d To)
 {
 	GetLevelSquare(From)->MoveCharacter(GetLevelSquare(To));
@@ -852,4 +793,9 @@ void level::MoveCharacter(vector2d From, vector2d To)
 ushort level::GetIdealPopulation() const 
 { 
 	return 10 + (game::GetCurrent() << 2); 
+}
+
+ushort level::GetLOSModifier() const
+{
+	return *LevelScript->GetLOSModifier();
 }

@@ -17,6 +17,8 @@ uchar		graphics::ColorDepth;
 std::list<bitmap*> graphics::BitmapContainer;
 colorizablebitmap*	graphics::DefaultFont;
 
+extern DWORD GetDXVersion();
+
 void graphics::Init()
 {
 	static bool AlreadyInstalled = false;

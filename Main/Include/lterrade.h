@@ -175,6 +175,7 @@ public:
 	virtual void Load(inputfile&);
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() { return "An invisible wall stops your feeble attempt."; }
+	virtual void StepOn(character*);
 protected:
 	virtual std::string NameSingular() const		{ return "altar"; }
 	virtual vector2d GetBitmapPos() const				{ return vector2d(0, 368); }

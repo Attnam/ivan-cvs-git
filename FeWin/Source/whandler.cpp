@@ -4,7 +4,7 @@
 #include "bitmap.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
-bool globalwindowhandler::KeyPressed = false;
+//bool globalwindowhandler::KeyPressed = false;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
 bool globalwindowhandler::InGetKey = false;
 
@@ -69,7 +69,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				return 0;
 			}
 
-			KeyPressed = true;
+			//KeyPressed = true;
 			KeyBuffer.Add(wParam);
 
 			return 0;
@@ -82,8 +82,8 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 			if(Index != 0xFFFF)
 				KeyBuffer.Remove(Index);
 
-			if(!KeyBuffer.Length())
-				KeyPressed = false;
+			//if(!KeyBuffer.Length())
+			//	KeyPressed = false;
 
 			return 0;
 		}
@@ -99,51 +99,51 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			KeyBuffer.Remove(0);	// Shift-key == 0x10
 						// So what?
 
-	KeyPressed = false;
+	//KeyPressed = false;
 	InGetKey = true;
 
 	MSG msg;
 
 	while(true)
-		if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-			if(msg.message == WM_QUIT)
-				exit(0);
+		if(KeyBuffer.Length())
+		{
+			int Key =  KeyBuffer.Remove(0);
+			int BackUp = Key;
+
+			unsigned int ScanCode = MapVirtualKeyEx(Key, 0, KeyboardLayoutName);
+			unsigned short ToBeReturned;	
+			unsigned char KeyboardBuffer[256];
+
+			if(Key == VK_LEFT) return 0x14B;
+			if(Key == VK_HOME) return 0x147;
+			if(Key == VK_UP) return 0x148;
+			if(Key == VK_PRIOR) return 0x149;	// page up! Belive it, or not!
+			if(Key == VK_RIGHT) return 0x14D;
+			if(Key == VK_NEXT) return 0x151;	// page down! Believe it, or not!
+			if(Key == VK_DOWN) return 0x150;
+			if(Key == VK_END) return 0x14F;
+
+			if(!GetKeyboardState(KeyboardBuffer))
+				return 'x';
+			ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
+
+			if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
+				return ToBeReturned;
 			else
-			{
-				TranslateMessage(&msg);
-
-				if(msg.message != WM_SYSKEYUP)
-					DispatchMessage(&msg);
-			}
+				if(AcceptCommandKeys)
+					return 0;
+		}
 		else
-			if(KeyBuffer.Length())
-			{
-				int Key =  KeyBuffer.Remove(0);
-				int BackUp = Key;
-
-				unsigned int ScanCode = MapVirtualKeyEx(Key, 0, KeyboardLayoutName);
-				unsigned short ToBeReturned;	
-				unsigned char KeyboardBuffer[256];
-
-				if(Key == VK_LEFT) return 0x14B;
-				if(Key == VK_HOME) return 0x147;
-				if(Key == VK_UP) return 0x148;
-				if(Key == VK_PRIOR) return 0x149;	// page up! Belive it, or not!
-				if(Key == VK_RIGHT) return 0x14D;
-				if(Key == VK_NEXT) return 0x151;	// page down! Believe it, or not!
-				if(Key == VK_DOWN) return 0x150;
-				if(Key == VK_END) return 0x14F;
-
-				if(!GetKeyboardState(KeyboardBuffer))
-					return 'x';
-				ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
-
-				if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
-					return ToBeReturned;
+			if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+				if(msg.message == WM_QUIT)
+					exit(0);
 				else
-					if(AcceptCommandKeys)
-						return 0;
-			}
+				{
+					TranslateMessage(&msg);
+
+					if(msg.message != WM_SYSKEYUP)
+						DispatchMessage(&msg);
+				}
 }
 
 void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)

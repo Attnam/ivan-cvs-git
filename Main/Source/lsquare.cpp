@@ -708,7 +708,7 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 {
 	if(GetCharacter() && Kicker->GetTeam()->GetRelation(GetCharacter()->GetTeam()) != HOSTILE)
-		if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+		if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
 			return false;
 		else
 			Kicker->GetTeam()->Hostility(GetCharacter()->GetTeam());
@@ -961,4 +961,11 @@ void levelsquare::MoveCharacter(levelsquare* To)
 		NewDrawRequested = true;
 		To->NewDrawRequested = true;
 	}
+}
+
+void levelsquare::StepOn(character* Stepper)
+{
+	GetGroundLevelTerrain()->StepOn(Stepper);
+	GetOverLevelTerrain()->StepOn(Stepper);
+	GetStack()->CheckForStepOnEffect(Stepper);
 }

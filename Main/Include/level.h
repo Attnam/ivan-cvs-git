@@ -61,9 +61,8 @@ public:
 	virtual bool GetOnGround() const;
 	virtual bool IsValid(vector2d Vector) const { return Vector.X < XSize ? Vector.Y < YSize ? true : false : false; }
 	virtual levelscript* GetLevelScript() const { return LevelScript; }
-	virtual vector2d GetNearestFreeSquare(vector2d);
-	virtual vector2d FreeSquareSeeker(vector2d, vector2d, uchar);
 	virtual void MoveCharacter(vector2d, vector2d);
+	virtual ushort GetLOSModifier() const;
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

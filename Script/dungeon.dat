@@ -24,6 +24,7 @@ Dungeon 0;
 		OnGround=false;
 		TeamDefault=1;
 		AmbientLight=0;
+		LOSModifier=16;
 
 		RoomDefault
 		{
@@ -255,6 +256,7 @@ Dungeon 1;
 		OnGround=true;
 		TeamDefault=2;
 		AmbientLight=225;
+		LOSModifier=64;
 		
 		RoomDefault
 		{
@@ -305,6 +307,7 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;

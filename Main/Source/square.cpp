@@ -80,10 +80,20 @@ void square::SetLastSeen(ulong What)
 	if(!GetLastSeen())
 		Memorized = new bitmap(16, 16);
 
-	if(GetLastSeen() < What - 1)
+	if(GetLastSeen() < What - 1 || !GetOverTerrain()->GetIsWalkable())
 		SendNewDrawRequest();
 
 	UpdateMemorizedDescription();
 
 	LastSeen = What;
 }
+
+void square::KickAnyoneStandingHereAway()
+{
+	if(Character)
+	{
+		GetAreaUnder()->AddCharacter(GetAreaUnder()->GetNearestFreeSquare(GetPos()), Character);
+		RemoveCharacter();
+	}
+}
+

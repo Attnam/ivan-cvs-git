@@ -48,6 +48,8 @@ public:
 	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
 	virtual bitmap* GetMemorized() const { return Memorized; }
 	virtual void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
+	virtual void StepOn(character*) {}
+	virtual void KickAnyoneStandingHereAway();
 protected:
 	std::string MemorizedDescription;
 	area* AreaUnder;

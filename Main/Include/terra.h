@@ -11,6 +11,7 @@ class terrain
 {
 public:
 	virtual bool GetIsWalkable() const { return true; }
+	virtual void StepOn(character*) {}
 };
 
 class groundterrain : public terrain

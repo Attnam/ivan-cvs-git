@@ -45,6 +45,8 @@ void object::Load(inputfile& SaveFile)
 
 	SaveFile >> Material >> Size >> GraphicId >> ID;
 
+	PreserveBit.resize(Material.size(), false);
+
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
@@ -57,6 +59,7 @@ void object::InitMaterials(ushort Materials, ...)
 	for(ushort c = 0; c < Materials; ++c)
 	{
 		Material.push_back(va_arg(AP, material*));
+		PreserveBit.push_back(false);
 
 		if(Material[c] && !Material[c]->GetVolume())
 			Material[c]->SetVolume(GetDefaultVolume(c));
@@ -74,6 +77,7 @@ void object::InitMaterials(ushort Materials, ...)
 void object::InitMaterials(material* FirstMaterial)
 {
 	Material.push_back(FirstMaterial);
+	PreserveBit.push_back(false);
 
 	if(Material[0])
 	{
@@ -269,7 +273,8 @@ void object::EraseMaterials()
 	igraph::RemoveUser(GraphicId);
 
 	for(ushort c = 0; c < Material.size(); ++c)
-		delete Material[c];
+		if(!PreserveBit[c])
+			delete Material[c];
 
 	Material.resize(0);
 }
@@ -277,7 +282,10 @@ void object::EraseMaterials()
 void object::SetMaterial(uchar Index, material* NewMaterial)
 {
 	if(Index >= Material.size())
+	{
 		Material.resize(Index + 1, 0);
+		PreserveBit.resize(Index + 1, false);
+	}
 
 	if(Index < 4)
 		if((Material[Index] && NewMaterial && Material[Index]->GetColor() != NewMaterial->GetColor()) || (!Material[Index] && NewMaterial && NewMaterial->GetColor()) || (Material[Index] && !NewMaterial && Material[Index]->GetColor()))
@@ -316,4 +324,9 @@ void object::SetSquareUnder(square* Square)
 	for(ushort c = 0; c < Material.size(); ++c)
 		if(Material[c])
 			Material[c]->SetSquareUnder(Square);
+}
+
+void object::PreserveMaterial(ushort Index)
+{
+	PreserveBit[Index] = true;
 }

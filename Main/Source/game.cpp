@@ -62,6 +62,7 @@ command* game::Command[] = {	0,
 				new command(&character::IncreaseSoftGamma, "increase software gamma", 'f', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
+				new command(&character::LowerGodRelations, "lower your relations to the gods", 'L', true),
 				new command(&character::LowerStats, "lower stats", 'T', true),
 				new command(&character::Offer, "sacrifice", 'S', false),
 				new command(&character::Open, "open", 'o', false),
@@ -70,6 +71,7 @@ command* game::Command[] = {	0,
 				new command(&character::PickUp, "pick up", ',', false),
 				new command(&character::Pray, "pray", 'p', false),
 				new command(&character::Quit, "quit", 'q', true),
+				new command(&character::RaiseGodRelations, "raise your relations to the gods", 'P', true),
 				new command(&character::RaiseStats, "raise stats", 'R', true),
 				new command(&character::Read, "read", 'r', false),
 				new command(&character::RestUntilHealed, "rest until fully healed", 'h', true),
@@ -88,8 +90,6 @@ command* game::Command[] = {	0,
 				new command(&character::Wield, "wield", 'w', true),
 				new command(&character::WizardMode, "wizard mode", 'X', true),
 				new command(&character::Zap, "zap", 'z', false),
-				new command(&character::RaiseGodRelations, "raise your relations to the gods", 'P', true),
-				new command(&character::LowerGodRelations, "lower your relations to the gods", 'P', true),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
@@ -189,9 +189,11 @@ void game::Init(std::string Name)
 
 		for(ushort c = 1; GetGod(c); ++c)
 		{
-			GetGod(c)->SetRelation(1000);
+			GetGod(c)->SetRelation(0);
 			GetGod(c)->SetTimer(0);
 		}
+
+		GetGod(1)->SetKnown(true);
 
 		Turns = 0;
 
@@ -544,8 +546,12 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
 	if(OnScreen(GetPlayer()->GetPos()))
 		igraph::DrawCursor((GetPlayer()->GetPos() - GetCamera() + vector2d(0,2)) << 4);
 	game::Panel.Draw();
-	DRAW_MESSAGES();
-	if(EmptyMsg) EMPTY_MESSAGES();
+
+	if(EmptyMsg)
+	{
+		DRAW_MESSAGES();
+		EMPTY_MESSAGES();
+	}
 }
 
 bool game::Save(std::string SaveName)

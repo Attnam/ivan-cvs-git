@@ -111,7 +111,8 @@ void god::AdjustTimer(long Amount)
 
 void consummo::PrayGoodEffect()
 {
-	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement! You teleport away!");
+	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
+	ADD_MESSAGE("You teleport away!");
 
 	vector2d Pos;
 
@@ -128,7 +129,8 @@ void consummo::PrayGoodEffect()
 
 void consummo::PrayBadEffect()
 {
-	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement! Some parts of you teleport away!");
+	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
+	ADD_MESSAGE("Some parts of you teleport away!");
 
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % game::GetPlayer()->GetMaxHP());
 
@@ -137,7 +139,8 @@ void consummo::PrayBadEffect()
 
 void valpuri::PrayGoodEffect()
 {
-	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\" A sword glittering with holy might drops on to the ground.");
+	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\"");
+	ADD_MESSAGE("A sword glittering with holy might drops on to the ground.");
 	item* Reward = new curvedtwohandedsword(false);
 	Reward->InitMaterials(3, new valpurium, new iron, 0);
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
@@ -152,7 +155,8 @@ void valpuri::PrayBadEffect()
 
 void venius::PrayGoodEffect()
 {
-	ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge divine fire sweeps the surrounding area.");
+	ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\"");
+	ADD_MESSAGE("A huge divine fire sweeps the surrounding area.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
@@ -195,22 +199,24 @@ void dulcis::PrayBadEffect()
 void inasnum::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
+
 	switch(rand() % 7)
 	{
 	case 0:
 		ADD_MESSAGE("His eye was found in a mug.");
 	break;
 	case 1:
-		ADD_MESSAGE("Master Evil, the Pepsi Daemon King, has escabeth not upwards but downwards in to the pits of dev/null with a great foe of the sword.");
+		ADD_MESSAGE("Master Evil, the Pepsi Daemon King, has escapeth not upwards but downwards.");
+		ADD_MESSAGE("In the pits of dev/null he carrieth a great foe of the sword.");
 	break;
 	case 2:
-		ADD_MESSAGE("Thou shalt not hit thine lesser brethren with a biggest thing you can find in this universe.");
+		ADD_MESSAGE("Thou shalt not hit thine lesser brethren with a biggest thing you can find.");
 	break;
 	case 3:
 		ADD_MESSAGE("If thy hast fought but not conquered thine foe thy must lick thine wounds in peace.");
 	break;
 	case 4:
-		ADD_MESSAGE("School... No, no...its right behind me!!! Nooooo... Why is it coming into my dreams?");
+		ADD_MESSAGE("School... No, no... Its right behind me!!! Nooo... Why is it coming into my dreams?");
 	break;
 	case 5:
 		ADD_MESSAGE("Thou shalt not hurry in thine killing.");
@@ -219,7 +225,7 @@ void inasnum::PrayGoodEffect()
 		ADD_MESSAGE("If thy shall eat frogs, thy will be foul.");
 	break;
 	default:
-		ADD_MESSAGE("He created me from the fire to destroy all gods who oppose Him.");
+		ADD_MESSAGE("He created me from the fire to destroy all gods who oppose him.");
 	}
 }
 
@@ -348,24 +354,29 @@ void calamus::PrayBadEffect()
 
 void god::Save(outputfile& SaveFile) const
 {
-	SaveFile << Relation << Timer;
+	SaveFile << Relation << Timer << Known;
 }
 
 void god::Load(inputfile& SaveFile)
 {
-	SaveFile >> Relation >> Timer;
+	SaveFile >> Relation >> Timer >> Known;
 }
 
 void erado::PrayGoodEffect()
 {
-	ADD_MESSAGE("The air vibrates violently around you and a terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption falls on the ground.");
+	ADD_MESSAGE("The air vibrates violently around you.");
+	ADD_MESSAGE("A terrible undead voice echoes through the caverns:");
+	ADD_MESSAGE("\"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\"");
+	ADD_MESSAGE("A heavy weapon of pure corruption falls on the ground.");
 
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new neercseulb);
 }
 
 void erado::PrayBadEffect()
 {
-	ADD_MESSAGE("A dark, booming voice shakes the walls: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
+	ADD_MESSAGE("A dark, booming voice shakes the walls:");
+	ADD_MESSAGE("\"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\"");
+	ADD_MESSAGE("A bolt of black energy hits you.");
 
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
 	game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);

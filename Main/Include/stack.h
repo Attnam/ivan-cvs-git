@@ -61,7 +61,7 @@ public:
 	bool Polymorph();
 	void ReceiveSound(float);
 	void StruckByWandOfStriking(void);
-	void CheckForStepOnEffect(character*, bool);
+	void CheckForStepOnEffect(character*);
 private:
 	void Optimize(ushort);
 	square* SquareUnder;

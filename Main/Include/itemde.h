@@ -436,7 +436,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,160)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
-	virtual void GetStepOnEffect(character*, bool); 
+	virtual void GetStepOnEffect(character*); 
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );

@@ -142,8 +142,8 @@ public:
 	virtual ushort GetEndurance() const					{ return Endurance; }
 	virtual ushort GetPerception() const				{ return Perception; }
 	virtual ushort GetStrength() const					{ return Strength; }
-	virtual ushort LOSRange() const { return GetPerception() / 3; }
-	virtual ushort LOSRangeSquare() const { return GetPerception() * GetPerception() / 9; }
+	virtual ushort LOSRange() const;
+	virtual ushort LOSRangeSquare() const;
 	virtual ushort Possibility() const = 0;
 	virtual vector2d GetPos() const;
 	virtual void AddBlockMessage(character*) const;
