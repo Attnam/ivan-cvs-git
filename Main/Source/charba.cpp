@@ -35,6 +35,7 @@ character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, 
 	StateHandler[POLYMORPHED] = &character::PolymorphHandler;
 	StateHandler[RESTING] = &character::RestHandler;
 	StateHandler[DIGGING] = &character::DigHandler;
+	StateHandler[GOING] = &character::GoHandler;
 }
 
 character::~character()
@@ -2527,7 +2528,7 @@ void character::EndPolymorph()
 
 bool character::CanMove()
 {
-	if(StateIsActivated(FAINTED) || StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING))
+	if(StateIsActivated(FAINTED) || StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING) || StateIsActivated(GOING))
 		return false;
 	else
 		return true;
@@ -2537,7 +2538,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 {
 	if(GetIsPlayer())
 	{
-		if((StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING)) && Reason != "")
+		if((StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING) || StateIsActivated(GOING)) && Reason != "")
 			ADD_MESSAGE("%s.", Reason.c_str());
 
 		if(StateIsActivated(CONSUMING))
@@ -2556,6 +2557,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 	EndConsuming();
 	EndRest();
 	EndDig();
+	EndGoing();
 }
 
 void character::StateAutoDeactivation()
@@ -3036,4 +3038,48 @@ void character::SetHP(short What)
 			game::Beep();
 			ADD_MESSAGE("You bleed.");
 		}
+}
+
+void character::EndGoing(void)
+{
+	DeActivateState(GOING);
+}
+
+bool character::Go(void)
+{
+	vector2d Temp;
+	if((Temp = game::AskForDirectionVector("What direction do you want to go?")) != vector2d(0,0))
+	{
+		ActivateState(GOING);
+		StateVariables.Going.Direction = game::GetDirectionForVector(Temp);
+		StateVariables.Going.FirstSquare = true;
+		return true;
+	}
+	return false;
+}
+
+void character::GoHandler(void)
+{
+	levelsquare* MoveToSquare = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
+	uchar OKDirectionsCounter = 0;
+
+	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	{
+		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+		{
+			OKDirectionsCounter++;	
+		}
+	});
+	if((!MoveToSquare->GetOverTerrain()->GetIsWalkable()
+	|| MoveToSquare->GetLuminance() < LIGHT_BORDER
+	|| OKDirectionsCounter > 2
+	|| MoveToSquare->GetCharacter()
+	|| MoveToSquare->GetStack()->GetItems())
+	&& !StateVariables.Going.FirstSquare)
+		EndGoing();
+	else
+	{
+		StateVariables.Going.FirstSquare = false;
+		TryMove(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
+	}
 }

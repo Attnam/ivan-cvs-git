@@ -19,13 +19,15 @@
 #define BURDENED		2
 #define UNBURDENED		3
 
-#define STATES			5
+#define STATES			6
 
 #define FAINTED		0
 #define CONSUMING		1
 #define POLYMORPHED		2
 #define RESTING		3
 #define DIGGING		4
+#define GOING			5
+
 
 #define CHARACTER_OUTLINE_COLOR	BLUE
 
@@ -253,6 +255,9 @@ public:
 	virtual std::string StandVerb() const { return "standing"; }
 	virtual stack* GetGiftStack() const;
 	virtual void MoveRandomlyInRoom();
+	virtual void GoHandler(void);
+	virtual void EndGoing(void);
+	virtual bool Go(void);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -307,6 +312,11 @@ protected:
 			ushort SquareBeingDiggedY;
 			item* OldWieldedItem;
 		} Digging;
+		struct going
+		{
+			uchar Direction;
+			bool FirstSquare;
+		} Going;
 	} StateVariables;
 	ulong Money;
 	uchar HomeRoom;

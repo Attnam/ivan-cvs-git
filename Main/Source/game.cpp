@@ -55,7 +55,7 @@ command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
 				new command(&character::Close, "close", 'c', false),
 				new command(&character::Consume, "eat/drink", 'e', true),
-				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'G', true),
+				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'B', true),
 				new command(&character::Dip, "dip", 'D', true),
 				new command(&character::Drop, "drop", 'd', false),
 				new command(&character::WhatToEngrave, "engrave", 'E', false),
@@ -63,7 +63,7 @@ command* game::Command[] = {	0,
 				new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
-				new command(&character::IncreaseSoftGamma, "increase software gamma", 'g', true),
+				new command(&character::IncreaseSoftGamma, "increase software gamma", 'b', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
 				new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
@@ -96,6 +96,7 @@ command* game::Command[] = {	0,
 				new command(&character::Wield, "wield", 'w', true),
 				new command(&character::WizardMode, "activate wizard mode", 'X', true),
 				new command(&character::Zap, "zap", 'z', false),
+				new command(&character::Go, "go", 'g', false),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
@@ -1156,4 +1157,13 @@ void game::HandleQuitMessage()
 void game::Beep()
 {
 	::Beep(400, 1000);
+}
+
+uchar game::GetDirectionForVector(vector2d Vector)
+{
+	for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+		if(Vector == game::GetMoveVector(c))
+			return c;
+
+	return DIRECTION_COMMAND_KEYS;
 }

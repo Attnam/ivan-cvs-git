@@ -161,6 +161,7 @@ public:
 	static bool GetBeepOnCriticalMsg() { return BeepOnCriticalMsg; }
 	static void SetBeepOnCriticalMsg(bool What) { BeepOnCriticalMsg = What; }
 	static void Beep();
+	static uchar GetDirectionForVector(vector2d);
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
