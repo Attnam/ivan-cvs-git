@@ -3173,7 +3173,7 @@ color16 game::GetAttributeColor(int I)
   || Delta >= 255)
     return WHITE;
   else if(OldAttribute[I] < NewAttribute[I])
-    return MakeRGB16(Delta, Delta, 255);
+    return MakeRGB16(255, 255, Delta);
   else
     return MakeRGB16(255, Delta, Delta);
 }
