@@ -46,7 +46,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, color24 
     }
 }
 
-void stack::AddItem(item* ToBeAdded)
+void stack::AddItem(item* ToBeAdded, bool RunRoomEffects)
 {
   if(!ToBeAdded)
     return;
@@ -66,6 +66,10 @@ void stack::AddItem(item* ToBeAdded)
 
   if(!game::IsGenerating())
     {
+      if(RunRoomEffects && GetLSquareUnder()->GetRoom())
+	{
+	  GetLSquareUnder()->GetRoom()->GetAddItemEffect(ToBeAdded);
+	}
       SquareUnder->SendNewDrawRequest();
       SquareUnder->SendMemorizedUpdateRequest();
     }
@@ -773,7 +777,7 @@ bool stack::Duplicate(int Max, ulong Flags)
 
 /* Adds the item without any external update requests */
 
-void stack::AddElement(item* Item)
+void stack::AddElement(item* Item,bool)
 {
   ++Items;
 

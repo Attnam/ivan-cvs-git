@@ -96,3 +96,4 @@ bool room::IsOKToDestroyWalls(const character* Infidel) const
 {
   return !MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE;
 }
+

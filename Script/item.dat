@@ -114,6 +114,7 @@ item
 	TeleportPriority = 100;
 	HasNormalPictureDirection = true;
 	DamageFlags = BLUNT;
+	IsKamikazeWeapon = false;
 }
 
 materialcontainer
@@ -1272,6 +1273,7 @@ wand
 		BeamEffect = BEAM_POLYMORPH;
 		CanBeCloned = false;
 		AttachedGod = SCABIES;
+		IsKamikazeWeapon = true;
 	}
 
 	Config WAND_OF_STRIKING;
@@ -1286,6 +1288,7 @@ wand
 		BeamColor = WHITE;
 		BeamEffect = BEAM_STRIKE;
 		AttachedGod = INFUSCOR;
+		IsKamikazeWeapon = true;
 	}
 
 	Config WAND_OF_FIRE_BALLS;
@@ -1301,6 +1304,7 @@ wand
 		BeamEffect = BEAM_FIRE_BALL;
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
+		IsKamikazeWeapon = true;
 	}
 
 	Config WAND_OF_TELEPORTATION;
@@ -1421,6 +1425,7 @@ wand
 		BeamStyle = LIGHTNING_BEAM;
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 9;
+		IsKamikazeWeapon = true;
 	}
 
 	Config WAND_OF_ACID_RAIN;
@@ -1436,6 +1441,7 @@ wand
 		BeamEffect = BEAM_ACID_RAIN;
 		AttachedGod = SCABIES;
 		BreakEffectRangeSquare = 1;
+		IsKamikazeWeapon = true;
 	}
 
 	Config WAND_OF_MIRRORING;
@@ -1612,6 +1618,7 @@ backpack /* materialcontainer-> */
 	IsTwoHanded = true;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 144;
+	IsKamikazeWeapon = true;
 }
 
 holybook

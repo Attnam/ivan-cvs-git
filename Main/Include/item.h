@@ -145,6 +145,7 @@ struct itemdatabase : public databasebase
   int TeleportPriority;
   bool HasNormalPictureDirection;
   int DamageFlags;
+  bool IsKamikazeWeapon;
 };
 
 class itemprototype
@@ -446,7 +447,7 @@ class item : public object
   void SetConfig(int, int = 0);
   god* GetMasterGod() const;
   const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
-  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*,bool));
   virtual int GetSquareIndex(vector2d) const { return 0; }
   virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
   vector2d GetLargeBitmapPos(vector2d, int) const;
@@ -502,6 +503,7 @@ class item : public object
   virtual character* GetBodyPartMaster() const { return 0; }
   virtual bool AllowFluids() const { return false; }
   int GetHinderVisibilityBonus(const character*) const;
+  virtual DATA_BASE_BOOL(IsKamikazeWeapon);
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

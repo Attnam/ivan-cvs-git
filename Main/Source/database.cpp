@@ -474,6 +474,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(TeleportPriority);
   ADD_MEMBER(HasNormalPictureDirection);
   ADD_MEMBER(DamageFlags);
+  ADD_MEMBER(IsKamikazeWeapon);
 }
 
 template<class type> void databasecreator<type>::CreateLTerrainDataBaseMemberMap()

@@ -35,7 +35,7 @@ const char* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
-void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*)) { Slot[0] = StackSlot; }
+void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*,bool)) { Slot[0] = StackSlot; }
 bool item::IsAnimated() const { return object::IsAnimated() || Fluid; }
 bool item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
 bool item::IsConsumable(const character* Eater) const { return !!GetConsumeMaterial(Eater); }
@@ -81,15 +81,21 @@ item::~item()
 
 void item::Fly(character* Thrower, int Direction, int Force)
 {
-  MoveTo(GetLSquareUnder()->GetStack());
-
-  if(GetSquaresUnder() != 1)
-    return;
 
   int Range = Force * 25UL / Max<long>(long(sqrt(GetWeight())), 1);
 
-  if(!Range)
-    return;
+  lsquare* LSquareUnder = GetLSquareUnder();
+  RemoveFromSlot();
+  LSquareUnder->GetStack()->AddItem(this, false);
+
+  if(!Range || GetSquaresUnder() != 1)
+    {
+      if(GetLSquareUnder()->GetRoom())
+	GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
+      return;
+    }
+
+
 
   if(Direction == RANDOM_DIR)
     Direction = RAND() & 7;
@@ -133,7 +139,8 @@ void item::Fly(character* Thrower, int Direction, int Force)
 	{
 	  clock_t StartTime = clock();
 	  Pos += DirVector;
-	  MoveTo(JustHit->GetStack());
+	  RemoveFromSlot();
+	  JustHit->GetStack()->AddItem(this, false);
 	  bool Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
 
 	  if(Draw)
@@ -159,6 +166,9 @@ void item::Fly(character* Thrower, int Direction, int Force)
 
   if(Breaks)
     ReceiveDamage(Thrower, int(sqrt(GetWeight() * RangeLeft) / 10), THROW|PHYSICAL_DAMAGE, Direction);
+
+  if(GetLSquareUnder()->GetRoom())
+    GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
 }
 
 int item::HitCharacter(character* Thrower, character* Dude, int Damage, double ToHitValue, int Direction)

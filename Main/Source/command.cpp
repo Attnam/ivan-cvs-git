@@ -266,10 +266,11 @@ bool commandsystem::Drop(character* Char)
 	}
       else if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
 	{
-	  for(uint c = 0; c < ToDrop.size(); ++c)
-	    ToDrop[c]->MoveTo(Char->GetStackUnder());
-
 	  ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).CStr());
+	  for(uint c = 0; c < ToDrop.size(); ++c)
+	    {
+	      ToDrop[c]->MoveTo(Char->GetStackUnder());
+	    }
 	  Success = true;
 	}
     }

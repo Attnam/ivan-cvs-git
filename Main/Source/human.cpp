@@ -1079,7 +1079,7 @@ bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, int Direction, bool F
 {
   if(!IsPlayer())
     for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-      if(i->IsExplosive())
+      if(i->IsKamikazeWeapon())
 	{
 	  if(IsElite() && RAND() & 1)
 	    ADD_MESSAGE("%s shouts: \"This time I won't fail, O Great %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());

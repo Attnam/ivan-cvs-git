@@ -90,3 +90,4 @@ You can destroy terrains in Attnam with a wand of acid rain without causing an a
 Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death.
 "There is many items on the wall"
 Vladimir can now be teleported (example: magical whistle) to places where he destroys the cathedral and buildings like that before moving away from them.
+Funny colors with dexterity etc when going to change equipment and then pressing esc

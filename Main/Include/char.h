@@ -948,6 +948,7 @@ class character : public entity, public id
   void ParasitizedSituationDangerModifier(double&) const;
   void LeprosySituationDangerModifier(double&) const;
   bool IsUsingWeaponOfCategory(int) const;
+  virtual bool IsKamikazeDwarf() const { return false; }
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

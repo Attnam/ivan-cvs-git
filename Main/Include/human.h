@@ -519,6 +519,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround(bool = true) { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(int);
+  virtual bool IsKamikazeDwarf() const { return true; }
  protected:
   virtual int GetTorsoMainColor() const;
   virtual int GetGauntletColor() const;

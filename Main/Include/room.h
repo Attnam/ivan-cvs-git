@@ -80,6 +80,7 @@ class room
   virtual bool AllowFoodSearch() const { return true; }
   virtual void ReceiveVomit(character*) { }
   virtual bool IsOKToDestroyWalls(const character*) const;
+  virtual void GetAddItemEffect(item*) { };
  protected:
   virtual void VirtualConstructor(bool) { }
   mutable character* Master;

@@ -156,6 +156,7 @@ class ITEM
   virtual bool ReceiveDamage(character*, int, int, int);
   virtual bool HasBetterVersion() const { return !SecondaryMaterial; }
   virtual bool EffectIsGood() const;
+  virtual bool IsKamikazeWeapon() const { return IsExplosive(); }
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(festring&, bool) const;
@@ -286,6 +287,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, int);
   virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
   virtual long GetPrice() const;
+  virtual bool IsExplosive() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   void BreakEffect(character*, const festring&);

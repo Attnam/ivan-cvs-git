@@ -74,7 +74,7 @@ class stack
   ~stack();
   void Load(inputfile&);
   void Draw(const character*, bitmap*, vector2d, color24, int, bool) const;
-  void AddItem(item*);
+  void AddItem(item*, bool = true);
   void RemoveItem(stackslot*);
   item* GetItem(int) const;
   stackiterator GetBottom() const { return stackiterator(Bottom); }
@@ -142,7 +142,7 @@ class stack
   void PreProcessForBone();
   void PostProcessForBone();
   void FinalProcessForBone();
-  void AddElement(item*);
+  void AddElement(item*, bool = false);
   void SpillFluid(character*, liquid*, long);
   void AddItems(const itemvector&);
   void MoveItemsTo(itemvector&, int);

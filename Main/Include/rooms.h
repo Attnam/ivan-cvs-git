@@ -69,6 +69,8 @@ class ROOM
   virtual void HostileAction(character*) const;
   virtual bool AllowAltarPolymorph() const { return false; }
   virtual bool AllowFoodSearch() const { return false; }
+  virtual void GetAddItemEffect(item*);
+  virtual character* FindRandomExplosiveReceiver() const;
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;

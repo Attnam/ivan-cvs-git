@@ -33,3 +33,4 @@ silicon carbide				SV 140-190, D 3100
 nephrite/jade (green)			SV 200-350
 tungsten carbide			SV 200-350, D 15700
 aluminium				SV 90, D 2650
+lead
