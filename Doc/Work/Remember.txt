@@ -8,7 +8,7 @@
 *Healing.
 *Danger values & difficulty.
 //Name system.
-(s) Vector based humanoid read.
+//(s) Vector based humanoid read.
 (s) Throw flipping.
 *Silhouette.
 *Graphical item menu.

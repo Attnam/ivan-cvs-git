@@ -28,9 +28,6 @@ class ABSTRACT_CHARACTER
   virtual ~humanoid();
   virtual void VirtualConstructor();
   virtual void Load(inputfile&);
-  //virtual bool WearArmor();
-  //virtual item* GetBodyArmor() const { return Armor.Torso; }
-  //virtual bool SetBodyArmor(item* What) { Armor.Torso = What; return true; }
   virtual uchar GetSex() const { return MALE; }
   //virtual ushort CalculateArmorModifier() const;
   virtual void Save(outputfile&) const;
@@ -42,17 +39,12 @@ class ABSTRACT_CHARACTER
   virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
   virtual void CharacterSpeciality(ushort = 1);
   virtual bool ShowWeaponSkills();
-  //virtual void SetWielded(item*);
-
-  //virtual float GetToHitValue() const;
   virtual long StatScore() const;
   virtual void AddSpecialItemInfo(std::string&, item*);
   virtual void AddSpecialItemInfoDescription(std::string&);
   virtual void KickHit();
   virtual bool CanBeGenerated() const { return false; }
-  //virtual void CheckGearExistence();
   virtual ushort GetSize() const;
-  virtual bool EqupmentScreen();
 
   virtual head* GetHead() const;
   virtual void SetHead(head* What);
@@ -85,7 +77,6 @@ class ABSTRACT_CHARACTER
 
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
-  virtual item* GetBodyArmor() const;
 
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
@@ -111,6 +102,27 @@ class ABSTRACT_CHARACTER
   virtual characterslot* GetGroinSlot() const { return GetBodyPartSlot(4); }
   virtual characterslot* GetRightLegSlot() const { return GetBodyPartSlot(5); }
   virtual characterslot* GetLeftLegSlot() const { return GetBodyPartSlot(6); }
+
+  virtual std::string EquipmentName(uchar) const;
+  virtual bodypart* GetBodyPartOfEquipment(uchar) const;
+  virtual item* GetEquipment(uchar) const;
+  virtual ushort EquipmentSlots() const { return 13; }
+
+  virtual item* GetHelmet() const;
+  virtual item* GetAmulet() const;
+  virtual item* GetCloak() const;
+  virtual item* GetBodyArmor() const;
+  virtual item* GetBelt() const;
+  virtual item* GetRightWielded() const;
+  virtual item* GetLeftWielded() const;
+  virtual item* GetRightRing() const;
+  virtual item* GetLeftRing() const;
+  virtual item* GetRightGauntlet() const;
+  virtual item* GetLeftGauntlet() const;
+  virtual item* GetRightBoot() const;
+  virtual item* GetLeftBoot() const;
+
+  virtual bool VirtualEquipmentScreen();
 
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
@@ -208,21 +220,8 @@ class ABSTRACT_CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(0,0); } // remove this
   virtual float GetMeleeStrength() const { return 1000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
-  /*struct armor
-  {
-    armor();
-    item* Torso;
-    item* Legs;
-    item* Hands;
-    item* Head;
-    item* Feet;
-  } Armor;*/
   gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
-  //std::vector<sweaponskill*> SingleWeaponSkill;
-  //sweaponskill* CurrentSingleWeaponSkill;
 );
-
-//inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ { }
 
 class CHARACTER
 (
@@ -251,7 +250,6 @@ class CHARACTER
   petrus,
   humanoid,
   {
-    //SetSize(225);
     SetAgility(75);
     SetStrength(75);
     SetEndurance(75);
@@ -264,7 +262,6 @@ class CHARACTER
  public:
   virtual ~petrus();
   virtual void Load(inputfile&);
-  //  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual void BeTalkedTo(character*);
   virtual ushort GetEmitation() const { return 333; }
   virtual void HealFully(character*);
@@ -304,7 +301,6 @@ class CHARACTER
   farmer,
   humanoid,
   {
-    //SetSize(170);
     SetAgility(10);
     SetStrength(15);
     SetEndurance(20);
@@ -331,7 +327,6 @@ class CHARACTER
   guard,
   humanoid,
   {
-    //SetSize(180);
     SetAgility(15);
     SetStrength(20);
     SetEndurance(20);
@@ -358,7 +353,6 @@ class CHARACTER
   shopkeeper,
   humanoid,
   {
-    //SetSize(160);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(25);
@@ -387,7 +381,6 @@ class CHARACTER
   priest,
   humanoid,
   {
-    //SetSize(180);
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
@@ -415,7 +408,6 @@ class CHARACTER
   oree,
   humanoid,
   {
-    //SetSize(225);
     SetAgility(50);
     SetStrength(30);
     SetEndurance(30);
@@ -423,7 +415,6 @@ class CHARACTER
     SetAssignedName("Oree");
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
@@ -450,7 +441,6 @@ class CHARACTER
   darkknight,
   humanoid,
   {
-    //SetSize(200);
     SetAgility(30);
     SetStrength(30);
     SetEndurance(30);
@@ -473,7 +463,6 @@ class CHARACTER
   ennerbeast,
   character,
   {
-    //SetSize(150);
     SetAgility(10);
     SetStrength(10);
     SetEndurance(25);
@@ -518,7 +507,6 @@ class CHARACTER
   darkfrog,
   frog,
   {
-    //SetSize(25);
     SetAgility(30);
     SetStrength(5);
     SetEndurance(5);
@@ -540,7 +528,6 @@ class CHARACTER
   elpuri,
   darkfrog,
   {
-    //SetSize(300);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(50);
@@ -572,7 +559,6 @@ class CHARACTER
   billswill,
   character,
   {
-    //SetSize(100);
     SetAgility(40);
     SetStrength(5);
     SetEndurance(20);
@@ -606,7 +592,6 @@ class CHARACTER
   skeleton,
   humanoid,
   {
-    //SetSize(150);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(10);
@@ -627,13 +612,12 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 1000; }
   virtual ushort TotalSize() const { return 150; }
 );
-// legs 16,64 (1,4) = 20
+
 class CHARACTER
 (
   goblin,
   humanoid,
   {
-    //SetSize(100);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
@@ -686,7 +670,6 @@ class CHARACTER
   conicalmommo,
   mommo,
   {
-    //SetSize(100);
     SetAgility(2);
     SetStrength(4);
     SetEndurance(50);
@@ -706,7 +689,6 @@ class CHARACTER
   flatmommo,
   mommo,
   {
-    //SetSize(50);
     SetAgility(4);
     SetStrength(2);
     SetEndurance(25);
@@ -726,7 +708,6 @@ class CHARACTER
   golem,
   character,
   {
-    //SetSize(250);
     SetAgility(5);
     SetStrength(20);
     SetEndurance(20);
@@ -734,7 +715,6 @@ class CHARACTER
   },
  public:
   virtual bool MoveRandomly();
-  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
@@ -756,7 +736,6 @@ class CHARACTER
   wolf,
   character,
   {
-    //SetSize(100);
     SetAgility(20);
     SetStrength(10);
     SetEndurance(10);
@@ -781,7 +760,6 @@ class CHARACTER
   dog,
   character,
   {
-    //SetSize(70);
     SetAgility(15);
     SetStrength(5);
     SetEndurance(5);
@@ -808,7 +786,6 @@ class CHARACTER
   spider,
   character,
   {
-    //SetSize(10);
     SetAgility(5);
     SetStrength(2);
     SetEndurance(1);
@@ -837,7 +814,6 @@ class CHARACTER
   jackal,
   character,
   {
-    //SetSize(80);
     SetAgility(10);
     SetStrength(3);
     SetEndurance(3);
@@ -861,7 +837,6 @@ class CHARACTER
   donkey,
   character,
   {
-    //SetSize(150);
     SetAgility(5);
     SetStrength(10);
     SetEndurance(10);
@@ -886,7 +861,6 @@ class CHARACTER
   communist,
   humanoid,
   {
-    //SetSize(230);
     SetAgility(20);
     SetStrength(50);
     SetEndurance(50);
@@ -897,7 +871,6 @@ class CHARACTER
   virtual bool MoveRandomly();
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
-  //virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool HasInfraVision() const { return true; }
   virtual uchar CriticalModifier() const { return 4; }
   virtual bool CanBeAssignedAName() const { return false; }
@@ -922,7 +895,6 @@ class CHARACTER
   hunter,
   humanoid,
   {
-    //SetSize(180);
     SetAgility(20);
     SetStrength(15);
     SetEndurance(15);
@@ -949,7 +921,6 @@ class CHARACTER
   polarbear,
   character,
   {
-    //SetSize(250);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(30);
@@ -973,7 +944,6 @@ class CHARACTER
   dolphin,
   character,
   {
-    //SetSize(300);
     SetAgility(30);
     SetStrength(10);
     SetEndurance(10);
@@ -1002,7 +972,6 @@ class CHARACTER
   lightfrog,
   frog,
   {
-    //SetSize(25);
     SetAgility(30);
     SetStrength(5);
     SetEndurance(5);
@@ -1025,7 +994,6 @@ class CHARACTER
   slave,
   humanoid,
   {
-    //SetSize(160);
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
@@ -1053,7 +1021,6 @@ class CHARACTER
   petrusswife,
   humanoid,
   {
-    //SetSize(170);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
@@ -1062,7 +1029,6 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
-  //virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
   virtual ushort ClothColor() const { return MAKE_RGB(150, 0, 0); }
@@ -1161,7 +1127,6 @@ class CHARACTER
   housewife,
   humanoid,
   {
-    //SetSize(160);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
@@ -1190,7 +1155,6 @@ class CHARACTER
   femaleslave,
   humanoid,
   {
-    //SetSize(170);
     SetAgility(10);
     SetStrength(10);
     SetEndurance(15);
@@ -1219,7 +1183,6 @@ class CHARACTER
   librarian,
   humanoid,
   {
-    //SetSize(170);
     SetAgility(5);
     SetStrength(5);
     SetEndurance(5);
@@ -1247,7 +1210,6 @@ class CHARACTER
   zombie,
   humanoid,
   {
-    //SetSize(160);
     SetAgility(5);
     SetStrength(10);
     SetEndurance(5);
@@ -1277,7 +1239,6 @@ class CHARACTER
   imp,
   character,
   {
-    //SetSize(100);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(10);
@@ -1298,7 +1259,6 @@ class CHARACTER
   bat,
   character,
   {
-    //SetSize(20);
     SetAgility(40);
     SetStrength(2);
     SetEndurance(1);
@@ -1324,7 +1284,6 @@ class CHARACTER
   mistress,
   humanoid,
   {
-    //SetSize(180);
     SetAgility(35);
     SetStrength(25);
     SetEndurance(50);
@@ -1399,7 +1358,6 @@ class CHARACTER
   kobold,
   humanoid,
   {
-    //SetSize(90);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
@@ -1423,7 +1381,6 @@ class CHARACTER
   gibberling,
   character,
   {
-    //SetSize(90);
     SetAgility(20);
     SetStrength(5);
     SetEndurance(5);
@@ -1443,7 +1400,6 @@ class CHARACTER
   largecat,
   character,
   {
-    //SetSize(60);
     SetAgility(25);
     SetStrength(5);
     SetEndurance(5);
@@ -1466,7 +1422,6 @@ class CHARACTER
   largerat,
   character,
   {
-    //SetSize(30);
     SetAgility(10);
     SetStrength(3);
     SetEndurance(2);
@@ -1489,7 +1444,6 @@ class CHARACTER
   angel,
   humanoid,
   {
-    //SetSize(180);
     SetAgility(35);
     SetStrength(35);
     SetEndurance(35);
@@ -1505,7 +1459,6 @@ class CHARACTER
   virtual uchar GetSex() const { return FEMALE; }
   virtual void SetMaster(uchar);
   virtual uchar GetMaster() const { return Master; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "an") + OwnerGodDescription(Master); }
   virtual bool CanFly() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 60000; }
@@ -1536,7 +1489,6 @@ class CHARACTER
   kamikazedwarf,
   dwarf,
   {
-    //SetSize(130);
     SetAgility(20);
     SetStrength(20);
     SetEndurance(20);
@@ -1576,7 +1528,6 @@ class CHARACTER
   mammoth,
   character,
   {
-    //SetSize(500);
     SetAgility(20);
     SetStrength(80);
     SetEndurance(80);
@@ -1598,7 +1549,6 @@ class CHARACTER
   character,
   //RandomizeFleshMaterial(),
   {
-    //SetSize(200);
     SetAgility(40);
     SetStrength(10);
     SetEndurance(25);
@@ -1630,7 +1580,6 @@ class CHARACTER
   genie,
   humanoid,
   {
-    //SetSize(250);
     SetAgility(30);
     SetStrength(30);
     SetEndurance(30);

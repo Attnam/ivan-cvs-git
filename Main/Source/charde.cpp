@@ -40,8 +40,6 @@ void humanoid::VirtualConstructor()
 {
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     CategoryWeaponSkill[c] = new gweaponskill(c);
-
-  //CurrentSingleWeaponSkill = 0;
 }
 
 humanoid::~humanoid()
@@ -184,46 +182,9 @@ void ennerbeast::CreateCorpse()
   GetLSquareUnder()->GetStack()->AddItem(new headofennerbeast);
 }
 
-/*bool humanoid::WearArmor()
-{
-  if(!GetStack()->GetItems())
-    {
-      ADD_MESSAGE("You have nothing to wear!");
-      return false;
-    }
-
-  ushort Index = GetStack()->DrawContents(this, "What do you want to wear? or press '-' for nothing");
-
-  if(Index == 0xFFFE)
-    {
-      Armor.Torso = 0;
-      EditAP(-5000);
-      return true;
-    }
-  else
-    if(Index < GetStack()->GetItems()) // Other Armor types should be coded...
-      if(GetStack()->GetItem(Index)->CanBeWorn())
-	if(GetStack()->GetItem(Index) != GetWielded())
-	  {
-	    Armor.Torso = GetStack()->GetItem(Index);
-	    EditAP(-5000);
-	    return true;
-	  }
-	else
-	  ADD_MESSAGE("You can't wear something that you wield!");
-      else
-	ADD_MESSAGE("You can't wear THAT!");
-
-  return false;
-}*/
-
 void humanoid::Save(outputfile& SaveFile) const
 {
   character::Save(SaveFile);
-
-  //ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
-
-  //SaveFile << SingleWeaponSkill;
 
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile << GetCategoryWeaponSkill(c);
@@ -232,12 +193,6 @@ void humanoid::Save(outputfile& SaveFile) const
 void humanoid::Load(inputfile& SaveFile)
 {
   character::Load(SaveFile);
-
-  /*ushort Index;
-
-  SaveFile >> Index >> SingleWeaponSkill;
-
-  Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;*/
 
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile >> GetCategoryWeaponSkill(c);
@@ -319,7 +274,7 @@ void petrus::HealFully(character* ToBeHealed)
 {
   SetHealTimer(0);
 
-  ToBeHealed->RestoreHP();//SetHP(ToBeHealed->GetMaxHP());
+  ToBeHealed->RestoreHP();
 
   if(ToBeHealed->GetIsPlayer())
     ADD_MESSAGE("%s heals you fully.", CHARDESCRIPTION(DEFINITE));
@@ -407,51 +362,6 @@ bool dog::ConsumeItemType(uchar Type) const // We need a better system for this.
       return false;
     }
 }
-
-/*float humanoid::GetAttackStrength() const
-{
-  if(!GetMainArm() && !GetSecondaryArm())
-    return 0; //add biting
-
-  //if(!GetMainWielded() && !GetSecondaryWielded())
-  //  return GetMeleeStrength() * GetCategoryWeaponSkill(UNARMED)->GetBonus();
-
-  float AS;
-
-  //if(GetMainWielded())
-  AS = GetMainAttackStrength() * GetCategoryWeaponSkill(GetMainWeaponCategory())->GetBonus();
-
-  if(GetSecondaryWielded())
-    {
-      AS *= 1 - float(GetMainWielded()->OneHandedPenalty(this)) / 100;
-
-      AS += GetSecondaryAttackStrength() * GetCategoryWeaponSkill(GetSecondaryWeaponCategory())->GetBonus();
-    }
-  else
-    {
-      if(GetSecondaryHand())
-	{
-	  
-	}
-      else
-	{
-	  //if(GetMainWielded()->CanBeWieldedWithTwoHands(this))
-	  AS *= 1 - float(GetMainWielded()->OneHandedPenalty(this)) / 100;
-	}
-    }
-
-  return 
-}*/
-
-/*float humanoid::GetAttackStrength() const
-{
-  return GetMainAttackStrength() + GetSecondaryAttackStrength();
-}*/
-
-/*float humanoid::GetToHitValue() const
-{
-  return (GetMainToHitValue() + GetSecondaryToHitValue()) / 2;
-}*/
 
 float humanoid::GetMainAttackStrength() const
 {
@@ -578,8 +488,6 @@ void humanoid::MainHit(character* Enemy)
 	    GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
 
 	  GetMainWielded()->ImpactDamage(GetStrength() / 2);
-	    //SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
-
 	}
     case HAS_DODGED:
       EditAgilityExperience(25);
@@ -604,8 +512,6 @@ void humanoid::SecondaryHit(character* Enemy)
 	    GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
 
 	  GetSecondaryWielded()->ImpactDamage(GetStrength() / 2);
-	    //SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
-
 	}
     case HAS_DODGED:
       EditAgilityExperience(25);
@@ -617,9 +523,6 @@ void humanoid::CharacterSpeciality(ushort Turns)
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     if(GetCategoryWeaponSkill(c)->Turn(Turns) && GetIsPlayer())
       GetCategoryWeaponSkill(c)->AddLevelDownMessage();
-
-  //GetRightArm()->WeaponSkillHandler();
-  //GetLeftArm()->WeaponSkillHandler();
 }
 
 bool humanoid::ShowWeaponSkills()
@@ -672,48 +575,6 @@ bool humanoid::ShowWeaponSkills()
 
   return false;
 }
-
-/*void humanoid::SetWielded(item* Something)
-{
-  if(GetWielded() && !GetCurrentSingleWeaponSkill()->GetHits())
-    for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-      if(*i == GetCurrentSingleWeaponSkill())
-	{
-	  delete *i;
-	  SingleWeaponSkill.erase(i);
-	  break;
-	}
-
-  SetCurrentSingleWeaponSkill(0);
-
-  if((Wielded = Something))
-    {
-      for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	if((*i)->GetID() == Wielded->GetID())
-	  {
-	    SetCurrentSingleWeaponSkill(*i);
-	    break;
-	  }
-
-      if(!GetCurrentSingleWeaponSkill())
-	{
-	  SetCurrentSingleWeaponSkill(new sweaponskill);
-	  GetCurrentSingleWeaponSkill()->SetID(Wielded->GetID());
-	  SingleWeaponSkill.push_back(GetCurrentSingleWeaponSkill());
-	}
-    }
-
-  if(GetSquareUnder())
-    GetSquareUnder()->SendNewDrawRequest();
-}*/
-
-/*float humanoid::GetToHitValue() const
-{
-  if(GetWielded())
-    return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
-  else
-    return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
-}*/
 
 void shopkeeper::CreateInitialEquipment()
 {
@@ -1062,10 +923,6 @@ long humanoid::StatScore() const
   for(c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SkillScore += GetCategoryWeaponSkill(c)->GetHits();
 
-  /*
-  for(c = 0; c < SingleWeaponSkill.size(); ++c)
-    SkillScore += SingleWeaponSkill[c]->GetHits();*/
-
   return (SkillScore >> 2) + character::StatScore();
 }
 
@@ -1335,7 +1192,6 @@ bool elpuri::Hit(character* Enemy)
 	  case HAS_BLOCKED:
 	  case HAS_DIED:
 	    ByStander->GetStack()->ImpactDamage(GetStrength());
-	    //ByStander->CheckGearExistence();
 	    EditStrengthExperience(50);
 	  case HAS_DODGED:
 	    EditAgilityExperience(25);
@@ -1855,7 +1711,6 @@ bool kamikazedwarf::Hit(character* Enemy)
     return humanoid::Hit(Enemy);
   else
     {
-      //for(ushort c = 0; c < GetStack()->GetItems(); ++c)
       for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
 	if((**i)->IsExplosive())
 	  {
@@ -1885,14 +1740,6 @@ void kamikazedwarf::Load(inputfile& SaveFile)
 
   SaveFile >> Master;
 }
-
-/*void humanoid::CheckGearExistence()
-{
-  character::CheckGearExistence();
-
-  if(GetBodyArmor() && !GetBodyArmor()->GetExists())
-    SetBodyArmor(0);
-}*/
 
 bool largecat::Catches(item* Thingy, float)
 {
@@ -2177,8 +2024,6 @@ void humanoid::CreateHead()
   SetHead(new head(false));
   UpdateHeadPicture(false);
   GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
-  /*GetHead()->SetMaster(this);
-  GetHead()->SetAttached(true);*/
   GetHead()->PlaceToSlot(GetHeadSlot());
   GetHead()->SetSize(HeadSize());
 }
@@ -2203,8 +2048,6 @@ void humanoid::CreateTorso()
   SetTorso(new humanoidtorso(false));
   UpdateTorsoPicture(false);
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
-  /*GetTorso()->SetMaster(this);
-  GetTorso()->SetAttached(true);*/
   GetTorso()->PlaceToSlot(GetTorsoSlot());
   GetTorso()->SetSize(TorsoSize());
 }
@@ -2229,8 +2072,6 @@ void humanoid::CreateRightArm()
   SetRightArm(new rightarm(false));
   UpdateRightArmPicture(false);
   GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
-  /*GetRightArm()->SetMaster(this);
-  GetRightArm()->SetAttached(true);*/
   GetRightArm()->PlaceToSlot(GetRightArmSlot());
   GetRightArm()->SetSize(RightArmSize());
 }
@@ -2254,7 +2095,6 @@ void humanoid::CreateLeftArm()
   SetLeftArm(new leftarm(false));
   UpdateLeftArmPicture(false);
   GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
-  //GetLeftArm()->SetMaster(this);
   GetLeftArm()->PlaceToSlot(GetLeftArmSlot());
   GetLeftArm()->SetSize(LeftArmSize());
 }
@@ -2278,8 +2118,6 @@ void humanoid::CreateGroin()
   SetGroin(new groin(false));
   UpdateGroinPicture(false);
   GetGroin()->InitMaterials(2, CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
-  /*GetGroin()->SetMaster(this);
-  GetGroin()->SetAttached(true);*/
   GetGroin()->PlaceToSlot(GetGroinSlot());
   GetGroin()->SetSize(GroinSize());
 }
@@ -2303,8 +2141,6 @@ void humanoid::CreateRightLeg()
   SetRightLeg(new rightleg(false));
   UpdateRightLegPicture(false);
   GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
-  /*GetRightLeg()->SetMaster(this);
-  GetRightLeg()->SetAttached(true);*/
   GetRightLeg()->PlaceToSlot(GetRightLegSlot());
   GetRightLeg()->SetSize(RightLegSize());
 }
@@ -2328,8 +2164,6 @@ void humanoid::CreateLeftLeg()
   SetLeftLeg(new leftleg(false));
   UpdateLeftLegPicture(false);
   GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
-  /*GetLeftLeg()->SetMaster(this);
-  GetLeftLeg()->SetAttached(true);*/
   GetLeftLeg()->PlaceToSlot(GetLeftLegSlot());
   GetLeftLeg()->SetSize(LeftLegSize());
 }
@@ -2488,10 +2322,10 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-item* humanoid::GetBodyArmor() const
+/*item* humanoid::GetBodyArmor() const
 {
   return GetHumanoidTorso()->GetBodyArmor();
-}
+}*/
 
 arm* humanoid::GetMainArm() const
 {
@@ -2537,23 +2371,152 @@ bool humanoid::CanWieldInSecondaryHand() const
   return GetSecondaryArm() ? true : false;
 }
 
-/*float humanoid::GetMainToHitValue() const
+std::string humanoid::EquipmentName(uchar Index) const
 {
-  if(GetWielded())
-    return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
-  else
-    return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
+  switch(Index)
+    {
+    case 0: return "Helmet";
+    case 1: return "Amulet";
+    case 2: return "Cloak";
+    case 3: return "Body armor";
+    case 4: return "Belt";
+    case 5: return "Right hand wielded";
+    case 6: return "Left hand wielded";
+    case 7: return "Right ring";
+    case 8: return "Left ring";
+    case 9: return "Right gauntlet";
+    case 10: return "Left gauntlet";
+    case 11: return "Right boot";
+    case 12: return "Left boot";
+    default: return "Forbidden piece of cloth";
+    }
 }
 
-float humanoid::GetSecondaryToHitValue() const
+bodypart* humanoid::GetBodyPartOfEquipment(uchar Index) const
 {
-  if(GetWielded())
-    return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
-  else
-    return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
-}*/
+  switch(Index)
+    {
+    case 0:
+    case 1:
+      return GetHead();
+    case 2:
+    case 3:
+    case 4:
+      return GetTorso();
+    case 5:
+    case 7:
+    case 9:
+      return GetRightArm();
+    case 6:
+    case 8:
+    case 10:
+      return GetLeftArm();
+    case 11:
+      return GetRightLeg();
+    case 12:
+      return GetLeftLeg();
+    default:
+      return 0;
+    }
+}
 
-bool humanoid::EqupmentScreen()
+item* humanoid::GetEquipment(uchar Index) const
 {
-  return false;
+  switch(Index)
+    {
+    case 0: return GetHelmet();
+    case 1: return GetAmulet();
+    case 2: return GetCloak();
+    case 3: return GetBodyArmor();
+    case 4: return GetBelt();
+    case 5: return GetRightWielded();
+    case 6: return GetLeftWielded();
+    case 7: return GetRightRing();
+    case 8: return GetLeftRing();
+    case 9: return GetRightGauntlet();
+    case 10: return GetLeftGauntlet();
+    case 11: return GetRightBoot();
+    case 12: return GetLeftBoot();
+    default: return 0;
+    }
+}
+
+item* humanoid::GetHelmet() const { return GetHead() ? GetHead()->GetHelmet() : 0; }
+item* humanoid::GetAmulet() const { return GetHead() ? GetHead()->GetAmulet() : 0; }
+item* humanoid::GetCloak() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetCloak() : 0; }
+item* humanoid::GetBodyArmor() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetBodyArmor() : 0; }
+item* humanoid::GetBelt() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetBelt() : 0; }
+item* humanoid::GetRightWielded() const { return GetRightArm() ? GetRightArm()->GetWielded() : 0; }
+item* humanoid::GetLeftWielded() const { return GetLeftArm() ? GetLeftArm()->GetWielded() : 0; }
+item* humanoid::GetRightRing() const { return GetRightArm() ? GetRightArm()->GetRing() : 0; }
+item* humanoid::GetLeftRing() const { return GetLeftArm() ? GetLeftArm()->GetRing() : 0; }
+item* humanoid::GetRightGauntlet() const { return GetRightArm() ? GetRightArm()->GetGauntlet() : 0; }
+item* humanoid::GetLeftGauntlet() const { return GetLeftArm() ? GetLeftArm()->GetGauntlet() : 0; }
+item* humanoid::GetRightBoot() const { return GetRightLeg() ? GetRightLeg()->GetBoot() : 0; }
+item* humanoid::GetLeftBoot() const { return GetLeftLeg() ? GetLeftLeg()->GetBoot() : 0; }
+
+bool humanoid::VirtualEquipmentScreen()
+{
+  bool EquipmentChanged = false;
+  bool Fade = true;
+
+  while(true)
+    {
+      DOUBLEBUFFER->Fill(0);
+
+      felist List("Equipment menu", WHITE, 0);
+
+      for(ushort c = 0; c < EquipmentSlots(); ++c)
+	{
+	  std::string Entry = EquipmentName(c) + ":";
+	  Entry.resize(20, ' ');
+
+	  if(!GetBodyPartOfEquipment(c))
+	    Entry += "can't use";
+	  else if(!GetEquipment(c))
+	    Entry += "-";
+	  else
+	    Entry += GetEquipment(c)->Name(INDEFINITE);
+
+	  List.AddEntry(Entry, BLUE);
+	}
+
+      ushort Chosen = List.Draw(false, Fade);
+
+      if(Chosen >= EquipmentSlots())
+	break;
+
+      if(!GetBodyPartOfEquipment(Chosen))
+	{
+	  Fade = false;
+	  continue;
+	}
+      else
+	Fade = true;
+
+      switch(Chosen)
+	{
+	case 0:
+	  //List.Draw(false, Fade);
+	  break;
+	case 1:
+
+	  break;
+	case 2:
+
+	  break;
+	case 3:
+
+	  break;
+	case 4:
+
+	  break;
+	case 5:
+
+	  break;
+	}
+    }
+
+  game::GetCurrentArea()->SendNewDrawRequest();
+  return EquipmentChanged;
 }

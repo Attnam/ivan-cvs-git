@@ -50,47 +50,36 @@ void highscore::Draw() const
 	GETKEY();
 	return;
     }
+
   FONT->Printf(&Buffer, 30, 30,  WHITE, "Adventurers' Hall of Fame");
 
   ushort Min = 0;
 
   for(ushort c = 0; c < Score.size(); ++c)
     {
-
-	
       if(c - Min == 50)
 	{
 	  Min += 50;
-
 	  FONT->Printf(&Buffer, 30, 560, WHITE, "-- Press ESC to exit, any other key for next page --");
-
 	  Buffer.FadeToScreen();
 
 	  if(GETKEY() == 0x1B)
 	    return;
 
 	  Buffer.Fill(0);
-
 	  FONT->Printf(&Buffer, 30, 30, WHITE, "Adventurers' Hall of Fame");
 	}
 
       std::string Desc;
-
       Desc += int(c + 1);
-
       Desc.resize(5, ' ');
-
       Desc += int(Score[c]);
-
       Desc.resize(13, ' ');
-
       Desc += Entry[c];
-
       FONT->Printf(&Buffer, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : BLUE, "%s", Desc.c_str());
     }
 
   Buffer.FadeToScreen();
-
   GETKEY();
 }
 

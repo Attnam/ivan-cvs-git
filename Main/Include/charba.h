@@ -156,16 +156,12 @@ class character : public type, public entity, public identity
   virtual bool Talk();
   virtual bool Throw();
   virtual bool WalkThroughWalls();
-  //virtual bool WearArmor();
   virtual bool EqupmentScreen();
   virtual bool WhatToEngrave();
-  //virtual bool Wield();
   virtual bool WizardMode();
   virtual void AddScoreEntry(std::string, float = 1, bool = true) const;
   virtual long Score() const;
   virtual float GetAttackStrength() const;
-  //virtual item* GetBodyArmor() const { return 0; }
-  //virtual item* GetWielded() const { return Wielded; }
   virtual wsquare* GetWSquareUnder() const;
   virtual long GetAgilityExperience() const { return AgilityExperience; }
   virtual long GetAP() const { return AP; }
@@ -227,14 +223,12 @@ class character : public type, public entity, public identity
   virtual void SetSquareUnder(square* Square);
   virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; if(Strength > 99) Strength = 99; }
   virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
-  //virtual void SetWielded(item* Something) { Wielded = Something; }
   virtual void SpillBlood(uchar);
   virtual void SpillBlood(uchar, vector2d);
   virtual void Vomit(ushort);
   virtual void Be();
   virtual bool Zap();
   virtual bool Polymorph(character*, ushort);
-  //virtual bool SetBodyArmor(item*) { return false; }
   virtual bool CanKick() const { return false; }
   virtual void BeKicked(ushort, bool, uchar, character*);
   virtual void FallTo(vector2d, bool);
@@ -306,7 +300,6 @@ class character : public type, public entity, public identity
   virtual bool CanBeDisplaced() const { return true; }
   virtual void ReceiveKoboldFleshEffect(long);
   virtual bool ChangeRandomStat(short);
-  //virtual void CheckGearExistence();
   virtual uchar RandomizeReply(uchar, bool*);
   virtual ushort Frequency() const { return 10000; }
   virtual ushort DangerLevel();
@@ -346,12 +339,7 @@ class character : public type, public entity, public identity
   virtual void RestoreBodyParts();
 
   virtual bool AssignName();
-  //virtual std::string Name(uchar) const;
-  /*virtual std::string Article() const { return "a"; }
-  virtual std::string Adjective() const { return ""; }
-  virtual bool ShowClassName() const { return true; }*/
- 
-//<<<<<<< charba.h
+
   virtual std::string GetAssignedName() const { return AssignedName; }
   virtual void SetAssignedName(std::string What) { AssignedName = What; }
 
@@ -364,9 +352,6 @@ class character : public type, public entity, public identity
   virtual std::string ObjectPronoun() const;
 
   virtual bool BodyPartCanBeSevered(uchar) const;
-
-  //virtual const char* CHARNAME(uchar Case) const { return Name(Case).c_str(); }
-  //virtual const char* CHARDESCRIPTION(uchar Case) const { return Description(Case).c_str(); }
 
   virtual std::string Name(uchar) const;
 
@@ -396,6 +381,8 @@ class character : public type, public entity, public identity
 
   virtual characterslot* GetBodyPartSlot(ushort) const;
 
+  virtual bool VirtualEquipmentScreen();
+
  protected:
 
   virtual ushort TotalSize() const = 0;
@@ -414,7 +401,7 @@ class character : public type, public entity, public identity
 
   virtual vector2d GetBitmapPos() const = 0;
 
-  virtual void AllocateBodyPartArray();// { BodyPart = new bodypart*[BodyParts()]; }
+  virtual void AllocateBodyPartArray();
 
   virtual ushort TorsoSize() const;
 
@@ -450,7 +437,6 @@ class character : public type, public entity, public identity
   virtual std::string ThirdPersonBloodVerb(bool Critical) const { return Critical ? "vomits very acidous blood at" : "vomits acidous blood at"; }
   virtual std::string TalkVerb() const { return "grunts"; }
   stack* Stack;
-  //item* Wielded;
   ushort Strength, Endurance, Agility, Perception, RegenerationCounter;
   long NP, AP;
   long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;

@@ -14,12 +14,13 @@
 #define GRCHARACTER	2
 #define GRHUMANOID	3
 
-#define GRAPHIC_TYPES	4
+#define GRAPHIC_TYPES	5
 
 #define GRWTERRAIN	0
 #define GRFOW		1
 #define GRCURSOR	2
 #define GRSYMBOL	3
+#define GRMENU		4
 
 #define STNORMAL	0
 #define STRIGHTARM	1
@@ -106,8 +107,8 @@ class igraph
   static bitmap* GetWTerrainGraphic() { return Graphic[GRWTERRAIN]; }
   static bitmap* GetFOWGraphic() { return Graphic[GRFOW]; }
   static bitmap* GetCursorGraphic() { return Graphic[GRCURSOR]; }
-  //static bitmap* GetHumanGraphic() { return Graphic[GRHUMAN]; }
   static bitmap* GetSymbolGraphic() { return Graphic[GRSYMBOL]; }
+  static bitmap* GetMenuGraphic() { return Graphic[GRMENU]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
   static tile GetTile(graphic_id);

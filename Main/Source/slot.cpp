@@ -45,3 +45,35 @@ void characterslot::MoveItemTo(stack* Stack)
   Empty();
   Stack->AddItem(Item);
 }
+
+void slot::PutInItem(item* Item)
+{
+  SetItem(Item);
+
+  if(Item)
+    Item->SetSlot(this);
+}
+
+void gearslot::Empty()
+{
+  /* add light update? */
+
+  SetItem(0);
+}
+
+void gearslot::FastEmpty()
+{
+  SetItem(0);
+}
+
+void gearslot::MoveItemTo(stack* Stack)
+{
+  Empty();
+  Stack->AddItem(Item);
+}
+
+void gearslot::Init(bodypart* BodyPart)
+{
+  SetBodyPart(BodyPart);
+  SetItem(0);
+}

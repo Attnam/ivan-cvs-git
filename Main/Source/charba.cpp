@@ -4109,6 +4109,11 @@ uchar character::GetHungerState() const
 
 bool character::EqupmentScreen()
 {
+  return VirtualEquipmentScreen();
+}
+
+bool character::VirtualEquipmentScreen()
+{
   ADD_MESSAGE("You can't use equipment!");
   return false;
 }

@@ -16,6 +16,7 @@ class stackslot;
 class outputfile;
 class inputfile;
 class stack;
+class bodypart;
 
 typedef std::list<stackslot*> stacklist;
 typedef std::list<stackslot*>::iterator stackiterator;
@@ -33,6 +34,8 @@ class slot
   item* operator*() const { return Item; }
   virtual void MoveItemTo(stack*) = 0;
   virtual bool IsCharacterSlot() const { return false; }
+  virtual bool IsGearSlot() const { return false; }
+  void PutInItem(item*);
  protected:
   item* Item;
 };
@@ -78,15 +81,41 @@ class characterslot : public slot
   character* Master;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, characterslot StackSlot)
+inline outputfile& operator<<(outputfile& SaveFile, characterslot CharacterSlot)
 {
-  StackSlot.Save(SaveFile);
+  CharacterSlot.Save(SaveFile);
   return SaveFile;
 }
 
-inline inputfile& operator>>(inputfile& SaveFile, characterslot& StackSlot)
+inline inputfile& operator>>(inputfile& SaveFile, characterslot& CharacterSlot)
 {
-  StackSlot.Load(SaveFile);
+  CharacterSlot.Load(SaveFile);
+  return SaveFile;
+}
+
+class gearslot : public slot
+{
+ public:
+  virtual void Empty();
+  virtual void FastEmpty();
+  bodypart* GetBodyPart() const { return BodyPart; }
+  void SetBodyPart(bodypart* What) { BodyPart = What; }
+  virtual void MoveItemTo(stack*);
+  virtual bool IsGearSlot() const { return true; }
+  void Init(bodypart*);
+ protected:
+  bodypart* BodyPart;
+};
+
+inline outputfile& operator<<(outputfile& SaveFile, gearslot GearSlot)
+{
+  GearSlot.Save(SaveFile);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, gearslot& GearSlot)
+{
+  GearSlot.Load(SaveFile);
   return SaveFile;
 }
 

@@ -23,7 +23,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 100; }
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", bananapeal::StaticType()); }
   virtual uchar GetConsumeType() const { return GetContainedMaterial()->GetConsumeType(); }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 112); }
   virtual bool Consume(character*, float);
@@ -60,7 +59,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 5; }
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, bananapeal::StaticType()); }
   virtual std::string NameSingular() const { return "banana of Liukas Vipro"; }
   virtual std::string NamePlural() const { return "bananas of Liukas Vipro"; }
   virtual float OfferModifier() const { return 40; }
@@ -72,7 +70,6 @@ class ITEM
   virtual std::string Adjective() const { return "holy"; }
   virtual bool ShowAdjective() const { return true; }
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != bananapeal::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
   virtual bool ForceDefiniteArticle() const { return true; }
   virtual ushort GetStrengthModifier() const { return 250; }
   virtual ushort GetFormModifier() const { return 200; }
@@ -121,7 +118,6 @@ class ITEM
  public:
   virtual ushort Possibility() const { return 200; }
   virtual void PositionedDrawToTileBuffer(uchar) const;
-  //virtual std::string Name(uchar Case) const { return NameContainer(Case); }
   virtual item* TryToOpen(character*, stack*);
   virtual uchar GetConsumeType() const { return GetContainedMaterial() ? GetContainedMaterial()->GetConsumeType() : ODD; }
   virtual std::string NameSingular() const { return "can"; }
@@ -150,7 +146,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 200; }
-  //virtual std::string Name(uchar Case) const { return NameThingsThatAreLikeLumps(Case, "a"); }
   virtual void ReceiveHitEffect(character*, character*);
   virtual bool CanBeDippedInto(item*) const { return true; }
   virtual material* BeDippedInto();
@@ -252,7 +247,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 0; }
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, valpurium::StaticType()); }
   virtual std::string NameSingular() const { return "broadsword \"Valpurus's Justifier\""; }
   virtual float OfferModifier() const { return 0.5; }
   virtual long Score() const { return 1000; }
@@ -265,7 +259,6 @@ class ITEM
   virtual std::string Adjective() const { return "holy"; }
   virtual bool ShowAdjective() const { return true; }
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != valpurium::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
   virtual bool ForceDefiniteArticle() const { return true; }
   virtual ushort GetStrengthModifier() const { return 400; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,64); }
@@ -404,7 +397,6 @@ class ITEM
     SetSize(60);
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, cloth::StaticType()); }
   virtual ushort Possibility() const { return 0; }
   virtual ushort GetStrengthValue() const { return 100; }
   virtual std::string NameSingular() const { return "Shirt of the Golden Eagle"; }
@@ -420,7 +412,6 @@ class ITEM
   virtual bool Polymorph(stack*) { return false; }
  protected:
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != cloth::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
   virtual bool ForceDefiniteArticle() const { return true; }
   virtual ushort GetStrengthModifier() const { return 50; } // not used
   virtual vector2d GetBitmapPos() const { return vector2d(16,112); }
@@ -457,7 +448,6 @@ class ITEM
 (
   potion,
   item,
-  //  InitMaterials(2, new glass, RAND() % 2 ? (material*)new water : (material*)new omleurine),
   GeneratePotionMaterials(),
   {
     SetSize(30);
@@ -466,7 +456,6 @@ class ITEM
   virtual ushort Possibility() const { return 100; }
   virtual uchar GetConsumeType() const { return GetContainedMaterial() ? GetContainedMaterial()->GetConsumeType() : ODD; }
   virtual bool Consume(character*, float);
-  //virtual std::string Name(uchar Case) const { return NameContainer(Case); }
   virtual std::string NameSingular() const { return "bottle"; }
   virtual bool ImpactDamage(ushort);
   virtual void PositionedDrawToTileBuffer(uchar) const;
@@ -501,7 +490,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 50; }
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", bananapeal::StaticType()); }
   virtual std::string NameSingular() const { return "banana peal"; }
   virtual item* BetterVersion() const { return new banana; }
   virtual float OfferModifier() const { return 0; }
@@ -636,7 +624,6 @@ class ITEM
  public:
   virtual ushort Possibility() const { return 0; }
   virtual bool IsPetrussNut() const { return true; }
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, humanflesh::StaticType()); }
   virtual std::string NameSingular() const { return "left nut of Petrus"; }
   virtual long Score() const { return 5000; }
   virtual item* CreateWishedItem() const;
@@ -647,7 +634,6 @@ class ITEM
   virtual bool Polymorph(stack*) { return false; }
  protected:
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != humanflesh::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
   virtual bool ForceDefiniteArticle() const { return true; }
   virtual ushort GetStrengthModifier() const { return 2500; }
 );
@@ -663,7 +649,6 @@ class ITEM
  public:
   virtual ushort Possibility() const { return 100; }
   virtual std::string NameSingular() const { return "bone"; }
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", bone::StaticType()); }
   virtual float OfferModifier() const { return 0.1f; }
   virtual bool DogWillCatchAndConsume() const { return GetMainMaterial()->GetType() == bone::StaticType(); }
   virtual uchar GetWeaponCategory() const { return CLUBS; }
@@ -726,7 +711,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 0; }
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, diamond::StaticType()); }
   virtual std::string NameSingular() const { return "mace \"Neerc Se-Ulb\""; }
   virtual float OfferModifier() const { return 0.25; }
   virtual long Score() const { return 1000; }
@@ -739,7 +723,6 @@ class ITEM
   virtual std::string AdjectiveArticle() const { return "an"; }
   virtual bool ShowAdjective() const { return true; }
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != diamond::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
   virtual bool ForceDefiniteArticle() const { return true; }
   virtual ushort GetStrengthModifier() const { return 600; }
   virtual ushort GetFormModifier() const { return 150; }
@@ -755,7 +738,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 100; }
-  //virtual std::string Name(uchar Case) const { return NameThingsThatAreLikeLumps(Case, "a"); }
   virtual std::string NameSingular() const { return "loaf"; }
   virtual std::string NamePlural() const { return "loaves"; }
   virtual float OfferModifier() const { return 0.125; }
@@ -825,7 +807,6 @@ class ABSTRACT_ITEM
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
   virtual bool IsExplosive() const { return true; }
   virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
-  //virtual std::string Name(uchar Case) const;
   virtual uchar GetCharges() const { return Charges; }
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual uchar GetTimesUsed() const { return TimesUsed; }
@@ -940,7 +921,6 @@ class ITEM
   },
  public:
   virtual bool IsTheAvatar() const { return true; }
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, valpurium::StaticType()); }
   virtual ushort Possibility() const { return 0; }
   virtual std::string NameSingular() const { return "Avatar of Valpurus"; }
   virtual bool CanBeWished() const { return false; }
@@ -953,7 +933,6 @@ class ITEM
   virtual ulong Price() const { return 2000000000; }
  protected:
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != valpurium::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
   virtual bool ForceDefiniteArticle() const { return true; }
   virtual ushort GetStrengthModifier() const { return 400; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,320); }
@@ -1032,7 +1011,6 @@ class ITEM
     SetSize(10);
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", kiwiflesh::StaticType()); }
   virtual ushort Possibility() const { return 25; }
   virtual std::string NameSingular() const { return "kiwi"; }
   virtual float OfferModifier() const { return 0.4f; }
@@ -1054,7 +1032,6 @@ class ITEM
     SetSize(20);
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", pineappleflesh::StaticType()); }
   virtual ushort Possibility() const { return 25; }
   virtual std::string NameSingular() const { return "pineapple"; }
   virtual float OfferModifier() const { return 0.4f; }
@@ -1076,7 +1053,6 @@ class ITEM
     SetSize(80);
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", palmleaf::StaticType()); }
   virtual ushort Possibility() const { return 10; }
   virtual std::string NameSingular() const { return "palm branch"; }
   virtual float OfferModifier() const { return 0.3f; }
@@ -1120,7 +1096,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 10; }
-  //virtual std::string Name(uchar Case) const { return NameContainer(Case); }
   virtual uchar GetConsumeType() const { return GetContainedMaterial() ? GetContainedMaterial()->GetConsumeType() : ODD; }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 144); }
   virtual float OfferModifier() const { return 0.5; }
@@ -1151,7 +1126,6 @@ class ITEM
   },
  public:
   virtual bool CanBeRead(character*) const;
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a") + OwnerGodDescription(OwnerGod); }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 128); }
   virtual ushort Possibility() const { return 10; }
   virtual float OfferModifier() const { return 0.4f; }
@@ -1182,7 +1156,6 @@ class ITEM
     SetSize(20);
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", parchment::StaticType()); }
   virtual ushort Possibility() const { return 0; }
   virtual std::string NameSingular() const { return "pile of 50 million roubles"; }
   virtual float OfferModifier() const { return 0.01f; }
@@ -1236,7 +1209,6 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 5; }
-  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual std::string NameSingular() const { return "stone"; }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 112); }
   virtual float OfferModifier() const { return 0.7f; }
@@ -1287,300 +1259,6 @@ class ITEM
   virtual ulong Price() const { return 350; }
 );
 
-class ABSTRACT_ITEM
-(
-  bodypart,
-  item,
- public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual ushort Possibility() const { return 0; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 0; default: return 0; } }
-  virtual void SetBitmapPos(vector2d What) { BitmapPos = What; }
-  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
-  virtual void SetColor(ushort Index, ushort What) { Color[Index] = What; }
-  virtual character* GetMaster() const;
-  //virtual void SetMaster(character*);
-  virtual humanoid* GetHumanoidMaster() const;
-  virtual bool AutoInitializable() const { return false; }
-  virtual ushort GetStrengthValue() const;
-  virtual short GetMaxHP() const;
-  virtual void SetHP(short What) { HP = What; }
-  virtual short GetHP() const { return HP; }
-  virtual void EditHP(short What) { HP += What; }
-  virtual ushort GetArmoredStrengthValue() const = 0;
-  virtual bool ReceivePhysicalDamage(short);
-  virtual std::string GetOwnerDescription() const { return OwnerDescription; }
-  virtual void SetOwnerDescription(std::string What) { OwnerDescription = What; }
-  virtual bool GetUnique() const { return Unique; }
-  virtual void SetUnique(bool What) { Unique = What; }
-  //virtual bool IsAttached() const;
-  /*virtual void SetAttached(bool What) { Attached = What; }*/
-  virtual characterslot* GetCharacterSlot() const;
- protected:
-  virtual std::string PostFix() const { return GetOwnerDescription(); }
-  virtual bool ShowPostFix() const { return !GetMaster(); }
-  virtual bool ShowMaterial() const { return false; }
-  virtual bool ForceDefiniteArticle() const { return Unique; }
-  virtual ushort GetMaterialColor0() const { return Color[0]; }
-  virtual ushort GetMaterialColor1() const { return Color[1]; }
-  virtual ushort GetMaterialColor2() const { return Color[2]; }
-  virtual ushort GetMaterialColor3() const { return Color[3]; }
-  virtual vector2d GetBitmapPos() const { return BitmapPos; }
-  std::string OwnerDescription;
-  vector2d BitmapPos;
-  ushort Color[4];
-  //character* Master;
-  short HP;
-  bool Unique;
-  //bool Attached;
-);
-
-class ITEM
-(
-  head,
-  bodypart,
-  InitMaterials(new humanflesh),
-  {
-    SetUnique(false);
-  },
- public:
-  virtual float OfferModifier() const { return 0.1f; }
-  virtual bool CanBeWished() const { return false; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
-  virtual vector2d GetInHandsPic() const { return vector2d(160,144); }
-  virtual ushort GetArmoredStrengthValue() const;
- protected:
-  virtual ushort GetStrengthModifier() const { return 150; }
-  virtual std::string NameSingular() const { return "head"; }
-  virtual ushort GetFormModifier() const { return 20; }
-  /*helmet* Helmet;
-  amulet* Amulet;*/
-);
-
-class ABSTRACT_ITEM
-(
-  torso,
-  bodypart,
- public:
- protected:
-  virtual ushort GetStrengthModifier() const { return 250; }
-  virtual std::string NameSingular() const { return "torso"; }
-);
-
-class ITEM
-(
-  normaltorso,
-  torso,
-  ;,
-  {
-    SetUnique(false);
-  },
- public:
-  virtual ushort GetMaterialColor0() const { return item::GetMaterialColor0(); }
-  virtual ushort GetMaterialColor1() const { return item::GetMaterialColor1(); }
-  virtual ushort GetMaterialColor2() const { return item::GetMaterialColor2(); }
-  virtual ushort GetMaterialColor3() const { return item::GetMaterialColor3(); }
-  virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
-  virtual ushort GetArmoredStrengthValue() const;
-);
-
-class ITEM
-(
-  humanoidtorso,
-  torso,
-  ;,
-  {
-    SetBodyArmor(0);
-    SetUnique(false);
-  },
- public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
-  virtual ushort GetArmoredStrengthValue() const;
-  virtual void SetBodyArmor(item*);
-  virtual item* GetBodyArmor() const { return *BodyArmorSlot; }
- protected:
-  characterslot BodyArmorSlot;
-  //bodyarmor* BodyArmor;
-  /*cloak* Cloak;
-  belt* Belt;*/
-);
-
-class ABSTRACT_ITEM
-(
-  arm,
-  bodypart,
- public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual ushort GetArmoredStrengthValue() const;
-  virtual void SetWielded(item*);
-  virtual item* GetWielded() const { return *WieldSlot; }
-  virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
-  virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
-  virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
-  virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
-  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
-  virtual void Be();
-  virtual float GetWieldedStrength(bool);
-  virtual float GetMeleeStrength();
-  virtual float GetWieldedToHitValue(bool);
-  virtual float GetMeleeToHitValue();
- protected:
-  virtual ushort GetStrengthModifier() const { return 50; }
-  //gauntlet* Gauntlet;
-  characterslot WieldSlot;
-  //ring* Ring;
-  std::vector<sweaponskill*> SingleWeaponSkill;
-  sweaponskill* CurrentSingleWeaponSkill;
-);
-
-class ITEM
-(
-  rightarm,
-  arm,
-  ;,
-  {
-    WieldSlot.SetItem(0);
-    SetCurrentSingleWeaponSkill(0);
-    SetHasBe(true);
-    SetUnique(false);
-  },
- public:
- protected:
-  virtual uchar GetSpecialType() const { return STRIGHTARM; }
-  virtual std::string NameSingular() const { return "right arm"; }
-);
-
-class ITEM
-(
-  leftarm,
-  arm,
-  ;,
-  {
-    WieldSlot.SetItem(0);
-    SetCurrentSingleWeaponSkill(0);
-    SetHasBe(true);
-    SetUnique(false);
-  },
- public:
- protected:
-  virtual uchar GetSpecialType() const { return STLEFTARM; }
-  virtual std::string NameSingular() const { return "left arm"; }
-);
-
-class ITEM
-(
-  groin,
-  bodypart,
-  ;,
-  {
-    SetUnique(false);
-  },
- public:
-  virtual ushort GetArmoredStrengthValue() const;
- protected:
-  virtual ushort GetStrengthModifier() const { return 100; }
-  virtual uchar GetSpecialType() const { return STGROIN; }
-  virtual std::string NameSingular() const { return "groin"; }
-);
-
-class ABSTRACT_ITEM
-(
-  leg,
-  bodypart,
- public:
-  virtual ushort GetArmoredStrengthValue() const;
- protected:
-  virtual ushort GetStrengthModifier() const { return 75; }
-  //boot* Boot;
-);
-
-class ITEM
-(
-  rightleg,
-  leg,
-  ;,
-  {
-    SetUnique(false);
-  },
- public:
- protected:
-  virtual uchar GetSpecialType() const { return STRIGHTLEG; }
-  virtual std::string NameSingular() const { return "right leg"; }
-);
-
-class ITEM
-(
-  leftleg,
-  leg,
-  ;,
-  {
-    SetUnique(false);
-  },
- public:
- protected:
-  virtual uchar GetSpecialType() const { return STLEFTLEG; }
-  virtual std::string NameSingular() const { return "left leg"; }
-);
-
-class ITEM
-(
-  headofelpuri,
-  head,
-  InitMaterials(new elpuriflesh),
-  {
-    SetSize(60);
-    //SetMaster(0);
-    SetUnique(true);
-    SetOwnerDescription("of Elpuri, the Master Dark Frog");
-  },
- public:
-  virtual ushort Possibility() const { return 0; }
-  //virtual std::string Name(uchar Case) const { return NameArtifact(Case, elpuriflesh::StaticType()); }
-  virtual bool IsHeadOfElpuri() const { return true; }
-  //virtual std::string NameSingular() const { return "head of Elpuri"; }
-  virtual long Score() const { return 1000; };
-  virtual bool CanBeWished() const { return false; }
-  virtual bool Destroyable() const { return false; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 25000; default: return 0; } }
-  virtual bool Consumable(character*) const { return false; }
-  virtual bool Polymorph(stack*) { return false; }
-  virtual bool AutoInitializable() const { return true; }
- protected:
-  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != elpuriflesh::StaticType(); }
-  //virtual std::string Article() const { return "the"; }
-  //virtual bool ForceDefiniteArticle() const { return true; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16,0); }
-);
-
-class ITEM
-(
-  headofennerbeast,
-  head,
-  InitMaterials(new ennerbeastflesh),
-  {
-    SetSize(50);
-    //SetMaster(0);
-    SetUnique(false);
-    SetOwnerDescription("of an enner beast");
-  },
- public:
-  virtual ushort Possibility() const { return 5; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-  //virtual std::string NameSingular() const { return "head of an enner beast"; }
-  virtual long Score() const { return 250; };
-  virtual bool CanBeWished() const { return true; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5000; default: return 0; } }
-  virtual ulong Price() const { return 100; }
-  virtual bool AutoInitializable() const { return true; }
- protected:
-  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetType() != ennerbeastflesh::StaticType(); }
-  virtual vector2d GetBitmapPos() const { return vector2d(0,176); }
-);
-
 class ITEM
 (
   wandofteleportation,
@@ -1618,7 +1296,6 @@ class ITEM
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
   virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->IsExplosive()) ? true : false; }
   virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
-  //virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", iron::StaticType()); }
   virtual uchar GetCharged() const { return Charged; }
   virtual bool StruckByWandOfStriking(character*, std::string);
   virtual void SetCharged(bool What) { Charged = What; }
@@ -1742,59 +1419,59 @@ class ITEM
 
 class ITEM
 (
- boot,
- item,
- GenerateBootMaterials(),
- {
-   SetSize(30);
- },
+  boot,
+  item,
+  GenerateBootMaterials(),
+  {
+  SetSize(30);
+  },
  public:
- virtual ushort Possibility() const { return 30; }
- virtual std::string NameSingular() const { return "boot"; }
- virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } } 
-  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the boots can be calculated someho
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "boot"; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } } 
+  virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the boots can be calculated someho
   virtual void GenerateBootMaterials();
-  protected:
+ protected:
   virtual ushort GetStrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
-  virtual ushort GetFormModifier() const { return 20; } 
+  virtual ushort GetFormModifier() const { return 20; }
 );
 
 class ITEM
 (
- gauntlet, 
- item,
- GenerateGauntletMaterials(),
- {
-   SetSize(30);
- },
+  gauntlet, 
+  item,
+  GenerateGauntletMaterials(),
+  {
+    SetSize(30);
+  },
  public:
- virtual ushort Possibility() const { return 30; }
- virtual std::string NameSingular() const { return "gauntlet"; }
- virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } } 
-  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the gauntlets can be calculated somehow
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "gauntlet"; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } } 
+  virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the gauntlets can be calculated somehow
   virtual void GenerateGauntletMaterials();
-  protected:
+ protected:
   virtual ushort GetStrengthModifier() const { return 55; }
   virtual vector2d GetBitmapPos() const { return vector2d(32, 368); }
-  virtual ushort GetFormModifier() const { return 20; } 
+  virtual ushort GetFormModifier() const { return 20; }
 );
 
 class ITEM
 (
- belt, 
- item,
- InitMaterials(new leather),
- {
-   SetSize(150);
- },
+  belt, 
+  item,
+  InitMaterials(new leather),
+  {
+    SetSize(150);
+  },
  public:
- virtual ushort Possibility() const { return 30; }
- virtual std::string NameSingular() const { return "belt"; }
- virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } } 
-  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "belt"; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } } 
+  virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual uchar GetWeaponCategory() const { return WHIPS; }
-  protected:
+ protected:
   virtual ushort GetStrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(32, 384); }
   virtual ushort GetFormModifier() const;
@@ -1802,42 +1479,348 @@ class ITEM
 
 class ITEM
 (
- ring, 
- item,
- GenerateRingMaterials(),
- {
-   SetSize(2);
- },
+  ring, 
+  item,
+  GenerateRingMaterials(),
+  {
+    SetSize(2);
+  },
  public:
- virtual ushort Possibility() const { return 30; }
- virtual std::string NameSingular() const { return "ring"; }
- virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 3; default: return 0; } } 
-  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "ring"; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 3; default: return 0; } } 
+  virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   void GenerateRingMaterials();
-  protected:
+ protected:
   virtual ushort GetStrengthModifier() const { return 80; }
   virtual vector2d GetBitmapPos() const { return vector2d(16, 400); }
-  virtual ushort GetFormModifier() const { return 20; } 
+  virtual ushort GetFormModifier() const { return 20; }
 );
 
 class ITEM
 (
- amulet, 
- item,
- GenerateAmuletMaterials(),
- {
-   SetSize(20);
- },
+  amulet, 
+  item,
+  GenerateAmuletMaterials(),
+  {
+    SetSize(20);
+  },
  public:
- virtual ushort Possibility() const { return 30; }
- virtual std::string NameSingular() const { return "amulet"; }
- virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } } 
-  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "amulet"; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } } 
+  virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   void GenerateAmuletMaterials();
-  protected:
+ protected:
   virtual ushort GetStrengthModifier() const { return 30; }
   virtual vector2d GetBitmapPos() const { return vector2d(32, 400); }
-  virtual ushort GetFormModifier() const { return 50; } 
+  virtual ushort GetFormModifier() const { return 50; }
+);
+
+class ABSTRACT_ITEM
+(
+  bodypart,
+  item,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual ushort Possibility() const { return 0; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 0; default: return 0; } }
+  virtual void SetBitmapPos(vector2d What) { BitmapPos = What; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
+  virtual void SetColor(ushort Index, ushort What) { Color[Index] = What; }
+  virtual character* GetMaster() const;
+  virtual humanoid* GetHumanoidMaster() const;
+  virtual bool AutoInitializable() const { return false; }
+  virtual ushort GetStrengthValue() const;
+  virtual short GetMaxHP() const;
+  virtual void SetHP(short What) { HP = What; }
+  virtual short GetHP() const { return HP; }
+  virtual void EditHP(short What) { HP += What; }
+  virtual ushort GetArmoredStrengthValue() const = 0;
+  virtual bool ReceivePhysicalDamage(short);
+  virtual std::string GetOwnerDescription() const { return OwnerDescription; }
+  virtual void SetOwnerDescription(std::string What) { OwnerDescription = What; }
+  virtual bool GetUnique() const { return Unique; }
+  virtual void SetUnique(bool What) { Unique = What; }
+  virtual characterslot* GetCharacterSlot() const;
+ protected:
+  virtual std::string PostFix() const { return GetOwnerDescription(); }
+  virtual bool ShowPostFix() const { return !GetMaster(); }
+  virtual bool ShowMaterial() const { return false; }
+  virtual bool ForceDefiniteArticle() const { return Unique; }
+  virtual ushort GetMaterialColor0() const { return Color[0]; }
+  virtual ushort GetMaterialColor1() const { return Color[1]; }
+  virtual ushort GetMaterialColor2() const { return Color[2]; }
+  virtual ushort GetMaterialColor3() const { return Color[3]; }
+  virtual vector2d GetBitmapPos() const { return BitmapPos; }
+  std::string OwnerDescription;
+  vector2d BitmapPos;
+  ushort Color[4];
+  short HP;
+  bool Unique;
+);
+
+class ITEM
+(
+  head,
+  bodypart,
+  InitMaterials(new humanflesh),
+  {
+    HelmetSlot.Init(this);
+    AmuletSlot.Init(this);
+    SetUnique(false);
+  },
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual float OfferModifier() const { return 0.1f; }
+  virtual bool CanBeWished() const { return false; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
+  virtual vector2d GetInHandsPic() const { return vector2d(160,144); }
+  virtual ushort GetArmoredStrengthValue() const;
+  virtual void SetHelmet(item* What) { HelmetSlot.PutInItem(What); }
+  virtual item* GetHelmet() const { return *HelmetSlot; }
+  virtual void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
+  virtual item* GetAmulet() const { return *AmuletSlot; }
+ protected:
+  virtual ushort GetStrengthModifier() const { return 150; }
+  virtual std::string NameSingular() const { return "head"; }
+  virtual ushort GetFormModifier() const { return 20; }
+  gearslot HelmetSlot;
+  gearslot AmuletSlot;
+);
+
+class ABSTRACT_ITEM
+(
+  torso,
+  bodypart,
+ public:
+ protected:
+  virtual ushort GetStrengthModifier() const { return 250; }
+  virtual std::string NameSingular() const { return "torso"; }
+);
+
+class ITEM
+(
+  normaltorso,
+  torso,
+  ;,
+  {
+    SetUnique(false);
+  },
+ public:
+  virtual ushort GetMaterialColor0() const { return item::GetMaterialColor0(); }
+  virtual ushort GetMaterialColor1() const { return item::GetMaterialColor1(); }
+  virtual ushort GetMaterialColor2() const { return item::GetMaterialColor2(); }
+  virtual ushort GetMaterialColor3() const { return item::GetMaterialColor3(); }
+  virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
+  virtual ushort GetArmoredStrengthValue() const;
+);
+
+class ITEM
+(
+  humanoidtorso,
+  torso,
+  ;,
+  {
+    BodyArmorSlot.Init(this);
+    CloakSlot.Init(this);
+    BeltSlot.Init(this);
+    SetUnique(false);
+  },
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
+  virtual ushort GetArmoredStrengthValue() const;
+  virtual void SetBodyArmor(item* What) { BodyArmorSlot.PutInItem(What); }
+  virtual item* GetBodyArmor() const { return *BodyArmorSlot; }
+  virtual void SetCloak(item* What) { CloakSlot.PutInItem(What); }
+  virtual item* GetCloak() const { return *CloakSlot; }
+  virtual void SetBelt(item* What) { BeltSlot.PutInItem(What); }
+  virtual item* GetBelt() const { return *BeltSlot; }
+ protected:
+  gearslot BodyArmorSlot;
+  gearslot CloakSlot;
+  gearslot BeltSlot;
+);
+
+class ABSTRACT_ITEM
+(
+  arm,
+  bodypart,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual ushort GetArmoredStrengthValue() const;
+  virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
+  virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
+  virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
+  virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
+  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
+  virtual void Be();
+  virtual float GetWieldedStrength(bool);
+  virtual float GetMeleeStrength();
+  virtual float GetWieldedToHitValue(bool);
+  virtual float GetMeleeToHitValue();
+  virtual void SetWielded(item*);
+  virtual item* GetWielded() const { return *WieldedSlot; }
+  virtual void SetGauntlet(item* What) { GauntletSlot.PutInItem(What); }
+  virtual item* GetGauntlet() const { return *GauntletSlot; }
+  virtual void SetRing(item* What) { RingSlot.PutInItem(What); }
+  virtual item* GetRing() const { return *RingSlot; }
+ protected:
+  virtual ushort GetStrengthModifier() const { return 50; }
+  gearslot WieldedSlot;
+  gearslot GauntletSlot;
+  gearslot RingSlot;
+  std::vector<sweaponskill*> SingleWeaponSkill;
+  sweaponskill* CurrentSingleWeaponSkill;
+);
+
+class ITEM
+(
+  rightarm,
+  arm,
+  ;,
+  {
+    WieldedSlot.Init(this);
+    GauntletSlot.Init(this);
+    RingSlot.Init(this);
+    SetCurrentSingleWeaponSkill(0);
+    SetHasBe(true);
+    SetUnique(false);
+  },
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return STRIGHTARM; }
+  virtual std::string NameSingular() const { return "right arm"; }
+);
+
+class ITEM
+(
+  leftarm,
+  arm,
+  ;,
+  {
+    WieldedSlot.Init(this);
+    GauntletSlot.Init(this);
+    RingSlot.Init(this);
+    SetCurrentSingleWeaponSkill(0);
+    SetHasBe(true);
+    SetUnique(false);
+  },
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return STLEFTARM; }
+  virtual std::string NameSingular() const { return "left arm"; }
+);
+
+class ITEM
+(
+  groin,
+  bodypart,
+  ;,
+  {
+    SetUnique(false);
+  },
+ public:
+  virtual ushort GetArmoredStrengthValue() const;
+ protected:
+  virtual ushort GetStrengthModifier() const { return 100; }
+  virtual uchar GetSpecialType() const { return STGROIN; }
+  virtual std::string NameSingular() const { return "groin"; }
+);
+
+class ABSTRACT_ITEM
+(
+  leg,
+  bodypart,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual ushort GetArmoredStrengthValue() const;
+  virtual void SetBoot(item* What) { BootSlot.PutInItem(What); }
+  virtual item* GetBoot() const { return *BootSlot; }
+ protected:
+  virtual ushort GetStrengthModifier() const { return 75; }
+  gearslot BootSlot;
+);
+
+class ITEM
+(
+  rightleg,
+  leg,
+  ;,
+  {
+    BootSlot.Init(this);
+    SetUnique(false);
+  },
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return STRIGHTLEG; }
+  virtual std::string NameSingular() const { return "right leg"; }
+);
+
+class ITEM
+(
+  leftleg,
+  leg,
+  ;,
+  {
+    BootSlot.Init(this);
+    SetUnique(false);
+  },
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return STLEFTLEG; }
+  virtual std::string NameSingular() const { return "left leg"; }
+);
+
+class ITEM
+(
+  headofelpuri,
+  head,
+  InitMaterials(new elpuriflesh),
+  {
+    SetSize(60);
+    SetUnique(true);
+    SetOwnerDescription("of Elpuri, the Master Dark Frog");
+  },
+ public:
+  virtual ushort Possibility() const { return 0; }
+  virtual bool IsHeadOfElpuri() const { return true; }
+  virtual long Score() const { return 1000; };
+  virtual bool CanBeWished() const { return false; }
+  virtual bool Destroyable() const { return false; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 25000; default: return 0; } }
+  virtual bool Consumable(character*) const { return false; }
+  virtual bool Polymorph(stack*) { return false; }
+  virtual bool AutoInitializable() const { return true; }
+ protected:
+  virtual vector2d GetBitmapPos() const { return vector2d(16,0); }
+);
+
+class ITEM
+(
+  headofennerbeast,
+  head,
+  InitMaterials(new ennerbeastflesh),
+  {
+    SetSize(50);
+    SetUnique(false);
+    SetOwnerDescription("of an enner beast");
+  },
+ public:
+  virtual ushort Possibility() const { return 5; }
+  virtual long Score() const { return 250; };
+  virtual bool CanBeWished() const { return true; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5000; default: return 0; } }
+  virtual ulong Price() const { return 100; }
+  virtual bool AutoInitializable() const { return true; }
+ protected:
+  virtual vector2d GetBitmapPos() const { return vector2d(0,176); }
 );
 
 #endif

@@ -64,10 +64,8 @@ int Main(int argc, char **argv)
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 #endif
 
-  elpuri Elpuri(true, false, false, true, false);
-
   while(true)
-    switch(iosystem::Menu(Elpuri.GetTorso()->GetPicture(), "Iter Vehemens ad Necem\rMain Menu\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_RGB(80, 80, 80), WHITE, true))
       {
       case 0:
 	game::Init();
@@ -76,7 +74,7 @@ int Main(int argc, char **argv)
 	break;
       case 1:
 	{
-	  std::string LoadName = iosystem::WhatToLoadMenu(WHITE, BLUE, SAVE_DIR);
+	  std::string LoadName = iosystem::WhatToLoadMenu(WHITE, MAKE_RGB(80, 80, 80), SAVE_DIR);
 
 	  if(LoadName != "")
 	    {

@@ -75,7 +75,7 @@ ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ushort ColorSelected, ushort ColorNotSelected, bool Pentagram) // (MENU)
+int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushort ColorSelected, ushort ColorNotSelected, bool Pentagram) // (MENU)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -94,7 +94,10 @@ int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ush
     {
       clock_t StartTime = clock();
 
-      Buffer.Fill(0);
+      if(BackGround)
+	BackGround->Blit(&Buffer, 0, 0, 0, 0, 800, 600);
+      else
+	Buffer.Fill(0);
 
       if(Pentagram)
 	{
@@ -110,8 +113,6 @@ int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ush
 
 	  for(x = 0; x < 4; ++x)
 	    Buffer.DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
-
-	  PentaPicture->MaskedBlit(&Buffer, 0, 0, 143, 141, 16, 16);
 	}
 
       std::string sCopyOfMS = Topic;

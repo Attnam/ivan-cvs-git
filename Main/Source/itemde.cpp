@@ -230,9 +230,6 @@ bool potion::ImpactDamage(ushort)
   Remains->InitMaterials(GetMaterial(0));
   SetMaterial(0,0);
   DonateSlotTo(Remains);
-  //ItemStack->AddItem(Remains);
-  //ItemStack->RemoveItem(ItemStack->SearchItem(this));
-  //RemoveFromSlot();
   if(GetSquareUnder()->CanBeSeen())
     ADD_MESSAGE("The potion shatters to pieces.");
   SetExists(false);
@@ -256,6 +253,7 @@ item* leftnutofpetrus::CreateWishedItem() const
 {
   return new cheapcopyofleftnutofpetrus;
 }
+
 /*
   
   Few Examples:
@@ -287,11 +285,7 @@ bool pickaxe::Apply(character* User)
       lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
 
       if(Square->CanBeDigged(User, this))
-//<<<<<<< itemde.cpp
 	if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDigged(GetMainMaterial()))
-//=======
-	//if(Square->GetOLTerrain()->GetMaterial(0)->CanBeDigged(GetMaterial(0)))
-//>>>>>>> 1.129
 	  {
 	    User->SetSquareBeingDigged(User->GetPos() + Temp);
 	    //User->SetOldWieldedItem(User->GetWielded());
@@ -357,7 +351,6 @@ bool wand::Apply(character* Terrorist)
       ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
   RemoveFromSlot();
-  //MotherStack->RemoveItem(MotherStack->SearchItem(this));
   SetExists(false);
 
   std::string DeathMsg;
@@ -426,9 +419,6 @@ bool lantern::ImpactDamage(ushort)
   PreserveMaterial(0);
   Lantern->SignalSquarePositionChange(OnWall);
   DonateSlotTo(Lantern);
-  //ItemStack->AddItem(Lantern);
-  //RemoveFromSlot();
-  //ItemStack->RemoveItem(ItemStack->SearchItem(this));
   if(GetSquareUnder()->CanBeSeen())
     ADD_MESSAGE("The lantern shatters to pieces.");
   SetExists(false);
@@ -709,7 +699,6 @@ bool backpack::Apply(character* Terrorist)
 	  ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
 
       std::string DeathMsg;
@@ -780,7 +769,6 @@ bool wand::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* Mot
 	ADD_MESSAGE("%s catches fire and explodes!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
       MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 40);
       return true;
@@ -797,7 +785,6 @@ bool backpack::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack*
 	ADD_MESSAGE("%s explodes in the heat!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
       MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
       return true;
@@ -834,7 +821,6 @@ bool scroll::ReceiveFireDamage(character*, std::string, stack* MotherStack, long
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
       return true;
     }
@@ -899,7 +885,6 @@ bool holybook::ReceiveFireDamage(character*, std::string, stack* MotherStack, lo
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
       return true;
     }
@@ -915,7 +900,6 @@ bool wand::StruckByWandOfStriking(character* Striker, std::string DeathMsg)
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
       GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, GetLSquareUnder()->GetPos(), 40);
       return true;
@@ -932,7 +916,6 @@ bool backpack::StruckByWandOfStriking(character* Striker, std::string DeathMsg)
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      //MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
       GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
       return true;
@@ -1244,7 +1227,6 @@ void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3] >> HP >> OwnerDescription >> Unique;
-  //SetMaster(0);
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1384,31 +1366,41 @@ ushort leg::GetArmoredStrengthValue() const
     return GetStrengthValue();
 }
 
+void head::Save(outputfile& SaveFile) const
+{
+  bodypart::Save(SaveFile);
+  SaveFile << HelmetSlot << AmuletSlot;
+}
+
+void head::Load(inputfile& SaveFile)
+{
+  bodypart::Load(SaveFile);
+  SaveFile >> HelmetSlot >> AmuletSlot;
+}
+
 void humanoidtorso::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  BodyArmorSlot.Save(SaveFile);
+  SaveFile << BodyArmorSlot << CloakSlot << BeltSlot;
 }
 
 void humanoidtorso::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  //SetBodyArmor(0);
-  BodyArmorSlot.Load(SaveFile);
+  SaveFile >> BodyArmorSlot >> CloakSlot >> BeltSlot;
 }
 
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  WieldSlot.Save(SaveFile);
+  SaveFile << WieldedSlot << GauntletSlot << RingSlot;
   SaveFile << SingleWeaponSkill;
 }
 
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  //SetWielded(0);
-  WieldSlot.Load(SaveFile);
+  SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
   SaveFile >> SingleWeaponSkill;
 
   if(GetWielded())
@@ -1418,6 +1410,18 @@ void arm::Load(inputfile& SaveFile)
 	  SetCurrentSingleWeaponSkill(*i);
 	  break;
 	}
+}
+
+void leg::Save(outputfile& SaveFile) const
+{
+  bodypart::Save(SaveFile);
+  SaveFile << BootSlot;
+}
+
+void leg::Load(inputfile& SaveFile)
+{
+  bodypart::Load(SaveFile);
+  SaveFile >> BootSlot;
 }
 
 bool bodypart::ReceivePhysicalDamage(short Damage)
@@ -1598,14 +1602,6 @@ bool potion::HasBeenDippedInFountain(character* Dipper,fountain* Fountain)
   return true;
 }
 
-void humanoidtorso::SetBodyArmor(item* Armor)
-{
-  BodyArmorSlot.SetItem(Armor);
-
-  if(Armor)
-    Armor->SetSlot(&BodyArmorSlot);
-}
-
 void arm::SetWielded(item* Item)
 {
   if(GetWielded() && !GetCurrentSingleWeaponSkill()->GetHits())
@@ -1618,12 +1614,10 @@ void arm::SetWielded(item* Item)
 	}
 
   SetCurrentSingleWeaponSkill(0);
-  WieldSlot.SetItem(Item);
+  WieldedSlot.PutInItem(Item);
 
   if(Item)
     {
-      Item->SetSlot(&WieldSlot);
-
       for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
 	if((*i)->GetID() == Item->GetID())
 	  {
@@ -1670,19 +1664,6 @@ void arm::Be()
       ++i;
     }
 }
-
-/*float arm::GetAttackStrength() const
-{
-  return GetWielded()->GetWeaponStrength() * GetCurrentSingleWeaponSkill()->GetBonus();
-}*/
-
-/*float arm::GetMainAttackStrength() const
-{
-  if(GetWielded())
-    return GetWielded()->GetWeaponStrength() * GetCurrentSingleWeaponSkill()->GetBonus();
-  else
-    return GetMeleeStrength();
-}*/
 
 float arm::GetWieldedStrength(bool OneHanded)
 {
@@ -1739,7 +1720,6 @@ ushort belt::GetFormModifier() const
     return 60;
 }
 
-
 void boot::GenerateBootMaterials()
 { 
   switch(RAND() % 2)
@@ -1748,7 +1728,6 @@ void boot::GenerateBootMaterials()
     case 2: InitMaterials(new iron); break;
     }
 }
-
 
 void gauntlet::GenerateGauntletMaterials()
 { 
@@ -1786,12 +1765,6 @@ character* bodypart::GetMaster() const
   else
     return 0;
 }
-
-/*void bodypart::SetMaster(character* What)
-{
-  if(Slot->IsCharacterSlot())
-    GetCharacterSlot()->SetMaster(What);
-}*/
 
 characterslot* bodypart::GetCharacterSlot() const
 {
