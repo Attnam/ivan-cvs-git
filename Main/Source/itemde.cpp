@@ -346,7 +346,7 @@ item* brokenbottle::BetterVersion() const
   if(RAND() % 5)
     Stuff = MAKE_MATERIAL(BANANA_FLESH);
   else
-    Stuff = MAKE_MATERIAL(OMEL_URINE);
+    Stuff = MAKE_MATERIAL(OMMEL_URINE);
 
   potion* P = new potion(0, NO_MATERIALS); 
   P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff); 
@@ -409,9 +409,10 @@ void potion::DipInto(material* Material, character* Dipper)
 
 ulong meleeweapon::GetPrice() const
 {
-  float WeaponStrengthModifier = float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight();
+  float WeaponStrengthModifier = GetFormModifier() * GetMainMaterial()->GetStrengthValue();
   WeaponStrengthModifier *= WeaponStrengthModifier;
-  return ulong(WeaponStrengthModifier / (5000000000000.0f * sqrt(GetWeight()))) + GetEnchantedPrice(Enchantment);
+  WeaponStrengthModifier *= GetMainMaterial()->GetWeight();
+  return ulong(WeaponStrengthModifier / (20000000.0f * sqrt(GetWeight()))) + GetEnchantedPrice(Enchantment);
 }
 
 ulong armor::GetPrice() const
@@ -450,7 +451,7 @@ item* potion::BetterVersion() const
       if(RAND() % 5)
 	Stuff = MAKE_MATERIAL(BANANA_FLESH);
       else
-	Stuff = MAKE_MATERIAL(OMEL_URINE);
+	Stuff = MAKE_MATERIAL(OMMEL_URINE);
 
       potion* P = new potion(0, NO_MATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
@@ -1254,7 +1255,7 @@ float arm::GetUnarmedDamage() const
 
 float arm::GetUnarmedToHitValue() const
 {
-  return float((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 10000;
+  return float((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 50000;
 }
 
 long arm::GetUnarmedAPCost() const
@@ -3453,7 +3454,7 @@ void materialcontainer::SignalSpoil(material* Material)
 	  lump* Lump = new lump(0, NO_MATERIALS);
 	  Lump->InitMaterials(GetContainedMaterial());
 	  SetContainedMaterial(0, NO_PIC_UPDATE);
-	  GetSlot()->DonateTo(Lump);
+	  DonateSlotTo(Lump);
 	}
 
       SendToHell();
@@ -3479,7 +3480,7 @@ void banana::SignalSpoil(material* Material)
 
       item* Peel = new bananapeels(0, NO_MATERIALS);
       Peel->InitMaterials(GetMainMaterial());
-      GetSlot()->DonateTo(Peel);
+      DonateSlotTo(Peel);
       SetMainMaterial(0, NO_PIC_UPDATE);
       SendToHell();
     }
@@ -3680,7 +3681,7 @@ void potion::Break()
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
-  GetSlot()->DonateTo(Remains);
+  DonateSlotTo(Remains);
   SendToHell();
 }
 

@@ -1257,18 +1257,27 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   GetStack()->AddItem(new holybook(GetConfig(), SpecialFlags));
+  item* Equipment;
 
   switch(GetMasterGod()->BasicAlignment())
     {
     case GOOD:
-      SetMainWielded(new meleeweapon(LONG_SWORD, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
-      SetBodyArmor(new bodyarmor(CHAIN_MAIL, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
+      Equipment = new meleeweapon(LONG_SWORD, SpecialFlags|NO_PIC_UPDATE);
+      Equipment->SetMainMaterial(MAKE_MATERIAL(DIAMOND), SpecialFlags);
+      SetMainWielded(Equipment);
+      Equipment = new bodyarmor(CHAIN_MAIL, SpecialFlags|NO_PIC_UPDATE);
+      Equipment->SetMainMaterial(MAKE_MATERIAL(DIAMOND), SpecialFlags);
+      SetBodyArmor(Equipment);
       GetCWeaponSkill(LARGE_SWORDS)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case NEUTRAL:
-      SetMainWielded(new meleeweapon(HALBERD, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
-      SetBodyArmor(new bodyarmor(CHAIN_MAIL, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
+      Equipment = new meleeweapon(HALBERD, SpecialFlags|NO_PIC_UPDATE);
+      Equipment->SetMainMaterial(MAKE_MATERIAL(SAPPHIRE), SpecialFlags);
+      SetMainWielded(Equipment);
+      Equipment = new bodyarmor(CHAIN_MAIL, SpecialFlags|NO_PIC_UPDATE);
+      Equipment->SetMainMaterial(MAKE_MATERIAL(SAPPHIRE), SpecialFlags);
+      SetBodyArmor(Equipment);
       GetCWeaponSkill(AXES)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
@@ -1277,7 +1286,9 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
 	meleeweapon* SpikedMace = new meleeweapon(MACE, NO_MATERIALS);
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROG_FLESH), !(SpecialFlags & NO_PIC_UPDATE));
 	SetMainWielded(SpikedMace);
-	SetBodyArmor(new bodyarmor(BROKEN|PLATE_MAIL, SpecialFlags, MAKE_MATERIAL(RUBY)));
+	Equipment = new bodyarmor(BROKEN|PLATE_MAIL, SpecialFlags|NO_PIC_UPDATE);
+	Equipment->SetMainMaterial(MAKE_MATERIAL(RUBY), SpecialFlags);
+	SetBodyArmor(Equipment);
 	GetCWeaponSkill(MACES)->AddHit(2000);
 	GetCurrentRightSWeaponSkill()->AddHit(2000);
 	break;
@@ -2241,7 +2252,7 @@ void nonhumanoid::CalculateUnarmedDamage()
 
 void nonhumanoid::CalculateUnarmedToHitValue()
 {
-  UnarmedToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 10000;
+  UnarmedToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 50000;
 }
 
 void nonhumanoid::CalculateUnarmedAPCost()
@@ -2259,7 +2270,7 @@ void nonhumanoid::CalculateKickDamage()
 
 void nonhumanoid::CalculateKickToHitValue()
 {
-  KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 20000;
+  KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 100000;
 }
 
 void nonhumanoid::CalculateKickAPCost()
@@ -2277,7 +2288,7 @@ void nonhumanoid::CalculateBiteDamage()
 
 void nonhumanoid::CalculateBiteToHitValue()
 {
-  BiteToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 20000;
+  BiteToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 100000;
 }
 
 void nonhumanoid::CalculateBiteAPCost()
@@ -3801,4 +3812,10 @@ void imperialist::BeTalkedTo(character* Talker)
 void imperialist::GetAICommand()
 {
   StandIdleAI();
+}
+
+ushort wolf::GetSkinColor() const
+{
+  static ushort WolfColor[] = { MakeRGB16(48, 48, 48), MakeRGB16(64, 64, 64),  MakeRGB16(80, 80, 80) };
+  return WolfColor[RAND() % 3];
 }

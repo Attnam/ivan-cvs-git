@@ -4060,14 +4060,14 @@ void character::ReceiveNutrition(long SizeOfEffect)
   EditNP(SizeOfEffect);
 }
 
-void character::ReceiveOmelUrine(long Amount)
+void character::ReceiveOmmelUrine(long Amount)
 {
   EditExperience(ARM_STRENGTH, Amount << 5);
   EditExperience(LEG_STRENGTH, Amount << 5);
   RestoreHP();
 }
 
-void character::AddOmelUrineConsumeEndMessage() const
+void character::AddOmmelUrineConsumeEndMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
@@ -5057,9 +5057,7 @@ bool character::IsWarm() const
 
 void character::BeginInvisibility()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->UpdatePictures();
+  UpdatePictures();
 
   if(GetSquareUnder())
     GetSquareUnder()->SendNewDrawRequest();
@@ -5079,10 +5077,7 @@ void character::BeginESP()
 
 void character::EndInvisibility()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->UpdatePictures();
-
+  UpdatePictures();
   GetSquareUnder()->SendNewDrawRequest();
 }
 

@@ -176,6 +176,12 @@ void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
       return;
     }
 
+  if(X + Width > XSize)
+    Width = XSize - X;
+
+  if(Y + Height > YSize)
+    Height = YSize - Y;
+
   ulong TrueOffset = ulong(&GetImage()[Y][X]);
   ulong TrueXMove = (XSize - Width) << 1;
 

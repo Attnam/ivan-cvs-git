@@ -50,7 +50,7 @@ bool material::Effect(character* Eater, long Amount)
     {
     case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
     case EFFECT_DARKNESS: Eater->ReceiveDarkness(Amount); return true;
-    case EFFECT_OMEL_URINE: Eater->ReceiveOmelUrine(Amount); return true;
+    case EFFECT_OMMEL_URINE: Eater->ReceiveOmmelUrine(Amount); return true;
     case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); return true;
     case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
     case EFFECT_HEAL: Eater->ReceiveHeal(Amount); return true;
@@ -75,7 +75,7 @@ bool material::HitEffect(character* Enemy)
     {
     case HM_SCHOOL_FOOD: Enemy->AddSchoolFoodHitMessage(); break;
     case HM_FROG_FLESH: Enemy->AddFrogFleshConsumeEndMessage(); break;
-    case HM_OMEL_URINE: Enemy->AddOmelUrineConsumeEndMessage(); break;
+    case HM_OMMEL_URINE: Enemy->AddOmmelUrineConsumeEndMessage(); break;
     case HM_PEPSI: Enemy->AddPepsiConsumeEndMessage(); break;
     case HM_KOBOLD_FLESH: Enemy->AddKoboldFleshHitMessage(); break;
     case HM_HEALING_LIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
@@ -94,7 +94,7 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_SCHOOL_FOOD: Eater->AddSchoolFoodConsumeEndMessage(); break;
     case CEM_BONE: Eater->AddBoneConsumeEndMessage(); break;
     case CEM_FROG_FLESH: Eater->AddFrogFleshConsumeEndMessage(); break;
-    case CEM_OMEL_URINE: Eater->AddOmelUrineConsumeEndMessage(); break;
+    case CEM_OMMEL_URINE: Eater->AddOmmelUrineConsumeEndMessage(); break;
     case CEM_PEPSI: Eater->AddPepsiConsumeEndMessage(); break;
     case CEM_KOBOLD_FLESH: Eater->AddKoboldFleshConsumeEndMessage(); break;
     case CEM_HEALING_LIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;

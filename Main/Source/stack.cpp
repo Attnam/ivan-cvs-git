@@ -383,7 +383,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
   Pile(PileVector, Viewer, SorterFunction);
 
   bool DrawDesc = Desc.length() != 0;
-  uchar LastCategory = 0xFF;
+  ulong LastCategory = 0;
 
   for(ushort p = 0; p < PileVector.size(); ++p)
     {

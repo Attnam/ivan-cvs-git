@@ -1,3 +1,20 @@
+October 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Weapon prices are now correct
+	* S&R:ed "omel" to "ommel"
+	* New materials added: hardened leather, troll hide, nymph hair, ommel hair,
+	  angel hair, phoenix feather, golden eagle feather, spider silk and kevlar
+	* Added many new material choices for cloaks, belts, gauntlets and boots
+	* Unarmed, kick and bite THVs decreased
+	* Corrected a problem with lamps that generated names like "oil iron lamp"
+	* Corrected a fatal bug in the spoil code
+	* Intact and broken morning star pictures added to item.pcx by Kahvi
+	* The old starting room moved to the tunnel
+	* Size of Elpuri's cave decreased by three levels
+	* Added scrolls of enchant weapon and armor as a reward to wolf room
+	* Added random item option to script
+	* Most items sold in shops and the library are now random
+
 October 24 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Inelastic armor now decreases dexterity and/or agility

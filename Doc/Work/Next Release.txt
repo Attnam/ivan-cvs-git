@@ -146,5 +146,8 @@ Boot m-color.
 Selecting from gear when using SoCM/SoEW/SoEA.
 //Weapon volumes should be more realistic.
 ?Flaming effect for holy banana.
-?Solving the iron cloak conundrum.
+//?Solving the iron cloak conundrum.
 ?Broad tapeworm.
+Imperialist quest.
+Moving the lamp room to the tunnel.
+New background story.

@@ -151,8 +151,9 @@ class basecontentscript : public script
  public:
   basecontentscript() : ContentType(0), Config(0) { }
   virtual void ReadFrom(inputfile&, bool = false);
-  ushort GetContentType() const { return ContentType; }
   virtual datamemberbase* GetData(const std::string&);
+  ushort GetContentType() const { return ContentType; }
+  bool IsValid() const { return ContentType || Random; }
  protected:
   virtual const std::string& GetClassId() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
@@ -162,6 +163,7 @@ class basecontentscript : public script
   DATAMEMBER(ulong, Parameters);
   ushort ContentType;
   ushort Config;
+  bool Random;
 };
 
 template <class type> class contentscripttemplate : public basecontentscript
@@ -195,6 +197,9 @@ class contentscript<item> : public contentscripttemplate<item>
   DATAMEMBER(bool, Active);
   DATAMEMBER(uchar, SideStackIndex);
   DATAMEMBER(short, Enchantment);
+  DATAMEMBER(ulong, MinPrice);
+  DATAMEMBER(ulong, MaxPrice);
+  DATAMEMBER(ulong, Category);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>

@@ -261,7 +261,7 @@ class character : public entity, public id
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   virtual void ReceiveNutrition(long);
-  virtual void ReceiveOmelUrine(long);
+  virtual void ReceiveOmmelUrine(long);
   virtual void ReceivePepsi(long);
   virtual void ReceiveSchoolFood(long);
   void Regenerate();
@@ -389,7 +389,7 @@ class character : public entity, public id
   virtual void AddHealingLiquidConsumeEndMessage() const;
   virtual void AddSchoolFoodConsumeEndMessage() const;
   virtual void AddSchoolFoodHitMessage() const;
-  virtual void AddOmelUrineConsumeEndMessage() const;
+  virtual void AddOmmelUrineConsumeEndMessage() const;
   virtual void AddPepsiConsumeEndMessage() const;
   virtual void AddFrogFleshConsumeEndMessage() const;
   virtual void AddKoboldFleshConsumeEndMessage() const;

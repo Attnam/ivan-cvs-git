@@ -266,17 +266,21 @@ bool game::Init(const std::string& Name)
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();
-	/*character* Doggie = new dog;
+	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
-	GetWorldMap()->GetPlayerGroup().push_back(Doggie);*/
+	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 
 	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  {
 	    const material::prototype* Proto = protocontainer<material>::GetProto(c);
 	    const material::databasemap& Config = Proto->GetConfig();
 
-	    for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	      Player->GetStack()->AddItem(new oillamp(MAKE_MATERIAL(i->first)));
+	    for(material::databasemap::const_iterator i = ++Config.begin(); i != Config.end(); ++i)
+	      {
+		oillamp* Lamp = new oillamp(0, NO_MATERIALS);
+		Lamp->InitMaterials(MAKE_MATERIAL(i->first));
+		Player->GetStack()->AddItem(Lamp);
+	      }
 	  }*/
 
 	ADD_MESSAGE("Game generated successfully.");

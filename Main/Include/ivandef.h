@@ -176,24 +176,25 @@
 
 #define ITEM_CATEGORIES 18
 
-#define HELMET 0
-#define AMULET 1
-#define CLOAK 2
-#define BODY_ARMOR 3
-#define WEAPON 4
-#define SHIELD 5
-#define RING 6
-#define GAUNTLET 7
-#define BELT 8
-#define BOOT 9
-#define FOOD 10
-#define POTION 11
-#define SCROLL 12
-#define BOOK 13
-#define WAND 14
-#define TOOL 15
-#define VALUABLE 16
-#define MISC 17
+#define ANY_CATEGORY 0
+#define HELMET 1
+#define AMULET 2
+#define CLOAK 4
+#define BODY_ARMOR 8
+#define WEAPON 16
+#define SHIELD 32
+#define RING 64
+#define GAUNTLET 128
+#define BELT 256
+#define BOOT 512
+#define FOOD 1024
+#define POTION 2048
+#define SCROLL 4096
+#define BOOK 8192
+#define WAND 16384
+#define TOOL 32768
+#define VALUABLE 65536
+#define MISC 131072
 
 #define NUMBER_OF_LOCK_TYPES 3 // damaged lock type does not count
 
@@ -216,7 +217,8 @@
 #define CT_BONE 32
 #define CT_PROCESSED 64
 #define CT_MISC_ORGANIC 128
-#define CT_GAS 256
+#define CT_PLASTIC 256
+#define CT_GAS 512
 
 #define DOWN 0
 #define LEFT 1
@@ -254,7 +256,7 @@
 #define EFFECT_NOTHING 0
 #define EFFECT_POISON 1
 #define EFFECT_DARKNESS 2
-#define EFFECT_OMEL_URINE 3
+#define EFFECT_OMMEL_URINE 3
 #define EFFECT_PEPSI 4
 #define EFFECT_KOBOLD_FLESH 5
 #define EFFECT_HEAL 6
@@ -267,7 +269,7 @@
 #define CEM_SCHOOL_FOOD 1
 #define CEM_BONE 2
 #define CEM_FROG_FLESH 3
-#define CEM_OMEL_URINE 4
+#define CEM_OMMEL_URINE 4
 #define CEM_PEPSI 5
 #define CEM_KOBOLD_FLESH 6
 #define CEM_HEALING_LIQUID 7
@@ -277,7 +279,7 @@
 #define HM_NOTHING 0
 #define HM_SCHOOL_FOOD 1
 #define HM_FROG_FLESH 2
-#define HM_OMEL_URINE 3
+#define HM_OMMEL_URINE 3
 #define HM_PEPSI 4
 #define HM_KOBOLD_FLESH 5
 #define HM_HEALING_LIQUID 6
@@ -312,6 +314,15 @@
 #define COPPER (MATERIAL_ID + 25)
 #define TIN (MATERIAL_ID + 26)
 #define STEEL (MATERIAL_ID + 27)
+#define SPIDER_SILK (MATERIAL_ID + 28)
+#define KEVLAR (MATERIAL_ID + 29)
+#define OMMEL_HAIR (MATERIAL_ID + 30)
+#define HARDENED_LEATHER (MATERIAL_ID + 31)
+#define TROLL_HIDE (MATERIAL_ID + 32)
+#define NYMPH_HAIR (MATERIAL_ID + 33)
+#define ANGEL_HAIR (MATERIAL_ID + 34)
+#define PHOENIX_FEATHER (MATERIAL_ID + 35)
+#define GOLDEN_EAGLE_FEATHER (MATERIAL_ID + 36)
 
 #define ORGANIC_SUBSTANCE_ID (4096 * 2)
 
@@ -330,7 +341,7 @@
 
 #define LIQUID_ID (4096 * 4)
 
-#define OMEL_URINE (LIQUID_ID + 1)
+#define OMMEL_URINE (LIQUID_ID + 1)
 #define PEPSI (LIQUID_ID + 2)
 #define WATER (LIQUID_ID + 3)
 #define HEALING_LIQUID (LIQUID_ID + 4)
@@ -559,8 +570,8 @@
 #define UNDER_WATER_TUNNEL 4
 #define UNDER_WATER_TUNNEL_EXIT 5
 
-#define DARK_LEVEL 6
-#define OREE_LAIR 9
+#define DARK_LEVEL 4
+#define OREE_LAIR 6
 
 #define NO_SELECT 1
 #define NO_MULTI_SELECT 2
@@ -569,5 +580,7 @@
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+
+#define MAX_PRICE 4294967295
 
 #endif

@@ -159,12 +159,21 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 	}
     }
 
-  ContentType = SearchCodeName(Word);
-
-  if(ContentType || Word == "0")
-    Word = SaveFile.ReadWord();
+  if(Word == "Random")
+    {
+      Random = true;
+      Word = SaveFile.ReadWord();
+    }
   else
-    ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    {
+      Random = false;
+      ContentType = SearchCodeName(Word);
+
+      if(ContentType || Word == "0")
+	Word = SaveFile.ReadWord();
+      else
+	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    }
 
   if(Word == "(")
     {
@@ -251,6 +260,9 @@ datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 
 void contentscript<character>::Instantiate(std::vector<character*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
+  if(Random)
+    ABORT("Random monsters aren't yet supported!");
+
   contentscripttemplate<character>::BasicInstantiate(Instance, Amount, SpecialFlags);
 
   if(GetTeam(false))
@@ -263,7 +275,7 @@ void contentscript<character>::Instantiate(std::vector<character*>& Instance, ul
 
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 {
-  if(!ContentType)
+  if(!IsValid())
     return 0;
 
   std::vector<character*> Instance;
@@ -277,12 +289,26 @@ datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(Active);
   ANALYZE_MEMBER(SideStackIndex);
   ANALYZE_MEMBER(Enchantment);
+  ANALYZE_MEMBER(MinPrice);
+  ANALYZE_MEMBER(MaxPrice);
+  ANALYZE_MEMBER(Category);
   return contentscripttemplate<item>::GetData(Identifier);
 }
 
 void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
-  contentscripttemplate<item>::BasicInstantiate(Instance, Amount, SpecialFlags);
+  if(Random)
+    {
+      Instance.resize(Amount, 0);
+      ulong MinPrice = GetMinPrice(false) ? *GetMinPrice() : 0;
+      ulong MaxPrice = GetMaxPrice(false) ? *GetMaxPrice() : MAX_PRICE;
+      ulong Category = GetCategory(false) ? *GetCategory() : ANY_CATEGORY;
+
+      for(ulong c = 0; c < Amount; ++c)
+	Instance[c] = protosystem::BalancedCreateItem(MinPrice, MaxPrice, Category);
+    }
+  else
+    contentscripttemplate<item>::BasicInstantiate(Instance, Amount, SpecialFlags);
 
   if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
@@ -299,7 +325,7 @@ void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 {
-  if(!ContentType)
+  if(!IsValid())
     return 0;
 
   std::vector<item*> Instance;
@@ -309,12 +335,15 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 
 void contentscript<glterrain>::Instantiate(std::vector<glterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
+  if(Random)
+    ABORT("Random GroundTerrains aren't yet supported!");
+
   contentscripttemplate<glterrain>::BasicInstantiate(Instance, Amount, SpecialFlags);
 }
 
 glterrain* contentscript<glterrain>::Instantiate(ushort SpecialFlags) const
 {
-  if(!ContentType)
+  if(!IsValid())
     return 0;
 
   std::vector<glterrain*> Instance;
@@ -332,6 +361,9 @@ datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
 
 void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
+  if(Random)
+    ABORT("Random OverTerrains aren't yet supported!");
+
   contentscripttemplate<olterrain>::BasicInstantiate(Instance, Amount, SpecialFlags);
 
   if(GetVisualEffects(false))
@@ -352,7 +384,7 @@ void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ul
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 {
-  if(!ContentType)
+  if(!IsValid())
     return 0;
 
   std::vector<olterrain*> Instance;
@@ -441,7 +473,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
 	      ContentScript->SetValueMap(ValueMap);
 	      ContentScript->ReadFrom(SaveFile);
 
-	      if(ContentScript->GetContentType())
+	      if(ContentScript->IsValid())
 		SymbolMap[Word[0]] = ContentScript;
 	      else
 		{

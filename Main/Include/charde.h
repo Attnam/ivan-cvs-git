@@ -457,6 +457,7 @@ class CHARACTER
   wolf,
   nonhumanoid,
  protected:
+  virtual ushort GetSkinColor() const;
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WOLF_FLESH, Volume); }
 );
 

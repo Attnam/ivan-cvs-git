@@ -111,7 +111,7 @@ material
 	{
 		StrengthValue = 15;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 600;
+		Density = 800;
 		IsSolid = true;
 		Color = rgb16(200, 200, 200);
 		IsFlammable = true;
@@ -155,7 +155,7 @@ material
 
 	Config GOLD;
 	{
-		StrengthValue = 30;
+		StrengthValue = 50;
 		ConsumeType = CT_METAL;
 		Density = 20000;
 		IsSolid = true;
@@ -182,9 +182,9 @@ material
 
 	Config LEATHER;
 	{
-		StrengthValue = 15;
+		StrengthValue = 20;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 500;
+		Density = 800;
 		IsSolid = true;
 		Color = rgb16(111, 64, 37);
 		IsFlammable = true;
@@ -263,7 +263,7 @@ material
 
 	Config SILVER;
 	{
-		StrengthValue = 50;
+		StrengthValue = 60;
 		ConsumeType = CT_METAL;
 		Density = 10500;
 		IsSolid = true;
@@ -326,7 +326,7 @@ material
 
 	Config TIN;
 	{
-		StrengthValue = 50;
+		StrengthValue = 60;
 		ConsumeType = CT_METAL;
 		Density = 7250; 
 		IsSolid = true;
@@ -345,6 +345,110 @@ material
 		PriceModifier = 40;
 		NameStem = "steel";
 	}
+
+	Config SPIDER_SILK;
+	{
+		StrengthValue = 160;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 200;
+		Color = rgb16(160, 160, 160);
+		IsFlammable = true;
+		NameStem = "spider silk";
+		Flexibility = 20;
+		CanBeWished = false;
+	}
+
+	Config KEVLAR;
+	{
+		StrengthValue = 140;
+		ConsumeType = CT_PLASTIC;
+		Density = 1400;
+		Color = rgb16(144, 95, 32);
+		NameStem = "kevlar";
+		Flexibility = 15;
+		CanBeWished = false;
+	}
+
+	Config OMMEL_HAIR;
+	{
+		StrengthValue = 60;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 400;
+		IsSolid = true;
+		Color = rgb16(160, 0, 0);
+		IsFlammable = true;
+		NameStem = "ommel hair";
+		Flexibility = 15;
+		Article = "an";
+	}
+
+	Config HARDENED_LEATHER;
+	{
+		StrengthValue = 30;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 1200;
+		IsSolid = true;
+		Color = rgb16(100, 50, 30);
+		IsFlammable = true;
+		NameStem = "hardened leather";
+		Flexibility = 7;
+	}
+
+	Config TROLL_HIDE;
+	{
+		StrengthValue = 40;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 2000;
+		Color = rgb16(128, 100, 32);
+		IsFlammable = true;
+		NameStem = "troll hide";
+		Flexibility = 5;
+	}
+
+	Config NYMPH_HAIR;
+	{
+		StrengthValue = 30;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 200;
+		Color = rgb16(100, 100, 200);
+		IsFlammable = true;
+		NameStem = "nymph hair";
+		Flexibility = 20;
+	}
+
+	Config ANGEL_HAIR;
+	{
+		StrengthValue = 120;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 200;
+		Color = rgb16(200, 200, 0);
+		IsFlammable = true;
+		NameStem = "angel hair";
+		Flexibility = 25;
+		Article = "an";
+		CanBeWished = false;
+	}
+
+	Config PHOENIX_FEATHER;
+	{
+		StrengthValue = 100;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 100;
+		Color = rgb16(220, 220, 0);
+		NameStem = "phoenix feather";
+		Flexibility = 30;
+	}
+
+	Config GOLDEN_EAGLE_FEATHER;
+	{
+		StrengthValue = 200;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 100;
+		Color = rgb16(80, 80, 176);
+		NameStem = "golden eagle feather";
+		Flexibility = 25;
+		CanBeWished = false;
+	}
 }
 
 organicsubstance /* substances that spoil but are not flesh */
@@ -358,7 +462,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 1200;
 		ConsumeType = CT_FRUIT;
 		NutritionValue = 100;
-		Color = rgb16(240, 240, 0);
+		Color = rgb16(224, 224, 0);
 		PriceModifier = 600;
 		NameStem = "banana flesh";
 		Flexibility = 5;
@@ -468,7 +572,7 @@ gas
 		NameStem = "air";
 		Article = "an";
 		Alpha = 150;
-		Flexibility = 50;
+		Flexibility = 75;
 	}
 }
 
@@ -477,20 +581,20 @@ liquid
 	ConsumeType = CT_LIQUID;
 	CanBeWished = false;
 	Density = 1000;
-	Flexibility = 25;
+	Flexibility = 50;
 
-	Config OMEL_URINE;
+	Config OMMEL_URINE;
 	{
 		StrengthValue = 1;
 		Color = rgb16(160, 160, 0);
 		CanBeWished = false;
 		NutritionValue = 50;
 		PriceModifier = 2500;
-		NameStem = "Omel urine";
+		NameStem = "ommel urine";
 		Article = "an";
-		Effect = EFFECT_OMEL_URINE;
-		ConsumeEndMessage = CEM_OMEL_URINE;
-		HitMessage = HM_OMEL_URINE;
+		Effect = EFFECT_OMMEL_URINE;
+		ConsumeEndMessage = CEM_OMMEL_URINE;
+		HitMessage = HM_OMMEL_URINE;
 		Alpha = 150;
 	}
 
@@ -539,7 +643,7 @@ liquid
 		Alignment = EVIL;
 		NameStem = "blood";
 		Alpha = 175;
-		Flexibility = 20;
+		Flexibility = 40;
 	}
 
 	Config BROWN_SLIME;
@@ -551,7 +655,7 @@ liquid
 		Color = rgb16(111, 74, 37);
 		NameStem = "brown slime";
 		Alpha = 200;
-		Flexibility = 10;
+		Flexibility = 30;
 	}
 
 	Config POISON_LIQUID;
@@ -577,6 +681,7 @@ liquid
 		Effect = EFFECT_POISON;
 		Alpha = 200;
 	}
+
 	Config ANTIDOTE_LIQUID;
 	{
 		StrengthValue = 1;

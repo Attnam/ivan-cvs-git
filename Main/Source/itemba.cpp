@@ -239,7 +239,7 @@ void item::MoveTo(stack* Stack)
     Stack->AddItem(this);
 }
 
-std::string item::ItemCategoryName(uchar Category)
+std::string item::ItemCategoryName(ulong Category)
 {
   switch(Category)
     {
@@ -603,7 +603,7 @@ void item::Break()
   item* Broken = RawDuplicate();
   Broken->SetConfig(GetConfig() | BROKEN);
   Broken->SetSize(Broken->GetSize() >> 1);
-  GetSlot()->DonateTo(Broken);
+  DonateSlotTo(Broken);
   SendToHell();
 }
 
@@ -647,7 +647,13 @@ void item::Fix()
       item* Fixed = RawDuplicate();
       Fixed->SetConfig(GetConfig() ^ BROKEN);
       Fixed->SetSize(Fixed->GetSize() << 1);
-      GetSlot()->DonateTo(Fixed);
+      DonateSlotTo(Fixed);
       SendToHell();
     }
+}
+
+void item::DonateSlotTo(item* Item)
+{
+  Slot->DonateTo(Item);
+  Slot = 0;
 }

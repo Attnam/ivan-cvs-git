@@ -43,7 +43,7 @@ Team 7; /* Ivan */
 
 Dungeon ELPURI_CAVE;
 {
-	Levels=10;
+	Levels=7;
 
 	LevelDefault
 	{
@@ -118,55 +118,6 @@ Dungeon ELPURI_CAVE;
 
 	Level 0;
 	{
-		IgnoreDefaultSpecialSquares = true;
-
-		RoomDefault
-		{
-			AltarPossible=false;
-		}
-
-		Square, Random;
-		{
-			Character=spider;
-			Times=20;
-		}
-
-		Square, Random;
-		{
-			Character=kobold;
-			Times=10;
-		}
-
-		Square, Random NOT_WALKABLE|ATTACHABLE;
-		{
-			OTerrain = link(STAIRS_DOWN);
-			EntryIndex = STAIRS_DOWN;
-			AttachRequired = true;
-		}
-
-		Room 0;
-		{
-			Size=5,5;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
-			Shape = ROUND_CORNERS;
-
-			Square, Pos 2,2;
-			{
-				OTerrain = link(STAIRS_UP);
-				EntryIndex = STAIRS_UP;
-			}
-
-			Square, Pos 3,1;
-			{
-				Item=lantern;
-				Character=mistress(QUEEN);
-			}
-		}
-	}
-
-	Level 3;
-	{
 		LevelMessage="You hear many wolves howling. You shiver.";
 		Rooms=10+rand%21;
 
@@ -174,6 +125,16 @@ Dungeon ELPURI_CAVE;
 		{
 			Size=7,7;
 			AltarPossible=false;
+
+			Square, Pos 3, 3;
+			{
+				Item = scrollofenchantarmor;
+			}
+
+			Square, Pos 3, 3;
+			{
+				Item = scrollofenchantweapon;
+			}
 
 			CharacterMap
 			{
@@ -196,7 +157,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 2;
+	Level 1;
 	{
 		Rooms=10+rand%21;
 
@@ -254,27 +215,25 @@ Dungeon ELPURI_CAVE;
 
 				Types
 				{
-					c = scrollofchangematerial;
-					L = STEEL STEEL meleeweapon(LONG_SWORD);
-					C = IRON bodyarmor(CHAIN_MAIL);
+					a = Random { MinPrice = 100; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					d = Random { MinPrice = 100; MaxPrice = 10000; Category = RING|AMULET; }
+					w = Random { MinPrice = 100; MaxPrice = 10000; Category = WEAPON|SHIELD; }
+					e = Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
+					u = Random { MinPrice = 100; MaxPrice = 10000; Category = WAND|TOOL; }
 					s = wandofstriking;
-					a = lantern;
-                                        l = IRON helmet;
-					t = scrollofteleportation;
-					p = STEEL STEEL meleeweapon(AXE);
 				}
 			}
 			{
 			    ...
-			    pa.
-			    t.c
-			    LlC
+			    dd.
+			    e.w
+			    auw
 			    .s.
 			}
 		}
 	}
 
-	Level 4;
+	Level 2;
 	{
 		LevelMessage="You hear a wailing scream in the distance. An enner beast must dwell in the level!";
 		Rooms=10+rand%21;
@@ -285,7 +244,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 5;
+	Level 3;
 	{
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
 		Rooms=10+rand%21;
@@ -325,7 +284,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 5+rand%4;
+	Level 4+rand%4;
 	{
 		Rooms=10+rand%21;
 
@@ -354,7 +313,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 8;
+	Level 5;
 	{
 		IgnoreDefaultSpecialSquares = true;
 
@@ -854,24 +813,20 @@ Dungeon ATTNAM;
 				Size=5,3;
 				Types
 				{
-					t = scrollofteleportation;
-					s = meleeweapon(SPEAR);
-					p = pickaxe;
-					A = potion { ContainedMaterial = HEALING_LIQUID; }
-					b = banana;
-					l = WOLF_FLESH lump;
+					a = Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					d = Random { MinPrice = 50; MaxPrice = 2000; Category = RING|AMULET; }
+					w = Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
+					e = Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
+					u = Random { MinPrice = 50; MaxPrice = 2000; Category = WAND|TOOL; }
+					f = WOLF_FLESH lump;
 					i = can { ContainedMaterial = POLAR_BEAR_FLESH; }
-					L = BREAD loaf;
-					a = lantern;
-					P = potion { ContainedMaterial = OMEL_URINE; }
-					C = bodyarmor(CHAIN_MAIL);
-					x = meleeweapon(AXE);
+					l = lantern;
 				}
 			}
 			{
-			    .spx.
-			    bLlCP
-			    tiAat
+			    .aaa.
+			    edwww
+			    efilu
 			}
 		}
 
@@ -1007,18 +962,16 @@ Dungeon ATTNAM;
 			{
 				Pos=1,1;
 				Size=5,3;
+
 				Types
 				{
-					t = scrollofteleportation;
-					c = scrollofcreatemonster;
-					C = scrollofcharging;
-					h = holybook;
+					r = Random { MaxPrice = 500; Category = SCROLL|BOOK; }
 				}
 			}
 			{
-			    Chhhh
-			    c...h
-			    t...h
+			    rrrrr
+			    r...r
+			    r...r
 			}
 
 			OTerrainMap
@@ -1269,11 +1222,23 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	Level 0;
 	{
-		Square, BoundedRandom 1, 1, 19, 19, NOT_WALKABLE|ATTACHABLE;
+		IgnoreDefaultSpecialSquares = true;
+
+		RoomDefault
 		{
-			OTerrain = link(STAIRS_UP);
-			EntryIndex = STAIRS_UP;
-			AttachRequired = true;
+			AltarPossible=false;
+		}
+
+		Square, Random;
+		{
+			Character=spider;
+			Times=20;
+		}
+
+		Square, Random;
+		{
+			Character=kobold;
+			Times=10;
 		}
 
 		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
@@ -1281,6 +1246,26 @@ Dungeon UNDER_WATER_TUNNEL;
 			OTerrain = link(STAIRS_DOWN);
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
+		}
+
+		Room 0;
+		{
+			Size=5,5;
+			AllowLockedDoors=false;
+			AllowBoobyTrappedDoors=false;
+			Shape = ROUND_CORNERS;
+
+			Square, Pos 2,2;
+			{
+				OTerrain = link(STAIRS_UP);
+				EntryIndex = STAIRS_UP;
+			}
+
+			Square, Pos 2,1;
+			{
+				Item=lantern;
+				/*Character=mistress(QUEEN);*/
+			}
 		}
 	}
 

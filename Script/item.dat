@@ -20,7 +20,7 @@ item
 	FireResistance = 0;
 	PoisonResistance = 0;
 	BulimiaResistance = 0;
-	StrengthModifier;
+	StrengthModifier = 0;
 	/* Obligatory: FormModifier */
 	NPModifier = 10000;
 	/* Obligatory: DefaultSize */
@@ -605,6 +605,7 @@ bodyarmor /* armor-> */
 		MainMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 3, 150, 50, 10; }
+		
 		InElasticityPenaltyModifier = 10;
 	}
 
@@ -652,6 +653,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	DefaultMainVolume = 1000;
 	BaseEmitation = rgb24(112, 112, 166);
 	/* StrengthModifier not used, SV == 3 * (10 + Enchantment) */
+	StrengthModifier = 150;
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == CLOTH;
 	ArticleMode = DEFINITE_ARTICLE;
@@ -676,7 +678,7 @@ potion /* materialcontainer-> */
 	FormModifier = 25;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 6, WATER, HEALING_LIQUID, OMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID; }
+	ContainedMaterialConfig = { 6, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID; }
 	MaterialConfigChances = { 6, 100, 75, 50, 75, 1, 50; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
@@ -743,7 +745,6 @@ scrollofteleportation /* scroll-> */
 	PostFix = "of teleportation";
 	Alias == "scroll of teleport";
 }
-
 
 scrollofcharging /* scroll-> */
 {
@@ -876,7 +877,7 @@ wandofpolymorph /* wand-> */
 scrollofchangematerial /* scroll-> */
 {
 	Possibility = 5;
-	Price = 500;
+	Price = 1000;
 	PostFix = "of change material";
 	Alias == "SoCM";
 }
@@ -966,13 +967,14 @@ whip /* meleeweapon-> */
 	Possibility = 50;
 	InHandsPic = 160, 224;
 	WeaponCategory = WHIPS;
-	DefaultMainVolume = 800;
+	DefaultMainVolume = 500;
 	DefaultSecondaryVolume = 40;
 	StrengthModifier = 50;
 	BitmapPos = 32, 0;
 	NameSingular = "whip";
-	MainMaterialConfig == LEATHER;
+	MainMaterialConfig = { 3, LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
 	SecondaryMaterialConfig == WOOD;
+	MaterialConfigChances = { 3, 200, 20, 10; }
 	Roundness = 2;
 	FormModifier = 7; /* this is multiplied by MainMaterial's flexibility */
 	CanBeBroken = false;
@@ -1052,13 +1054,13 @@ oillamp
 	BitmapPos = 32, 48;
 	FormModifier = 20;
 	BaseEmitation = rgb24(120, 120, 100);
-	NameSingular = "lamp";
-	Adjective = "oil";
+	NameSingular = "oil lamp";
 	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 40;
 	CanBePiled = false; /* otherwise you could summon a genie only from the first piled item */
 	Price = 100;
+	Alias == "lamp";
 }
 
 stone
@@ -1192,13 +1194,13 @@ cloak /* armor-> */
 	DefaultSize = 200;
 	Possibility = 250;
 	Category = CLOAK;
-	DefaultMainVolume = 3000;
+	DefaultMainVolume = 2000;
 	StrengthModifier = 75;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
 	NameSingular = "cloak";
-	MainMaterialConfig = { 3, LEATHER, FABRIC, CLOTH; }
-	MaterialConfigChances = { 3, 250, 50, 50; }
+	MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
+	MaterialConfigChances = { 5, 250, 100, 50, 20, 10; }
 	Roundness = 60;
 	IsTwoHanded = true;
 	InElasticityPenaltyModifier = 50;
@@ -1222,8 +1224,8 @@ boot /* armor-> */
 	BitmapPos = 0, 400;
 	FormModifier = 20;
 	NameSingular = "boot";
-	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 4, 200, 100, 50, 20; }
+	MainMaterialConfig = { 8, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, MITHRIL; }
+	MaterialConfigChances = { 8, 200, 100, 50, 20, 10, 100, 50, 10; }
 	Roundness = 50;
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 10;
@@ -1263,8 +1265,8 @@ gauntlet /* armor-> */
 	BitmapPos = 32, 368;
 	FormModifier = 20;
 	NameSingular = "gauntlet";
-	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 4, 200, 100, 50, 20; }
+	MainMaterialConfig = { 7, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, MITHRIL; }
+	MaterialConfigChances = { 7, 200, 100, 20, 10, 75, 25, 5; }
 	Roundness = 60;
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 30;
@@ -1300,12 +1302,12 @@ belt /* armor-> */
 	Possibility = 250;
 	WeaponCategory = WHIPS;
 	Category = BELT;
-	DefaultMainVolume = 300;
+	DefaultMainVolume = 250;
 	StrengthModifier = 75;
 	BitmapPos = 32, 384;
 	NameSingular = "belt";
-	MainMaterialConfig = { 3, LEATHER, CLOTH, FABRIC; }
-	MaterialConfigChances = { 3, 250, 50, 50; }
+	MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
+	MaterialConfigChances = { 5, 200, 100, 50, 20, 10; }
 	Roundness = 10;
 	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
 }
@@ -1694,8 +1696,8 @@ helmet
 	BitmapPos = 16, 384;
 	FormModifier = 10;
 	NameSingular = "helmet";
-	MainMaterialConfig = 	{ 10, 	LEATHER,BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
-	MaterialConfigChances = { 10, 	30,	30,	10,	10,	2,	4,	20,	5,	3,	30; }
+	MainMaterialConfig = { 12, LEATHER, HARDENED_LEATHER, TROLL_HIDE, WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
+	MaterialConfigChances = { 12, 50, 75, 30, 40, 30, 50, 20, 125, 100, 75, 20, 10; }
 	Roundness = 60;
 
 	Config HELM_OF_PERCEPTION;
@@ -1810,7 +1812,7 @@ mjolak /* meleeweapon-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	Alias == "Mjolak";
 	CanBeCloned = false;
-	Price = 500;
+	Price = 750;
 
 	Config BROKEN;
 	{
@@ -1889,12 +1891,12 @@ whipofthievery /* meleeweapon->whip-> */
 	StrengthModifier = 100;
 	NameSingular = "whip";
 	PostFix = "of thievery";
-	MainMaterialConfig == LEATHER;
+	MainMaterialConfig == NYMPH_HAIR;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 2;
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	CanBeCloned = false;
-	Price = 500;
+	Price = 750;
 
 	Config BROKEN; /* for future */
 	{

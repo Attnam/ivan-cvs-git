@@ -344,12 +344,16 @@ Carrot that would increase perception a little.
 When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
 Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
-Fly system should be remade (with the ability of having two or more items in the air at the same time)
+Fly system should be remade (with the ability of having two or more items in the air at the same time).
 Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
-Picking VERY heavy items should be prohibited.
+Picking up VERY heavy items should be prohibited.
 If an invisible monster hits the player, a Nethack-style question mark should be displayed in its square.
 New artifact: Banana Bunch of Plenty, which can be applied every day to get free bananas.
 Some way of adding things to character's inventory from the script.
 In Attnam there should be thought guards that use amulets of ESP to spy on citizens and have rings of teleportation and teleport control which they use to enter to suspicious people's houses.
 The smith of Attnam should have a golden statue of a woman in his closet. (A Kalevala reference)
 Wishing for a plate mail shouldn't yield a leather armor.
+//Kevlar.
+Money unit and its plural and symbol should be possible to define from config.
+Scoll of harden material.
+Broken bananas should spoil faster than intact ones.

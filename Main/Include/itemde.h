@@ -245,8 +245,7 @@ class ITEM
   bodyarmor,
  public:
   virtual void Be() { }
-  virtual ushort GetStrengthValue() const { return 3 * (10 + Enchantment); }
-  virtual bool IsGoldenEagleShirt() const { return true; };
+  virtual bool IsGoldenEagleShirt() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }

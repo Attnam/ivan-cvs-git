@@ -38,7 +38,7 @@ struct itemdatabase
   uchar WeaponCategory;
   bool IsPolymorphSpawnable;
   bool IsAutoInitializable;
-  uchar Category;
+  ulong Category;
   ushort SoundResistance;
   ushort EnergyResistance;
   ushort AcidResistance;
@@ -175,7 +175,7 @@ class item : public object
   void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
   void RemoveFromSlot();
   void MoveTo(stack*);
-  static std::string ItemCategoryName(uchar);
+  static std::string ItemCategoryName(ulong);
   static bool EatableSorter(item* Item, const character* Char) { return Item->IsEatable(Char); }
   static bool DrinkableSorter(item* Item, const character* Char) { return Item->IsDrinkable(Char); }
   static bool OpenableSorter(item* Item, const character* Char) { return Item->IsOpenable(Char); }
@@ -240,7 +240,7 @@ class item : public object
   virtual DATA_BASE_VALUE(uchar, WeaponCategory);
   virtual DATA_BASE_BOOL(IsPolymorphSpawnable);
   virtual DATA_BASE_BOOL(IsAutoInitializable);
-  virtual DATA_BASE_VALUE(uchar, Category);
+  virtual DATA_BASE_VALUE(ulong, Category);
   virtual DATA_BASE_VALUE(ushort, SoundResistance);
   virtual DATA_BASE_VALUE(ushort, EnergyResistance);
   virtual DATA_BASE_VALUE(ushort, AcidResistance);
@@ -360,6 +360,7 @@ class item : public object
   virtual void Fix();
   virtual ushort GetStrengthRequirement() const;
   virtual ushort GetInElasticityPenalty(ushort) const { return 0;  }
+  void DonateSlotTo(item*);
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();
@@ -390,7 +391,6 @@ name : public base\
 {\
  public:\
   name(ushort Config = 0, ushort SpecialFlags = 0) : base(donothing()) { Initialize(Config, SpecialFlags); }\
-  name(ushort Config, ushort SpecialFlags, material* FirstMaterial) : base(donothing()) { Initialize(Config, SpecialFlags); SetMainMaterial(FirstMaterial, SpecialFlags & NO_PIC_UPDATE); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static item* Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\

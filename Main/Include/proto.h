@@ -7,6 +7,7 @@
 
 #include <vector>
 
+#include "ivandef.h"
 #include "typedef.h"
 #include "save.h"
 
@@ -51,7 +52,7 @@ class protosystem
 {
  public:
   static character* BalancedCreateMonster();
-  static item* BalancedCreateItem(bool = false);
+  static item* BalancedCreateItem(ulong = 0, ulong = MAX_PRICE, ulong = ANY_CATEGORY, bool = false);
   static character* CreateMonster(ushort = 0);
   static character* CreateMonster(const std::string&, ushort = 0, bool = true);
   static item* CreateItem(const std::string&, bool = true);

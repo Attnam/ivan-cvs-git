@@ -92,40 +92,61 @@ character* protosystem::BalancedCreateMonster()
     }
 }
 
-item* protosystem::BalancedCreateItem(bool Polymorph)
+item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, bool Polymorph)
 {
-  ulong c, SumOfPossibilities = 0;
+  ulong SumOfPossibilities = 0;
 
-  for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     {
       const item::databasemap& Config = protocontainer<item>::GetProto(c)->GetConfig();
 
       for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract)
+	if(!i->second.IsAbstract && (!Category || Category & i->second.Category))
 	  SumOfPossibilities += i->second.Possibility;
     }
 
   while(true)
     {
-      ulong Counter = 0, RandomOne = 1 + RAND() % (SumOfPossibilities);
-
-      for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+      for(ushort c1 = 0; c1 < 100; ++c1)
 	{
-	  const item::prototype* Proto = protocontainer<item>::GetProto(c);
-	  const item::databasemap& Config = Proto->GetConfig();
+	  ulong Counter = 0, RandomOne = 1 + RAND() % (SumOfPossibilities);
 
-	  for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	    if(!i->second.IsAbstract)
-	      {
-		Counter += i->second.Possibility;
+	  for(ushort c2 = 1; c2 < protocontainer<item>::GetProtoAmount(); ++c2)
+	    {
+	      const item::prototype* Proto = protocontainer<item>::GetProto(c2);
+	      const item::databasemap& Config = Proto->GetConfig();
 
-		if(Counter >= RandomOne)
-		  if(!Polymorph || i->second.IsPolymorphSpawnable)
-		    return Proto->Clone(i->first);
-		  else
-		    break;
-	      }
+	      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+		if(!i->second.IsAbstract && (!Category || Category & i->second.Category))
+		  {
+		    Counter += i->second.Possibility;
+
+		    if(Counter >= RandomOne)
+		      {
+			if(!Polymorph || i->second.IsPolymorphSpawnable)
+			  {
+			    item* Item = Proto->Clone(i->first);
+
+			    if(MinPrice == 0 && MaxPrice == MAX_PRICE) // optimization, GetPrice() may be rather slow
+			      return Item;
+
+			    ulong Price = Item->GetPrice();
+
+			    if(Price >= MinPrice && Price <= MaxPrice)
+			      return Item;
+			  }
+
+			break;
+		      }
+		  }
+
+	      if(Counter >= RandomOne)
+		break;
+	    }
 	}
+
+      MinPrice -= MinPrice / 4;
+      MaxPrice += MaxPrice / 4;
     }
 }
 

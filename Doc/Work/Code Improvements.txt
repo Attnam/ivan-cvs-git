@@ -50,3 +50,5 @@ Säiliöluokka.
 Piirron deasmaus.
 Repliikkien datafilesaatio.
 Raajarajapinta.
+Jumalten arrayttäminen.
+Tiedostojen tekijätiedottaminen.
