@@ -640,3 +640,8 @@ bool shop::AllowSpoil(const item* Item) const
 {
   return !Master || !Item->GetPrice();
 }
+
+bool shop::AllowKick(const character* Char) const // gum solution
+{
+  return !Master || Master->GetRelation(Char) == HOSTILE;
+}

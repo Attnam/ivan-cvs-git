@@ -27,6 +27,7 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil(const item*) const;
+  virtual bool AllowKick(const character*) const;
 );
 
 class ROOM

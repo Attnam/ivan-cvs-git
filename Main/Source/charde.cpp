@@ -538,7 +538,7 @@ void petrus::BeTalkedTo()
 				"Galladon hath told Us his agents witnessed thou leaving the dreaded underwater tunnel.\n"
 				"This means thou most likely hast defeated genetrix vesana and art a talented warrior.\n"
 				"We happen to have a task perfect for such a person. An evil dark frog named Elpuri who\n"
-				"hates Valpurus and Attnam more than anything hath taken control over an abandonned mine\n"
+				"hates Valpurus and Attnam more than anything hath taken control over an abandoned mine\n"
 				"nearby. It is pestering our fine city in many ways and reconnaissance has reported an\n"
 				"army of monsters gathering in the cave. Our guards are not trained to fight underground\n"
 				"and We dare not send them. To make things worse, someone hath recently stolen Us the\n"
@@ -1864,6 +1864,18 @@ bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
 	ADD_MESSAGE("You cannot fight while carrying so much.");
 
       return false;
+    }
+
+  /* Behold this Terrible Father of Gum Solutions! */
+
+  uchar AttackStyle = GetAttackStyle();
+
+  if(AttackStyle & USE_LEGS)
+    {
+      room* Room = Enemy->GetLSquareUnder()->GetRoomClass();
+
+      if(Room && !Room->AllowKick(this))
+	AttackStyle &= ~USE_LEGS;
     }
 
   ushort c, AttackStyles;

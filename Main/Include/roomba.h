@@ -69,6 +69,7 @@ class room
   virtual bool AllowSpoil(const item*) const { return true; }
   virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual short GetGodRelationAdjustment() const { return -50; }
+  virtual bool AllowKick(const character*) const { return true; }
  protected:
   virtual void VirtualConstructor(bool) { }
   std::vector<vector2d> Door;
