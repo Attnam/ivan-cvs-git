@@ -14,7 +14,7 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-#define IVAN_VERSION "0.410"
+#define IVAN_VERSION "0.411"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
@@ -444,6 +444,7 @@
 
 /* StateData flags */
 
+#define NO_FLAGS 0
 #define SECRET 1
 #define DUR_TEMPORARY 2
 #define DUR_PERMANENT 4
@@ -453,5 +454,11 @@
 #define SRC_CONFUSE_READ 32
 #define SRC_FLAGS (8|16|32)
 #define RANDOMIZABLE (2|4|8|16|32)
+
+#define MAP_HIDDEN 0
+#define SHOW_MAP_IN_TRUE_LIGHT 1
+#define SHOW_MAP_IN_UNIFORM_LIGHT 2
+
+#define DIM_LUMINANCE 0x6E6E6E
 
 #endif

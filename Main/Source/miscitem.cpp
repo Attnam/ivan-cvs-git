@@ -52,7 +52,7 @@ void potion::GenerateLeftOvers(character* Eater)
 
 bool scroll::CanBeRead(character* Reader) const
 {
-  return Reader->CanRead() || game::SeeWholeMapCheatIsActive();
+  return Reader->CanRead() || game::GetSeeWholeMapCheatMode();
 }
 
 bool scrollofcreatemonster::Read(character* Reader)
@@ -447,7 +447,7 @@ bool backpack::Apply(character* Terrorist)
 
 bool holybook::CanBeRead(character* Reader) const
 {
-  return Reader->CanRead() || game::SeeWholeMapCheatIsActive();
+  return Reader->CanRead() || game::GetSeeWholeMapCheatMode();
 }
 
 bool holybook::Read(character* Reader)

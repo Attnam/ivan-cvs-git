@@ -121,7 +121,7 @@ class game
   static void ActivateWizardMode() { WizardMode = true; }
   static bool WizardModeIsActive() { return WizardMode; }
   static void SeeWholeMap();
-  static bool SeeWholeMapCheatIsActive() { return SeeWholeMapCheat; }
+  static uchar GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static bool EmitationHandler(long, long);
   static bool NoxifyHandler(long, long);
   static bool GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -275,7 +275,7 @@ class game
   static character* Player;
   static vector2d Camera;
   static bool WizardMode;
-  static bool SeeWholeMapCheat;
+  static uchar SeeWholeMapCheatMode;
   static bool GoThroughWallsCheat;
   static long BaseScore;
   static ulong Ticks;

@@ -582,7 +582,7 @@ void worldmap::Draw(bool) const
   ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenSize().X);
   ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenSize().Y);
 
-  if(!game::SeeWholeMapCheatIsActive())
+  if(!game::GetSeeWholeMapCheatMode())
     {
       for(ushort x = XMin; x < XMax; ++x)
 	{

@@ -396,7 +396,7 @@ void read::Handle()
       return;
     }
 
-  if(GetActor()->GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
+  if(GetActor()->GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheatMode())
     {
       ADD_MESSAGE("It is too dark to read now.");
       Terminate(false);

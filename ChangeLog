@@ -9,6 +9,20 @@ is also provided AS IS and is probably completely unreadable.
 
 April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Version updated to 0.411
+	* SeeWholeMapCheat is now more versatile
+	* Corrected a bug that prevented doors to be created on the right and left sides
+	  of a room, so they appeared only on the top and bottom (it's quite interesting
+	  that no one ever noticed)
+	* Fixed a strange bug that caused lanterns to be generated inside the walls of
+	  the starting room
+	* If less than four items are on the ground, stepping on them says "A few items
+	  are lying here" instead of "several"
+	* State information is again better categorized and documented
+	* Again corrected a bug in the messages after teleport
+
+April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Docs have been cleaned up a bit
 	* _Lots_ of ideas added
 	* Value plan updated

@@ -472,7 +472,7 @@ bool commandsystem::Save(character*)
 
 bool commandsystem::Read(character* Char)
 {
-  if(!Char->CanRead() && !game::SeeWholeMapCheatIsActive())
+  if(!Char->CanRead() && !game::GetSeeWholeMapCheatMode())
     {
       ADD_MESSAGE("You can't read.");
       return false;
@@ -484,7 +484,7 @@ bool commandsystem::Read(character* Char)
       return false;
     }
 
-  if(Char->GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
+  if(Char->GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheatMode())
     {
       ADD_MESSAGE("It is too dark to read.");
       return false;

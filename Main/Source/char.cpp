@@ -1,46 +1,191 @@
 /* Compiled through charset.cpp */
 
 /*
- * These arrays contain functions and values used for handling states. Remember to update them.
- * All normal states must have PrintBeginMessage and PrintEndMessage functions, a StateDescription string
- * and a StateIsSecret boolean (if true, StateDescription is not shown in the panel without magical means).
- * BeginHandler, EndHandler and StateHandler (called each tick) are optional, enter zero if the state
- * doesn't need one.
+ * These statedata structs contain functions and values used for handling states. Remember to update them.
+ * All normal states must have PrintBeginMessage and PrintEndMessage functions and a Description string.
+ * BeginHandler, EndHandler, Handler (called each tick) and IsAllowed are optional, enter zero if the state
+ * doesn't need one. If the SECRET flag is set, Description is not shown in the panel without magical means.
+ * You can also set some source (SRC_*) and duration (DUR_*) flags, which control whether the state can be
+ * randomly activated in certain situations. These flags can be found in ivandef.h. RANDOMIZABLE sets all
+ * source & duration flags at once.
  */
 
 struct statedata
 {
+  char* Description;
+  ushort Flags;
   void (character::*PrintBeginMessage)() const;
   void (character::*PrintEndMessage)() const;
   void (character::*BeginHandler)();
   void (character::*EndHandler)();
   void (character::*Handler)();
   bool (character::*IsAllowed)() const;
-  char* Description;
-  ushort Flags;
 };
 
 statedata StateData[STATES] =
 {
-  /* PrintBeginMessage */			    /* PrintEndMessage */			  /* BeginHandler */		  /* EndHandler */		/* Handler */			/* IsAllowed */		      /* Desc */	      /* Flags */
-  { 0,						    0,						  0,				  &character::EndPolymorph,	0,				0,			      "Polymorphed",  0 },
-  { &character::PrintBeginHasteMessage,		    &character::PrintEndHasteMessage,		  0,				  0,				0,				0,			      "Hasted",	      RANDOMIZABLE },
-  { &character::PrintBeginSlowMessage,		    &character::PrintEndSlowMessage,		  0,				  0,				0,				0,			      "Slowed",	      RANDOMIZABLE },
-  { &character::PrintBeginPolymorphControlMessage,  &character::PrintEndPolymorphControlMessage,  0,				  0,				0,				0,			      "PolyControl",  RANDOMIZABLE },
-  { &character::PrintBeginLifeSaveMessage,	    &character::PrintEndLifeSaveMessage,	  0,				  0,				0,				0,			      "LifeSaved",    SECRET },
-  { &character::PrintBeginLycanthropyMessage,	    &character::PrintEndLycanthropyMessage,	  0,				  0,				&character::LycanthropyHandler,	0,			      "Lycanthropy",  SECRET|SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_TEMPORARY },
-  { &character::PrintBeginInvisibilityMessage,	    &character::PrintEndInvisibilityMessage,	  &character::BeginInvisibility,  &character::EndInvisibility,	0,				0,			      "Invisible",    RANDOMIZABLE },
-  { &character::PrintBeginInfraVisionMessage,	    &character::PrintEndInfraVisionMessage,	  &character::BeginInfraVision,	  &character::EndInfraVision,	0,				0,			      "Infravision",  RANDOMIZABLE },
-  { &character::PrintBeginESPMessage,		    &character::PrintEndESPMessage,		  &character::BeginESP,		  &character::EndESP,		0,				0,			      "ESP",	      RANDOMIZABLE },
-  { &character::PrintBeginPoisonedMessage,	    &character::PrintEndPoisonedMessage,	  0,				  0,				&character::PoisonedHandler,	&character::CanBePoisoned,    "Poisoned",     0 },
-  { &character::PrintBeginTeleportMessage,	    &character::PrintEndTeleportMessage,	  0,				  0,				&character::TeleportHandler,	0,			      "Teleporting",  SECRET|RANDOMIZABLE },
-  { &character::PrintBeginPolymorphMessage,	    &character::PrintEndPolymorphMessage,	  0,				  0,				&character::PolymorphHandler,	0,			      "Polymorphing", SECRET|RANDOMIZABLE },
-  { &character::PrintBeginTeleportControlMessage,   &character::PrintEndTeleportControlMessage,	  0,				  0,				0,				0,			      "TeleControl",  RANDOMIZABLE },
-  { &character::PrintBeginPanicMessage,		    &character::PrintEndPanicMessage,		  0,				  0,				0,				0,			      "Panicked",     0 },
-  { &character::PrintBeginConfuseMessage,	    &character::PrintEndConfuseMessage,		  0,				  0,				0,				&character::CanBeConfused,    "Confused",     RANDOMIZABLE&~DUR_PERMANENT },
-  { &character::PrintBeginParasitizedMessage,	    &character::PrintEndParasitizedMessage,	  0,				  0,				&character::ParasitizedHandler,	&character::CanBeParasitized, "Parasitized",  RANDOMIZABLE&~DUR_TEMPORARY },
-  { &character::PrintBeginSearchingMessage,	    &character::PrintEndSearchingMessage,	  0,				  0,				&character::SearchingHandler,	0,			      "Searching",    0 },
-  { &character::PrintBeginGasImmunityMessage,	    &character::PrintEndGasImmunityMessage,	  0,				  0,				0,				0,			      "GasImmunity",  SECRET|RANDOMIZABLE }
+  {
+    "Polymorphed",
+    NO_FLAGS,
+    0,
+    0,
+    0,
+    &character::EndPolymorph,
+    0,
+    0
+  }, {
+    "Hasted",
+    RANDOMIZABLE,
+    &character::PrintBeginHasteMessage,
+    &character::PrintEndHasteMessage,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Slowed",
+    RANDOMIZABLE,
+    &character::PrintBeginSlowMessage,
+    &character::PrintEndSlowMessage,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "PolyControl",
+    RANDOMIZABLE,
+    &character::PrintBeginPolymorphControlMessage,
+    &character::PrintEndPolymorphControlMessage,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "LifeSaved",
+    SECRET,
+    &character::PrintBeginLifeSaveMessage,
+    &character::PrintEndLifeSaveMessage,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Lycanthropy",
+    SECRET|SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_TEMPORARY,
+    &character::PrintBeginLycanthropyMessage,
+    &character::PrintEndLycanthropyMessage,
+    0,
+    0,
+    &character::LycanthropyHandler,
+    0
+  }, {
+    "Invisible",
+    RANDOMIZABLE,
+    &character::PrintBeginInvisibilityMessage,
+    &character::PrintEndInvisibilityMessage,
+    &character::BeginInvisibility,  &character::EndInvisibility,
+    0,
+    0
+  }, {
+    "Infravision",
+    RANDOMIZABLE,
+    &character::PrintBeginInfraVisionMessage,
+    &character::PrintEndInfraVisionMessage,
+    &character::BeginInfraVision,
+    &character::EndInfraVision,
+    0,
+    0
+  }, {
+    "ESP",
+    RANDOMIZABLE,
+    &character::PrintBeginESPMessage,
+    &character::PrintEndESPMessage,
+    &character::BeginESP,
+    &character::EndESP,
+    0,
+    0
+  }, {
+    "Poisoned",
+    NO_FLAGS,
+    &character::PrintBeginPoisonedMessage,
+    &character::PrintEndPoisonedMessage,
+    0,
+    0,
+    &character::PoisonedHandler,
+    &character::CanBePoisoned
+  }, {
+    "Teleporting",
+    SECRET|RANDOMIZABLE,
+    &character::PrintBeginTeleportMessage,
+    &character::PrintEndTeleportMessage,
+    0,
+    0,
+    &character::TeleportHandler,
+    0
+  }, {
+    "Polymorphing",
+    SECRET|RANDOMIZABLE,
+    &character::PrintBeginPolymorphMessage,
+    &character::PrintEndPolymorphMessage,
+    0,
+    0,
+    &character::PolymorphHandler,
+    0
+  }, {
+    "TeleControl",
+    RANDOMIZABLE,
+    &character::PrintBeginTeleportControlMessage,
+    &character::PrintEndTeleportControlMessage,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Panicked",
+    NO_FLAGS,
+    &character::PrintBeginPanicMessage,
+    &character::PrintEndPanicMessage,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Confused",
+    RANDOMIZABLE&~DUR_PERMANENT,
+    &character::PrintBeginConfuseMessage,
+    &character::PrintEndConfuseMessage,
+    0,
+    0,
+    0,
+    &character::CanBeConfused
+  }, {
+    "Parasitized",
+    RANDOMIZABLE&~DUR_TEMPORARY,
+    &character::PrintBeginParasitizedMessage,
+    &character::PrintEndParasitizedMessage,
+    0,
+    0,
+    &character::ParasitizedHandler,
+    &character::CanBeParasitized
+  }, {
+    "Searching",
+    NO_FLAGS,
+    &character::PrintBeginSearchingMessage,
+    &character::PrintEndSearchingMessage,
+    0,
+    0,
+    &character::SearchingHandler,
+    0
+  }, {
+    "GasImmunity",
+    SECRET|RANDOMIZABLE,
+    &character::PrintBeginGasImmunityMessage,
+    &character::PrintEndGasImmunityMessage,
+    0,
+    0,
+    0,
+    0
+  }
 };
 
 characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
@@ -1176,7 +1321,7 @@ bool character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))
     {
-      if(!GetLSquareUnder()->IsDark() || game::SeeWholeMapCheatIsActive())
+      if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheatMode())
 	{
 	  if(StateIsActivated(CONFUSED))
 	    {
@@ -2008,11 +2153,13 @@ void character::ShowNewPosInfo() const
     game::UpdateCameraY();
 
   game::SendLOSUpdateRequest();
+  GetArea()->UpdateLOS();
   UpdateESPLOS();
+  game::DrawEverythingNoBlit();
 
   if(!game::IsInWilderness())
     {
-      if(GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
+      if(GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheatMode())
 	ADD_MESSAGE("It's dark in here!");
 
       GetLSquareUnder()->ShowSmokeMessage();
@@ -2021,8 +2168,19 @@ void character::ShowNewPosInfo() const
 
       if(PileVector.size() == 1)
 	ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).c_str(), PileVector[0].size() == 1 ? "is" : "are");
-      else if(!PileVector.empty())
-	ADD_MESSAGE("Several items are lying here.");
+      else
+	{
+	  ushort Items = 0;
+
+	  for(ushort c = 0; c < PileVector.size(); ++c)
+	    if((Items += PileVector[c].size()) > 3)
+	      break;
+
+	  if(Items > 3)
+	    ADD_MESSAGE("Several items are lying here.");
+	  else if(Items)
+	    ADD_MESSAGE("A few items are lying here.");
+	}
 		
       if(GetNearLSquare(GetPos())->GetEngraved().length())
 	ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().c_str());
@@ -2543,7 +2701,7 @@ std::string character::GetPersonalPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return "you";
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return "it";
   else if(GetSex() == MALE)
     return "he";
@@ -2555,7 +2713,7 @@ std::string character::GetPossessivePronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return "your";
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return "its";
   else if(GetSex() == MALE)
     return "his";
@@ -2567,7 +2725,7 @@ std::string character::GetObjectPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return "you";
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return "it";
   else if(GetSex() == MALE)
     return "him";

@@ -154,6 +154,7 @@ class lsquare : public square
   bool IsDipDestination() const;
   void ReceiveEarthQuakeDamage();
   bool IsDangerous(character*) const;
+  bool CanBeFeltByPlayer() const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

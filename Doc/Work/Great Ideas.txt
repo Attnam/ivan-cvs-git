@@ -72,3 +72,7 @@ Storks. (alternative for the last one)
 One day, the dolphins in the cathedral should vanish, leaving behind only a glass bowl.
 Inquisition.
 Random ruins in the wilderness.
+Random artifacts.
+Random demigods.
+On the world map, there should be a sign in the middle of nowhere with text "All your base are belong to us."
+Graphical statistics of kills per 100 turns etc. to endgame.

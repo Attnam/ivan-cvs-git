@@ -102,7 +102,7 @@ bool game::Running;
 character* game::Player;
 vector2d game::Camera(0,0);
 bool game::WizardMode;
-bool game::SeeWholeMapCheat;
+uchar game::SeeWholeMapCheatMode;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 ulong game::Ticks;
@@ -217,7 +217,7 @@ bool game::Init(const std::string& Name)
 	InitScript();
 	msgsystem::Format();
 	WizardMode = false;
-	SeeWholeMapCheat = false;
+	SeeWholeMapCheatMode = MAP_HIDDEN;
 	GoThroughWallsCheat = false;
 	LOSTurns = 1;
 	CreateTeams();
@@ -461,7 +461,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
     GetCurrentArea()->UpdateLOS();
 
   if(OnScreen(CursorPos))
-    if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || SeeWholeMapCheatIsActive())
+    if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || GetSeeWholeMapCheatMode())
       CurrentArea->GetSquare(CursorPos)->SendNewDrawRequest();
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, 0);
@@ -492,7 +492,7 @@ bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << ushort(SAVE_FILE_VERSION);
-  SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheat;
+  SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheatMode;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
   SaveFile << LOSTurns;
   ulong Seed = RAND();
@@ -542,7 +542,7 @@ uchar game::Load(const std::string& SaveName)
 	return BACK;
     }
 
-  SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheat;
+  SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheatMode;
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
   femath::SetSeed(ReadType<ulong>(SaveFile));
@@ -829,7 +829,11 @@ void game::SetPlayer(character* NP)
 
 void game::SeeWholeMap()
 {
-  SeeWholeMapCheat = !SeeWholeMapCheat;
+  if(SeeWholeMapCheatMode < 2)
+    ++SeeWholeMapCheatMode;
+  else
+    SeeWholeMapCheatMode = 0;
+    
   GetCurrentArea()->SendNewDrawRequest();
 }
 
@@ -1176,7 +1180,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
     {
       square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
-      if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !SeeWholeMapCheatIsActive())
+      if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !GetSeeWholeMapCheatMode())
 	DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), BLACK);
       else
 	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
@@ -1236,7 +1240,7 @@ void game::LookHandler(vector2d CursorPos)
   square* Square = GetCurrentArea()->GetSquare(CursorPos);
   std::string OldMemory;
 
-  if(SeeWholeMapCheatIsActive())
+  if(GetSeeWholeMapCheatMode())
     {
       OldMemory = Square->GetMemorizedDescription();
 
@@ -1248,16 +1252,18 @@ void game::LookHandler(vector2d CursorPos)
 
   std::string Msg;
 
-  if(Square->GetLastSeen() || SeeWholeMapCheatIsActive())
+  if(Square->GetLastSeen() || GetSeeWholeMapCheatMode())
     {
-      if(Square->CanBeSeenByPlayer(true) || SeeWholeMapCheatIsActive())
+      if(!IsInWilderness() && !Square->CanBeSeenByPlayer() && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer())
+	Msg = "You feel here ";
+      else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
 	Msg = "You see here ";
       else
 	Msg = "You remember here ";
 
       Msg << Square->GetMemorizedDescription() << ".";
 
-      if(Square->CanBeSeenByPlayer(true) || SeeWholeMapCheatIsActive())
+      if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
 	Square->DisplaySmokeInfo(Msg);
     }
   else
@@ -1265,7 +1271,7 @@ void game::LookHandler(vector2d CursorPos)
 
   character* Character = Square->GetCharacter();
 
-  if(Character && (Character->CanBeSeenByPlayer() || SeeWholeMapCheatIsActive()))
+  if(Character && (Character->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000))
@@ -1273,7 +1279,7 @@ void game::LookHandler(vector2d CursorPos)
 
   ADD_MESSAGE("%s", Msg.c_str());
 
-  if(SeeWholeMapCheatIsActive())
+  if(GetSeeWholeMapCheatMode())
     Square->SetMemorizedDescription(OldMemory);
 }
 
@@ -1355,13 +1361,13 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
     {
     case 'i':
       if(!IsInWilderness())
-	if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || SeeWholeMapCheatIsActive())
+	if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || GetSeeWholeMapCheatMode())
 	  {
 	    lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
 	    stack* Stack = LSquare->GetStack();
 
 	    if(LSquare->IsTransparent() && Stack->GetVisibleItems(PLAYER))
-	      Stack->DrawContents(PLAYER, "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
+	      Stack->DrawContents(PLAYER, "Items here", NO_SELECT|(GetSeeWholeMapCheatMode() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1370,11 +1376,11 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 
       break;
     case 'c':
-      if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || SeeWholeMapCheatIsActive())
+      if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || GetSeeWholeMapCheatMode())
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || SeeWholeMapCheatIsActive()))
+	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
 	    Char->PrintInfo();
 	  else
 	    ADD_MESSAGE("You see no one here.");

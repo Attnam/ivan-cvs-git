@@ -76,7 +76,7 @@ void lsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
     {
-      if(!IsDark())
+      if(!IsDark() || CanBeFeltByPlayer())
 	{
 	  DrawStaticContents(Memorized, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	  igraph::GetFOWGraphic()->MaskedBlit(Memorized, uchar(0), 0);
@@ -118,12 +118,18 @@ void lsquare::Draw()
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
-      if(!IsDark() || game::SeeWholeMapCheatIsActive())
+      if(!IsDark() || game::GetSeeWholeMapCheatMode())
 	{
-	  ulong RealLuminance = game::SeeWholeMapCheatIsActive() ? configuration::GetContrastLuminance() : configuration::ApplyContrastTo(Luminance);
+	  ulong RealLuminance;
+
+	  if(game::GetSeeWholeMapCheatMode() == SHOW_MAP_IN_UNIFORM_LIGHT || (game::GetSeeWholeMapCheatMode() && !IsTransparent()))
+	    RealLuminance = configuration::GetContrastLuminance();
+	  else
+	    RealLuminance = configuration::ApplyContrastTo(Luminance);
+
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
-	  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
+	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheatMode()))
 	    {
 	      if(Character->CanFly())
 		{
@@ -143,6 +149,12 @@ void lsquare::Draw()
 	  else
 	    for(ushort c = 0; c < Smoke.size(); ++c)
 	      Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+	}
+      else if(CanBeFeltByPlayer())
+	{
+	  ulong RealLuminance = Luminance;
+	  game::CombineLights(RealLuminance, DIM_LUMINANCE);
+	  DrawStaticContents(DOUBLE_BUFFER, BitPos, configuration::ApplyContrastTo(RealLuminance), true);
 	}
       else
 	{
@@ -491,6 +503,9 @@ void lsquare::Save(outputfile& SaveFile) const
 
 void lsquare::Load(inputfile& SaveFile)
 {
+  if(Pos == vector2d(10, 14))
+    int esko = 2;
+
   Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
   Stack->SetMotherSquare(this);
   square::Load(SaveFile);
@@ -534,9 +549,11 @@ void lsquare::CalculateLuminance()
 	game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
     }
   else
-    for(ushort c = 0; c < Emitter.size(); ++c)
-      if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(PLAYER->GetPos()))
-	game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
+    {
+      for(ushort c = 0; c < Emitter.size(); ++c)
+	if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(PLAYER->GetPos()))
+	  game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
+    }
 }
 
 ulong lsquare::GetRawLuminance() const
@@ -655,6 +672,11 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 
 	  if(Cheat)
 	    MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << ")";
+	}
+      else if(CanBeFeltByPlayer())
+	{
+	  MemorizedDescription.resize(0);
+	  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 	}
       else
 	MemorizedDescription = "darkness";
@@ -1662,4 +1684,9 @@ void lsquare::ReceiveEarthQuakeDamage()
 bool lsquare::IsDangerous(character* ToWhom) const
 {
   return GetStack()->IsDangerous(ToWhom) || !Smoke.empty();
+}
+
+bool lsquare::CanBeFeltByPlayer() const
+{
+  return OLTerrain && !OLTerrain->IsWalkable() && Pos.IsAdjacent(PLAYER->GetPos());
 }

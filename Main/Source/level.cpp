@@ -975,7 +975,7 @@ void level::Draw(bool AnimationDraw) const
   ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenSize().X);
   ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenSize().Y);
 
-  if(!game::SeeWholeMapCheatIsActive())
+  if(!game::GetSeeWholeMapCheatMode())
     {
       if(!AnimationDraw)
 	{
@@ -1075,8 +1075,8 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
       || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
 	{
-	  OKForDoor.push_back(vector2d(x,Pos.Y));
-	  OKForDoor.push_back(vector2d(x,Pos.Y + Size.Y - 1));
+	  OKForDoor.push_back(vector2d(x, Pos.Y));
+	  OKForDoor.push_back(vector2d(x, Pos.Y + Size.Y - 1));
 
 	  if(AllowLanterns)
 	    {
@@ -1096,20 +1096,20 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room);
       CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room);
 
-      if(Shape == ROUND_CORNERS && y > Pos.Y + 1 && y < Pos.Y + Size.Y - 2)
+      if(Shape == RECTANGLE || (Shape == ROUND_CORNERS && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2))
 	{
 	  OKForDoor.push_back(vector2d(Pos.X, y));
 	  OKForDoor.push_back(vector2d(Pos.X + Size.X - 1, y));
+
+	  if(AllowLanterns)
+	    {
+	      GenerateLanterns(Pos.X, y, RIGHT);
+	      GenerateLanterns(Pos.X + Size.X - 1, y, LEFT);
+	    }
 	}
 
       Border.push_back(vector2d(Pos.X, y));
       Border.push_back(vector2d(Pos.X + Size.X - 1, y));
-
-      if(AllowLanterns)
-	{
-	  GenerateLanterns(Pos.X, y, RIGHT);
-	  GenerateLanterns(Pos.X + Size.X - 1, y, LEFT);
-	}
     }
 
   GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
