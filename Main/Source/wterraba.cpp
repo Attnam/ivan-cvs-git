@@ -12,6 +12,8 @@
 #include "game.h"
 #include "save.h"
 #include "message.h"
+#include "charba.h"
+#include "team.h"
 
 struct prioritypair
 {

@@ -11,7 +11,9 @@
 #include "save.h"
 #include "graphics.h"
 #include "script.h"
+#include "charba.h"
 #include "team.h"
+
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0)
 {

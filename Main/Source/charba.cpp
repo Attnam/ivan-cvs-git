@@ -2645,6 +2645,7 @@ bool character::LowerGodRelations()
 		game::GetGod(c)->AdjustRelation(-50);
 
 	return false;
+
 }
 
 ushort character::LOSRange() const
