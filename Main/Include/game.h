@@ -169,6 +169,7 @@ class game
   static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
+  static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "");
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

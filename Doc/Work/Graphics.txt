@@ -8,3 +8,5 @@ Village Elder.
 Thief.
 Black Mage.
 Grave digger.
+
+Fabrick belts and whips seem are not clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

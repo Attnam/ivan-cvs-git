@@ -387,7 +387,7 @@ class character : public entity, public id
   virtual void AddBoneConsumeEndMessage() const;
   virtual void AddInfo(felist&) const = 0;
   virtual void PrintInfo() const;
-  virtual bodypart* SevereBodyPart(ushort);
+  virtual item* SevereBodyPart(ushort);
   virtual bool IsAnimated() const { return false; }
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);

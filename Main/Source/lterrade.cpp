@@ -739,13 +739,18 @@ void door::Break()
     ActivateBoobyTrap();
   else
     {
-      brokendoor* Temp = new brokendoor(false);
+      bool Open = Opened;
+      brokendoor* Temp = new brokendoor(0, false);
       Temp->InitMaterials(GetMainMaterial());
       SetMainMaterial(0);
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
+      if(Open)
+	Temp->MakeWalkable();
+      else 
+	Temp->MakeNotWalkable();
     }
 }
 

@@ -287,6 +287,7 @@ class item : public object
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
   virtual void CalculateAll();
+  virtual void DropEquipment() { }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }

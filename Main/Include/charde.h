@@ -400,6 +400,7 @@ class CHARACTER
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
+  virtual item* SevereBodyPart(ushort);
  protected:
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is transformed into a crumpled heap of bones."; }
   virtual void CreateCorpse();

@@ -1230,7 +1230,7 @@ void mine::Save(outputfile& SaveFile) const
 
 bool mine::ReceiveDamage(character* Damager, short, uchar Type)
 {
-  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1))
+  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1) || (Type == PHYSICALDAMAGE))
     {
       std::string DeathMsg = "explosion of ";
       DeathMsg << GetName(INDEFINITE);
@@ -3146,10 +3146,10 @@ void flamingsword::ReceiveHitEffect(character* Enemy, character* Hitter)
 {
   if(RAND() & 1)
     {
-      if(Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s burns %s.", CHARNAME(DEFINITE), Enemy->CHARNAME(DEFINITE));
-      
-      Enemy->ReceiveDamage(Hitter, 2 + (RAND() & 1), PHYSICALDAMAGE, ALL);
+      if(Enemy->ReceiveDamage(Hitter, 2 + (RAND() & 1), FIRE, ALL))
+	{
+	  ADD_MESSAGE("BURN BURN BURN! FIX FIX FIX!");
+	}
     }
 }
 

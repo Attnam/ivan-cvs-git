@@ -231,7 +231,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new darkknight(0, false));
+	SetPlayer(new skeleton(0, false));
 	Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
 	/*Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
 	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);*/
@@ -1087,7 +1087,7 @@ bool game::HandleQuitMessage()
       if(IsInGetCommand())
 	{
 #ifndef WIN32
-	  switch(iosystem::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHTGRAY))
+	  switch(game::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHTGRAY))
 #else
 	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
@@ -1111,7 +1111,7 @@ bool game::HandleQuitMessage()
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	if(iosystem::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHTGRAY))
+	if(game::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHTGRAY))
 #endif
 	  {
 	    RemoveSaves();
@@ -1535,3 +1535,9 @@ void game::SetCurrentEmitterPos(vector2d What)
   CurrentEmitterPosY = What.Y;
 }
 
+int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText)
+{
+  globalwindowhandler::DeInstallControlLoop(AnimationController);
+  iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText);
+  globalwindowhandler::InstallControlLoop(AnimationController);
+}

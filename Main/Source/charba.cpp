@@ -1821,8 +1821,8 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
 	  HScore.ForgetLastAdd();
 	  game::TextScreen("You didn't manage to get onto the high score list.");
 	}
-      else
-	HScore.Save();
+
+      HScore.Save();
     }
 }
 
@@ -3135,20 +3135,20 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().c_str(), BodyPart->CHARNAME(UNARTICLED));
 
-      SevereBodyPart(BodyPartIndex);
+      item* Severed = SevereBodyPart(BodyPartIndex);
       GetSquareUnder()->SendNewDrawRequest();
 
       if(!game::IsInWilderness())
 	{
-	  GetStackUnder()->AddItem(BodyPart);
+	  GetStackUnder()->AddItem(Severed);
 
 	  if(Direction != 8)
-	    BodyPart->Fly(0, Direction, Damage);
+	    Severed->Fly(0, Direction, Damage);
 	}
       else
-	  GetStack()->AddItem(BodyPart);
+	  GetStack()->AddItem(Severed);
 
-      BodyPart->DropEquipment();
+      Severed->DropEquipment();
 
       if(IsPlayer())
 	game::AskForKeyPress("Bodypart severed! [press any key to continue]");
@@ -3157,7 +3157,7 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
   return true;
 }
 
-bodypart* character::SevereBodyPart(ushort BodyPartIndex)
+item* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
@@ -3166,7 +3166,7 @@ bodypart* character::SevereBodyPart(ushort BodyPartIndex)
   return BodyPart;
 }
 
-/* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage */
+/* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage. Returns true if the character really receives damage */
 
 bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
@@ -5080,7 +5080,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	}
       else
 	{
-	  bodypart* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
+	  item* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
 	  SeveredBodyPart->MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
 	  if(IsPlayer())
 	    ADD_MESSAGE("Your %s teleports away.", SeveredBodyPart->CHARNAME(UNARTICLED));

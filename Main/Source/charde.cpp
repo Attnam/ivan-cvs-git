@@ -3219,10 +3219,10 @@ bool humanoid::DetachBodyPart()
 
   if(BodyPart)
     {
-      SevereBodyPart(ToBeDetached);
+      item* ToDrop = SevereBodyPart(ToBeDetached);
       GetSquareUnder()->SendNewDrawRequest();
-      GetStack()->AddItem(BodyPart);
-      BodyPart->DropEquipment();
+      GetStack()->AddItem(ToDrop);
+      ToDrop->DropEquipment();
       ADD_MESSAGE("Bodypart detached!");  
       return true;
     }
@@ -3589,4 +3589,16 @@ material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
     return MAKE_MATERIAL(HUMANFLESH, Volume);
   else
     return MAKE_MATERIAL(Config, Volume);
+}
+
+item* skeleton::SevereBodyPart(ushort BodyPartIndex)
+{
+  bone* Bone = new bone(0, false);
+  item* BodyPart = GetBodyPart(BodyPartIndex);
+  Bone->InitMaterials(BodyPart->GetContainedMaterial());
+  BodyPart->SetContainedMaterial(0);
+  BodyPart->SendToHell();
+  BodyPart->DropEquipment();
+  BodyPart->RemoveFromSlot();
+  return Bone;  
 }
