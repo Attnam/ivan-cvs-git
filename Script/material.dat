@@ -1046,6 +1046,7 @@ flesh
 	{
 		NameStem = "floating eye flesh";
 		Density = 1000;
+		Effect = EFFECT_ESP;
 	}
 }
 

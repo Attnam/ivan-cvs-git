@@ -84,6 +84,7 @@ character
 	IsExtraCoward = false;
 	SpillsBlood = true;
 	HasEyes = true;
+	HasHead = true;
 }
 
 humanoid
@@ -908,6 +909,7 @@ billswill
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
+	HasHead = false;
 }
 
 skeleton
@@ -1113,6 +1115,7 @@ mommo
 	FleshMaterial = BROWN_SLIME;
 	DeathMessage = "@Dd turns into lifeless goo.";
 	HasEyes = false;
+	HasHead = false;
 
 	Config CONICAL;
 	{
@@ -3095,5 +3098,7 @@ floatingeye
 	Frequency = 1000;
 	TorsoBitmapPos = 32, 0;
 	SkinColor = rgb16(140,140,140);
-	ClothColor = rgb16(0, 0, 100); // eye color
+	ClothColor = rgb16(0, 0, 100); /* eye color */
+	HasHead = false;
+	StandVerb = "floating";
 }

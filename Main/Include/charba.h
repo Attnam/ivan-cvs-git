@@ -161,6 +161,7 @@ struct characterdatabase
   bool IsExtraCoward;
   bool SpillsBlood;
   bool HasEyes;
+  bool HasHead;
 };
 
 class characterprototype
@@ -753,6 +754,8 @@ class character : public entity, public id
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(ushort) const { return 0; }
   DATA_BASE_BOOL(HasEyes);
+  virtual void AddESPConsumeMessage() const;  
+  virtual DATA_BASE_BOOL(HasHead);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

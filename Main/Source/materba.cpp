@@ -64,6 +64,7 @@ bool material::Effect(character* Eater, ulong Amount)
     case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); return true;
     case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); return true;
     case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); return true;
+    case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); return true;
     default: return false;
     }
 }
@@ -109,6 +110,7 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_KOBOLD_FLESH: Eater->AddKoboldFleshConsumeEndMessage(); break;
     case CEM_HEALING_LIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;
     case CEM_ANTIDOTE: Eater->AddAntidoteConsumeEndMessage(); break;
+    case CEM_ESP: Eater->AddESPConsumeMessage(); break;
     }
 }
 

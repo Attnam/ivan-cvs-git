@@ -2345,10 +2345,13 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 
   if(!GetNearLSquare(Where)->GetOLTerrain()->IsWalkable())
     {
-      if(IsPlayer()) 
-	ADD_MESSAGE("You hit your head on the wall.");
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hits %s head on the wall.", CHAR_NAME(DEFINITE), GetPossessivePronoun().c_str());
+      if(HasHead())
+	{
+	  if(IsPlayer()) 
+	    ADD_MESSAGE("You hit your head on the wall.");
+	  else if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s hits %s head on the wall.", CHAR_NAME(DEFINITE), GetPossessivePronoun().c_str());
+	}
 
       ReceiveDamage(GuiltyGuy, 1 + RAND() % 5, PHYSICAL_DAMAGE, HEAD);
       CheckDeath("killed by hitting a wall", GuiltyGuy);
@@ -6543,4 +6546,10 @@ std::string character::GetPanelName() const
 long character::GetMoveAPRequirement(uchar Difficulty) const
 {
   return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
+}
+
+void character::AddESPConsumeMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel a strange mental activity.");
 }

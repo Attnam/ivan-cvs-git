@@ -154,6 +154,8 @@ class ABSTRACT_CHARACTER
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual item* GetPairEquipment(ushort) const;
+  virtual bool HasHead() const { return GetHead(); }
+  virtual const std::string& humanoid::GetStandVerb() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);

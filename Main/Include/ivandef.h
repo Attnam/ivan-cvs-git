@@ -268,6 +268,7 @@
 #define EFFECT_ANTIDOTE 9
 #define EFFECT_CONFUSE 10
 #define EFFECT_POLYMORPH 11
+#define EFFECT_ESP 12
 
 /* CEM = Consume End Message */
 
@@ -280,6 +281,7 @@
 #define CEM_KOBOLD_FLESH 6
 #define CEM_HEALING_LIQUID 7
 #define CEM_ANTIDOTE 8
+#define CEM_ESP 12
 
 /* HM = Hit Message */
 

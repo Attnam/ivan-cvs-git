@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+December 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Eating Floating eye corpses gives ESP
+	* Headless creatures no longer hit their head on walls
+	* Creatures with no legs don't stand in look mode anymore 
+	
 December 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added floating eye
