@@ -192,7 +192,7 @@ item* item::CreateWishedItem() const
   return protocontainer<item>::GetProto(Type())->Clone();
 }
 
-bool item::Apply(character* Applier, stack*)
+bool item::Apply(character* Applier)
 {
   if(Applier->GetIsPlayer())
     ADD_MESSAGE("You can't apply this!");

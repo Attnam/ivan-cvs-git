@@ -307,7 +307,7 @@ class ITEM
   virtual std::string NameSingular() const { return "pick-axe"; }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 64); }
   virtual float OfferModifier() const { return 0.25; }
-  virtual bool Apply(character*, stack*);
+  virtual bool Apply(character*);
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1500; case 1: return 2000; case 2: return 100; default: return 0; } }
  protected:
   virtual ushort GetStrengthModifier() const { return 150; }
@@ -818,7 +818,7 @@ class ABSTRACT_ITEM
   wand,
   item,
  public:
-  virtual bool Apply(character*, stack*);
+  virtual bool Apply(character*);
   virtual bool CanBeZapped() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -1127,7 +1127,7 @@ class ITEM
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual uchar GetConsumeMaterial() const { return 1; }
-  virtual bool Apply(character*, stack*);
+  virtual bool Apply(character*);
   virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->IsExplosive()) ? true : false; }
   virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
   virtual bool StruckByWandOfStriking(character*, std::string);
@@ -1216,7 +1216,7 @@ class ITEM
   virtual void Load(inputfile&);
   virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }
   virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
-  virtual bool Apply(character*, stack*);
+  virtual bool Apply(character*);
   virtual bool CanBeWished() const { return false; }
  protected:
   virtual std::string Article() const { return "an"; }
@@ -1612,7 +1612,7 @@ class ITEM
     SetCharged(RAND() % 5 ? true : false);
   },
  public:
-  //  virtual bool Apply(character*, stack*);
+  //  virtual bool Apply(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
@@ -1689,7 +1689,7 @@ class ITEM
   virtual float OfferModifier() const { return 0.5; }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } }
   virtual ulong Price() const { return 10; }
-  virtual bool Apply(character*, stack*);
+  virtual bool Apply(character*);
   virtual void SetLockType(uchar What) { LockType = What; }
   virtual uchar GetLockType() const { return LockType; }
  protected:

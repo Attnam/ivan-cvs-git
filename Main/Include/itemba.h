@@ -68,7 +68,7 @@ class item : public object
   virtual ushort Possibility() const = 0;
   virtual bool CanBeWished() const { return true; }
   virtual item* CreateWishedItem() const;
-  virtual bool Apply(character*, stack*);
+  virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);

@@ -1864,7 +1864,7 @@ bool kamikazedwarf::Hit(character* Enemy)
 	    else
 	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
 
-	    if((**i)->Apply(this, GetStack()))
+	    if((**i)->Apply(this))
 	      return true;
 	  }
 

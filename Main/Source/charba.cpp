@@ -2448,7 +2448,7 @@ bool character::Apply()
 	  return false;
 	}*/
 
-      if(!Item->Apply(this, GetStack()))
+      if(!Item->Apply(this))
 	return false;
 
       /*if(GetWielded() && !GetWielded()->GetExists()) 

@@ -278,7 +278,7 @@ item* leftnutofpetrus::CreateWishedItem() const
 */
 
 
-bool pickaxe::Apply(character* User, stack*)
+bool pickaxe::Apply(character* User)
 {
   vector2d Temp;
 	
@@ -348,7 +348,7 @@ ushort brokenplatemail::GetArmorValue() const
   return ushort(Base);
 }*/
 
-bool wand::Apply(character* Terrorist, stack* MotherStack)
+bool wand::Apply(character* Terrorist)
 {
   if(Terrorist->GetIsPlayer())
     ADD_MESSAGE("%s breaks in two and then explodes!", CHARNAME(DEFINITE));
@@ -698,7 +698,7 @@ ushort whip::GetFormModifier() const
     return 70;
 }
 
-bool backpack::Apply(character* Terrorist, stack* MotherStack)
+bool backpack::Apply(character* Terrorist)
 {
   if(GetContainedMaterial() && GetContainedMaterial()->IsExplosive())
     {
@@ -954,7 +954,7 @@ material* loaf::CreateLoafMaterials()
     }
 }
 
-bool oillamp::Apply(character* Applier, stack*)
+bool oillamp::Apply(character* Applier)
 {
   if(Applier->GetIsPlayer())
     ADD_MESSAGE("You rub %s.", CHARNAME(DEFINITE));
@@ -1570,7 +1570,7 @@ bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool key::Apply(character* User, stack*)
+bool key::Apply(character* User)
 {
   if(User->GetIsPlayer())
     {
