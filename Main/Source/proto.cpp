@@ -117,7 +117,7 @@ material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Outpu
 			}
 		
 	if(Output)
-		ADD_MESSAGE("There is no such item.");
+		ADD_MESSAGE("There is no such material.");
 
 	return 0;
 }

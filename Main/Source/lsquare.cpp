@@ -98,26 +98,29 @@ bool levelsquare::DrawStacks() const
 {
 	bool Items = false;
 
-	if(GetOverTerrain()->GetIsWalkable() && GetStack()->DrawToTileBuffer())
-		Items = true;
-
-	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
-
-	if(GetPos().X)
-		if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer())
+	if(GetOverTerrain()->GetIsWalkable())
+	{
+		if(GetStack()->DrawToTileBuffer())
 			Items = true;
 
-	if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
-		if(NS(vector2d(1, 0), 3)->DrawToTileBuffer())
-			Items = true;
+		#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
 
-	if(GetPos().Y)
-		if(NS(vector2d(0, -1), 2)->DrawToTileBuffer())
-			Items = true;
+		if(GetPos().X)
+			if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer())
+				Items = true;
 
-	if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
-		if(NS(vector2d(0, 1), 0)->DrawToTileBuffer())
-			Items = true;
+		if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
+			if(NS(vector2d(1, 0), 3)->DrawToTileBuffer())
+				Items = true;
+
+		if(GetPos().Y)
+			if(NS(vector2d(0, -1), 2)->DrawToTileBuffer())
+				Items = true;
+
+		if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
+			if(NS(vector2d(0, 1), 0)->DrawToTileBuffer())
+				Items = true;
+	}
 
 	return Items;
 }
@@ -137,8 +140,6 @@ void levelsquare::UpdateMemorized()
 {
 	if(MemorizedUpdateRequested)
 	{
-		if(GetOverLevelTerrain()->GetType() == door::StaticType())
-			int esko = 2;
 		ushort Luminance = GetLuminance();
 
 		if(Luminance >= LIGHT_BORDER)
@@ -146,7 +147,7 @@ void levelsquare::UpdateMemorized()
 			DrawTerrain();
 			DrawStacks();
 
-			igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+			igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
 			if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
 				igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
@@ -341,11 +342,13 @@ void levelsquare::NoxifyEmitter(vector2d Dir)
 	ushort Index = Emitter.Search(DirEmitter);
 
 	if(Index != 0xFFFF)
+	{
 		Emitter.Access(Index) = DirEmitter;
 
-	NewDrawRequested = true;
-	MemorizedUpdateRequested = true;
-	DescriptionChanged = true;
+		NewDrawRequested = true;
+		MemorizedUpdateRequested = true;
+		DescriptionChanged = true;
+	}
 }
 
 uchar levelsquare::CalculateBitMask(vector2d Dir) const
@@ -428,48 +431,48 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 	{
 		if(AiL >= LIGHT_BORDER)
 		{
-			if(GetRawLuminance() < LIGHT_BORDER)
+			if(!GetRawLuminance())
+			{
 				DescriptionChanged = true;
+				MemorizedUpdateRequested = true;
+			}
 
 			Emitter << DirEmitter;
 		}
 	}
 	else
-		if(AiL)
+		if(AiL >= LIGHT_BORDER)
 		{
 			if(Emitter.Access(Index).DilatedEmitation == AiL)
 				return;
 
-			if(GetRawLuminance() < LIGHT_BORDER)
+			if(!GetRawLuminance())
 			{
-				Emitter.Access(Index) = DirEmitter;
-
-				if(AiL >= LIGHT_BORDER)
-					DescriptionChanged = true;
+				DescriptionChanged = true;
+				MemorizedUpdateRequested = true;
 			}
-			else
-			{
-				Emitter.Access(Index) = DirEmitter;
 
-				if(AiL < LIGHT_BORDER && GetRawLuminance() < LIGHT_BORDER)
-					DescriptionChanged = true;
-			}
+			Emitter.Access(Index) = DirEmitter;
 		}
 		else
 		{
-			if(GetRawLuminance() >= LIGHT_BORDER)
+			ushort RawLum = GetRawLuminance();
+
+			if(RawLum && RawLum == Emitter.Access(Index).DilatedEmitation)
 			{
 				Emitter.Remove(Index);
 
-				if(GetRawLuminance() < LIGHT_BORDER)
+				if(!GetRawLuminance())
+				{
 					DescriptionChanged = true;
+					MemorizedUpdateRequested = true;
+				}
 			}
 			else
 				Emitter.Remove(Index);
 		}
 
 	NewDrawRequested = true;
-	MemorizedUpdateRequested = true;
 
 	if(GetLastSeen() == game::GetLOSTurns())
 		game::SendLOSUpdateRequest();
@@ -487,7 +490,6 @@ bool levelsquare::Close(character* Closer)
 	else
 	{
 		ADD_MESSAGE("There's something in the way...");
-
 		return false;
 	}
 }

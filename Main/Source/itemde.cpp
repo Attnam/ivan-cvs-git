@@ -369,7 +369,11 @@ bool scrollofwishing::Read(character* Reader)
 
 bool lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	ItemStack->AddItem(new brokenlamp);
+	brokenlamp* Lamp = new brokenlamp(false);
+	Lamp->InitMaterials(GetMaterial(0));
+	PreserveMaterial(0);
+	Lamp->SignalSquarePositionChange(OnWall);
+	ItemStack->AddItem(Lamp);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The lamp shatters to pieces.");
 	SetExists(false);
@@ -520,7 +524,7 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 		if(Wearer && Wearer->GetTorsoArmor() == this)
 			Wearer->SetTorsoArmor(0);
 
-		ImpactDamage(ushort(Strength), false, ItemsStack);
+		ImpactDamage(Strength, false, ItemsStack);
 
 		if(Shown)
 			ADD_MESSAGE("The plate mail is damaged by the loud sound.");
@@ -533,7 +537,7 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 
 bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
 {
-	if(rand() % 20 + GetArmorValue() * 2 < Strength * 5 + rand() % 20)
+	if(Strength > 2500.0f / GetArmorValue() + rand() % 11 - rand() % 11)
 	{
 		if (IsShown)
 			ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
@@ -563,7 +567,6 @@ void brokenbottle::GetStepOnEffect(character* Stepper)
 		Stepper->SetHP(Stepper->GetHP() - rand() % 2 - 1);
 		Stepper->CheckDeath("stepped on a broken bottle");
 	}
-
 }
 
 material* corpse::BeDippedInto()

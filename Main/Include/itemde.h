@@ -463,7 +463,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,160)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
-	virtual void GetStepOnEffect(character*); 
+	virtual void GetStepOnEffect(character*);
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -815,19 +815,22 @@ public:
 class ITEM
 (
 	brokenlamp,
-	item,
+	lamp,
 	InitMaterials(new glass),
 	{
 		SetSize(15);
+		SetOnWall(false);
+		UpdatePicture();
 	},
 public:
 	virtual ushort Possibility() const RET(50)
 	virtual std::string NameSingular() const RET("broken lamp")
 	virtual item* BetterVersion() const { return new lamp; }
 	virtual float OfferModifier() const RET(0)
-	virtual vector2d GetBitmapPos() const RETV(0,304)
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual vector2d GetBitmapPos() const { return vector2d(0, OnWall ? 208 : 304); }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
+	virtual bool ImpactDamage(ushort, bool, stack*) { return false; }
+	virtual ushort GetEmitation() const RET(0)
 protected:
 	virtual ushort GetFormModifier() const RET(80)
 );

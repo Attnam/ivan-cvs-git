@@ -465,16 +465,16 @@ void game::UpdateCameraX()
 
 void game::UpdateCameraY()
 {
-	if(Player->GetPos().Y < 18)
+	if(Player->GetPos().Y < 15)
 		if(!Camera.Y)
 			return;
 		else
 			Camera.Y = 0;
 	else
-		if(Camera.Y == Player->GetPos().Y - 18)
+		if(Camera.Y == Player->GetPos().Y - 15)
 			return;
 		else
-			Camera.Y = Player->GetPos().Y - 18;
+			Camera.Y = Player->GetPos().Y - 15;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }
@@ -719,16 +719,16 @@ void game::UpdateCameraXWithPos(ushort Coord)
 
 void game::UpdateCameraYWithPos(ushort Coord)
 {
-        if(Coord < 18)
+        if(Coord < 15)
                 if(!Camera.Y)
 			return;
 		else
 			Camera.Y = 0;
 	else
-                if(Camera.Y == Coord - 18)
+                if(Camera.Y == Coord - 15)
 			return;
 		else
-			Camera.Y = Coord - 18;
+			Camera.Y = Coord - 15;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }
@@ -1136,10 +1136,10 @@ void game::UpdateCamera()
 	else
 		Camera.X = Player->GetPos().X - 25;
 
-	if(Player->GetPos().Y < 18)
+	if(Player->GetPos().Y < 15)
 		Camera.Y = 0;
 	else
-		Camera.Y = Player->GetPos().Y - 18;
+		Camera.Y = Player->GetPos().Y - 15;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }

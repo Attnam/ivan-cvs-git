@@ -445,36 +445,50 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-	std::string OldName;
+	for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); c++)
+	{
+		item* Old = game::GetPlayer()->GetStack()->GetItem(c);
+
+		if(Old->GetType() == brokenplatemail::StaticType())
+		{
+			bool Worn = false, Wielded = false;
+
+			if(Old == game::GetPlayer()->GetTorsoArmor())
+				Worn = true;
+			else
+				if(Old == game::GetPlayer()->GetWielded())
+					Wielded = true;
+
+			game::GetPlayer()->GetStack()->RemoveItem(c);
+			ADD_MESSAGE("Loricatus fixes your %s.", Old->CNAME(UNARTICLED));
+			Old->SetExists(false);
+			item* Plate = new platemail(false);
+			Plate->InitMaterials(Old->GetMaterial(0));
+			Old->PreserveMaterial(0);
+			game::GetPlayer()->GetStack()->AddItem(Plate);
+
+			if(Worn)
+				game::GetPlayer()->SetTorsoArmor(Plate);
+			else
+				if(Wielded)
+					game::GetPlayer()->SetWielded(Plate);
+
+			return;
+		}
+	}
 	
 	if(game::GetPlayer()->GetWielded())
 		if(game::GetPlayer()->GetWielded()->IsMaterialChangeable())
 		{
-			OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
+			std::string OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
 			game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
 			ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
+			return;
 		}
 		else
-			ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
+			ADD_MESSAGE("%s glows in a strange light but remains unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
 	else
 		ADD_MESSAGE("You feel a slight tingling in your hands.");
-	for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); c++)
-	{
-		if(game::GetPlayer()->GetStack()->GetItem(c)->GetType() == brokenplatemail::StaticType())
-		{
-			bool Worn = false;
-			ushort JustCreated;
-
-			if(game::GetPlayer()->GetTorsoArmor())
-				Worn = true;
-
-			game::GetPlayer()->GetStack()->RemoveItem(c);			
-			JustCreated = game::GetPlayer()->GetStack()->AddItem(new platemail);
-			if(Worn)
-				game::GetPlayer()->SetTorsoArmor(game::GetPlayer()->GetStack()->GetItem(c));
-			ADD_MESSAGE("Loricatus fixes your broken torso armor.");
-		}
-	}
 }
 
 void loricatus::PrayBadEffect()

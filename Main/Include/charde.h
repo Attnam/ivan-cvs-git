@@ -20,14 +20,18 @@ public:
 	virtual uchar GetSex() const RET(MALE)
 	virtual ushort CalculateArmorModifier() const;
 	virtual void Save(outputfile&) const;
+	virtual uchar GetLegType() const RET(LegType)
+	virtual uchar GetTorsoType() const RET(TorsoType)
 	virtual uchar GetArmType() const RET(ArmType)
 	virtual uchar GetHeadType() const RET(HeadType)
+	virtual uchar GetShieldType() const RET(ShieldType)
 	virtual bool CanWield() const RET(true)
 	virtual bool CanWear() const RET(true)
-	virtual void SetArmType(uchar Value) { ArmType = Value; }
-	virtual void SetHeadType(uchar Value) { HeadType = Value; }
 	virtual void SetLegType(uchar Value) { LegType = Value; }
 	virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
+	virtual void SetArmType(uchar Value) { ArmType = Value; }
+	virtual void SetHeadType(uchar Value) { HeadType = Value; }
+	virtual void SetShieldType(uchar Value) { ShieldType = Value; }
 	virtual bool CanKick() const RET(true)
 	virtual float GetAttackStrength() const;
 	virtual bool Hit(character*);
@@ -60,10 +64,11 @@ protected:
 	gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
 	std::vector<sweaponskill*> SingleWeaponSkill;
 	sweaponskill* CurrentSingleWeaponSkill;
-	uchar ArmType;
-	uchar HeadType;
 	uchar LegType;
 	uchar TorsoType;
+	uchar ArmType;
+	uchar HeadType;
+	uchar ShieldType;
 );
 
 inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ {}
@@ -79,10 +84,11 @@ class CHARACTER
 		SetStrength(10 + rand() % 6);
 		SetEndurance(10 + rand() % 6);
 		SetPerception(10 + rand() % 6);
-		SetArmType(rand() % NUMBER_OF_HUMAN_ARMS);
-		SetHeadType(rand() % NUMBER_OF_HUMAN_HEADS);
 		SetLegType(rand() % NUMBER_OF_HUMAN_LEGS);
 		SetTorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
+		SetArmType(rand() % NUMBER_OF_HUMAN_ARMS);
+		SetHeadType(rand() % NUMBER_OF_HUMAN_HEADS);
+		SetShieldType(0);
 		SetMoney(200 + rand() % 101);
 	},
 public:
@@ -103,10 +109,11 @@ class CHARACTER
 		SetStrength(75);
 		SetEndurance(75);
 		SetPerception(75);
-		SetArmType(3);
-		SetHeadType(10);
 		SetLegType(1);
 		SetTorsoType(5);
+		SetArmType(3);
+		SetHeadType(10);
+		SetShieldType(0);
 		SetHealTimer(100);
 		SetStoryState(0);
 		game::SetPerttu(this);
@@ -152,10 +159,11 @@ class CHARACTER
 		SetStrength(10);
 		SetEndurance(15);
 		SetPerception(18);
-		SetArmType(rand() % 7);
-		SetHeadType(4 + rand() % 3);
 		SetLegType(rand() % 3);
 		SetTorsoType(2 + rand() % 2);
+		SetArmType(rand() % 5);
+		SetHeadType(5 + rand() % 2);
+		SetShieldType(0);
 		SetMoney(20);
 	},
 public:
@@ -178,10 +186,11 @@ class CHARACTER
 		SetStrength(30);
 		SetEndurance(30);
 		SetPerception(21);
+		SetLegType(4);
+		SetTorsoType(8);
 		SetArmType(5);
 		SetHeadType(7);
-		SetLegType(3);
-		SetTorsoType(1);
+		SetShieldType(1);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
@@ -204,10 +213,11 @@ class CHARACTER
 		SetStrength(30);
 		SetEndurance(30);
 		SetPerception(30);
+		SetLegType(2);
+		SetTorsoType(7);
 		SetArmType(6);
 		SetHeadType(4);
-		SetLegType(2);
-		SetTorsoType(8);
+		SetShieldType(0);
 		SetMoney(3000 + rand() % 2001);
 	},
 public:
@@ -232,10 +242,11 @@ class CHARACTER
 		SetStrength(20);
 		SetEndurance(20);
 		SetPerception(18);
+		SetLegType(2);
+		SetTorsoType(7);
 		SetArmType(6);
 		SetHeadType(9);
-		SetLegType(2);
-		SetTorsoType(0);
+		SetShieldType(0);
 	},
 public:
 	virtual void GetAICommand() { StandIdleAI(); }
@@ -715,10 +726,11 @@ class CHARACTER
 		SetStrength(30);
 		SetEndurance(50);
 		SetPerception(18);
-		SetArmType(7);
-		SetHeadType(12);
 		SetLegType(5);
 		SetTorsoType(9);
+		SetArmType(7);
+		SetHeadType(12);
+		SetShieldType(0);
 	},
 public:
 	virtual void CreateInitialEquipment();
@@ -745,10 +757,11 @@ class CHARACTER
 		SetStrength(20);
 		SetEndurance(20);
 		SetPerception(24);
-		SetArmType(8);
-		SetHeadType(13);
 		SetLegType(6);
 		SetTorsoType(12);
+		SetArmType(8);
+		SetHeadType(13);
+		SetShieldType(0);
 	},
 public:
 	virtual void CreateInitialEquipment();
@@ -838,10 +851,11 @@ class CHARACTER
 		SetStrength(20);
 		SetEndurance(10);
 		SetPerception(12);
-		SetArmType(0);
-		SetHeadType(0);
 		SetLegType(6);
 		SetTorsoType(0);
+		SetArmType(9);
+		SetHeadType(14);
+		SetShieldType(0);
 	},
 public:
 	virtual ushort Possibility() const RET(0)

@@ -2,6 +2,7 @@
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
+#include "resource.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
@@ -163,7 +164,7 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	wc.lpfnWndProc   = (WNDPROC) globalwindowhandler::WndProc;
 	wc.style         = CS_OWNDC;
 	wc.hInstance     = hInst;
-	wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
+	wc.hIcon         = LoadIcon(hInst, MAKEINTRESOURCE(IDI_LOGO));
 	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
 	wc.lpszMenuName  = NULL;

@@ -30,7 +30,14 @@ void team::Hostility(team* Enemy)
 		game::Hostility(this, Enemy);
 
 		if(this == game::GetPlayer()->GetTeam())
+		{
+			/* This is a gum solution. The message should come from the script. */
+
+			if(Enemy == game::GetTeam(2))
+				ADD_MESSAGE("You hear an alarm ringing.");
+
 			ADD_MESSAGE("You have a feeling this wasn't a good idea...");
+		}
 	}
 
 	SetRelation(Enemy, HOSTILE);

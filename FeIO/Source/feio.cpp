@@ -55,7 +55,7 @@ ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
 	return iReturnCounter;
 }
 
-int iosystem::Menu(std::string sMS, ushort ColorSelected, ushort ColorNotSelected) // (MENU)
+int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, ushort ColorNotSelected) // (MENU)
 {
 	if(CountChars('\r',sMS) < 1)
 		return (-1);
@@ -63,6 +63,7 @@ int iosystem::Menu(std::string sMS, ushort ColorSelected, ushort ColorNotSelecte
 	bool bReady = false;
 	ulong iSelected = 0;
 	double Rotation = 0;
+
 	while(!bReady)
 	{
 		if(Rotation == 2 * 3.141)
@@ -79,6 +80,8 @@ int iosystem::Menu(std::string sMS, ushort ColorSelected, ushort ColorNotSelecte
 
 		for(x = 0; x < 4; ++x)
 			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
+
+		PentaPicture->MaskedBlit(DOUBLEBUFFER, 0, 0, 143, 141, 16, 16);
 
 		for(ulong i = 0; i < CountChars('\r',sMS); ++i)
 		{
@@ -129,11 +132,20 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 	bitmap Backup(XRES, YRES);
 	DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
 
+	bool TooShort = false;
+
 	for(int LastKey = 0;; LastKey = 0)
 	{
 		Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
 		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
+
+		if(TooShort)
+		{
+			FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 50, Color, "Too short!");
+			TooShort = false;
+		}
+
 		graphics::BlitDBToScreen();
 		
 		while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 8 || LastKey == 13))
@@ -152,9 +164,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 				break;
 			else
 			{
-				FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 50, Color, "Too short!");
-				graphics::BlitDBToScreen();
-				GETKEY();
+				TooShort = true;
 				continue;
 			}
 

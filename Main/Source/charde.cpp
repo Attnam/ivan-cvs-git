@@ -96,7 +96,7 @@ void froggoblin::CreateInitialEquipment()
 
 void cityguard::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new poleaxe)));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new iron))));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail)));
 }
 
@@ -138,38 +138,74 @@ void golem::DrawToTileBuffer() const
 
 void humanoid::DrawToTileBuffer() const
 {	
-	vector2d InHandsPic, ArmPos, HeadPos;
+	vector2d InHandsPic, LegPos, TorsoPos, ArmPos, HeadPos, ShieldPos;
+
+	if(GetLegType() > 16)
+	{
+		LegPos.X = 16;
+		LegPos.Y = (GetLegType() - 16) << 4;
+	}
+	else
+	{
+		LegPos.X = 0;
+		LegPos.Y = GetLegType() << 4;
+	}
+
+	if(GetTorsoType() > 16)
+	{
+		TorsoPos.X = 48;
+		TorsoPos.Y = (GetTorsoType() - 16) << 4;
+	}
+	else
+	{
+		TorsoPos.X = 32;
+		TorsoPos.Y = GetTorsoType() << 4;
+	}
 
 	if(GetArmType() > 16)
 	{
 		ArmPos.X = 80;
-		ArmPos.Y = (GetArmType() - 16) * 16;
+		ArmPos.Y = (GetArmType() - 16) << 4;
 	}
 	else
 	{
 		ArmPos.X = 64;
-		ArmPos.Y = GetArmType() * 16;
+		ArmPos.Y = GetArmType() << 4;
 	}
+
 	if(GetHeadType() > 16)
 	{
 		HeadPos.X = 112;
-		HeadPos.Y = (GetHeadType() - 16) * 16;
+		HeadPos.Y = (GetHeadType() - 16) << 4;
 	}
 	else
 	{
 		HeadPos.X = 96;
-		HeadPos.Y = GetHeadType() * 16;
+		HeadPos.Y = GetHeadType() << 4;
 	}
 
-	if(GetWielded() != 0) InHandsPic = GetWielded()->GetInHandsPic();
+	if(GetShieldType() > 16)
+	{
+		ShieldPos.X = 144;
+		ShieldPos.Y = (GetShieldType() - 16) << 4;
+	}
+	else
+	{
+		ShieldPos.X = 128;
+		ShieldPos.Y = GetShieldType() << 4;
+	}
 
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16); // Legs
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), 32, 0, 0, 0, 16, 16); // Torso
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ArmPos.X, ArmPos.Y, 0, 0, 16, 16); // Arms
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 0, 16, 16); // Head
+	if(GetWielded())
+		InHandsPic = GetWielded()->GetInHandsPic();
 
-	if(GetWielded() != 0 && (InHandsPic.X != 0 || InHandsPic.Y != 0))
-		igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16); // Wielded
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), LegPos.X,LegPos.Y, 0, 0, 16, 16);
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), TorsoPos.X, TorsoPos.Y, 0, 0, 16, 16);
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ArmPos.X, ArmPos.Y, 0, 0, 16, 16);
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 0, 16, 16);
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ShieldPos.X, ShieldPos.Y, 0, 0, 16, 16);
+
+	if(GetWielded() && (InHandsPic.X != 0 || InHandsPic.Y != 0))
+		igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16);
 }
 
 void fallenvalpurist::CreateCorpse()
@@ -753,7 +789,7 @@ void cityguard::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("%s says gravely: \"You don't have life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 1:
 		ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");

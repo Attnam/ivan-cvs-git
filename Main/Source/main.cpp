@@ -4,6 +4,7 @@
 #include "hscore.h"
 #include "feio.h"
 #include "whandler.h"
+#include "charde.h"
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {
@@ -27,7 +28,10 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 	iosystem::TextScreen(Buffer);
 
 	while(true)
-		switch(iosystem::Menu("Start Game\rContinue a game\rView Highscores\rQuit\r", BLUE, WHITE))
+	{
+		elpuri Elpuri(true, false, false, false);
+
+		switch(iosystem::Menu(Elpuri.GetPicture(), "Start Game\rContinue a game\rView Highscores\rQuit\r", BLUE, WHITE))
 		{
 		case 0:
 			game::Init();
@@ -57,4 +61,5 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 		case 3:
 			return 0;
 		}
+	}
 }

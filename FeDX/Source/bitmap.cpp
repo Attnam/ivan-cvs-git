@@ -310,10 +310,12 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
+				mov ebx, TrueSourceXMove
+				mov edx, TrueDestXMove
 				cld
 			MaskedLoop1:
 				mov cx, Width
@@ -324,8 +326,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				cld
 				dec cx
 				jnz MaskedLoop2
-				add esi, TrueSourceXMove
-				add edi, TrueDestXMove
+				add esi, ebx
+				add edi, edx
 				dec Height
 				jnz MaskedLoop1
 				pop es
@@ -345,11 +347,12 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov bx, Height
 				shr dx, 0x01
 				cld
 			MaskedLoop3:
@@ -357,7 +360,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				rep movsd
 				add esi, TrueSourceXMove
 				sub edi, TrueDestXMove
-				dec Height
+				dec bx
 				jnz MaskedLoop3
 				pop es
 				popad
@@ -376,10 +379,12 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
+				mov ebx, TrueSourceXMove
+				mov edx, TrueDestXMove
 				cld
 			MaskedLoop6:
 				mov cx, Width
@@ -390,8 +395,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				cld
 				dec cx
 				jnz MaskedLoop7
-				add esi, TrueSourceXMove
-				sub edi, TrueDestXMove
+				add esi, ebx
+				sub edi, edx
 				dec Height
 				jnz MaskedLoop6
 				pop es
@@ -412,18 +417,19 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop4:
 				mov cx, dx
 			MaskedLoop5:
 				lodsw
 				mov [edi], ax
-				add edi, TrueDestXMove
+				add edi, ebx
 				dec cx
 				jnz MaskedLoop5
 				add esi, TrueSourceXMove
@@ -448,18 +454,19 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop8:
 				mov cx, dx
 			MaskedLoop9:
 				lodsw
 				mov [edi], ax
-				add edi, TrueDestXMove
+				add edi, ebx
 				dec cx
 				jnz MaskedLoop9
 				add esi, TrueSourceXMove
@@ -484,18 +491,19 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop10:
 				mov cx, dx
 			MaskedLoop11:
 				lodsw
 				mov [edi], ax
-				sub edi, TrueDestXMove
+				sub edi, ebx
 				dec cx
 				jnz MaskedLoop11
 				add esi, TrueSourceXMove
@@ -520,18 +528,19 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop12:
 				mov cx, dx
 			MaskedLoop13:
 				lodsw
 				mov [edi], ax
-				sub edi, TrueDestXMove
+				sub edi, ebx
 				dec cx
 				jnz MaskedLoop13
 				add esi, TrueSourceXMove
@@ -584,12 +593,12 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 		pushad
 		push es
 		mov ax, ds
-		mov es, ax
 		mov esi, TrueSourceOffset
 		mov edi, TrueDestOffset
-		xor ecx, ecx
 		xor edx, edx
+		mov es, ax
 		mov dx, Luminance
+		xor ecx, ecx
 		sub dx, 0x100
 		cld
 	MaskedLoop1:
@@ -702,10 +711,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
+				mov ebx, TrueSourceXMove
+				mov edx, TrueDestXMove
 				cld
 			MaskedLoop1:
 				mov cx, Width
@@ -718,16 +729,20 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				cld
 				dec cx
 				jnz MaskedLoop2
+				add esi, ebx
+				add edi, edx
+				dec Height
+				jnz MaskedLoop1
 				jmp MaskedNextLine1
 			MaskSkip1:
 				sub edi, 0x02
 				dec cx
 				jnz MaskedLoop2
-			MaskedNextLine1:
-				add esi, TrueSourceXMove
-				add edi, TrueDestXMove
+				add esi, ebx
+				add edi, edx
 				dec Height
 				jnz MaskedLoop1
+			MaskedNextLine1:
 				pop es
 				popad
 			}
@@ -745,14 +760,15 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
-				mov dx, Width
+				mov ebx, TrueSourceXMove
+				mov edx, TrueDestXMove
 				cld
 			MaskedLoop3:
-				mov cx, dx
+				mov cx, Width
 			MaskedLoop55:
 				lodsw
 				cmp ax, 0xF81F
@@ -760,16 +776,20 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				stosw
 				dec cx
 				jnz MaskedLoop55
+				add esi, ebx
+				sub edi, edx
+				dec Height
+				jnz MaskedLoop3
 				jmp MaskedNextLine2
 			MaskSkip2:
 				add edi, 0x02
 				dec cx
 				jnz MaskedLoop55
-			MaskedNextLine2:
-				add esi, TrueSourceXMove
-				sub edi, TrueDestXMove
+				add esi, ebx
+				sub edi, edx
 				dec Height
 				jnz MaskedLoop3
+			MaskedNextLine2:
 				pop es
 				popad
 			}
@@ -787,10 +807,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
+				mov ebx, TrueSourceXMove
+				mov edx, TrueDestXMove
 				cld
 			MaskedLoop6:
 				mov cx, Width
@@ -803,16 +825,20 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				cld
 				dec cx
 				jnz MaskedLoop7
+				add esi, ebx
+				sub edi, edx
+				dec Height
+				jnz MaskedLoop6
 				jmp MaskedNextLine3
 			MaskSkip3:
 				sub edi, 0x02
 				dec cx
 				jnz MaskedLoop7
-			MaskedNextLine3:
-				add esi, TrueSourceXMove
-				sub edi, TrueDestXMove
+				add esi, ebx
+				sub edi, edx
 				dec Height
 				jnz MaskedLoop6
+			MaskedNextLine3:
 				pop es
 				popad
 			}
@@ -831,11 +857,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop4:
 				mov cx, dx
@@ -844,15 +871,10 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				cmp ax, 0xF81F
 				je MaskSkip4
 				mov [edi], ax
-				add edi, TrueDestXMove
-				dec cx
-				jnz MaskedLoop5
-				jmp MaskedNextLine4
 			MaskSkip4:
-				add edi, TrueDestXMove
+				add edi, ebx
 				dec cx
 				jnz MaskedLoop5
-			MaskedNextLine4:
 				add esi, TrueSourceXMove
 				sub edi, TrueDestYMove
 				dec Height
@@ -875,11 +897,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop8:
 				mov cx, dx
@@ -888,15 +911,10 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				cmp ax, 0xF81F
 				je MaskSkip5
 				mov [edi], ax
-				add edi, TrueDestXMove
-				dec cx
-				jnz MaskedLoop9
-				jmp MaskedNextLine5
 			MaskSkip5:
-				add edi, TrueDestXMove
+				add edi, ebx
 				dec cx
 				jnz MaskedLoop9
-			MaskedNextLine5:
 				add esi, TrueSourceXMove
 				sub edi, TrueDestYMove
 				dec Height
@@ -919,11 +937,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop10:
 				mov cx, dx
@@ -932,15 +951,10 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				cmp ax, 0xF81F
 				je MaskSkip6
 				mov [edi], ax
-				sub edi, TrueDestXMove
-				dec cx
-				jnz MaskedLoop11
-				jmp MaskedNextLine6
 			MaskSkip6:
-				sub edi, TrueDestXMove
+				sub edi, ebx
 				dec cx
 				jnz MaskedLoop11
-			MaskedNextLine6:
 				add esi, TrueSourceXMove
 				add edi, TrueDestYMove
 				dec Height
@@ -963,11 +977,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				pushad
 				push es
 				mov ax, ds
-				mov es, ax
 				mov esi, TrueSourceOffset
 				mov edi, TrueDestOffset
+				mov es, ax
 				xor ecx, ecx
 				mov dx, Width
+				mov ebx, TrueDestXMove
 				cld
 			MaskedLoop12:
 				mov cx, dx
@@ -976,15 +991,10 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				cmp ax, 0xF81F
 				je MaskSkip7
 				mov [edi], ax
-				sub edi, TrueDestXMove
-				dec cx
-				jnz MaskedLoop13
-				jmp MaskedNextLine7
 			MaskSkip7:
-				sub edi, TrueDestXMove
+				sub edi, ebx
 				dec cx
 				jnz MaskedLoop13
-			MaskedNextLine7:
 				add esi, TrueSourceXMove
 				add edi, TrueDestYMove
 				dec Height
@@ -1035,12 +1045,12 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		pushad
 		push es
 		mov ax, ds
-		mov es, ax
 		mov esi, TrueSourceOffset
 		mov edi, TrueDestOffset
-		xor ecx, ecx
 		xor edx, edx
+		mov es, ax
 		mov dx, Luminance
+		xor ecx, ecx
 		sub dx, 0x100
 		cld
 	MaskedLoop1:
@@ -1100,16 +1110,20 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		stosw
 		dec cx
 		jnz MaskedLoop2
+		add esi, TrueSourceXMove
+		add edi, TrueDestXMove
+		dec Height
+		jnz MaskedLoop1
 		jmp MaskedNextLine
 	MaskSkip:
 		add edi, 0x02
 		dec cx
 		jnz MaskedLoop2
-	MaskedNextLine:
 		add esi, TrueSourceXMove
 		add edi, TrueDestXMove
 		dec Height
 		jnz MaskedLoop1
+	MaskedNextLine:
 		pop es
 		popad
 	}
@@ -1150,9 +1164,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		pushad
 		push es
 		mov ax, ds
-		mov es, ax
 		mov esi, TrueSourceOffset
 		mov edi, TrueDestOffset
+		mov es, ax
 		mov dl, Alpha
 		cld
 	MaskedLoop1:
@@ -1217,16 +1231,20 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		stosw
 		dec cx
 		jnz MaskedLoop2
+		add esi, TrueSourceXMove
+		add edi, TrueDestXMove
+		dec Height
+		jnz MaskedLoop1
 		jmp MaskedNextLine
 	MaskSkip:
 		add edi, 0x02
 		dec cx
 		jnz MaskedLoop2
-	MaskedNextLine:
 		add esi, TrueSourceXMove
 		add edi, TrueDestXMove
 		dec Height
 		jnz MaskedLoop1
+	MaskedNextLine:
 		pop es
 		popad
 	}

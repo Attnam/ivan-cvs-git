@@ -338,6 +338,7 @@ void object::UpdatePicture()
 {
 	igraph::RemoveUser(GraphicId);
 	GraphicId.BitmapPos = GetBitmapPos();
+	GraphicId.FileIndex = GetGraphicsContainerIndex();
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 

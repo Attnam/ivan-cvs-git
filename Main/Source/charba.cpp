@@ -959,7 +959,7 @@ void character::Regenerate(ushort Turns)
 {
 	SetRegenerationCounter(GetRegenerationCounter() + GetEndurance() * Turns);
 
-	while(GetRegenerationCounter() > 100)
+	while(GetRegenerationCounter() > 200)
 	{
 		if(GetHP() < GetMaxHP())
 		{
@@ -967,7 +967,7 @@ void character::Regenerate(ushort Turns)
 			SetEnduranceExperience(GetEnduranceExperience() + 100);
 		}
 
-		SetRegenerationCounter(GetRegenerationCounter() - 100);
+		SetRegenerationCounter(GetRegenerationCounter() - 200);
 	}
 }
 
@@ -2630,7 +2630,7 @@ bool character::CheckForUsefulItemsOnGround()
 {
 	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
 	{
-		if(CanWield() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
+		if(CanWield() && long(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength()) > long(GetAttackStrength()) && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
 			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
 			{
 				item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());

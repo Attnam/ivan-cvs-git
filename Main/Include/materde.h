@@ -214,7 +214,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return BONE; }
 	virtual void EatEffect(character*, float, float);
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(96, 96, 96); }
+	virtual ushort GetColor() const { return MAKE_RGB(144, 144, 144); }
 	virtual bool IsFlesh() { return true; }
 	virtual short NutritionValue() const			{ return 20; }
 protected:
@@ -241,7 +241,7 @@ class MATERIAL
 	darkfrogflesh,
 	frogflesh,
 public:
-	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
 protected:
 	virtual std::string NameStem() const	{ return "dark frog flesh"; }
 );
@@ -303,7 +303,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return ODD; }
 	virtual ushort GetDensity() const				{ return 500; }
 	virtual ushort OfferValue() const				{ return 1; }
-	virtual ushort GetColor() const { return MAKE_RGB(208, 208, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 0); }
 protected:
 	virtual std::string NameStem() const	{ return "banana peal"; }
 );
@@ -385,7 +385,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 15; }
-	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
 	virtual short NutritionValue() const			{ return 400; }
 protected:
 	virtual std::string NameStem() const	{ return "wolf flesh"; }
@@ -460,7 +460,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 4; }
-	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
 protected:
 	virtual std::string NameStem() const	{ return "spider flesh"; }
 );
@@ -472,7 +472,7 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 6; }
 	virtual short NutritionValue() const			{ return 400; }
-	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
+	virtual ushort GetColor() const { return MAKE_RGB(224, 224, 224); }
 protected:
 	virtual std::string NameStem() const	{ return "jackal flesh"; }
 );
@@ -483,7 +483,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const			{ return 6; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(96, 96, 96); }
 	virtual short NutritionValue() const			{ return 400; }
 protected:
 	virtual std::string NameStem() const	{ return "donkey flesh"; }
@@ -588,7 +588,7 @@ class MATERIAL
 	lightfrogflesh,
 	frogflesh,
 public:
-	virtual ushort GetColor() const { return MAKE_RGB(255, 255, 255); }
+	virtual ushort GetColor() const { return MAKE_RGB(32, 88, 32); }
 protected:
 	virtual std::string NameStem() const	{ return "light frog flesh"; }
 );
