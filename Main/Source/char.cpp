@@ -1812,23 +1812,48 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
-      festring NewMsg = Msg, PolyMsg;
+      festring SpecifierMsg;
+      int SpecifierParts = 0;
 
       if(GetPolymorphBackup())
 	{
-	  PolyMsg = CONST_S(" polymorphed into ");
-	  id::AddName(PolyMsg, INDEFINITE);
+	  SpecifierMsg << " polymorphed into ";
+	  id::AddName(SpecifierMsg, INDEFINITE);
+	  ++SpecifierParts;
+	}
+
+      if(IsStuck())
+	{
+	  if(SpecifierParts++)
+	    SpecifierMsg << " and";
+
+	  SpecifierMsg << " caught in " << GetTrapDescription();
 	}
 
       if(GetAction())
 	{
-	  NewMsg << GetAction()->GetDeathExplanation();
+	  festring ActionMsg = GetAction()->GetDeathExplanation();
 
-	  if(!PolyMsg.IsEmpty())
-	    NewMsg << " and" << PolyMsg;
+	  if(!ActionMsg.IsEmpty())
+	    {
+	      if(SpecifierParts > 1)
+		SpecifierMsg = ActionMsg << ',' << SpecifierMsg;
+	      else
+		{
+		  if(SpecifierParts)
+		    SpecifierMsg << " and";
+
+		  SpecifierMsg << ActionMsg;
+		}
+
+	      ++SpecifierParts;
+	    }
 	}
-      else if(!PolyMsg.IsEmpty())
-	NewMsg << " while" << PolyMsg;
+
+      festring NewMsg = Msg;
+
+      if(SpecifierParts)
+	NewMsg << " while" << SpecifierMsg;
 
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), game::GetScore());
@@ -3992,10 +4017,10 @@ void character::DrawPanel(bool AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
   ++PanelPosY;
 
-  int D = int(game::GetGameSituationDanger() * 1000);
+  /*int D = int(game::GetGameSituationDanger() * 1000);
   int E = Max(255 - D / 4, 0);
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, MakeRGB16(255, E, E), "Dan: %d", D);
-  ++PanelPosY;
+  ++PanelPosY;*/
 
   if(game::IsInWilderness())
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Worldmap");
@@ -8918,30 +8943,6 @@ void character::RemoveTrap(ulong ID)
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
   T = T->Next;
   DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
-
-  /*trapdata* T = TrapData;
-
-  if(!T)
-    int esko = 2;
-
-  if(T->TrapID == ID)
-    TrapData = T->Next;
-  else
-    {
-      trapdata* LT;
-
-      do
-	{
-	  LT = T;
-
-	  if(!(T = T->Next))
-	    return;
-	}
-      while(T->TrapID != ID);
-
-      LT->Next = T->Next;
-      delete T;
-    }*/
 }
 
 void character::AddTrap(ulong ID, ulong BodyParts)
@@ -8952,30 +8953,6 @@ void character::AddTrap(ulong ID, ulong BodyParts)
     T->BodyParts |= BodyParts;
   else
     T = new trapdata(ID, GetID(), BodyParts);
-
-  /*trapdata* T = TrapData;
-
-  if(!T)
-    TrapData = new trapdata(ID, GetID(), BodyParts);
-  else
-    {
-      trapdata* LT;
-
-      do
-	{
-	  if(T->TrapID == ID)
-	    {
-	      T->BodyParts |= BodyParts;
-	      return;
-	    }
-
-	  LT = T;
-	  T = T->Next;
-	}
-      while(T);
-
-      LT->Next = new trapdata(ID, GetID(), BodyParts);
-    }*/
 
   DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
 }
@@ -9005,14 +8982,6 @@ void character::RemoveTraps()
 
   TrapData = 0;
   DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
-
-  /*for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-        BodyPart->SignalPossibleUsabilityChange();
-    }*/
 }
 
 void character::RemoveTraps(int BodyPartIndex)

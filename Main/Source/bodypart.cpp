@@ -3194,7 +3194,7 @@ void head::SignalPossibleUsabilityChange()
   ulong OldFlags = Flags;
   UpdateFlags();
 
-  if(Flags & BADLY_HURT && !Master->IsInitializing())
+  if(HP > 0 && Flags & BADLY_HURT && !Master->IsInitializing())
     Master->LoseConsciousness(1);
 }
 

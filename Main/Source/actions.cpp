@@ -11,7 +11,7 @@
 
 /* Compiled through actset.cpp */
 
-const char* unconsciousness::GetDeathExplanation() const { return " while unconscious"; }
+const char* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
 const char* unconsciousness::GetDescription() const { return "unconscious"; }
 const char* consume::GetDescription() const { return Description.CStr(); }
 void consume::SetDescription(const festring& What) { Description = What; }
