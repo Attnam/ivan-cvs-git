@@ -1,0 +1,33 @@
+Genie
+
+	The sprit that lives in a bottle. When freed grants a wish. When the Genie becomes hostile it makes a wish and wishes for a plate mail.
+
+
+Mammoth
+	
+	Pretty normal creatures except that when they die an ivory horn. 
+
+Gremlin
+	
+	These creatures multiply when they touch water and die when see bright lights.
+
+Dwarf
+
+	Dwarfs are a pretty generic character. Except that they carry pick-axes and dig through walls. They should also have more mithril and other precious metals than normal monsters. You should also be able to bribe them to your side with gold.
+
+
+Hobbit
+
+	A Tolkien cliche, but don't mind about that. Maybe these creatures could carry more rings (especially rings of invisiblity)
+
+
+
+Gnome
+	
+
+Floating eye (or Beholder)
+
+	 When you hit this monster you will fall asleep (a la Nethack)
+
+
+
