@@ -1,4 +1,9 @@
-2002-04-06  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item.pcx: boot added and an error in cloak fixed by Kahvi
+	* Humanoid.pcx: mistress hair shortened by Kahvi
+
+2002-04-06 Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* Main/Source/itemde.cpp (pickaxe::Apply): Added new formula for calulation the length of digging
 	* FELL/Include/hscore.h: Add changed to return bool telling whether the score got to the list or not
@@ -9,8 +14,6 @@
 	* Main/Include/materba.h: 
 	* Main/Source/materba.cpp: CanBeDigged now examines the StrengthValues of the materials.
 	* Main/Source/game.cpp: DrawPanel now draws Satiated and Bloated hunger states also and all hungerstate are calculated by character's GetHungerState function
-	
-
 	
 April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
