@@ -184,7 +184,7 @@ void game::Init(std::string Name)
 
 		CreateTeams();
 
-		SetPlayer(new mistress);
+		SetPlayer(new human);
 
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
@@ -807,7 +807,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-	float Base = game::GetPlayer()->MaxDanger() * (0.1f + float(GetCurrent()) / 15);
+	float Base = game::GetPlayer()->MaxDanger() * (0.1f + float(GetCurrent()) / 20);
 
 	while(true)
 	{

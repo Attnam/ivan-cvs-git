@@ -31,10 +31,10 @@
 
 #include "rand.h"
 
-unsigned long femath::mt[N]; /* the array for the state vector  */
-int femath::mti = N+1; /* mti==N+1 means mt[N] is not initialized */
+ulong femath::mt[N]; /* the array for the state vector  */
+long femath::mti = N+1; /* mti==N+1 means mt[N] is not initialized */
 
-void femath::SetSeed(unsigned long seed)
+void femath::SetSeed(ulong seed)
 {
     /* setting initial seeds to mt[N] using         */
     /* the generator Line 25 of Table 1 in          */
@@ -47,8 +47,8 @@ void femath::SetSeed(unsigned long seed)
 
 long femath::Rand()
 {
-    unsigned long y;
-    static unsigned long mag01[2]={0x0, MATRIX_A};
+    ulong y;
+    static ulong mag01[2]={0x0, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
     if (mti >= N) { /* generate N words at one time */

@@ -373,5 +373,4 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(48, 304); }
 );
 
-
 #endif

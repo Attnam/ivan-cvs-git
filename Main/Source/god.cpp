@@ -22,6 +22,17 @@ void god::Pray()
 			AdjustTimer(500);
 			AdjustRelation(50);
 			game::ApplyDivineAlignmentBonuses(this, true);
+
+			if(Relation > 500 && !(RAND() % 1000))
+			{
+				character* Angel = CreateAngel();
+
+				if(Angel)
+				{
+					Angel->SetTeam(game::GetPlayer()->GetTeam());
+					ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+				}
+			}
 		}
 		else
 		{
@@ -46,6 +57,17 @@ void god::Pray()
 			AdjustTimer(5000);
 			AdjustRelation(-100);
 			game::ApplyDivineAlignmentBonuses(this, false);
+
+			if(Relation < -500 && !(RAND() % 50))
+			{
+				character* Angel = CreateAngel();
+
+				if(Angel)
+				{
+					Angel->SetTeam(game::GetTeam(5));
+					ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+				}
+			}
 		}
 }
 
@@ -636,6 +658,17 @@ void valpuri::Pray()
 		AdjustTimer(10000);
 		AdjustRelation(-500);
 		game::ApplyDivineAlignmentBonuses(this, true);
+
+		if(Relation > 500 && !(RAND() % 10))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetPlayer()->GetTeam());
+				ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 	else
 	{
@@ -644,6 +677,17 @@ void valpuri::Pray()
 		AdjustTimer(5000);
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
+
+		if(Relation < -500 && !(RAND() % 50))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetTeam(5));
+				ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 }
 
@@ -656,6 +700,17 @@ void atavus::Pray()
 		AdjustTimer(5000);
 		AdjustRelation(-250);
 		game::ApplyDivineAlignmentBonuses(this, true);
+
+		if(Relation > 500 && !(RAND() % 10))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetPlayer()->GetTeam());
+				ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 	else
 	{
@@ -664,6 +719,17 @@ void atavus::Pray()
 		AdjustTimer(5000);
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
+
+		if(Relation < -500 && !(RAND() % 50))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetTeam(5));
+				ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 }
 
@@ -676,6 +742,17 @@ void erado::Pray()
 		AdjustTimer(10000);
 		AdjustRelation(-500);
 		game::ApplyDivineAlignmentBonuses(this, true);
+
+		if(Relation > 500 && !(RAND() % 5))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetPlayer()->GetTeam());
+				ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 	else
 	{
@@ -684,6 +761,17 @@ void erado::Pray()
 		AdjustTimer(5000);
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
+
+		if(Relation < -500 && !(RAND() % 5))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetTeam(5));
+				ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 }
 
@@ -789,6 +877,17 @@ void cruentus::Pray()
 		AdjustTimer(5000);
 		AdjustRelation(-250);
 		game::ApplyDivineAlignmentBonuses(this, true);
+
+		if(Relation > 500 && !(RAND() % 10))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetPlayer()->GetTeam());
+				ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 	else
 	{
@@ -797,6 +896,17 @@ void cruentus::Pray()
 		AdjustTimer(5000);
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
+
+		if(Relation < -500 && !(RAND() % 50))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetTeam(5));
+				ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+			}
+		}
 	}
 }
 
@@ -822,6 +932,17 @@ bool god::ReceiveOffer(item* Sacrifice)
 			ADD_MESSAGE("%s seems not to appreciate your gift at all.", GOD_NAME);
 
 		PrintRelation();
+
+		if(OfferValue > 0 && Relation > 500 && !(RAND() % 500))
+		{
+			character* Angel = CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetPlayer()->GetTeam());
+				ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+			}
+		}
 
 		return true;
 	}
@@ -896,6 +1017,17 @@ void god::PlayerVomitedOnAltar()
 	AdjustRelation(-200);
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
 	game::GetPlayer()->CheckDeath("chocked to death by own vomit");
+
+	if(!(RAND() % 500))
+	{
+		character* Angel = CreateAngel();
+
+		if(Angel)
+		{
+			Angel->SetTeam(game::GetTeam(5));
+			ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+		}
+	}
 }
 
 void scabies::PlayerVomitedOnAltar()
@@ -911,4 +1043,31 @@ void valpuri::AddPriestMessage() const
 	ADD_MESSAGE("That's why this cathedral and the whole city of Attnam is dedicated to His worship.\"");
 	ADD_MESSAGE("\"In thine prayers thou must understand He is a busy god who knows His importance.");
 	ADD_MESSAGE("He will not help newbies. Pray Him only when He calls thee a Champion!\"");
+}
+
+character* god::CreateAngel()
+{
+	vector2d TryToCreate;
+
+	for(uchar c = 0; c < 100; ++c)
+	{
+		TryToCreate = game::GetPlayer()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+		if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+		{
+			angel* Angel = new angel;
+
+			/* This is a most unitelligent gum solution, but... */
+
+			for(uchar c = 1; game::GetGod(c); ++c)
+				if(game::GetGod(c) == this)
+					Angel->SetMaster(c);
+
+			game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Angel);
+			ADD_MESSAGE("Suddenly %s appears!", Angel->CNAME(INDEFINITE));
+			return Angel;
+		}
+	}
+
+	return 0;
 }

@@ -54,6 +54,7 @@ public:
 	virtual void PlayerKickedAltar() { AdjustRelation(-100); }
 	virtual void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
 	virtual void PlayerVomitedOnAltar();
+	virtual character* CreateAngel();
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();

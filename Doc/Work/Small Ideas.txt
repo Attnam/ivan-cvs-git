@@ -61,3 +61,4 @@ There should be an option to show all text in the game in tengwar font.
 Scroll of charging.
 CanOpenDoors.
 Check polymorph!!!
+A priests of Attnam should kick the player if he vomits on their altars.

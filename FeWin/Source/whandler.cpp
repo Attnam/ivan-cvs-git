@@ -120,9 +120,9 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 
 			HKL MappedVirtualKey = LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE );
 
-			unsigned int ScanCode = MapVirtualKeyEx(Key, 0, MappedVirtualKey);
-			unsigned short ToBeReturned;	
-			unsigned char KeyboardBuffer[256];
+			ulong ScanCode = MapVirtualKeyEx(Key, 0, MappedVirtualKey);
+			ushort ToBeReturned;	
+			uchar KeyboardBuffer[256];
 
 			if(Key == VK_LEFT || Key == VK_NUMPAD4) return 0x14B;
 			if(Key == VK_HOME || Key == VK_NUMPAD7) return 0x147;

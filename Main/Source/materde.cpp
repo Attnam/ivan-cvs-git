@@ -68,3 +68,7 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
+
+ushort goodleather::GetColor() const { return MAKE_RGB(160, 160, 0); }
+ushort neutralleather::GetColor() const { return MAKE_RGB(20, 120, 200); }
+ushort evilleather::GetColor() const { return MAKE_RGB(200, 0, 0); }

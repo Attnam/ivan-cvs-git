@@ -1499,7 +1499,7 @@ void werewolf::ChangeIntoWolf()
 
 void werewolf::Be()
 {
-	if(ChangeCounter++ > 1000)
+	if(ChangeCounter++ > 2500)
 	{
 		SetChangeCounter(0);
 
@@ -1545,7 +1545,7 @@ ulong werewolf::MaxDanger()
 float werewolf::GetMeleeStrength() const
 {
 	if(GetIsWolf())
-		return 20000;
+		return 10000;
 	else
 		return 2000;
 }
@@ -1567,4 +1567,84 @@ void werewolf::Load(inputfile& SaveFile)
 void kobold::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
+}
+
+void angel::Save(outputfile& SaveFile) const
+{
+	humanoid::Save(SaveFile);
+
+	SaveFile << Master;
+}
+
+void angel::Load(inputfile& SaveFile)
+{
+	humanoid::Load(SaveFile);
+
+	SaveFile >> Master;
+}
+
+void angel::SetMaster(uchar NewMaster)
+{
+	switch(game::GetGod(NewMaster)->BasicAlignment())
+	{
+	case GOOD:
+		SetAgility(99);
+		SetStrength(30);
+		SetEndurance(30);
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new valpurium))));
+		SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new valpurium))));
+		SetMaterial(1, new goodleather);
+		break;
+	case NEUTRAL:
+		SetAgility(25);
+		SetStrength(25);
+		SetEndurance(99);
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new twohandedsword(new mithril))));
+		SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
+		SetMaterial(1, new neutralleather);
+		SetHP(GetMaxHP());
+		break;
+	case EVIL:
+	{
+		SetAgility(25);
+		SetStrength(99);
+		SetEndurance(25);
+		item* SpikedMace = new spikedmace(false);
+		SpikedMace->InitMaterials(3, new mithril, new iron, new darkfrogflesh);
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(SpikedMace)));
+		SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new brokenplatemail(new mithril))));
+		SetMaterial(1, new evilleather);
+		break;
+	}
+	}
+
+	Master = NewMaster;
+}
+
+std::string angel::Name(uchar Case) const
+{
+	if(!(Case & PLURAL))
+		if(!(Case & DEFINEBIT))
+			return NameSingular() + " of " + game::GetGod(Master)->Name();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + NameSingular() + " of " + game::GetGod(Master)->Name();
+			else
+				return std::string("an ") + NameSingular() + " of " + game::GetGod(Master)->Name();
+	else
+		if(!(Case & DEFINEBIT))
+			return NamePlural() + " of " + game::GetGod(Master)->Name();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + NamePlural() + " of " + game::GetGod(Master)->Name();
+			else
+				return NamePlural() + " of " + game::GetGod(Master)->Name();
+}
+
+void angel::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+		ADD_MESSAGE("\"With the power of %s, I shall slay thee, sinner!\"", game::GetGod(Master)->Name().c_str());
+	else
+		ADD_MESSAGE("\"%s be with you, mortal.\"", game::GetGod(Master)->Name().c_str());
 }

@@ -1138,7 +1138,7 @@ class CHARACTER
 	complexhumanoid,
 	InitMaterials(new werewolfflesh),
 	{
-		SetChangeCounter(RAND() % 1000);
+		SetChangeCounter(RAND() % 2500);
 
 		if(RAND() % 2) 
 			ChangeIntoHuman();
@@ -1163,8 +1163,8 @@ public:
 protected:
 	virtual std::string NameSingular() const RET("werewolf")
 	virtual float GetMeleeStrength() const;
+	ushort ChangeCounter;
 	bool IsWolf;
-	unsigned short ChangeCounter;
 );
 
 class CHARACTER
@@ -1189,8 +1189,8 @@ protected:
 	virtual float GetMeleeStrength() const RET(2000)
 );
 
-class CHARACTER	// it should be noted that I no idea what 
-(		// a gibberling is.... sooooo....
+class CHARACTER
+(
 	gibberling,
 	character,
 	InitMaterials(new gibberlingflesh),
@@ -1253,20 +1253,33 @@ class CHARACTER
 (				
 	angel,
 	humanoid,
-	InitMaterials(2, new angelflesh, new pork), // 2nd is temp material.
+	InitMaterials(new angelflesh),
 	{
-		SetSize(30);
-		SetAgility(60);
-		SetStrength(70);
-		SetEndurance(80);
-		SetPerception(40);
+		SetSize(180);
+		SetAgility(35);
+		SetStrength(35);
+		SetEndurance(35);
+		SetPerception(45);
 	},
 public:
+	virtual void BeTalkedTo(character*);
+	virtual bool Charmable() const RET(false)
+	virtual bool Polymorph() RET(false)
+	virtual bool HasInfraVision() const { return true; }
+	virtual void Load(inputfile&);
+	virtual void Save(outputfile&) const;
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+	virtual uchar GetSex() const RET(FEMALE)
+	virtual void SetMaster(uchar);
+	virtual uchar GetMaster() const { return Master; }
+	virtual std::string Name(uchar) const;
 protected:
+	virtual std::string DeathMessage() { return Name(DEFINITE) + " leaves this mortal plane behind."; }
 	virtual vector2d GetBitmapPos() const RETV(432,0)
 	virtual std::string NameSingular() const RET("angel")
-	virtual float GetMeleeStrength() const RET(40000)
+	virtual float GetMeleeStrength() const RET(10000)
+	virtual void CreateCorpse() {}
+	uchar Master;
 );
 
 #endif

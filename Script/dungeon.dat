@@ -1,5 +1,5 @@
 Dungeons=2;
-Teams=5;
+Teams=6;
 
 Team 2;
 {
@@ -17,6 +17,15 @@ Team 4;
 	Relation 0, HOSTILE;
 	Relation 2, HOSTILE;
 	Relation 3, HOSTILE;
+}
+
+Team 5;
+{
+	Relation 0, HOSTILE;
+	Relation 1, NEUTRAL;
+	Relation 2, NEUTRAL;
+	Relation 3, NEUTRAL;
+	Relation 4, HOSTILE;
 }
 
 Dungeon 0;
@@ -561,15 +570,6 @@ Dungeon 1;
 					4 = "petrusswife4";
 					5 = "petrusswife5";
 					6 = "petrusswife6";
-
-					r = largerat;
-					a = largecat;
-					n = angel;
-					m = mistress;
-					w = werewolf;
-					k = kobold;
-					g = gibberling;
-					b = bat;
 				}
 			}
 			{
@@ -605,8 +605,8 @@ Dungeon 1;
 				# . 1 . . . . . . # # # # # . . . . . # # # # # . . . . . . . . #
 				# . . . . 4 . 6 . # . . . . . . . . . . . . . # . . . . . . . . #
 				# # . . . # # # # # . . . . . . . . . . . . . # # # # # . . . # #
-				. # # 2 . # . . . . . . . . r a n b . . . . . . . . . # . . # # .
-				. . # # # # . i . . . . . . m w k g . . . . . . . . . # # # # . .
+				. # # 2 . # . . . . . . . . . . . . . . . . . . . . . # . . # # .
+				. . # # # # . i . . . . . . . . . . . . . . . . . . . # # # # . .
 			}
 		}
 

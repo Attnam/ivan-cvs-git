@@ -18,14 +18,16 @@
 #define TEMPERING_SHIFT_T(y)  (y << 15)
 #define TEMPERING_SHIFT_L(y)  (y >> 18)
 
+#include "typedef.h"
+
 class femath
 {
 public: 
 	static long Rand();
-	static void SetSeed(unsigned long);
+	static void SetSeed(ulong);
 protected:
-	static unsigned long mt[N];
-	static int mti;
+	static ulong mt[N];
+	static long mti;
 };
 
 #endif

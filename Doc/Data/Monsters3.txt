@@ -1,5 +1,5 @@
 Name		Size	Agil.	Str.	End.	Perc.	MelStr.		Volume
-player		150-200	15-25	10-15	10-15	10-15	20000
+player		150-200	15-25	10-15	10-15	10-15	1000
 perttu		225	75	75	75	75	1000
 farmer		170	10	15	20	18	1000
 guard		180	15	25	30	24	2000
@@ -31,7 +31,7 @@ perttuswife	170	10	5	5	21	500
 housewife	160	15	10	15	24	500
 femaleslave	170	10	10	15	18	500
 librarian	170	5	5	5	12	500
-angel		180
+angel		180	35*	35*	35*	45	10000		80000	*default; depends on alignment
 bat		20	40	2	1	24	20000		1000
 beholder
 genie

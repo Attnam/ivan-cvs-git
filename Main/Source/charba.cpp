@@ -874,7 +874,7 @@ void character::CreateCorpse()
 
 void character::Die(bool ForceMsg)
 {
-	// Not for programmers: This function MUST NOT delete any objects!
+	// Note for programmers: This function MUST NOT delete any objects!
 
 	if(!Exists)
 		return;
@@ -3140,4 +3140,3 @@ void character::ChangeTeam(team* What)
 
 	SetTeamIterator(GetTeam()->Add(this));
 }
-

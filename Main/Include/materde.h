@@ -345,7 +345,7 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 30; }
 	virtual uchar Alignment() const				{ return EVIL; }
-	virtual ushort GetColor() const { return MAKE_RGB(190, 130, 100); }
+	virtual ushort GetColor() const { return MAKE_RGB(180, 120, 90); }
 protected:
 	virtual std::string NameStem() const	{ return "human flesh"; }
 );
@@ -687,7 +687,7 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 7; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(80, 80, 80); }
-	virtual short NutritionValue() const			{ return 350; }
+	virtual short NutritionValue() const			{ return 500; }
 protected:
 	virtual std::string NameStem() const	{ return "bat flesh"; }
 );
@@ -699,7 +699,6 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 13; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(90, 64, 64); }
-	virtual short NutritionValue() const			{ return 350; }
 protected:
 	virtual std::string NameStem() const	{ return "werewolf flesh"; }
 );
@@ -711,7 +710,7 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 14; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(100, 100, 90); }
-	virtual short NutritionValue() const			{ return 400; }
+	virtual short NutritionValue() const			{ return 100; }
 protected:
 	virtual std::string NameStem() const	{ return "kobold flesh"; }
 );
@@ -723,7 +722,6 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 12; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(100, 100, 200); }
-	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "gibberling flesh"; }
 );
@@ -735,7 +733,6 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 12; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(50, 50, 50); }
-	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "cat flesh"; }
 );
@@ -747,7 +744,6 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 8; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(180, 100, 40); }
-	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "rat flesh"; }
 );
@@ -759,9 +755,47 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 8; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(200, 200, 200); }
-	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "angel flesh"; }
+);
+
+class MATERIAL
+(
+	goodleather,
+	leather,
+public:
+	virtual bool IsSolid() const { return false; }
+	virtual ushort GetColor() const;
+	virtual uchar Alignment() const { return GOOD; }
+	virtual bool CanBeWished() const { return false; }
+protected:
+	virtual std::string NameStem() const	{ return "good leather"; }
+);
+
+class MATERIAL
+(
+	neutralleather,
+	leather,
+public:
+	virtual bool IsSolid() const { return false; }
+	virtual ushort GetColor() const;
+	virtual uchar Alignment() const { return NEUTRAL; }
+	virtual bool CanBeWished() const { return false; }
+protected:
+	virtual std::string NameStem() const	{ return "neutral leather"; }
+);
+
+class MATERIAL
+(
+	evilleather,
+	leather,
+public:
+	virtual bool IsSolid() const { return false; }
+	virtual ushort GetColor() const;
+	virtual uchar Alignment() const { return EVIL; }
+	virtual bool CanBeWished() const { return false; }
+protected:
+	virtual std::string NameStem() const	{ return "evil leather"; }
 );
 
 #endif
