@@ -19,7 +19,7 @@ Garbage monsters.
 Ääriviivat itemeille ja monsuille.
 Space should = esc in the inventory.
 Help should be organised.
-*Do you really want to pray to somebody.
+////*Do you really want to pray to somebody.
 Pick-axejen sääteleminen (kesto, expat, valot).
 *Mellis abuse.
 *Alpha blend.
