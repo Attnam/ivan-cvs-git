@@ -145,9 +145,11 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 		if(rand() % 4) 
 			SpillBlood(rand() % 5);
-		
-		
-		vector2d Where = GetPos() + game::GetMoveVector(rand() % 8);	
+
+		/* This may crash on borders! */
+
+		vector2d Where = GetPos() + game::GetMoveVector(rand() % 8);
+
 		if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable())
 		{
 			SpillBlood(5 + rand() % 5, Where);

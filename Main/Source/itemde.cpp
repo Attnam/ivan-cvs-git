@@ -190,7 +190,7 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
 	item* Remains = new brokenbottle(false);
 	if(GetMaterial(1)) 
-		GetLevelSquareUnder()->SpillFluid(1, GetMaterial(1)->GetColor());
+		GetLevelSquareUnder()->SpillFluid(5, GetMaterial(1)->GetColor());
 	Remains->InitMaterials(GetMaterial(0));
 	SetMaterial(0, 0);
 	ushort Index = ItemStack->AddItem(Remains);
@@ -296,7 +296,6 @@ bool wand::Apply(character* StupidPerson, stack* MotherStack)
 	})
 
 	StupidPerson->ReceiveFireDamage(10);
-	
 	StupidPerson->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding."));
 	return true;
 }

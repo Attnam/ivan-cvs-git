@@ -12,7 +12,7 @@ New goals for version 0.30 alpha:
 D-adding question to leaving city (Hex)
  -fixing the message of wishing forbidden items (Hex)
 D-making fluid spill from breaking potions (Hex)
-D-adding more blood in criticals (Hex)
+B-adding more blood in criticals (Hex)
  -making monsters think what they eat (Hex)
  -making rest stop when the player is hungry (Timo)
  -making weapon experience and money affect score and NP not affect it (Timo)
