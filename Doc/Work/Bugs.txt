@@ -1,2 +1,3 @@
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 Various graphics have become buggy after the Material Color Change.
+Effect of DoEvilDeed may surpass relation limits.

@@ -16,6 +16,7 @@ Release time: before the end of the std::year
 
 Goals:
 
+-many new items and monsters
 -block AI system
 -renewed god system
 -fixing the Great Surface Destruction Bug
@@ -29,4 +30,4 @@ Goals:
 
 -genetic algorithms
 -magic system
--random towns and dungeons (perhaps even quests?)
+-random towns and dungeons (perhaps even *very* simple quests?)

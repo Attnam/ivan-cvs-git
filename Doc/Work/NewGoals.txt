@@ -1,20 +1,38 @@
-Code work:
+New goals for version 0.30 alpha:
 
 -fixing all bugs except the Great Surface Destruction Bug
--fixing all buggy graphics
--making Venius burn only hostile creatures
--making rest stop when the player is hungry
--making weapon experience and money affecting score, NP not
--making monsters think what they eat
--making kicking increase the unarmed weapon skill
--adding Banana and Pick-axe logo to menu
--adding pray effects for Silva
--reimplementating higher victory types
--adding relation effect limits to cannibalism and navastating
--making Mellis fill also intact empty bottles and empty cans
--adding "Name too short!" message
+ -single weapon's name not updated (Timo)
+ -eating weapons made of an eatable material (Hex)
+ -odd hit message (Timo)
+ -wrath of Seges (Timo)
+ -score bug with polymorph (Timo)
+ -others that may be found (Hex or Timo)
 
-Graphics needed:
+-adding more blood in criticals (Hex)
+-making fluid spill from breaking potions (Hex)
+-adding question to leaving city (Hex)
+-fixing the message of wishing forbidden items (Hex)
+-making monsters think what they eat (Hex)
+-making rest stop when the player is hungry (Timo)
+-making weapon experience and money affect score and NP not affect it (Timo)
+-making kicking increase the unarmed weapon skill (Hex)
+-reimplementating higher victory types (Timo)
+-adding pray effects for Silva (Hex)
+-making Venius burn only hostile creatures (Hex)
+-making Mellis fill also intact empty bottles and empty cans (Hex)
+-adding relation effect limits to cannibalism and navastating (Timo)
+-adding Banana and Pick-axe logo to menu (Hex)
+-adding "Name too short!" message (Hex)
 
--grass
--new Avatar
+-fixing buggy graphics that are buggy due to code
+ -can (Timo)
+ -others that may be found (Timo)
+
+-fixing buggy graphics that are buggy due to overuse of material colors
+ -many weapons etc. (Tuukka)
+
+-creating new graphics (to make Attnam a little less ugly)
+ -grass (Tuukka)
+ -pine and spruce (Tuukka)
+ -new Avatar (Tuukka)
+ -others that may be needed (Tuukka)

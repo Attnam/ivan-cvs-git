@@ -893,7 +893,7 @@ protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
 
-class ITEM
+/*class ITEM
 (
 	bow,
 	item,
@@ -910,7 +910,7 @@ public:
 	virtual float GetThrowStrengthModifier() const RET(4)
 protected:
 	virtual ushort GetFormModifier() const RET(40)
-);
+);*/
 
 class ITEM
 (
