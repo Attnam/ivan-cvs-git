@@ -1067,7 +1067,7 @@ bone
 loaf
 {
 	DefaultSize = 40;
-	Possibility = 400;
+	Possibility = 500;
 	WeaponCategory = BLUNT_WEAPONS;
 	Category = FOOD;
 	DefaultMainVolume = 500;
