@@ -17,6 +17,7 @@ public:
 	static void Empty();
 	static void DrawMessageHistory();
 	static void Format();
+	static felist* GetMessageHistory() { return &MessageHistory; }
 private:
 	static char* MessageBuffer;
 	static ushort BufferLength;

@@ -552,7 +552,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << game::GetPlayer()->GetPos();
 
 	SaveFile << PlayerBackup;
-
+	globalmessagingsystem::GetMessageHistory()->Save(SaveFile);
 	return true;
 }
 
@@ -588,7 +588,7 @@ bool game::Load(std::string SaveName)
 	SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
 
 	SaveFile >> PlayerBackup;
-
+	globalmessagingsystem::GetMessageHistory()->Load(SaveFile);
 	return true;
 }
 

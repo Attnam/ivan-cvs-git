@@ -6,7 +6,8 @@
 #include "dynarray.h"
 
 class bitmap;
-
+class inputfile;
+class outputfile;
 class felist
 {
 public:
@@ -19,6 +20,8 @@ public:
 	void Empty();
 	std::string GetString(ushort Index) { return String.Access(Index); }
 	ushort Length() const { return String.Length(); }
+	void Load(inputfile&);
+	void Save(outputfile&) const;
 protected:
 	dynarray<std::string> String;
 	dynarray<std::string> Description;

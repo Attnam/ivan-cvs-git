@@ -2,6 +2,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
+#include "save.h"
 
 ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) const
 {
@@ -104,4 +105,42 @@ void felist::AddString(std::string S, bool WriteToEnd)
 		String.Put(S, 0);
 	if(Maximum && String.Length() > Maximum)
 		String.Remove(0);
+}
+
+void felist::Save(outputfile& Temp) const
+{
+	ushort c;
+	Temp << String.Length();
+
+	for(c = 0; c < String.Length(); ++c)
+	{
+		Temp << String.Access(c);
+	}
+	
+	Temp << Description.Length();
+
+	for(c = 0; c < Description.Length(); ++c)
+		Temp << Description.Access(c);
+}
+
+void felist::Load(inputfile& Temp) 
+{
+	ushort TempLength, c;
+
+	Temp >> TempLength;
+	
+
+	for(c = 0; c < TempLength; ++c)
+	{
+		std::string LoadedEntry;
+		Temp >> LoadedEntry;
+		String.Add(LoadedEntry);
+	}
+	Temp >> TempLength;
+	for(c = 0; c < TempLength; ++c)
+	{
+		std::string LoadedEntry;
+		Temp >> LoadedEntry;
+		String.Add(LoadedEntry);
+	}
 }
