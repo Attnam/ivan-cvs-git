@@ -52,7 +52,7 @@ void oree::CreateInitialEquipment()
 
 void swatcommando::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 5 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
 }
 
 void fallenvalpurist::CreateInitialEquipment()
@@ -62,7 +62,10 @@ void fallenvalpurist::CreateInitialEquipment()
 	else
 	{
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
-		SetStrength(20);
+		SetSize(200);
+		SetAgility(15);
+		SetStrength(18);
+		SetEndurance(15);
 	}
 }
 
@@ -277,7 +280,7 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasHeadOfElpuri() && !Triggered)
 	{
-		if(game::GetGod(1)->GetRelation() >= 500 && Talker->GetDifficulty() >= 2500 && game::BoolQuestion("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee. Dost thou wish to stay on duty for a while more and complete another quest for me?\" (Y/n)", 'y'))
+		if(game::GetGod(1)->GetRelation() >= 500 && Talker->Danger() >= 100000 && game::BoolQuestion("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee. Dost thou wish to stay on duty for a while more and complete another quest for me?\" (Y/n)", 'y'))
 		{
 			iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
 			game::GetCurrentArea()->SendNewDrawRequest();
@@ -341,15 +344,15 @@ void humanoid::Load(inputfile& SaveFile)
 
 float golem::GetMeleeStrength() const
 {
-	return 75 * GetMaterial(0)->GetHitValue();
+	return 150 * GetMaterial(0)->GetHitValue();
 }
 
 ushort golem::CalculateArmorModifier() const
 {
-	if(GetMaterial(0)->GetArmorValue() / 2 > 90)
+	if(((GetMaterial(0)->GetArmorValue() * 3) >> 2) > 90)
 		return 10;
 	else
-		return 100 - GetMaterial(0)->GetArmorValue() / 2;
+		return 100 - ((GetMaterial(0)->GetArmorValue() * 3) >> 2);
 }
 
 void golem::MoveRandomly()
@@ -405,7 +408,7 @@ void perttu::GetAICommand()
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	if(Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
-		if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < (Char->GetEndurance() << 1) / 3 && GetHealTimer() > 100)
+		if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
 			HealFully(Char);
 	})
 }
@@ -414,7 +417,7 @@ void perttu::HealFully(character* ToBeHealed)
 {
 	SetHealTimer(0);
 
-	ToBeHealed->SetHP(ToBeHealed->GetEndurance() << 1);
+	ToBeHealed->SetHP(ToBeHealed->GetMaxHP());
 
 	if(ToBeHealed->GetIsPlayer())
 		ADD_MESSAGE("%s heals you fully.", CNAME(DEFINITE));
@@ -434,11 +437,6 @@ void perttu::Load(inputfile& SaveFile)
 	SaveFile >> HealTimer;
 }
 
-ulong golem::Danger() const
-{
-	return ulong(GetMeleeStrength() * 100 / (CalculateArmorModifier() * 15));
-}
-
 bool humanoid::Throw()
 {
 	ushort Index;
@@ -453,7 +451,7 @@ bool humanoid::Throw()
 	{
 		if(GetStack()->GetItem(Index) == GetWielded())
 		{
-			ADD_MESSAGE("You can't throw something that you wield.");
+			SetWielded(0);
 			return false;
 		}
 		if(GetStack()->GetItem(Index) == GetTorsoArmor())
@@ -564,11 +562,6 @@ float humanoid::GetAttackStrength() const
 	return GetWielded() ? GetWielded()->GetWeaponStrength() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() : GetMeleeStrength() * GetCategoryWeaponSkill(UNARMED)->GetBonus();
 }
 
-ushort humanoid::GetSpeed() const
-{
-	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / GetWielded()->GetWeight()) * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus()) : ushort(((GetAgility() << 2) + GetStrength()) * GetCategoryWeaponSkill(UNARMED)->GetBonus());
-}
-
 bool humanoid::Hit(character* Enemy)
 {
 	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
@@ -582,7 +575,7 @@ bool humanoid::Hit(character* Enemy)
 
 	short Success = rand() % 26 - rand() % 26;
 
-	switch(Enemy->TakeHit(GetSpeed(), Success, GetAttackStrength(), this)) //there's no breaks and there shouldn't be any
+	switch(Enemy->TakeHit(this, Success)) //there's no breaks and there shouldn't be any
 	{
 	case HAS_HIT:
 	case HAS_BLOCKED:
@@ -711,6 +704,9 @@ void humanoid::SetWielded(item* Something)
 			SingleWeaponSkill.push_back(GetCurrentSingleWeaponSkill());
 		}
 	}
+
+	if(GetSquareUnder())
+		GetSquareUnder()->SendNewDrawRequest();
 }
 
 void humanoid::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
@@ -719,4 +715,22 @@ void humanoid::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 
 	if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
 		SetTorsoArmor(0);
+}
+
+float humanoid::GetToHitValue() const
+{
+	if(GetWielded())
+		return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
+	else
+		return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
+}
+
+void shopkeeper::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe)));
+}
+
+void farmer::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new axe)));
 }

@@ -105,8 +105,6 @@ protected:
 	uchar DivineOwner;
 	bool Fluided;
 	bitmap* FluidBuffer;
-	bool Dark;
-	//ushort Luminance;
 };
 
 #endif

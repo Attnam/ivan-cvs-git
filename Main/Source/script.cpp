@@ -500,6 +500,16 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			continue;
 		}
 
+		if(Word == "GenerateLamps")
+		{
+			if(!GenerateLamps)
+				GenerateLamps = new bool;
+
+			*GenerateLamps = SaveFile.ReadBool();
+
+			continue;
+		}
+
 		ABORT("Odd script term %s encountered in room script!", Word.c_str());
 	}
 }
@@ -707,6 +717,20 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 				AmbientLight = new ushort;
 
 			*AmbientLight  = SaveFile.ReadNumber(ValueMap);
+
+			continue;
+		}
+
+		if(Word == "Description")
+		{
+			SaveFile.ReadWord();
+
+			if(!Description)
+				Description = new std::string;
+
+			*Description = SaveFile.ReadWord();
+
+			SaveFile.ReadWord();
 
 			continue;
 		}

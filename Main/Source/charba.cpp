@@ -103,7 +103,7 @@ bool character::Hit(character* Enemy)
 
 	short Success = rand() % 26 - rand() % 26;
 
-	switch(Enemy->TakeHit(GetSpeed(), Success, GetAttackStrength(), this)) //there's no breaks and there shouldn't be any
+	switch(Enemy->TakeHit(this, Success)) //there's no breaks and there shouldn't be any
 	{
 	case HAS_HIT:
 	case HAS_BLOCKED:
@@ -125,13 +125,13 @@ ushort character::CalculateArmorModifier() const
 	return 100;
 }
 
-uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, character* Enemy)
+uchar character::TakeHit(character* Enemy, short Success)
 {
 	DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile");
 
 	if(!(rand() % 20))
 	{
-		ushort Damage = ushort(WeaponStrength * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 5 ? 2 : 1);
+		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 3 ? 2 : 1);
 
 		Enemy->AddHitMessage(this,true);
 
@@ -148,9 +148,9 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 		return HAS_HIT;
 	}
 
-	if((Success + Speed + GetSize() - GetAgility()) > 0 && rand() % (Success + Speed + GetSize() - GetAgility()) > 50)
+	if(rand() % ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success)) >= 100)
 	{
-		ushort Damage = ushort(WeaponStrength * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2000000) + (rand() % 5 ? 1 : 0);
+		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2000000) + (rand() % 3 ? 1 : 0);
 
 		if(!Damage)
 		{
@@ -198,7 +198,7 @@ void character::Be()
 		{
 			ApplyExperience();
 
-			if(GetHP() < GetEndurance())
+			if(GetHP() < GetMaxHP() / 3)
 				SpillBlood(rand() % 2);
 
 			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED))
@@ -489,11 +489,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 {
 	if(GetBurdenState() || TeleportMove)
 	{
-		/* Keep this order. It prevents unnecessary description updates. */
-
-		//game::GetCurrentArea()->RemoveCharacter(GetPos());
-		//game::GetCurrentArea()->AddCharacter(MoveTo, this);
-		//game::GetCurrentArea()->RemoveCharacter(GetPos());
 		game::GetCurrentArea()->MoveCharacter(GetPos(), MoveTo);
 
 		if(GetIsPlayer())
@@ -504,7 +499,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 			if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + 27)
 				game::UpdateCameraY();
 
-			//game::GetCurrentArea()->UpdateLOS();
 			game::SendLOSUpdateRequest();
 
 			if(!game::GetInWilderness())
@@ -705,7 +699,6 @@ bool character::TryMove(vector2d MoveTo)
 				game::LoadWorldMap();
 				game::SetInWilderness(true);
 				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
-				//game::GetCurrentArea()->UpdateLOS();
 				game::SendLOSUpdateRequest();
 				game::UpdateCamera();
 				return true;
@@ -824,7 +817,7 @@ void character::Die()
 
 			if(!game::BoolQuestion("Do you want to do this, cheater? [Y/N]", 2, 'y'))
 			{
-				SetHP(Endurance << 1);
+				SetHP(GetMaxHP());
 				SetNP(1000);
 				return;
 			}
@@ -862,7 +855,13 @@ void character::Die()
 			GetStack()->GetItem(0)->SetExists(false);
 			GetStack()->RemoveItem(0);
 		}
+	
+	GetSquareUnder()->RemoveCharacter();
 
+	if(!game::GetInWilderness())
+		CreateCorpse();
+
+	SetExists(false);
 
 	if(GetIsPlayer())
 	{
@@ -899,17 +898,17 @@ bool character::OpenItem()
 
 void character::Regenerate(ushort Turns)
 {
-	SetRegenerationCounter(CRegenerationCounter() + GetEndurance() * Turns);
+	SetRegenerationCounter(GetRegenerationCounter() + GetEndurance() * Turns);
 
-	while(CRegenerationCounter() > 100)
+	while(GetRegenerationCounter() > 100)
 	{
-		if(GetHP() < (GetEndurance() << 1))
+		if(GetHP() < GetMaxHP())
 		{
 			SetHP(GetHP() + 1);
 			SetEnduranceExperience(GetEnduranceExperience() + 100);
 		}
 
-		SetRegenerationCounter(CRegenerationCounter() - 100);
+		SetRegenerationCounter(GetRegenerationCounter() - 100);
 	}
 }
 
@@ -1382,8 +1381,7 @@ bool character::RaiseStats()
 		Endurance += 10;  // really odd with GetStrength() etc.
 		Agility += 10;
 		Perception += 10;
-		HP = Endurance << 1;
-		//game::GetCurrentArea()->UpdateLOS();
+		HP = GetMaxHP();
 		game::SendLOSUpdateRequest();
 	}
 	else
@@ -1400,8 +1398,7 @@ bool character::LowerStats()
 		Endurance -= 10;
 		Agility -= 10;
 		Perception -= 10;
-		HP = Endurance << 1;
-		//game::GetCurrentArea()->UpdateLOS();
+		HP = GetMaxHP();
 		game::SendLOSUpdateRequest();
 	}
 	else
@@ -1571,9 +1568,6 @@ bool character::Look()
 		if(game::GetWizardMode())
 			ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 
-		//if(!game::GetInWilderness())
-		//	ADD_MESSAGE("%d", game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance());
-
 		game::DrawEverythingNoBlit();
 		igraph::DrawCursor((CursorPos - game::GetCamera() + vector2d(0,2)) << 4);
 		game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
@@ -1587,11 +1581,6 @@ bool character::Look()
 
 	DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 	return false;
-}
-
-float character::GetDifficulty() const
-{
-	return float(GetStrength()) * GetEndurance() * GetAgility() * GetAttackStrength() / (float(CalculateArmorModifier()) * 25000);
 }
 
 float character::GetAttackStrength() const
@@ -1891,14 +1880,16 @@ bool character::Throw()
 	{
 		if(GetStack()->GetItem(Index) == GetWielded())
 		{
-			ADD_MESSAGE("You can't throw something that you wield.");
+			SetWielded(0);
 			return false;
 		}
+
 		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw?", 8, false);
+
 		if(Answer == 0xFF)
 			return false;
-		ThrowItem(Answer, GetStack()->GetItem(Index));
 
+		ThrowItem(Answer, GetStack()->GetItem(Index));
 	}
 	else
 		return false;
@@ -2203,11 +2194,6 @@ void character::SoldierAICommand()
 
 	if(CheckForUsefulItemsOnGround())
 		return;
-}
-
-ushort character::GetSpeed() const
-{
-	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / Wielded->GetWeight())) : ulong(GetAgility() << 2) + GetStrength();
 }
 
 bool character::ShowWeaponSkills()
@@ -2527,8 +2513,8 @@ bool character::RestUntilHealed(void)
 		return false;
 	}
 
-	if(HPToRest > GetEndurance() << 1)
-		HPToRest = GetEndurance() << 1;
+	if(HPToRest > GetMaxHP())
+		HPToRest = GetMaxHP();
 
 	StateCounter[RESTING] = HPToRest;
 	ActivateState(RESTING);
@@ -2592,19 +2578,54 @@ float character::GetThrowStrengthModifier() const
 	else
 		return 1;
 }
+<<<<<<< charba.cpp
 
-bool character::RaiseGodRelations(void)
+ushort character::GetMeleeAttributeModifier() const
 {
-	for(ushort c = 1;;c++)
+	ushort Modifier = (GetAgility() << 2) + GetStrength() + GetPerception() / 3;
+
+	switch(GetBurdenState())
+	{
+	case BURDENED:
+		return (Modifier * 3) >> 2;
+	case STRESSED:
+	case OVERLOADED:
+		return Modifier >> 1;
+	default:
+		return Modifier;
+	}
+}
+
+float character::GetToHitValue() const
+{
+	if(GetWielded())
+		return GetMeleeAttributeModifier() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
+	else
+		return GetMeleeAttributeModifier() >> 1;
+}
+
+float character::GetDodgeValue() const
+{
+	return (GetMeleeAttributeModifier() << 1) / sqrt(GetSize());
+}
+
+ulong character::Danger() const
+{
+	return ulong(GetAttackStrength() * GetStrength() * GetEndurance() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+}
+
+bool character::RaiseGodRelations()
+{
+	for(ushort c = 1;; ++c)
 	{
 		game::GetGod(c)->AdjustRelation(50);
 	}
 	return false;
 }
 
-bool character::LowerGodRelations(void)
+bool character::LowerGodRelations()
 {
-	for(ushort c = 1;;c++)
+	for(ushort c = 1;; ++c)
 	{
 		game::GetGod(c)->AdjustRelation(-50);
 	}

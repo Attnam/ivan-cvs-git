@@ -69,25 +69,11 @@ void area::AddCharacter(vector2d Pos, character* Guy)
 
 void area::UpdateLOS()
 {
-	//EmptyFlags();
 	game::LOSTurn();
 
 	DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, game::GetPlayer()->LOSRange(),
 			    game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);)
-
-	/*DO_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, game::GetPlayer()->LOSRange(),
-			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	Top,		game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);
-			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	Bottom,		game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler); },
-			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, Left,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);
-			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, Rigth,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler); })*/
 }
-
-/*void area::EmptyFlags()
-{
-	for(ushort x = 0; x < XSize; ++x)
-		for(ushort y = 0; y < YSize; ++y)
-			Map[x][y]->EmptyFlag();
-}*/
 
 void area::SendNewDrawRequest()
 {

@@ -17,7 +17,7 @@ public:
 	colorizablebitmap(std::string);
 	~colorizablebitmap();
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
-	void Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
+	ushort Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
 	bitmap* Colorize(ushort*) const;
 	bitmap* Colorize(vector2d, vector2d, ushort*) const;
 protected:

@@ -30,7 +30,7 @@ Level	Succesful hits	Unuse penalty	Idle Turns for	Skill Bonus
 9	25000		1000/200	5000		135
 10	50000		1000/100	1600		150
 
-Hit limit is 65500. Skill level confers a bonus of 15% per level to damage
+Hit limit is 65500. Skill level confers a bonus of +15% per level to damage
 and speed.
 
 Single weapon experience chart:
@@ -50,5 +50,5 @@ Level	Succesful hits	Unuse penalty	Idle Turns for	Skill Bonus
 9	5000		500/50		500		60
 10	10000		500/25		160		65
 
-Hit limit is 65500. Skill level confers a bonus of 20% to damage and speed
-in the first level and 5% per level thereafter.
+Hit limit is 65500. Skill level confers a bonus of +20% to damage and speed
+in the first level and +5% per level thereafter.

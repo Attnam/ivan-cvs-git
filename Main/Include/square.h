@@ -36,9 +36,6 @@ public:
 	virtual void SetLastSeen(ulong);
 	virtual ushort GetPopulation() const { if(Character) return 1; else return 0; }
 	virtual area* GetAreaUnder() const { return AreaUnder; }
-	//virtual void EmptyFlag()			{ Flag = false; }
-	//virtual void SetFlag()			{ Flag = true; }
-	//virtual bool RetrieveFlag() const		{ return Flag; }
 	virtual groundterrain* GetGroundTerrain() const = 0;
 	virtual overterrain* GetOverTerrain() const = 0;
 	virtual std::string GetMemorizedDescription() { return MemorizedDescription; }
@@ -50,7 +47,6 @@ public:
 	virtual void DrawCheat() = 0;
 	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
 	virtual bitmap* GetMemorized() const { return Memorized; }
-	//virtual void SetDescriptionChanged(bool) {}
 	virtual void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
 protected:
 	std::string MemorizedDescription;

@@ -29,7 +29,6 @@ public:
 	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
 protected:
 	virtual std::string NameSingular() const				{ return "floor"; }
-	virtual std::string NamePlural() const					{ return "floors"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
 );
 
@@ -63,7 +62,6 @@ public:
 	virtual bool GetIsWalkable() const { return false; }
 protected:
 	virtual std::string NameSingular() const				{ return "earth"; }
-	virtual std::string NamePlural() const					{ return "earths"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 336); }
 );
 
@@ -81,7 +79,6 @@ public:
 	virtual bool GetIsWalkable() const { return false; }
 protected:
 	virtual std::string NameSingular() const				{ return "wall"; }
-	virtual std::string NamePlural() const					{ return "walls"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 240); }
 );
 
@@ -96,7 +93,6 @@ public:
 	virtual std::string DigMessage() { return "The square you are trying to dig is empty."; }
 protected:
 	virtual std::string NameSingular() const				{ return "atmosphere"; }
-	virtual std::string NamePlural() const					{ return "atmospheres"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 480); }
 );
 
@@ -121,7 +117,6 @@ public:
 	virtual bool GetIsWalkable() const { return IsOpen; }
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
-	virtual std::string NamePlural() const					{ return "doors"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }
 	virtual void MakeWalkable();
 	virtual void MakeNotWalkable();
@@ -182,7 +177,6 @@ public:
 	virtual std::string DigMessage() { return "An invisible wall stops your feeble attempt."; }
 protected:
 	virtual std::string NameSingular() const		{ return "altar"; }
-	virtual std::string NamePlural() const			{ return "altars"; }
 	virtual vector2d GetBitmapPos() const				{ return vector2d(0, 368); }
 	uchar OwnerGod;
 );
@@ -199,7 +193,6 @@ public:
 	virtual std::string DigMessage() { return "The throne resists."; }
 protected:
 	virtual std::string NameSingular() const				{ return "throne"; }
-	virtual std::string NamePlural() const					{ return "thrones"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 304); }
 );
 

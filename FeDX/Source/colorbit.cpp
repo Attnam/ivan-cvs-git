@@ -174,7 +174,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color) 
 	return Bitmap;
 }
 
-void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
 {
 	char Buffer[256];
 
@@ -189,4 +189,6 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
 
 		MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
 	}
+
+	return strlen(Buffer);
 }

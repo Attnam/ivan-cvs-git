@@ -253,7 +253,6 @@ public:
 	virtual ushort GetXSize() const { return XSize; }
 	virtual ushort GetYSize() const { return YSize; }
 	virtual void UpdateLOS();
-	//virtual void EmptyFlags();
 	virtual void SendNewDrawRequest();
 	virtual void Initialize(ushort, ushort);
 	virtual void MoveCharacter(vector2d, vector2d);

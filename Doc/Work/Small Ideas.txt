@@ -68,3 +68,19 @@ Dying in WMode doesn't yield a high score entry, but highlighting the last non-c
 Breaking potions of Omle urine should spill green fluid on the ground.
 Blood could be spilled to adjacent squares on critical hits.
 Additional short names to some weapons, that would be used in places where string space is limited. (e.g. "Justifier" instead of "the holy broadsword named Valpuri's Justifier")
+"Do you want to leave the city?" message to Attnam.
+Cannibalism and navastating should have relation effect limits.
+Bow:lle InHandsPic.
+Valpuri's Avatar should not look like a sword.
+Some artifacts should resist change material methods.
+A manual that would contain description of basic rules. (like why you can't hit dark frogs with two-handed swords etc.)
+Some variation to weapon materials.
+"The farmer looks faster" messages are annoying. They should be more scarce.
+LOS range should be higher in Attnam.
+You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
+There shouldn't be any one square minimum in throw distance. (Elpuri's corpse can be moved limitless distances with that rule)
+"Your big bone changes into a big bone."
+Reading in a too low luminance (<224 or so) should decrease perception experience.
+Savefiles should be deleted when the window is closed from the corner X.
+When wishing a forbidden item the game shouldn't say "There is no such item." but something else.
+A golem workshop. You carry raw materials there, and once enough is collected, the shopkeeper creates a golem to do your bidding.

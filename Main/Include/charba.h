@@ -118,7 +118,6 @@ public:
 	virtual void AddScoreEntry(std::string, float = 1) const;
 	virtual long Score() const;
 	virtual float GetAttackStrength() const;
-	virtual float GetDifficulty() const;
 	virtual item* GetTorsoArmor() const				{ return 0; }
 	virtual item* GetWielded() const				{ return Wielded; }
 	virtual worldmapsquare* GetWorldMapSquareUnder() const;
@@ -132,11 +131,11 @@ public:
 	virtual stack* GetStack() const				{ return Stack; }
 	virtual uchar GetBurdenState(ulong = 0) const;
 	virtual uchar GetSex() const { return UNDEFINED; }
-	virtual uchar TakeHit(ushort, short, float, character*);
-	virtual ulong Danger() const = 0;
+	virtual uchar TakeHit(character*, short);
+	virtual ulong Danger() const;
 	virtual ulong GetBloodColor() const;
 	virtual ushort CalculateArmorModifier() const;
-	virtual ushort CRegenerationCounter() const { return RegenerationCounter; }
+	virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
 	virtual ushort GetAgility() const					{ return Agility; }
 	virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
 	virtual ushort GetEmitation() const;
@@ -196,7 +195,6 @@ public:
 	virtual bool CheckCannibalism(ushort);
 	virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
 	virtual void VirtualConstructor() {}
-	virtual ushort GetSpeed() const;
 	virtual void CharacterSpeciality() {}
 	virtual void ActivateState(uchar Index) { State |= 1 << Index; }
 	virtual void DeActivateState(uchar Index) { State &= ~(1 << Index); }
@@ -227,8 +225,12 @@ public:
 	virtual bool OutlineCharacters();
 	virtual bool OutlineItems();
 	virtual float GetThrowStrengthModifier() const;
-	virtual bool RaiseGodRelations(void);
-	virtual bool LowerGodRelations(void);
+	virtual ushort GetMaxHP() const { return GetEndurance() << 1; }
+	virtual ushort GetMeleeAttributeModifier() const;
+	virtual float GetToHitValue() const;
+	virtual float GetDodgeValue() const;
+	virtual bool RaiseGodRelations();
+	virtual bool LowerGodRelations();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -298,7 +300,7 @@ protected:
 		ushort Index;\
 	} static name##_ProtoInstaller;\
 	\
-	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
 	character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
 	typeable* name::CloneAndLoad(inputfile& SaveFile) const { character* Char = new name(false, false, false); Char->Load(SaveFile); return Char; }\
 	void name::SetDefaultStats() { setstats }\
@@ -318,7 +320,7 @@ name : public base\
 {\
 public:\
 	name(bool = true, bool = true, bool = true, bool = true);\
-	name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); VirtualConstructor(); }\
+	name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); VirtualConstructor(); }\
 	virtual character* Clone(bool = true, bool = true, bool = true) const;\
 	virtual typeable* CloneAndLoad(inputfile&) const;\
 	static ushort StaticType();\

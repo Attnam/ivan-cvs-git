@@ -57,13 +57,6 @@ void worldmapsquare::UpdateMemorizedAndDraw()
 {
 	if(NewDrawRequested)
 	{
-		/*if(!GetKnown())
-		{
-			Memorized = new bitmap(16, 16);
-
-			SetKnown(true);
-		}*/
-
 		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
 		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);

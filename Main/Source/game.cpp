@@ -185,7 +185,6 @@ void game::Init(std::string Name)
 
 		UpdateCamera();
 
-		//GetCurrentArea()->UpdateLOS();
 		game::SendLOSUpdateRequest();
 
 		for(ushort c = 1; GetGod(c); ++c)
@@ -296,9 +295,6 @@ void game::Quit()
 
 bool game::LOSHandler(vector2d Pos, vector2d Origo) // CurrentX = CX, CurrentY = CY
 {                                                   // OrigoX = OX, OrigoY = OY
-	//Pos >>= 2;
-	//Origo >>= 2;
-
 	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
@@ -310,183 +306,8 @@ bool game::LOSHandler(vector2d Pos, vector2d Origo) // CurrentX = CX, CurrentY =
 		return GetCurrentArea()->GetSquare(Pos)->GetOverTerrain()->GetIsWalkable();
 }
 
-bool game::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, /*ushort FromX, ushort FromY, ushort ToX, ushort ToY, */bool (*Proc)(vector2d, vector2d))
+bool game::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*Proc)(vector2d, vector2d))
 {
-	/*ushort X, Y, DistaX, DistaY, BTemp;
-
-	uchar Return;
-
-	__asm
-	{
-		pushad
-		mov	bx,	FromX
-		mov	ax,	FromY
-		mov	dx,	ToX
-		mov	cx,	ToY
-		cmp	bx,	dx
-		jnz	LineNotVertical
-		cmp	ax,	cx
-		jl	VerticalLinePlus
-		jg	VerticalLineMinus
-		jmp	LineQuickEnd
-	VerticalLinePlus:
-		call	NPutPixel
-		cmp	Return,	0x00
-		jz	End
-		inc	ax
-		cmp	ax,	cx
-		jl	VerticalLinePlus
-		jmp	LineQuickEnd
-	VerticalLineMinus:
-		call	NPutPixel
-		cmp	Return,	0x00
-		jz	End
-		dec	ax
-		cmp	ax,	cx
-		jg	VerticalLineMinus
-		jmp	LineQuickEnd
-	LineNotVertical:	
-		cmp	ax,	cx
-		jnz	LineNotHorizontal
-		cmp	bx,	dx
-		jl	LineHorizontalPlus
-		jg	LineHorizontalMinus
-	LineHorizontalPlus:
-		call	NPutPixel
-		cmp	Return,	0x00
-		jz	End
-		inc	bx
-		cmp	bx,	dx
-		jl	LineHorizontalPlus
-		jmp	LineQuickEnd
-	LineHorizontalMinus:
-		call	NPutPixel
-		cmp	Return,	0x00
-		jz	End
-		dec	bx
-		cmp	bx,	dx
-		jg	LineHorizontalMinus
-	LineQuickEnd:
-		call	NPutPixel
-		mov	Return,	0x01
-		jmp	End
-	LineNotHorizontal:
-		cmp	dx,	bx
-		jl	LineXSwapNeeded
-		sub	dx,	bx
-		mov	si,	0x0001
-		jmp	LineNext1
-	LineXSwapNeeded:
-		push	bx
-		sub	bx,	dx
-		mov	dx,	bx
-		pop	bx
-		mov	si,	0xFFFF
-	LineNext1:
-		cmp	cx,	ax
-		jl	LineYSwapNeeded
-		sub	cx,	ax
-		mov	di,	0x0001
-		jmp	LineNext2
-	LineYSwapNeeded:
-		push	ax
-		sub	ax,	cx
-		mov	cx,	ax
-		pop	ax
-		mov	di,	0xFFFF
-	LineNext2:
-		cmp	dx,	cx
-		jl	LineXYSwap
-		mov	DistaX,	dx
-		mov	DistaY,	cx
-		mov	bx,	FromX
-		mov	ax,	FromY
-		xor	cl,	cl
-		jmp	LineXYNoSwap
-	LineXYSwap:
-		mov	DistaY,	dx
-		mov	DistaX,	cx
-		mov	ax,	FromX
-		mov	bx,	FromY
-		mov	dx,	ToX
-		mov	cx,	ToY
-		mov	ToY,	dx
-		mov	ToX,	cx
-		mov	cx,	si
-		mov	dx,	di
-		mov	di,	cx
-		mov	si,	dx
-		mov	dx,	DistaX
-		mov	cl,	0x01
-	LineXYNoSwap:
-		shr	dx,	0x01
-		inc	dx
-		mov	BTemp,	dx
-		mov	dh,	cl
-		xor	cx,	cx
-		jmp	LineLoopBegin
-	LineXPlus:
-		add	cx,	DistaY
-	LineLoopBegin:
-		cmp	cx,	BTemp
-		jl	LineNotYPlus
-		sub	cx,	DistaX
-		add	ax,	di
-	LineNotYPlus:
-		call	SPutPixel
-		cmp	Return,	0x00
-		jz	End
-		add	bx,	si
-		cmp	bx,	ToX
-		jnz	LineXPlus
-		add	cx,	DistaY
-		cmp	cx,	BTemp
-		jl	LineEnd
-		add	ax,	di
-	LineEnd:call	SPutPixel
-		mov	Return,	0x01
-
-	End:	popad
-	}
-
-	return Return ? true : false;
-
-	__asm
-	{
-	NPutPixel:
-		mov	X,	bx
-		mov	Y,	ax
-		pushad
-	}
-
-	Return = Proc(X, Y, FromX, FromY);
-
-	__asm
-	{
-		popad
-		ret
-
-	SPutPixel:
-		or	dh,	dh
-		jz	SPutPixelNoSwap
-		mov	X,	ax
-		mov	Y,	bx
-		jmp	SPutPixelCall
-	SPutPixelNoSwap:
-		mov	X,	bx
-		mov	Y,	ax
-	SPutPixelCall:
-		pushad
-	}
-
-	Return = Proc(X, Y, FromX, FromY);
-
-	__asm
-	{
-		popad
-		ret
-	}*/
-
 	long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
 
 	#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)			\
@@ -561,43 +382,44 @@ void game::panel::Draw() const
 	FONT->Printf(DOUBLEBUFFER, 16, 554, WHITE, "Agility: %d", Player->GetAgility());
 	FONT->Printf(DOUBLEBUFFER, 16, 564, WHITE, "Perception: %d", Player->GetPerception());
 	FONT->Printf(DOUBLEBUFFER, 16, 574, WHITE, "Size: %d", Player->GetSize());
-	FONT->Printf(DOUBLEBUFFER, 16, 584, Player->GetHP() < (Player->GetEndurance() << 1) / 3 ? RED : WHITE, "HP: %d/%d", Player->GetHP(), (Player->GetEndurance() << 1));
-
-	FONT->Printf(DOUBLEBUFFER, 160, 534, WHITE, "Exp: %d", Player->GetStrengthExperience());
-	FONT->Printf(DOUBLEBUFFER, 160, 544, WHITE, "Exp: %d", Player->GetEnduranceExperience());
-	FONT->Printf(DOUBLEBUFFER, 160, 554, WHITE, "Exp: %d", Player->GetAgilityExperience());
-	FONT->Printf(DOUBLEBUFFER, 160, 564, WHITE, "Exp: %d", Player->GetPerceptionExperience());
+	FONT->Printf(DOUBLEBUFFER, 16, 584, Player->GetHP() < Player->GetMaxHP() / 3 ? RED : WHITE, "HP: %d/%d", Player->GetHP(), Player->GetMaxHP());
 
 	if(Player->GetWielded())
-		FONT->Printf(DOUBLEBUFFER, 160, 574, WHITE, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
+		FONT->Printf(DOUBLEBUFFER, 200, 574, WHITE, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
 
         if(Player->GetTorsoArmor())
-		FONT->Printf(DOUBLEBUFFER, 160, 584, WHITE, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
+		FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
 
-	FONT->Printf(DOUBLEBUFFER, 320, 534, WHITE, "Speed: %d", Player->GetSpeed());
-	FONT->Printf(DOUBLEBUFFER, 320, 544, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
-	FONT->Printf(DOUBLEBUFFER, 320, 554, WHITE, "Weaponstrength: %.0f", Player->GetAttackStrength());
-	FONT->Printf(DOUBLEBUFFER, 320, 564, WHITE, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
-	FONT->Printf(DOUBLEBUFFER, 600, 544, WHITE, "Dungeon level: %d", game::GetCurrent() + 1);
-	FONT->Printf(DOUBLEBUFFER, 600, 554, WHITE, "NP: %d", Player->GetNP());
-	FONT->Printf(DOUBLEBUFFER, 600, 564, WHITE, "Turns: %d", game::GetTurns());
+	FONT->Printf(DOUBLEBUFFER, 200, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength());
+	FONT->Printf(DOUBLEBUFFER, 200, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
+	FONT->Printf(DOUBLEBUFFER, 200, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
+
+	FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
+	FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
+
+	if(GetInWilderness())
+		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "Worldmap");
+	else
+		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "%s", game::GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
+
+	FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Turns: %d", game::GetTurns());
 
 	if(Player->GetNP() < CRITICALHUNGERLEVEL)
-		FONT->Printf(DOUBLEBUFFER, 600, 574, RED, "Fainting");
+		FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainting");
 	else
 		if(Player->GetNP() < HUNGERLEVEL)
-			FONT->Printf(DOUBLEBUFFER, 600, 574, BLUE, "Hungry");
+			FONT->Printf(DOUBLEBUFFER, 620, 554, BLUE, "Hungry");
 
 	switch(Player->GetBurdenState())
 	{
 		case OVERLOADED:
-			FONT->Printf(DOUBLEBUFFER, 600, 584, RED, "Overload!");
+			FONT->Printf(DOUBLEBUFFER, 620, 564, RED, "Overload!");
 		break;
 		case STRESSED:
-			FONT->Printf(DOUBLEBUFFER, 600, 584, BLUE, "Stressed");
+			FONT->Printf(DOUBLEBUFFER, 620, 564, BLUE, "Stressed");
 		break;
 		case BURDENED:
-			FONT->Printf(DOUBLEBUFFER, 600, 584, BLUE, "Burdened!");
+			FONT->Printf(DOUBLEBUFFER, 620, 564, BLUE, "Burdened!");
                 case UNBURDENED:
 		break;
 	}
@@ -927,7 +749,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-	float Base = game::GetPlayer()->GetDifficulty() * (Current + 1);
+	float Base = game::GetPlayer()->Danger() / 25 * (GetCurrent() + 1);
 
 	while(true)
 	{
@@ -935,13 +757,13 @@ float game::Difficulty()
 
 		if(!Dice)
 		{
-			Base /= 5;
+			Base /= 3;
 			continue;
 		}
 
 		if(Dice == 4)
 		{
-			Base *= 5;
+			Base *= 3;
 			continue;
 		}
 
@@ -961,7 +783,6 @@ void game::ShowLevelMessage()
 
 void game::TriggerQuestForMaakotkaShirt()
 {
-	//ADD_MESSAGE("The dungeon underneath vibrates violently.");
 	GetDungeon(0)->PrepareLevel(6);
 	GetDungeon(0)->GetLevel(6)->CreateStairs(false);
 	GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");

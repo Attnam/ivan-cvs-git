@@ -150,7 +150,7 @@ protected:
 class roomscript : public script
 {
 public:
-	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), Base(0) {}
+	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLamps(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(roomscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -168,6 +168,7 @@ public:
 	bool* GetReCalculate(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ReCalculate) }
 	bool* GetGenerateTunnel(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateTunnel) }
 	uchar* GetDivineOwner(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DivineOwner) }
+	bool* GetGenerateLamps(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateLamps) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
@@ -183,12 +184,13 @@ protected:
 	bool* AltarPossible, * GenerateDoor, * ReCalculate, * GenerateTunnel;
 	uchar* DivineOwner;
 	roomscript* Base;
+	bool* GenerateLamps;
 };
 
 class levelscript : public script
 {
 public:
-	levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), OnGround(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), TeamDefault(0), AmbientLight(0), Base(0) {}
+	levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), OnGround(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), TeamDefault(0), AmbientLight(0), Description(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(levelscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -206,6 +208,7 @@ public:
 	bool* GetOnGround(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OnGround) }
 	uchar* GetTeamDefault(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(TeamDefault) }
 	ushort* GetAmbientLight(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AmbientLight) }
+	std::string* GetDescription(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Description) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
@@ -220,6 +223,7 @@ protected:
 	bool* GenerateUpStairs, * GenerateDownStairs, * OnGround;
 	uchar* TeamDefault;
 	ushort* AmbientLight;
+	std::string* Description;
 	levelscript* Base;
 };
 

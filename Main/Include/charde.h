@@ -33,7 +33,6 @@ public:
 	virtual void SetLegType(uchar Value) { LegType = Value; }
 	virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
 	virtual bool CanKick() const RET(true)
-	virtual ushort GetSpeed() const;
 	virtual float GetAttackStrength() const;
 	virtual bool Hit(character*);
 	virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
@@ -44,10 +43,11 @@ public:
 	virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
 	virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
 	virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
+	virtual float GetToHitValue() const;
 	virtual void ReceiveSound(char*, short, float);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
-	virtual float GetMeleeStrength() const RET(2000)
+	virtual float GetMeleeStrength() const RET(1000)
 	struct armor
 	{
 		armor();
@@ -85,12 +85,10 @@ class CHARACTER
 		SetTorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
 	},
 public:
-	virtual ulong Danger() const RET(0)
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("human")
-	virtual std::string NamePlural() const RET("humans")
 );
                       
 class CHARACTER
@@ -99,11 +97,11 @@ class CHARACTER
 	human,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(200);
-		SetAgility(80);
-		SetStrength(80);
-		SetEndurance(80);
-		SetPerception(80);
+		SetSize(225);
+		SetAgility(75);
+		SetStrength(75);
+		SetEndurance(75);
+		SetPerception(75);
 		SetArmType(3);
 		SetHeadType(10);
 		SetLegType(1);
@@ -120,18 +118,16 @@ public:
 	virtual ushort GetHealTimer() RET(HealTimer)
 	virtual void ReceiveFireDamage(long) {}
 	virtual void Save(outputfile&) const;
-	virtual ulong Danger() const RET(150000)
 	virtual bool Charmable() const RET(false)
 	virtual ushort Possibility() const RET(0)
 	virtual bool Polymorph() RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
-	virtual std::string NamePlural() const RET("Perttus, the Überpriests of the Great Frog")
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " disappears in a bright light and his left nut is left behind."; }
 	virtual void CreateInitialEquipment();
-	virtual float GetMeleeStrength() const RET(10000)
+	virtual float GetMeleeStrength() const RET(20000)
 	virtual void GetAICommand();
 	ushort HealTimer;
 );
@@ -143,22 +139,21 @@ class CHARACTER
 	InitMaterials(new humanflesh),
 	{
 		SetSize(170);
-		SetAgility(5);
-		SetStrength(15);
+		SetAgility(10);
+		SetStrength(10);
 		SetEndurance(10);
-		SetPerception(9);
+		SetPerception(12);
 		SetArmType(rand() % 7);
 		SetHeadType(4 + rand() % 3);
 		SetLegType(rand() % 3);
 		SetTorsoType(2 + rand() % 2);
 	},
 public:
+	virtual void CreateInitialEquipment();
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("farmer")
-	virtual std::string NamePlural() const RET("farmers")
-	virtual float GetMeleeStrength() const RET(1000)
 );
 
 class CHARACTER
@@ -170,7 +165,7 @@ class CHARACTER
 		SetSize(180);
 		SetAgility(20);
 		SetStrength(20);
-		SetEndurance(15);
+		SetEndurance(20);
 		SetPerception(21);
 		SetArmType(5);
 		SetHeadType(7);
@@ -184,8 +179,6 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("city guard")
-	virtual std::string NamePlural() const RET("city guards")
-	virtual float GetMeleeStrength() const RET(5000)
 );
 
 class CHARACTER
@@ -195,7 +188,7 @@ class CHARACTER
 	InitMaterials(new humanflesh),
 	{
 		SetSize(160);
-		SetAgility(5);
+		SetAgility(10);
 		SetStrength(30);
 		SetEndurance(30);
 		SetPerception(30);
@@ -205,12 +198,12 @@ class CHARACTER
 		SetTorsoType(8);
 	},
 public:
+	virtual void CreateInitialEquipment();
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("shopkeeper")
-	virtual std::string NamePlural() const RET("shopkeepers")
-	virtual float GetMeleeStrength() const RET(10000)
+	virtual float GetMeleeStrength() const RET(2000)
 );
 
 class CHARACTER
@@ -220,28 +213,26 @@ class CHARACTER
 	InitMaterials(new pepsi),
 	{
 		SetSize(225);
-		SetAgility(40);
-		SetStrength(40);
-		SetEndurance(40);
-		SetPerception(27);
+		SetAgility(50);
+		SetStrength(30);
+		SetEndurance(30);
+		SetPerception(30);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual uchar GetSex() const RET(MALE)
 	virtual ushort CalculateArmorModifier() const RET(10)
-	virtual ulong Danger() const RET(30000)
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
 	virtual bool CanKick() const RET(true)
-	virtual ulong GetBloodColor() const RET(MAKE_RGB(255,255,255))
+	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(208,0)
 	virtual std::string NameSingular() const RET("Oree the Pepsi Daemon King")
-	virtual std::string NamePlural() const RET("Orees the Pepsi Daemon Kings")
 	virtual void CreateInitialEquipment();
-	virtual float GetMeleeStrength() const RET(40000)
+	virtual float GetMeleeStrength() const RET(30000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPepsiVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonPepsiVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPepsiVerb(Critical))
@@ -256,23 +247,22 @@ class CHARACTER
 		SetSize(200);
 		SetAgility(30);
 		SetStrength(20);
-		SetEndurance(15);
-		SetPerception(27);
+		SetEndurance(30);
+		SetPerception(30);
 	},
 public:
 	virtual ushort Possibility() const RET(5)
 	virtual uchar GetSex() const RET(MALE)
 	virtual bool CanWield() const RET(true)
-	virtual ulong Danger() const RET(750)
 	virtual bool Charmable() const RET(false)
 	virtual bool CanKick() const RET(true)
+	virtual ushort CalculateArmorModifier() const RET(50)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(128,0)
 	virtual std::string NameSingular() const RET("Bill's SWAT commando")
-	virtual std::string NamePlural() const RET("Bill's SWAT commandos")
 	virtual void CreateInitialEquipment();
-	virtual float GetMeleeStrength() const RET(10000)
+	virtual float GetMeleeStrength() const RET(5000)
 );
 
 class CHARACTER
@@ -283,14 +273,13 @@ class CHARACTER
 	{
 		SetSize(150);
 		SetAgility(10);
-		SetStrength(5);
-		SetEndurance(10);
-		SetPerception(9);
+		SetStrength(10);
+		SetEndurance(25);
+		SetPerception(12);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual bool Hit(character*);
-	virtual ulong Danger() const RET(2500);
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
 	virtual bool CanKick() const RET(true)
@@ -298,8 +287,7 @@ public:
 protected:
 	virtual vector2d GetBitmapPos() const RETV(96,0)
 	virtual std::string NameSingular() const RET("Enner Beast")
-	virtual std::string NamePlural() const RET("Enner Beasts")
-	virtual float GetMeleeStrength() const RET(200000)
+	virtual float GetMeleeStrength() const RET(50000)
 	virtual void GetAICommand();
 	virtual void CreateCorpse();
 );
@@ -322,19 +310,18 @@ class CHARACTER
 	InitMaterials(new darkfrogflesh),
 	{
 		SetSize(15);
-		SetAgility(20);
-		SetStrength(1);
-		SetEndurance(2);
-		SetPerception(15);
+		SetAgility(30);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(18);
 	},
 public:
 	virtual ushort Possibility() const RET(100)
-	virtual ulong Danger() const RET(25)
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 1000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
+	virtual ulong GetBloodColor() const RET(BLACK)
 protected:
 	virtual vector2d GetBitmapPos() const RETV(80,0)
 	virtual std::string NameSingular() const RET("dark frog")
-	virtual std::string NamePlural() const RET("dark frogs")
 );
 
 class CHARACTER
@@ -344,23 +331,22 @@ class CHARACTER
 	InitMaterials(new elpuriflesh),
 	{
 		SetSize(300);
-		SetAgility(50);
-		SetStrength(50);
+		SetAgility(10);
+		SetStrength(30);
 		SetEndurance(50);
-		SetPerception(18);
+		SetPerception(30);
 	},
 public:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual ushort Possibility() const RET(0)
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
-	virtual ulong Danger() const RET(5000)
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 8000000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 277500; else return 0; }
+	virtual ulong GetBloodColor() const RET(BLACK)
 protected:
 	virtual vector2d GetBitmapPos() const RETV(64,0)
 	virtual std::string NameSingular() const RET("Elpuri the Dark Frog")
-	virtual std::string NamePlural() const RET("Elpuris the Dark Frogs")
 	virtual void CreateCorpse();
 );
 
@@ -373,13 +359,12 @@ class CHARACTER
 		SetSize(100);
 		SetAgility(40);
 		SetStrength(5);
-		SetEndurance(5);
+		SetEndurance(20);
 		SetPerception(27);
 	},
 public:
 	virtual ushort Possibility() const RET(50)
 	virtual void SpillBlood(uchar) {}
-	virtual ulong Danger() const RET(75)
 	virtual bool Charmable() const RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }	
 protected:
@@ -388,7 +373,7 @@ protected:
 	virtual std::string NamePlural() const RET("pure masses of Bill's will")
 	virtual void CreateCorpse() {}
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
-	virtual float GetMeleeStrength() const RET(30000)
+	virtual float GetMeleeStrength() const RET(20000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPSIVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonPSIVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPSIVerb(Critical))
@@ -403,24 +388,22 @@ class CHARACTER
 		SetSize(150);
 		SetAgility(10);
 		SetStrength(5);
-		SetEndurance(5);
+		SetEndurance(10);
 		SetPerception(15);
 	},
 public:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
 	virtual ushort Possibility() const RET(50)
 	virtual bool CanWield() const RET(true)
-	virtual ulong Danger() const RET(25)
 	virtual bool CanKick() const RET(true)
 	virtual void SpillBlood(uchar) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(112,0)
 	virtual std::string NameSingular() const RET("fallen valpurist")
-	virtual std::string NamePlural() const RET("fallen valpurists")
 	virtual void CreateCorpse();
 	virtual void CreateInitialEquipment();
-	virtual float GetMeleeStrength() const RET(5000)
+	virtual float GetMeleeStrength() const RET(1000)
 );
 
 class CHARACTER
@@ -432,20 +415,18 @@ class CHARACTER
 		SetSize(100);
 		SetAgility(15);
 		SetStrength(10);
-		SetEndurance(5);
-		SetPerception(21);
+		SetEndurance(15);
+		SetPerception(18);
 	},
 public:
 	virtual ushort Possibility() const RET(100)
-	virtual ulong Danger() const RET(25)
 	virtual bool CanKick() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 25000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(144,0)
 	virtual std::string NameSingular() const RET("frog-goblin hybrid")
-	virtual std::string NamePlural() const RET("frog-goblin hybrids")
 	virtual void CreateInitialEquipment();
-	virtual float GetMeleeStrength() const RET(5000)
+	virtual float GetMeleeStrength() const RET(2000)
 );
 
 class ABSTRACT_CHARACTER
@@ -456,7 +437,7 @@ protected:
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBrownSlimeVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBrownSlimeVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBrownSlimeVerb(Critical))
-	virtual float GetMeleeStrength() const RET(25000)
+	virtual float GetMeleeStrength() const RET(20000)
 );
 
 class CHARACTER
@@ -466,19 +447,17 @@ class CHARACTER
 	InitMaterials(new brownslime),
 	{
 		SetSize(100);
-		SetAgility(1);
-		SetStrength(2);
-		SetEndurance(40);
+		SetAgility(2);
+		SetStrength(4);
+		SetEndurance(50);
 		SetPerception(9);
 	},
 public:
 	virtual ushort Possibility() const RET(25)
-	virtual ulong Danger() const RET(250)
 	virtual ulong GetBloodColor() const RET(MAKE_RGB(7,155,0))
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 250000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("conical mommo slime")
-	virtual std::string NamePlural() const RET("conical mommo slimes")
 	virtual vector2d GetBitmapPos() const RETV(176,0)
 
 );
@@ -490,19 +469,17 @@ class CHARACTER
 	InitMaterials(new brownslime),
 	{
 		SetSize(50);
-		SetAgility(2);
-		SetStrength(1);
-		SetEndurance(20);
+		SetAgility(4);
+		SetStrength(2);
+		SetEndurance(25);
 		SetPerception(9);
 	},
 public:
 	virtual ushort Possibility() const RET(75)
-	virtual ulong Danger() const RET(75)
 	virtual ulong GetBloodColor() const RET(MAKE_RGB(7,155,0))
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 150000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("flat mommo slime")
-	virtual std::string NamePlural() const RET("flat mommo slimes")
 	virtual vector2d GetBitmapPos() const RETV(192,0)
 );
 
@@ -514,7 +491,7 @@ class CHARACTER
 	{
 		SetSize(250);
 		SetAgility(5);
-		SetStrength(35);
+		SetStrength(20);
 		SetEndurance(20);
 		SetPerception(12);
 	},
@@ -524,13 +501,11 @@ public:
 	virtual ushort CalculateArmorModifier() const;
 	virtual void MoveRandomly();
 	virtual std::string Name(uchar Case) const RET(NameWithMaterial(Case))
-	virtual ulong Danger() const;
 	virtual void DrawToTileBuffer() const;
 	virtual void SpillBlood(uchar) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("golem")
-	virtual std::string NamePlural() const RET("golems")
 	virtual vector2d GetBitmapPos() const RETV(256,0)
 	virtual float GetMeleeStrength() const;
 );
@@ -543,13 +518,12 @@ class CHARACTER
 	{
 		SetSize(100);
 		SetAgility(20);
-		SetStrength(6);
-		SetEndurance(6);
+		SetStrength(10);
+		SetEndurance(10);
 		SetPerception(24);
 	},
 public:
 	virtual ushort Possibility() const RET(40)
-	virtual ulong Danger() const RET(20)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("wolf")
@@ -567,22 +541,20 @@ class CHARACTER
 	character,
 	InitMaterials(new dogflesh),
 	{
-		SetSize(75);
+		SetSize(70);
 		SetAgility(15);
-		SetStrength(4);
-		SetEndurance(4);
+		SetStrength(8);
+		SetEndurance(8);
 		SetPerception(21);
 	},
 public:
 	virtual ushort Possibility() const RET(20)
-	virtual ulong Danger() const RET(10)
 	virtual bool Catches(item*, float);
 	virtual bool ConsumeItemType(uchar) const;
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(240,0)
 	virtual std::string NameSingular() const RET("dog")
-	virtual std::string NamePlural() const RET("dogs")
 	virtual float GetMeleeStrength() const RET(5000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
@@ -596,23 +568,22 @@ class CHARACTER
 	InitMaterials(new spiderflesh),
 	{
 		SetSize(10);
-		SetAgility(4);
-		SetStrength(1);
+		SetAgility(5);
+		SetStrength(2);
 		SetEndurance(1);
-		SetPerception(5);
+		SetPerception(9);
 	},
 public:
 	virtual ushort Possibility() const RET(100)
-	virtual ulong Danger() const RET(5)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100; else return 0; }
+	virtual ulong GetBloodColor() const RET(BLACK)
 protected:
 	virtual vector2d GetBitmapPos() const RETV(272,0)
 	virtual std::string NameSingular() const RET("spider")
-	virtual std::string NamePlural() const RET("spiders")
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
-	virtual float GetMeleeStrength() const RET(2000)
+	virtual float GetMeleeStrength() const RET(10000)
 	virtual void CreateCorpse() {}
 );
 
@@ -623,23 +594,21 @@ class CHARACTER
 	InitMaterials(new jackalflesh),
 	{
 		SetSize(80);
-		SetAgility(6);
-		SetStrength(6);
-		SetEndurance(4);
-		SetPerception(20);
+		SetAgility(10);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(18);
 	},
 public:
 	virtual ushort Possibility() const RET(100)
-	virtual ulong Danger() const RET(6)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 20000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(304,0)
 	virtual std::string NameSingular() const RET("jackal")
-	virtual std::string NamePlural() const RET("jackals")
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))																																																																																																																																													//Jackals are unoriginal
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
-	virtual float GetMeleeStrength() const RET(3000)
+	virtual float GetMeleeStrength() const RET(5000)
 );
 
 class CHARACTER
@@ -649,23 +618,21 @@ class CHARACTER
 	InitMaterials(new donkeyflesh),
 	{
 		SetSize(150);
-		SetAgility(4);
-		SetStrength(6);
-		SetEndurance(6);
-		SetPerception(17);
+		SetAgility(5);
+		SetStrength(10);
+		SetEndurance(10);
+		SetPerception(15);
 	},
 public:
 	virtual ushort Possibility() const RET(100)
-	virtual ulong Danger() const RET(6)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(288,0)
 	virtual std::string NameSingular() const RET("donkey")
-	virtual std::string NamePlural() const RET("donkeys")
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
-	virtual float GetMeleeStrength() const RET(3000)
+	virtual float GetMeleeStrength() const RET(1000)
 );
 
 #endif

@@ -15,6 +15,7 @@ class levelsquare;
 class typeable
 {
 public:
+	typeable();
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual std::string Name(uchar Case) const = 0;

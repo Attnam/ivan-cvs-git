@@ -4,6 +4,10 @@
 #include "level.h"
 #include "lsquare.h"
 
+typeable::typeable() : AreaUnder(0), SquareUnder(0)
+{
+}
+
 void typeable::Save(outputfile& SaveFile) const
 {
 	SaveFile << Type();

@@ -456,12 +456,12 @@ item* brokenbottle::BetterVersion(void) const
 	material* Stuff;
 
 	if(rand() % 5)
-		Stuff = new bananaflesh(1500);
+		Stuff = new bananaflesh;
 	else
-		Stuff = new omleurine(1500);
+		Stuff = new omleurine;
 
 	 item* P = new potion(false); 
-	 P->InitMaterials(2, new glass(50), Stuff); 
+	 P->InitMaterials(2, new glass, Stuff); 
 
 	 return P;
 }

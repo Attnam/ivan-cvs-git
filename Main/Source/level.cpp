@@ -410,10 +410,10 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[x][YPos + Height - 1]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
-		if(!(rand() % 7) && x != XPos && x != XPos + Width - 1)
+		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && x != XPos && x != XPos + Width - 1)
 			Map[x][YPos]->GetSideStack(2)->FastAddItem(new lamp);
 
-		if(!(rand() % 7) && x != XPos && x != XPos + Width - 1)
+		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && x != XPos && x != XPos + Width - 1)
 			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(new lamp);
 
 		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
@@ -431,10 +431,10 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[XPos + Width - 1][y]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
-		if(!(rand() % 7) && y != YPos && y != YPos + Height - 1)
+		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && y != YPos && y != YPos + Height - 1)
 			Map[XPos][y]->GetSideStack(1)->FastAddItem(new lamp);
 
-		if(!(rand() % 7) && y != YPos && y != YPos + Height - 1)
+		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && y != YPos && y != YPos + Height - 1)
 			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(new lamp);
 
 		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
@@ -735,9 +735,7 @@ void level::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
-				//long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
-
-				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())// && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeSquare())
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
 					Map[x][y]->UpdateMemorizedAndDraw();
 				else
 					Map[x][y]->DrawCheat();
@@ -746,9 +744,7 @@ void level::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
-				//long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
-
-				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())// && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeSquare())
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
 					Map[x][y]->UpdateMemorizedAndDraw();
 				else
 					Map[x][y]->DrawMemorized();

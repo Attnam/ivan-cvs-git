@@ -60,7 +60,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const = 0;
 protected:
 	virtual std::string NameSingular() const = 0;
-	virtual std::string NamePlural() const = 0;
+	virtual std::string NamePlural() const { return NameSingular() + "s"; }
 	virtual std::string NameNormal(uchar, std::string) const;
 	virtual std::string NameProperNoun(uchar) const;
 	virtual std::string NameArtifact(uchar, uchar) const;

@@ -130,7 +130,7 @@ void consummo::PrayBadEffect()
 {
 	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement! Some parts of you teleport away!");
 
-	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % (game::GetPlayer()->GetEndurance() << 1));
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % game::GetPlayer()->GetMaxHP());
 
 	game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
 }
@@ -360,14 +360,14 @@ void erado::PrayGoodEffect()
 {
 	ADD_MESSAGE("The air vibrates violently around you and a terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption falls on the ground.");
 
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new htaedfoneercseulb);
+	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new neercseulb);
 }
 
 void erado::PrayBadEffect()
 {
 	ADD_MESSAGE("A dark, booming voice shakes the walls: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
 
-	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - (game::GetPlayer()->GetEndurance() << 1) + 1);
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
 	game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
 	game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
 	game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);

@@ -92,9 +92,7 @@ void worldmap::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
-				//long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
-
-				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())// && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
 					Map[x][y]->UpdateMemorizedAndDraw();
 				else
 					Map[x][y]->DrawCheat();
@@ -103,9 +101,7 @@ void worldmap::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
-				//long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
-
-				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())// && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
 					Map[x][y]->UpdateMemorizedAndDraw();
 				else
 					Map[x][y]->DrawMemorized();

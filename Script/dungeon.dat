@@ -37,6 +37,7 @@ Dungeon 0;
 			ReCalculate=true;
 			DivineOwner=0;
 			GenerateTunnel=true;
+			GenerateLamps=true;
 		}
 	}
 
@@ -75,8 +76,19 @@ Dungeon 0;
 
 	Level 6;
 	{
+		Description=DarkLevel;
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
+		FillSquare=stone floor, iron wall;
+		Items=0;
 		GenerateDownStairs=false;
+
+		RoomDefault
+		{
+			AltarPossible=false;
+			WallSquare=stone floor, iron wall;
+			DoorSquare=parquet,iron door;
+			GenerateLamps=false;
+		}
 
 		Square, Random { Walkable=true; }
 		{
@@ -86,6 +98,7 @@ Dungeon 0;
 
 	Level 1+rand%2;
 	{
+		LevelMessage="You hear many wolves howling. You shiver.";
 		Rooms=5+rand%16;  /* Due to a bug in recalculation code this must be repeated! */
 
 		Room 1;
@@ -169,6 +182,7 @@ Dungeon 0;
 	{
 		/*Speciality=OreeLair;*/
 
+		Description=OreeLair;
 		LevelMessage="You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
 		FillSquare=pepsi floor,pepsi earth;
 		Rooms=1;
@@ -229,6 +243,7 @@ Dungeon 1;
 
 	Level 0;
 	{
+		Description=Attnam;
 		FillSquare=floor,empty;
 		Size=64,64;
 		GenerateMonsters=false;
@@ -253,6 +268,7 @@ Dungeon 1;
 			ReCalculate=true;
 			DivineOwner=0;
 			GenerateTunnel=false;
+			GenerateLamps=true;
 		}
 
 		Square, Random { Walkable=true; }
@@ -369,6 +385,7 @@ Dungeon 1;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=1;
+			GenerateLamps=false;
 
 			Square, Pos 12, 24;
 			{

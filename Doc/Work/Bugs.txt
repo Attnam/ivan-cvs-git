@@ -10,4 +10,10 @@ Dipping to dark frog flesh doesn't work.
 One can kill Attnamian farmers with Holy Fire without becoming outlawed.
 Show messages may show the same page twice. (does exist, appears when 2+ pages are displayed with a boolquestion on the last page)
 One can read in the dark.
-Wielding an item with InHandPic does not update screen immediately.
+Wielding an item with InHandsPic does not update screen immediately.
+NewDrawRequest should be sent when the player walks into a different angle of a wall.
+Entering level may crash if someone is on the entrance?
+I went down to Elpuri's level in WMode. Elpuri happened to be right next to me, and hit me before my first move. The message was "something hits you".
+Bananapeals left by the Holy Banana are too light.
+Monsters eat dark frogs and school food.
+Coming up from level 10 with pets doesn't work.

@@ -34,6 +34,7 @@ public:
 	levelscript* GetLevelScript(ushort);
 	vector2d GetWorldMapPos() { return WorldMapPos; }
 	void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
+	std::string GetLevelDescription(uchar);
 private:
 	void Initialize();
 	dungeonscript* DungeonScript;

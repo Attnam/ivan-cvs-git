@@ -13,7 +13,7 @@
 #include "script.h"
 #include "team.h"
 
-levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Dark(true)
+levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0)
 {
 	Stack = new stack(this);
 
@@ -135,13 +135,6 @@ void levelsquare::UpdateMemorizedAndDraw()
 {
 	if(NewDrawRequested || Fluided)
 	{
-		/*if(!GetLastSeen())
-		{
-			Memorized = new bitmap(16, 16);
-
-			//SetKnown(true);
-		}*/
-
 		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
 		ushort Luminance = GetLuminance();
@@ -243,8 +236,6 @@ void levelsquare::UpdateMemorizedAndDraw()
 						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 					}
 			}
-
-			Dark = false;
 		}
 		else
 		{
@@ -256,8 +247,6 @@ void levelsquare::UpdateMemorizedAndDraw()
 				Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16);
 			
 			igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
-
-			Dark = true;
 		}
 
 		NewDrawRequested = false;
@@ -276,12 +265,6 @@ void levelsquare::Emitate()
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 			    game::DoLine(GetPos().X, GetPos().Y, XPointer,	YPointer,      RadiusSquare,	game::EmitationHandler);)
-
-	/*DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
-	             {game::DoLine(GetPos().X, GetPos().Y, XPointer, Top,      RadiusSquare,	game::EmitationHandler);
-	              game::DoLine(GetPos().X, GetPos().Y, XPointer, Bottom,   RadiusSquare,	game::EmitationHandler);},
-	             {game::DoLine(GetPos().X, GetPos().Y, Left,     YPointer, RadiusSquare,	game::EmitationHandler);
-	              game::DoLine(GetPos().X, GetPos().Y, Rigth,    YPointer, RadiusSquare,	game::EmitationHandler);})*/
 }
 
 void levelsquare::ReEmitate()
@@ -297,12 +280,6 @@ void levelsquare::ReEmitate()
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 			    game::DoLine(GetPos().X, GetPos().Y, XPointer,	YPointer,      RadiusSquare,	game::EmitationHandler);)
-
-	/*DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
-	             {game::DoLine(GetPos().X, GetPos().Y, XPointer, Top,      RadiusSquare,	game::EmitationHandler);
-	              game::DoLine(GetPos().X, GetPos().Y, XPointer, Bottom,   RadiusSquare,	game::EmitationHandler);},
-	             {game::DoLine(GetPos().X, GetPos().Y, Left,     YPointer, RadiusSquare,	game::EmitationHandler);
-	              game::DoLine(GetPos().X, GetPos().Y, Rigth,    YPointer, RadiusSquare,	game::EmitationHandler);})*/
 }
 
 void levelsquare::Noxify()
@@ -312,12 +289,6 @@ void levelsquare::Noxify()
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 			    game::DoLine(GetPos().X, GetPos().Y, XPointer,	YPointer,      RadiusSquare,	game::NoxifyHandler);)
-
-	/*DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
-	             {game::DoLine(GetPos().X, GetPos().Y, XPointer, Top,      RadiusSquare,	game::NoxifyHandler);
-	              game::DoLine(GetPos().X, GetPos().Y, XPointer, Bottom,   RadiusSquare,	game::NoxifyHandler);},
-	             {game::DoLine(GetPos().X, GetPos().Y, Left,     YPointer, RadiusSquare,	game::NoxifyHandler);
-	              game::DoLine(GetPos().X, GetPos().Y, Rigth,    YPointer, RadiusSquare,	game::NoxifyHandler);})*/
 }
 
 void levelsquare::ForceEmitterNoxify()
@@ -340,7 +311,6 @@ void levelsquare::NoxifyEmitter(vector2d Dir)
 
 	if(Index != 0xFFFF)
 		Emitter.Access(Index) = DirEmitter;
-		//Emitter.Remove(Index);
 
 	NewDrawRequested = true;
 	DescriptionChanged = true;
@@ -430,23 +400,16 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 				DescriptionChanged = true;
 
 			Emitter << DirEmitter;
-
-			//if(Dark)
-			//	DescriptionChanged = true;
 		}
 	}
 	else
 		if(AiL)
 		{
-			//if((!Dark && AiL < LIGHT_BORDER && Emitter.Access(Index).DilatedEmitation >= LIGHT_BORDER) || (Dark && AiL >= LIGHT_BORDER))
-			//	DescriptionChanged = true;
 			if(Emitter.Access(Index).DilatedEmitation == AiL)
 				return;
 
 			if(GetLuminance() < LIGHT_BORDER)
 			{
-				//DescriptionChanged = true;
-
 				Emitter.Access(Index) = DirEmitter;
 
 				if(AiL >= LIGHT_BORDER)
@@ -454,22 +417,16 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 			}
 			else
 			{
-				//DescriptionChanged = true;
-
 				Emitter.Access(Index) = DirEmitter;
 
 				if(AiL < LIGHT_BORDER && GetLuminance() < LIGHT_BORDER)
 					DescriptionChanged = true;
 			}
-
-			//Emitter.Access(Index) = DirEmitter;
 		}
 		else
 		{
 			if(GetLuminance() >= LIGHT_BORDER)
 			{
-				//DescriptionChanged = true;
-
 				Emitter.Remove(Index);
 
 				if(GetLuminance() < LIGHT_BORDER)
@@ -477,13 +434,7 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 			}
 			else
 				Emitter.Remove(Index);
-
-			//if(!Dark && AiL >= LIGHT_BORDER)
-			//	DescriptionChanged = true;
 		}
-
-	//if((Luminance < LIGHT_BORDER && AiL >= LIGHT_BORDER) || (Luminance == AiL))
-	//	DescriptionChanged = true;
 
 	NewDrawRequested = true;
 
@@ -530,7 +481,7 @@ void levelsquare::Save(outputfile& SaveFile) const
 	for(ushort c = 0; c < Emitter.Length(); ++c)
 		SaveFile << Emitter.Access(c).Pos << Emitter.Access(c).DilatedEmitation;
 
-	SaveFile << Fluided << Dark;
+	SaveFile << Fluided;
 
 	if(Fluided)
 		GetFluidBuffer()->Save(SaveFile);
@@ -567,7 +518,7 @@ void levelsquare::Load(inputfile& SaveFile)
 		Emitter.Add(E);
 	}
 
-	SaveFile >> Fluided >> Dark;
+	SaveFile >> Fluided;
 
 	if(Fluided)
 	{
@@ -739,16 +690,10 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 				SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 		}
 		else
-		{
 			SetMemorizedDescription("darkness");
-			//Anything = true;
-		}
 
 		DescriptionChanged = false;
 	}
-
-	//if(!Anything)
-	//	SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 }
 
 bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
@@ -783,11 +728,8 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 		ushort Emit = GetOverLevelTerrain()->GetEmitation();
 		ChangeOverLevelTerrain(new empty);
 		SignalEmitationDecrease(Emit);
-		//delete GetOverLevelTerrain();
-		//SetOverLevelTerrain(new empty);
 		ForceEmitterEmitation();
-		
-		//game::GetCurrentLevel()->UpdateLOS();
+
 		game::SendLOSUpdateRequest();
 	}
 	for(uchar c = 0; c < 4; ++c)
@@ -938,6 +880,8 @@ void levelsquare::DrawCheat()
 
 void levelsquare::ApplyScript(squarescript* SquareScript)
 {
+	Clean();
+
 	if(SquareScript->GetCharacter(false))
 	{
 		character* Char = SquareScript->GetCharacter()->Instantiate();

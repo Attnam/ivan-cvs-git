@@ -49,7 +49,7 @@ public:
 	static area* GetCurrentArea();
 	static level* GetCurrentLevel();
 	static bool LOSHandler(vector2d, vector2d);
-	static bool DoLine(long, long, long, long, ulong, /*ushort, ushort, ushort, ushort, */bool (*Proc)(vector2d, vector2d));
+	static bool DoLine(long, long, long, long, ulong, bool (*Proc)(vector2d, vector2d));
 	static class panel
 	{
 	public:
