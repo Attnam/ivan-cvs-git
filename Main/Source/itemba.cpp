@@ -222,7 +222,7 @@ bool item::Consume(character* Eater, float Amount)
 
 	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
 	{
-		game::DoEvilDeed(10);
+		game::DoEvilDeed(25);
 		ADD_MESSAGE("You feel that this was an evil deed.");
 	}
 

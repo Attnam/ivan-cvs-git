@@ -1893,11 +1893,7 @@ void character::ReceivePepsiEffect(long SizeOfEffect)
 		ADD_MESSAGE("Urgh. You feel your guruism fading away.");
 
 	SetHP(GetHP() - short(sqrt(SizeOfEffect / 20)));
-
-	if(short(GetPerception() - short(sqrt(SizeOfEffect / 20))) > 0)
-		SetPerception(GetPerception() - short(sqrt(SizeOfEffect / 20)));
-	else
-		SetPerception(1);
+	SetPerception(GetPerception() + short(sqrt(SizeOfEffect / 250)));
 
 	if(CheckDeath("was poisoned by pepsi"))
 		return;
@@ -1938,7 +1934,7 @@ void character::Darkness(long SizeOfEffect)
 
 	if(GetIsPlayer())
 	{
-		game::DoEvilDeed(short(SizeOfEffect / 100));
+		game::DoEvilDeed(short(SizeOfEffect / 50));
 
 		if(game::GetWizardMode())
 			ADD_MESSAGE("Change in relation: %d.", short(SizeOfEffect / 100));

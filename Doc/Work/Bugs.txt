@@ -1,1 +1,2 @@
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+Ivan's engrave msg is still too long.

@@ -1177,7 +1177,7 @@ public:
 protected:
 	virtual std::string NameSingular() const RET("werewolf")
 	virtual float GetMeleeStrength() const;
-	virtual std::string TalkVerb() const { return IsWolf ? "howls" : "hollers"; }
+	virtual std::string TalkVerb() const { return IsWolf ? "howls" : "screams"; }
 	ushort ChangeCounter;
 	bool IsWolf;
 );

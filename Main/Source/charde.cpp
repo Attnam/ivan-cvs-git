@@ -720,7 +720,7 @@ void petrus::BeTalkedTo(character* Talker)
 
 	if(Talker->HasHeadOfElpuri())
 	{
-		if(game::GetGod(1)->GetRelation() >= 0 && Talker->MaxDanger() >= 100000)
+		if(game::GetGod(1)->GetRelation() >= 0 && Talker->MaxDanger() >= 250000)
 		{
 			ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog!");
 			ADD_MESSAGE("Elpuri is not a foe worthy for thee.");

@@ -45,7 +45,7 @@ bool banana::Consume(character* Eater, float Amount)
 
 	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
 	{
-		game::DoEvilDeed(10);
+		game::DoEvilDeed(25);
 		ADD_MESSAGE("You feel that this was an evil deed.");
 	}
 
@@ -70,7 +70,7 @@ bool potion::Consume(character* Eater, float Amount)
 
 	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
 	{
-		game::DoEvilDeed(10);
+		game::DoEvilDeed(25);
 		ADD_MESSAGE("You feel that this was an evil deed.");
 	}
 

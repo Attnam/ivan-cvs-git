@@ -222,7 +222,6 @@ Dungeon 0;
 	Level 9;
 	{
 		Description=OreeLair;
-		/*LevelMessage="You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";*/
 		LevelMessage="\"Welcome to my lair, mortal! Prepare to be pepsified!\" Suddenly the stairs disappear.";
 		FillSquare=pepsi ground,pepsi earth;
 		Rooms=1;

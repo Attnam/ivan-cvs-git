@@ -897,7 +897,7 @@ void cruentus::Pray()
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
 
-		if(Relation < -500 && !(RAND() % 50))
+		if(Relation < -500 && !(RAND() % 10))
 		{
 			character* Angel = CreateAngel();
 

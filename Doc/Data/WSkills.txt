@@ -1,4 +1,4 @@
-The 12 main weapon skill categories are:
+The 13 main weapon skill categories are:
 
 Uncategorized
 Unarmed Combat
@@ -12,6 +12,7 @@ Flails
 Axes
 Halberds
 Spears
+Whips
 
 Category experience chart:
 

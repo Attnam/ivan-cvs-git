@@ -815,13 +815,13 @@ float game::Difficulty()
 
 		if(!Dice)
 		{
-			Base /= 3;
+			Base /= 5;
 			continue;
 		}
 
 		if(Dice == 4)
 		{
-			Base *= 3;
+			Base *= 5;
 			continue;
 		}
 
