@@ -8904,9 +8904,20 @@ bool character::TryToUnStickTraps(vector2d Dir)
   return !TrapData;
 }
 
+struct trapidcomparer
+{
+  trapidcomparer(ulong ID) : ID(ID) { }
+  bool operator()(const trapdata* T) const { return T->TrapID == ID; }
+  ulong ID;
+};
+
 void character::RemoveTrap(ulong ID)
 {
-  trapdata* T = TrapData;
+  trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
+  T = T->Next;
+  DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
+
+  /*trapdata* T = TrapData;
 
   if(!T)
     int esko = 2;
@@ -8928,12 +8939,19 @@ void character::RemoveTrap(ulong ID)
 
       LT->Next = T->Next;
       delete T;
-    }
+    }*/
 }
 
 void character::AddTrap(ulong ID, ulong BodyParts)
 {
-  trapdata* T = TrapData;
+  trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
+
+  if(T)
+    T->BodyParts |= BodyParts;
+  else
+    T = new trapdata(ID, GetID(), BodyParts);
+
+  /*trapdata* T = TrapData;
 
   if(!T)
     TrapData = new trapdata(ID, GetID(), BodyParts);
@@ -8955,7 +8973,9 @@ void character::AddTrap(ulong ID, ulong BodyParts)
       while(T);
 
       LT->Next = new trapdata(ID, GetID(), BodyParts);
-    }
+    }*/
+
+  DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
 }
 
 bool character::IsStuckToTrap(ulong ID) const
@@ -9090,7 +9110,7 @@ int character::RandomizeHurtBodyPart(ulong BodyParts) const
 bool character::BodyPartIsStuck(int I) const
 {
   for(const trapdata* T = TrapData; T; T = T->Next)
-    if(1 << I | T->BodyParts)
+    if(1 << I & T->BodyParts)
       return true;
 
   return false;

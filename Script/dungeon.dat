@@ -2583,7 +2583,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random;
 		{
 			Character = spider;
-			Times = 2;
+			Times = 5;
 		}
 
 		Square, Random;
@@ -2846,6 +2846,12 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random IN_ROOM;
 		{
 			Character = golem(GREEN_CRYSTAL);
+		}
+
+		Square, Random;
+		{
+			Character = spider;
+			Times = 15;
 		}
 
 		Square, Random IN_ROOM; /* this *must* be last currently */

@@ -41,7 +41,7 @@ double arm::GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBl
 int rightarm::GetBodyPartIndex() const { return RIGHT_ARM_INDEX; }
 int rightarm::GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_ARM; }
 
-int leftarm::GetBodyPartIndex() const { return  LEFT_ARM_INDEX; }
+int leftarm::GetBodyPartIndex() const { return LEFT_ARM_INDEX; }
 int leftarm::GetSpecialFlags() const { return SpecialFlags|ST_LEFT_ARM; }
 
 int groin::GetBodyPartIndex() const { return GROIN_INDEX; }

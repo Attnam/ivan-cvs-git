@@ -76,6 +76,8 @@ bool web::TryToUnStick(character* Victim, vector2d)
 	ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE),Victim->CHAR_OBJECT_PRONOUN);
 
       Victim->LoseConsciousness(250 + RAND_N(250));
+      Victim->EditAP(-1000);
+      return true;
     }
 
   if(!RAND_N(Modifier))
