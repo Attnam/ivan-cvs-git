@@ -227,9 +227,9 @@ void gearslot::PutInItem(item* What)
   if(Item)
     {
       Item->SetSlot(this);
+      GetBodyPart()->SignalEquipmentAdd(this);
       SignalVolumeAndWeightChange();
       SignalEmitationIncrease(Item->GetEmitation());
-      GetBodyPart()->SignalEquipmentAdd(this);
     }
 }
 

@@ -1,6 +1,11 @@
-July 21 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* Consummos bad pray effect works.
+	* BurdenState and all non-trivial attack information is now cached
+	* Some recently added bugs in TemporaryStateIsActivated(), EquipmentStateIsActivated()
+	  IsUsingArms(), IsUsingLegs() and IsUsingHead() fixed
+	* Corrected a fatal bug in the interlevel travel code born due to Hex's search & replace
+	* Fixed some odd block messages
+	* Many new bugs included
 
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
@@ -14,6 +19,10 @@ July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	  and carnivorous plants) to be run each tick instead of each turn, thus slowing
 	  down the game considerably
 	* Corrected the Great Attnamian Blitzkrieg Bug added by the last commit
+
+July 21 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Consummos bad pray effect works.
 
 July 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

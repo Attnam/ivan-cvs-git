@@ -705,7 +705,7 @@ class ABSTRACT_ITEM
   std::vector<ushort>& GetColorCVector() { return ColorC; }
   std::vector<ushort>& GetColorDVector() { return ColorD; }
   std::vector<uchar>& GetSpecialFlagsVector() { return SpecialFlags; }
-  virtual void ApplyExperience() { }
+  virtual bool ApplyExperience() { return false; }
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
   virtual void InitSpecialAttributes() { }
@@ -721,6 +721,10 @@ class ABSTRACT_ITEM
   virtual void CalculateMaxHP();
   virtual void SignalVolumeAndWeightChange();
   void RestoreHP() { HP = MaxHP; }
+  virtual void CalculateAttackStrength() { }
+  virtual void CalculateToHitValue() { }
+  virtual void CalculateAPCost() { }
+  void CalculateAttackInfo();
  protected:
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
@@ -765,19 +769,24 @@ class ITEM
   virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
+  float GetBiteStrength() const { return BiteStrength; }
   float GetBiteToHitValue() const { return 1.0f; }
-  float GetBiteStrength() const;
-  long GetBiteAPCost() const;
+  long GetBiteAPCost() const { return BiteAPCost; }
   virtual void InitSpecialAttributes();
   virtual item* GetEquipment(ushort) const;
   virtual ushort GetEquipmentSlots() const { return 2; }
   ulong GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(ulong What) { BaseBiteStrength = What; }
+  //void CalculateBiteToHitValue();
+  virtual void CalculateAttackStrength();
+  virtual void CalculateAPCost();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
   gearslot AmuletSlot;
   ulong BaseBiteStrength;
+  float BiteStrength;
+  long BiteAPCost;
 );
 
 class ABSTRACT_ITEM
@@ -847,11 +856,11 @@ class ABSTRACT_ITEM
   virtual void DropEquipment();
   float GetUnarmedToHitValue() const;
   float GetUnarmedStrength() const;
-  virtual void Hit(character*, float, float);
+  virtual void Hit(character*);
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long);
-  virtual void ApplyExperience();
+  virtual bool ApplyExperience();
   virtual void RaiseStats();
   virtual void LowerStats();
   void SetStrength(ushort What) { Strength = What; }
@@ -868,6 +877,15 @@ class ABSTRACT_ITEM
   virtual ushort GetEquipmentSlots() const { return 3; }
   ulong GetBaseUnarmedStrength() const { return BaseUnarmedStrength; }
   void SetBaseUnarmedStrength(ulong What) { BaseUnarmedStrength = What; }
+  virtual void CalculateAttackStrength();
+  virtual void CalculateToHitValue();
+  virtual void CalculateAPCost();
+  float GetAttackStrength() const { return AttackStrength; }
+  float GetToHitValue() const { return ToHitValue; }
+  long GetAPCost() const { return APCost; }
+  bool PairArmAllowsMelee() const;
+  void AddAttackInfo(felist&) const;
+  virtual void SignalVolumeAndWeightChange();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -878,6 +896,9 @@ class ABSTRACT_ITEM
   long StrengthExperience;
   long DexterityExperience;
   ulong BaseUnarmedStrength;
+  float AttackStrength;
+  float ToHitValue;
+  long APCost;
 );
 
 class ITEM
@@ -931,12 +952,12 @@ class ABSTRACT_ITEM
   item* GetBoot() const { return *BootSlot; }
   virtual ushort DangerWeight() const;
   virtual void DropEquipment();
-  float GetKickToHitValue() const;
-  float GetKickStrength() const;
+  float GetKickToHitValue() const { return KickToHitValue; }
+  float GetKickStrength() const { return KickStrength; }
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long);
-  virtual void ApplyExperience();
+  virtual bool ApplyExperience();
   virtual void RaiseStats();
   virtual void LowerStats();
   void SetStrength(ushort What) { Strength = What; }
@@ -945,11 +966,14 @@ class ABSTRACT_ITEM
   ushort GetStrength() const { return Strength; }
   virtual void InitSpecialAttributes();
   virtual void Mutate();
-  long GetKickAPCost() const;
+  long GetKickAPCost() const { return KickAPCost; }
   virtual item* GetEquipment(ushort) const;
   virtual ushort GetEquipmentSlots() const { return 1; }
   ulong GetBaseKickStrength() const { return BaseKickStrength; }
   void SetBaseKickStrength(ulong What) { BaseKickStrength = What; }
+  virtual void CalculateAttackStrength();
+  virtual void CalculateToHitValue();
+  virtual void CalculateAPCost();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -958,6 +982,9 @@ class ABSTRACT_ITEM
   long StrengthExperience;
   long AgilityExperience;
   ulong BaseKickStrength;
+  float KickToHitValue;
+  float KickStrength;
+  long KickAPCost;
 );
 
 class ITEM

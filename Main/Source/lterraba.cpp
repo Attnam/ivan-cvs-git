@@ -21,9 +21,8 @@ bool olterrain::GoUp(character* Who) const // Try to go up
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      vector2d Pos = GetLevelUnder()->RandomSquare(Who, true);
-      GetLevelUnder()->AddCharacter(Pos, Who);
-      //GetLevelUnder()->Luxify();
+      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
+      game::GetCurrentArea()->AddCharacter(Pos, Who);
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -76,9 +75,8 @@ bool olterrain::GoDown(character* Who) const // Try to go down
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      vector2d Pos = GetLevelUnder()->RandomSquare(Who, true);
-      GetLevelUnder()->AddCharacter(Pos, Who);
-      //GetLevelUnder()->Luxify();
+      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
+      game::GetCurrentArea()->AddCharacter(Pos, Who);
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();

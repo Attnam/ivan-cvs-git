@@ -350,7 +350,7 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-float humanoid::GetRightAttackStrength() const
+/*float humanoid::GetRightAttackStrength() const
 {
   if(GetRightArm())
     if(GetRightArm()->GetWielded())
@@ -432,7 +432,7 @@ long humanoid::GetLeftAPCost() const
 	return GetLeftArm()->GetUnarmedAPCost();
   else
     return 0;
-}
+}*/
 
 bool humanoid::Hit(character* Enemy)
 {
@@ -467,20 +467,20 @@ bool humanoid::Hit(character* Enemy)
   switch(Chosen)
     {
     case USE_ARMS:
-      if(GetRightAttackStrength() || GetLeftAttackStrength())
+      if((GetRightArm() && GetRightArm()->GetAttackStrength()) || (GetLeftArm() && GetLeftArm()->GetAttackStrength()))
 	{
 	  long RightAPCost = 0, LeftAPCost = 0;
 
-	  if(GetRightAttackStrength())
+	  if(GetRightArm() && GetRightArm()->GetAttackStrength())
 	    {
-	      RightAPCost = GetRightAPCost();
-	      GetRightArm()->Hit(Enemy, GetRightAttackStrength(), GetRightToHitValue());
+	      RightAPCost = GetRightArm()->GetAPCost();
+	      GetRightArm()->Hit(Enemy);
 	    }
 
-	  if(Enemy->IsEnabled() && GetLeftAttackStrength())
+	  if(IsEnabled() && Enemy->IsEnabled() && GetLeftArm() && GetLeftArm()->GetAttackStrength())
 	    {
-	      LeftAPCost = GetLeftAPCost();
-	      GetLeftArm()->Hit(Enemy, GetLeftAttackStrength(), GetLeftToHitValue());
+	      LeftAPCost = GetLeftArm()->GetAPCost();
+	      GetLeftArm()->Hit(Enemy);
 	    } 
 
 	  EditNP(-50);
@@ -2152,10 +2152,17 @@ void humanoid::AddInfo(felist& Info) const
       Info.AddEntry(std::string("Left leg agility: ") + GetLeftLeg()->GetAttribute(AGILITY), LIGHTGRAY);
     }
 
-  Info.AddEntry(std::string("Right attack strength: ") + ulong(GetRightAttackStrength() / 1000), LIGHTGRAY);
-  Info.AddEntry(std::string("Right to hit value: ") + ulong(GetRightToHitValue()), LIGHTGRAY);
-  Info.AddEntry(std::string("Left attack strength: ") + ulong(GetLeftAttackStrength() / 1000), LIGHTGRAY);
-  Info.AddEntry(std::string("Left to hit value: ") + ulong(GetLeftToHitValue()), LIGHTGRAY);
+  if(GetRightArm())
+    {
+      Info.AddEntry(std::string("Right attack strength: ") + ulong(GetRightArm()->GetAttackStrength() / 1000), LIGHTGRAY);
+      Info.AddEntry(std::string("Right to hit value: ") + ulong(GetRightArm()->GetToHitValue()), LIGHTGRAY);
+    }
+
+  if(GetLeftArm())
+    {
+      Info.AddEntry(std::string("Left attack strength: ") + ulong(GetLeftArm()->GetAttackStrength() / 1000), LIGHTGRAY);
+      Info.AddEntry(std::string("Left to hit value: ") + ulong(GetLeftArm()->GetToHitValue()), LIGHTGRAY);
+    }
 
   if(GetRightLeg())
     {
@@ -2408,49 +2415,49 @@ void nonhumanoid::Load(inputfile& SaveFile)
   SaveFile >> Strength >> Agility >> StrengthExperience >> AgilityExperience;
 }
 
-float nonhumanoid::GetUnarmedStrength() const
+void nonhumanoid::CalculateUnarmedStrength()
 {
-  return GetBaseUnarmedStrength() * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
+  UnarmedStrength = GetBaseUnarmedStrength() * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
-float nonhumanoid::GetUnarmedToHitValue() const
+void nonhumanoid::CalculateUnarmedToHitValue()
 {
-  return ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 100;
+  UnarmedToHitValue = ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 100;
 }
 
-long nonhumanoid::GetUnarmedAPCost() const
+void nonhumanoid::CalculateUnarmedAPCost()
 {
-  return long(GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMoveEase());
+  UnarmedAPCost = long(GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMoveEase());
 }
 
-float nonhumanoid::GetKickStrength() const
+void nonhumanoid::CalculateKickStrength()
 {
-  return GetBaseKickStrength() * GetAttribute(LEGSTRENGTH) * GetCategoryWeaponSkill(KICK)->GetEffectBonus();
+  KickStrength = GetBaseKickStrength() * GetAttribute(LEGSTRENGTH) * GetCategoryWeaponSkill(KICK)->GetEffectBonus();
 }
 
-float nonhumanoid::GetKickToHitValue() const
+void nonhumanoid::CalculateKickToHitValue()
 {
-  return ((GetAttribute(AGILITY) << 2) + GetAttribute(LEGSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 200;
+  KickToHitValue = ((GetAttribute(AGILITY) << 2) + GetAttribute(LEGSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 200;
 }
 
-long nonhumanoid::GetKickAPCost() const
+void nonhumanoid::CalculateKickAPCost()
 {
-  return long(GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(GetAttribute(AGILITY)) - 200) * 1000 / GetMoveEase());
+  KickAPCost = long(GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(GetAttribute(AGILITY)) - 200) * 1000 / GetMoveEase());
 }
 
-float nonhumanoid::GetBiteStrength() const
+void nonhumanoid::CalculateBiteStrength()
 {
-  return GetBaseBiteStrength() * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(BITE)->GetEffectBonus();
+  BiteStrength = GetBaseBiteStrength() * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(BITE)->GetEffectBonus();
 }
 
-float nonhumanoid::GetBiteToHitValue() const
+void nonhumanoid::CalculateBiteToHitValue()
 {
-  return ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 200;
+  BiteToHitValue = ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 200;
 }
 
-long nonhumanoid::GetBiteAPCost() const
+void nonhumanoid::CalculateBiteAPCost()
 {
-  return long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 1000 / GetMoveEase());
+  BiteAPCost = long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 1000 / GetMoveEase());
 }
 
 void nonhumanoid::InitSpecialAttributes()
@@ -2473,7 +2480,10 @@ void humanoid::Bite(character* Enemy)
       SpecialBiteEffect(Enemy);
     case HASDIED:
       if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
-	GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+	{
+	  GetHead()->CalculateAttackInfo();
+	  GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+	}
     case HASDODGED:
       EditExperience(AGILITY, 50);
     }
@@ -2491,7 +2501,10 @@ void nonhumanoid::Bite(character* Enemy)
       SpecialBiteEffect(Enemy);
     case HASDIED:
       if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
-	GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+	{
+	  CalculateBiteAttackInfo();
+	  GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+	}
     case HASDODGED:
       EditExperience(AGILITY, 50);
     }
@@ -2501,37 +2514,43 @@ void humanoid::Kick(lsquare* Square)
 {
   /* This function must not be called if a leg is missing */
 
-  if(GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength())
+  /*if(GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength())
+    {*/
+
+  leg* KickLeg = GetKickLeg();
+  EditAP(KickLeg->GetKickAPCost());
+  Square->BeKicked(this, KickLeg->GetKickStrength(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+
+  /* Leg might be destroyed in the process, check needed */
+
+  if(KickLeg == GetKickLeg())
     {
-      EditAP(GetRightLeg()->GetKickAPCost());
-      Square->BeKicked(this, GetRightLeg()->GetKickStrength(), GetRightLeg()->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
-
-      /* Leg might be destroyed in the process, check needed */
-
-      if(GetRightLeg())
-	{
-	  GetRightLeg()->EditExperience(LEGSTRENGTH, 25);
-	  GetRightLeg()->EditExperience(AGILITY, 50);
-	}
+      KickLeg->EditExperience(LEGSTRENGTH, 25);
+      KickLeg->EditExperience(AGILITY, 50);
     }
+
+    /*}
   else
     {
       EditAP(GetLeftLeg()->GetKickAPCost());
       Square->BeKicked(this, GetLeftLeg()->GetKickStrength(), GetLeftLeg()->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
 
-      /* Leg might be destroyed in the process, check needed */
+      / Leg might be destroyed in the process, check needed /
 
       if(GetLeftLeg())
 	{
 	  GetLeftLeg()->EditExperience(LEGSTRENGTH, 25);
 	  GetLeftLeg()->EditExperience(AGILITY, 50);
 	}
-    }
+    }*/
 
   EditNP(-50);
 
   if(GetCategoryWeaponSkill(KICK)->AddHit() && IsPlayer())
-    GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
+    {
+      GetKickLeg()->CalculateAttackInfo(); // check existence
+      GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
+    }
 }
 
 void nonhumanoid::Kick(lsquare* Square)
@@ -2543,7 +2562,10 @@ void nonhumanoid::Kick(lsquare* Square)
   EditAP(GetKickAPCost());
 
   if(GetCategoryWeaponSkill(KICK)->AddHit() && IsPlayer())
-    GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
+    {
+      CalculateKickAttackInfo();
+      GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
+    }
 }
 
 bool nonhumanoid::Hit(character* Enemy)
@@ -2619,7 +2641,10 @@ void nonhumanoid::UnarmedHit(character* Enemy)
       EditExperience(ARMSTRENGTH, 50);
 
       if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
-	GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+	{
+	  CalculateUnarmedAttackInfo();
+	  GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+	}
     case HASDODGED:
       EditExperience(DEXTERITY, 25);
     }
@@ -2636,18 +2661,15 @@ float humanoid::GetAttackStrengthDanger() const
 
   if(IsUsingArms())
     {
-      Danger += GetRightAttackStrength() * (GetRightToHitValue() + DodgeValue);
-      Danger += GetLeftAttackStrength() * (GetLeftToHitValue() + DodgeValue);
+      //Danger += GetRightAttackStrength() * (GetRightToHitValue() + DodgeValue);
+      //Danger += GetLeftAttackStrength() * (GetLeftToHitValue() + DodgeValue);
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
-      if(GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength())
-	Danger += GetRightLeg()->GetKickStrength() * (GetRightLeg()->GetKickToHitValue() + DodgeValue);
-      else
-	Danger += GetLeftLeg()->GetKickStrength() * (GetLeftLeg()->GetKickToHitValue() + DodgeValue);
-
+      leg* KickLeg = GetKickLeg();
+      Danger += KickLeg->GetKickStrength() * (KickLeg->GetKickToHitValue() + DodgeValue);
       ++AttackStyles;
     }
 
@@ -2687,7 +2709,7 @@ float nonhumanoid::GetAttackStrengthDanger() const
   return Danger / AttackStyles;
 }
 
-void nonhumanoid::ApplyExperience()
+void nonhumanoid::ApplyExperience(bool Edited)
 {
   if(CheckForAttributeIncrease(Strength, StrengthExperience, true))
     {
@@ -2695,6 +2717,9 @@ void nonhumanoid::ApplyExperience()
 	ADD_MESSAGE("Your feel stronger!");
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", CHARNAME(DEFINITE));
+
+      CalculateBurdenState();
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(Strength, StrengthExperience, true))
     {
@@ -2702,6 +2727,9 @@ void nonhumanoid::ApplyExperience()
 	ADD_MESSAGE("Your feel weaker.");
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", CHARNAME(DEFINITE));
+
+      CalculateBurdenState();
+      Edited = true;
     }
 
   if(CheckForAttributeIncrease(Agility, AgilityExperience, true))
@@ -2710,6 +2738,8 @@ void nonhumanoid::ApplyExperience()
 	ADD_MESSAGE("Your feel very agile!");
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks very agile.", CHARNAME(DEFINITE));
+
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(Agility, AgilityExperience, true))
     {
@@ -2717,9 +2747,11 @@ void nonhumanoid::ApplyExperience()
 	ADD_MESSAGE("Your feel slower.");
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks sluggish.", CHARNAME(DEFINITE));
+
+      Edited = true;
     }
 
-  character::ApplyExperience();
+  character::ApplyExperience(Edited);
 }
 
 ushort humanoid::GetAttribute(ushort Identifier) const
@@ -2913,38 +2945,32 @@ ushort humanoid::DrawStats() const
 	if(GetRightWielded() && GetRightWielded()->IsShield(this))
 	  {
 	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDS %d", GetRightWielded()->GetStrengthValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDV %.0f", GetRightToHitValue() * GetRightWielded()->GetBlockModifier(this) / 10000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDV %.0f", GetRightArm()->GetToHitValue() * GetRightWielded()->GetBlockModifier(this) / 10000);
 	  }
 	else
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAS %.0f", GetRightAttackStrength() / 1000);
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", GetRightToHitValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAPC %d", -GetRightAPCost());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAS %.0f", GetRightArm()->GetAttackStrength() / 1000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", GetRightArm()->GetToHitValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAPC %d", -GetRightArm()->GetAPCost());
 	  }
 
       if(GetLeftArm())
 	if(GetLeftWielded() && GetLeftWielded()->IsShield(this))
 	  {
 	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDS %d", GetLeftWielded()->GetStrengthValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDV %.0f", GetLeftToHitValue() * GetLeftWielded()->GetBlockModifier(this) / 10000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDV %.0f", GetLeftArm()->GetToHitValue() * GetLeftWielded()->GetBlockModifier(this) / 10000);
 	  }
 	else
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAS %.0f", GetLeftAttackStrength() / 1000);
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", GetLeftToHitValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAPC %d", -GetLeftAPCost());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAS %.0f", GetLeftArm()->GetAttackStrength() / 1000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", GetLeftArm()->GetToHitValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAPC %d", -GetLeftArm()->GetAPCost());
 	  }
     }
 
   if(IsUsingLegs())
     {
-      leg* Leg;
-
-      if(GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength())
-	Leg = GetRightLeg();
-      else
-	Leg = GetLeftLeg();
-
+      leg* Leg = GetKickLeg();
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAS %.0f", Leg->GetKickStrength() / 1000);
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", Leg->GetKickToHitValue());
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAPC %d", -Leg->GetKickAPCost());
@@ -3046,10 +3072,10 @@ ushort humanoid::GetRandomStepperBodyPart() const
 ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
 {
   if(GetRightWielded())
-    Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, GetRightToHitValue(), Damage, Success, Type);
+    Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, GetRightArm()->GetToHitValue(), Damage, Success, Type);
 
   if(Damage && GetLeftWielded())
-    Damage = CheckForBlockWithItem(Enemy, Weapon, GetLeftWielded(), ToHitValue, GetLeftToHitValue(), Damage, Success, Type);
+    Damage = CheckForBlockWithItem(Enemy, Weapon, GetLeftWielded(), ToHitValue, GetLeftArm()->GetToHitValue(), Damage, Success, Type);
 
   return Damage;
 }
@@ -3176,6 +3202,8 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 	  SingleWeaponSkill.push_back(GetCurrentLeftSingleWeaponSkill());
 	}
     }
+
+  CalculateAttackInfo();
 }
 
 void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
@@ -3208,6 +3236,8 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
 
       SetCurrentLeftSingleWeaponSkill(0);
     }
+
+  CalculateAttackInfo();
 }
 
 void humanoid::CharacterSpeciality()
@@ -3484,82 +3514,33 @@ bool humanoid::CanUseStethoscope(bool PrintReason) const
 
 bool humanoid::IsUsingArms() const
 {
-  return GetAttackStyle() & USE_ARMS && (GetRightAttackStrength() || GetLeftAttackStrength());
+  return GetAttackStyle() & USE_ARMS && ((GetRightArm() && GetRightArm()->GetAttackStrength()) || (GetLeftArm() && GetLeftArm()->GetAttackStrength()));
 }
 
 bool humanoid::IsUsingLegs() const
 {
-  return (GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !GetRightAttackStrength() && !GetLeftAttackStrength())) && GetRightLeg() && GetLeftLeg();
+  return (GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && (!GetRightArm() || !GetRightArm()->GetAttackStrength()) && (!GetLeftArm() || !GetLeftArm()->GetAttackStrength()))) && GetRightLeg() && GetLeftLeg();
 }
 
 bool humanoid::IsUsingHead() const
 {
-  return (GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !GetRightAttackStrength() && !GetLeftAttackStrength())) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead();
+  return (GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && (!GetRightArm() || !GetRightArm()->GetAttackStrength()) && (!GetLeftArm() || !GetLeftArm()->GetAttackStrength()))) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead();
 }
 
 void humanoid::AddAttackInfo(felist& List) const
 {
   if(GetAttackStyle() & USE_ARMS)
     {
-      if(GetRightAttackStrength())
-	{
-	  std::string Entry = "   ";
+      if(GetRightArm())
+	GetRightArm()->AddAttackInfo(List);
 
-	  if(GetRightWielded())
-	    {
-	      GetRightWielded()->AddName(Entry, UNARTICLED);
-
-	      if(GetRightWielded()->IsTwoHanded() && GetLeftArm() && !GetLeftWielded())
-		Entry << " (b)";
-	      else
-		Entry << " (r)";
-	    }
-	  else
-	    Entry << "melee attack (r)";
-
-	  Entry.resize(50, ' ');
-	  Entry << int(GetRightAttackStrength() / 50000);
-	  Entry.resize(60, ' ');
-	  Entry << int(GetRightToHitValue());
-	  Entry.resize(70, ' ');
-	  Entry << -GetRightAPCost();
-	  List.AddEntry(Entry, LIGHTGRAY, 0, false);
-	}
-
-      if(GetLeftAttackStrength())
-	{
-	  std::string Entry = "   ";
-
-	  if(GetLeftWielded())
-	    {
-	      GetLeftWielded()->AddName(Entry, UNARTICLED);
-
-	      if(GetLeftWielded()->IsTwoHanded() && GetRightArm() && !GetRightWielded())
-		Entry << " (b)";
-	      else
-		Entry << " (l)";
-	    }
-	  else
-	    Entry << "melee attack (l)";
-
-	  Entry.resize(50, ' ');
-	  Entry << int(GetLeftAttackStrength() / 50000);
-	  Entry.resize(60, ' ');
-	  Entry << int(GetLeftToHitValue());
-	  Entry.resize(70, ' ');
-	  Entry << -GetLeftAPCost();
-	  List.AddEntry(Entry, LIGHTGRAY, 0, false);
-	}
+      if(GetLeftArm())
+	GetLeftArm()->AddAttackInfo(List);
     }
 
   if(IsUsingLegs())
     {
-      leg* KickLeg;
-
-      if(GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength())
-	KickLeg = GetRightLeg();
-      else
-	KickLeg = GetLeftLeg();
+      leg* KickLeg = GetKickLeg();
 
       std::string Entry = "   kick attack";
       Entry.resize(50, ' ');
@@ -3623,3 +3604,46 @@ void nonhumanoid::AddAttackInfo(felist& List) const
     }
 }
 
+void humanoid::CalculateAttackInfo()
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      {
+	GetBodyPart(c)->CalculateAttackStrength();
+	GetBodyPart(c)->CalculateToHitValue();
+	GetBodyPart(c)->CalculateAPCost();
+      }
+}
+
+void nonhumanoid::CalculateAttackInfo()
+{
+  CalculateUnarmedAttackInfo();
+  CalculateKickAttackInfo();
+  CalculateBiteAttackInfo();
+}
+
+void nonhumanoid::CalculateUnarmedAttackInfo()
+{
+  CalculateUnarmedStrength();
+  CalculateUnarmedToHitValue();
+  CalculateUnarmedAPCost();
+}
+
+void nonhumanoid::CalculateKickAttackInfo()
+{
+  CalculateKickStrength();
+  CalculateKickToHitValue();
+  CalculateKickAPCost();
+}
+
+void nonhumanoid::CalculateBiteAttackInfo()
+{
+  CalculateBiteStrength();
+  CalculateBiteToHitValue();
+  CalculateBiteAPCost();
+}
+
+leg* humanoid::GetKickLeg() const
+{
+  return GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength() ? static_cast<leg*>(GetRightLeg()) : static_cast<leg*>(GetLeftLeg());
+}

@@ -124,13 +124,12 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      GetLevelUnder()->GetSquare(GetLevelUnder()->GetDownStairs())->KickAnyoneStandingHereAway();
-      GetLevelUnder()->AddCharacter(GetLevelUnder()->GetDownStairs(), Who);
+      game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
+      game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	GetLevelUnder()->AddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetDownStairs()), *c);
+	game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetDownStairs()), *c);
 
-      //GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -192,13 +191,12 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      GetLevelUnder()->GetSquare(GetLevelUnder()->GetUpStairs())->KickAnyoneStandingHereAway();
-      GetLevelUnder()->AddCharacter(GetLevelUnder()->GetUpStairs(), Who);
+      game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
+      game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	GetLevelUnder()->AddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetUpStairs()), *c);
+	game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetUpStairs()), *c);
 
-      //GetLevelUnder()->Luxify();
       game::ShowLevelMessage();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();

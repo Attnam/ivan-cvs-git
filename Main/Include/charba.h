@@ -221,7 +221,8 @@ class character : public entity, public id
   long GetNP() const { return NP; }
   //virtual short GetHP() const;
   virtual stack* GetStack() const { return Stack; }
-  virtual uchar GetBurdenState(ulong = 0) const;
+  virtual uchar GetBurdenState() const { return BurdenState; }
+  virtual bool MakesBurdened(ulong Mass) const { return Mass > 2500 * GetCarryingStrength(); }
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
   virtual ulong CurrentDanger() const;
   virtual ulong MaxDanger() const;
@@ -232,7 +233,7 @@ class character : public entity, public id
   virtual void AddMissMessage(character*) const;
   virtual void AddPrimitiveHitMessage(character*, const std::string&, const std::string&, uchar) const;
   virtual void AddWeaponHitMessage(character*, item*, uchar, bool = false) const;
-  virtual void ApplyExperience();
+  virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo(character*);
   virtual void ReceiveDarkness(long);
   virtual void Die(bool = false);
@@ -262,8 +263,8 @@ class character : public entity, public id
   void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
   void ActivateEquipmentState(ushort What) { EquipmentState |= What; }
   void DeActivateEquipmentState(ushort What) { EquipmentState &= ~What; }
-  bool TemporaryStateIsActivated(ushort What) const { return TemporaryState & What != 0; }	
-  bool EquipmentStateIsActivated(ushort What) const { return EquipmentState & What != 0; }
+  bool TemporaryStateIsActivated(ushort What) const { return (TemporaryState & What) != 0; }	
+  bool EquipmentStateIsActivated(ushort What) const { return (EquipmentState & What) != 0; }
   bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
   virtual void Faint();
   void SetTemporaryStateCounter(ushort, ushort);
@@ -592,9 +593,9 @@ class character : public entity, public id
   void PrintBeginPolymorphMessage() const;
   void DisplayStethoscopeInfo(character*) const;
   virtual bool CanUseStethoscope(bool) const;
-  virtual bool IsUsingArms() const { return GetAttackStyle() & USE_ARMS != 0; }
-  virtual bool IsUsingLegs() const { return GetAttackStyle() & USE_LEGS != 0; }
-  virtual bool IsUsingHead() const { return GetAttackStyle() & USE_HEAD != 0; }
+  virtual bool IsUsingArms() const { return (GetAttackStyle() & USE_ARMS) != 0; }
+  virtual bool IsUsingLegs() const { return (GetAttackStyle() & USE_LEGS) != 0; }
+  virtual bool IsUsingHead() const { return (GetAttackStyle() & USE_HEAD) != 0; }
   virtual void AddAttackInfo(felist&) const = 0;
   level* GetLevelUnder() const { return static_cast<level*>(SquareUnder->GetAreaUnder()); }
   area* GetAreaUnder() const { return SquareUnder->GetAreaUnder(); }
@@ -629,6 +630,8 @@ class character : public entity, public id
   short GetMaxHP() const { return MaxHP; }
   void CalculateBodyPartMaxHPs();
   bool IsInitializing() const { return Initializing; }
+  virtual void CalculateAttackInfo() = 0;
+  void CalculateBurdenState();
  protected:
   virtual void SpecialTurnHandler() { }
   virtual uchar GetAllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
@@ -721,6 +724,7 @@ class character : public entity, public id
   short HP;
   short MaxHP;
   bool Initializing;
+  uchar BurdenState;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

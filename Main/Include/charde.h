@@ -78,12 +78,12 @@ class ABSTRACT_CHARACTER
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  virtual float GetRightAttackStrength() const;
+  /*virtual float GetRightAttackStrength() const;
   virtual float GetLeftAttackStrength() const;
   virtual float GetRightToHitValue() const;
   virtual float GetLeftToHitValue() const;
   virtual long GetRightAPCost() const;
-  virtual long GetLeftAPCost() const;
+  virtual long GetLeftAPCost() const;*/
   virtual std::string EquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
@@ -140,6 +140,8 @@ class ABSTRACT_CHARACTER
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
   virtual void AddAttackInfo(felist&) const;
+  virtual void CalculateAttackInfo();
+  virtual leg* GetKickLeg() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -165,22 +167,31 @@ class ABSTRACT_CHARACTER
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual float GetUnarmedStrength() const;
-  virtual float GetKickStrength() const;
-  virtual float GetBiteStrength() const;
-  virtual float GetUnarmedToHitValue() const;
-  virtual float GetKickToHitValue() const;
-  virtual float GetBiteToHitValue() const;
-  virtual long GetUnarmedAPCost() const;
-  virtual long GetKickAPCost() const;
-  virtual long GetBiteAPCost() const;
+  virtual void CalculateUnarmedStrength();
+  virtual void CalculateKickStrength();
+  virtual void CalculateBiteStrength();
+  virtual void CalculateUnarmedToHitValue();
+  virtual void CalculateKickToHitValue();
+  virtual void CalculateBiteToHitValue();
+  virtual void CalculateUnarmedAPCost();
+  virtual void CalculateKickAPCost();
+  virtual void CalculateBiteAPCost();
+  float GetUnarmedStrength() const { return UnarmedStrength; }
+  float GetKickStrength() const { return KickStrength; }
+  float GetBiteStrength() const { return BiteStrength; }
+  float GetUnarmedToHitValue() const { return UnarmedToHitValue; }
+  float GetKickToHitValue() const { return KickToHitValue; }
+  float GetBiteToHitValue() const { return BiteToHitValue; }
+  long GetUnarmedAPCost() const { return UnarmedAPCost; }
+  long GetKickAPCost() const { return KickAPCost; }
+  long GetBiteAPCost() const { return BiteAPCost; }
   virtual void Kick(lsquare*);
   virtual void AddInfo(felist&) const;
   virtual bool Hit(character*);
   virtual void UnarmedHit(character*);
   virtual void InitSpecialAttributes();
   virtual float GetAttackStrengthDanger() const;
-  virtual void ApplyExperience();
+  virtual void ApplyExperience(bool = false);
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
@@ -190,11 +201,24 @@ class ABSTRACT_CHARACTER
   virtual bool LowerStats();
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH) << 1; }
   virtual void AddAttackInfo(felist&) const;
+  virtual void CalculateAttackInfo();
+  virtual void CalculateUnarmedAttackInfo();
+  virtual void CalculateKickAttackInfo();
+  virtual void CalculateBiteAttackInfo();
  protected:
   ushort Strength;
   ushort Agility;
   long StrengthExperience;
   long AgilityExperience;
+  float UnarmedStrength;
+  float KickStrength;
+  float BiteStrength;
+  float UnarmedToHitValue;
+  float KickToHitValue;
+  float BiteToHitValue;
+  long UnarmedAPCost;
+  long KickAPCost;
+  long BiteAPCost;
 );
 
 class CHARACTER

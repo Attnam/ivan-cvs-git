@@ -964,9 +964,9 @@ void character::AddBlockMessage(character* Enemy, item* Blocker, const std::stri
   std::string Msg;
   std::string BlockVerb = (Partial ? " to partially block the " : " to block the ") + HitNoun;
 
-  if(Enemy->IsPlayer())
+  if(IsPlayer())
     Msg << "You manage" << BlockVerb << " with your " << Blocker->GetName(UNARTICLED) << "!";
-  else if(IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
+  else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
     Msg << Description(DEFINITE) << " manages" << BlockVerb << " with " << PossessivePronoun() << " " << Blocker->GetName(UNARTICLED) << "!";
   else
     return;
@@ -1106,19 +1106,14 @@ bool character::NOP()
 {
   EditExperience(AGILITY, -10);
   EditAP(-1000);
-  //EditExperience(PERCEPTION, 100000);
-  //EditExperience(ENDURANCE, 100000);
-  EditAttribute(PERCEPTION, 1);
-  EditAttribute(ENDURANCE, 1);
-  EditAttribute(ARMSTRENGTH, 1);
   return true;
 }
 
-void character::ApplyExperience()
+void character::ApplyExperience(bool Edited)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->ApplyExperience();
+    if(GetBodyPart(c) && GetBodyPart(c)->ApplyExperience())
+      Edited = true;
 
   if(CheckForAttributeIncrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
     {
@@ -1128,6 +1123,7 @@ void character::ApplyExperience()
 	ADD_MESSAGE("Suddenly %s looks tougher.", CHARNAME(DEFINITE));
 
       CalculateBodyPartMaxHPs();
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
     {
@@ -1137,6 +1133,7 @@ void character::ApplyExperience()
 	ADD_MESSAGE("Suddenly %s looks less healthy.", CHARNAME(DEFINITE));
 
       CalculateBodyPartMaxHPs();
+      Edited = true;
     }
 
   if(CheckForAttributeIncrease(BaseAttribute[PERCEPTION], BaseExperience[PERCEPTION]))
@@ -1146,6 +1143,8 @@ void character::ApplyExperience()
 	  ADD_MESSAGE("Your don't feel as guru anymore.");
 	  game::SendLOSUpdateRequest();
 	}
+
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(BaseAttribute[PERCEPTION], BaseExperience[PERCEPTION]))
     {
@@ -1155,28 +1154,38 @@ void character::ApplyExperience()
 	  game::GetGod(1)->AdjustRelation(100);
 	  game::SendLOSUpdateRequest();
 	}
+
+      Edited = true;
     }
 
   if(CheckForAttributeIncrease(BaseAttribute[INTELLIGENCE], BaseExperience[INTELLIGENCE]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("Suddenly the inner structure of the Multiverse around you looks quite simple.");
+
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(BaseAttribute[INTELLIGENCE], BaseExperience[INTELLIGENCE]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("It surely is hard to think today.");
+
+      Edited = true;
     }
 
   if(CheckForAttributeIncrease(BaseAttribute[WISDOM], BaseExperience[WISDOM]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel your life experience increasing all the time.");
+
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(BaseAttribute[WISDOM], BaseExperience[WISDOM]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel like having done something unwise.");
+
+      Edited = true;
     }
 
   if(CheckForAttributeIncrease(BaseAttribute[CHARISMA], BaseExperience[CHARISMA]))
@@ -1190,6 +1199,8 @@ void character::ApplyExperience()
 	  else
 	    ADD_MESSAGE("%s looks more attractive.", CHARNAME(DEFINITE));
 	}
+
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(BaseAttribute[CHARISMA], BaseExperience[CHARISMA]))
     {
@@ -1202,6 +1213,8 @@ void character::ApplyExperience()
 	  else
 	    ADD_MESSAGE("%s looks less attractive.", CHARNAME(DEFINITE));
 	}
+
+      Edited = true;
     }
 
   if(CheckForAttributeIncrease(BaseAttribute[MANA], BaseExperience[MANA]))
@@ -1210,6 +1223,8 @@ void character::ApplyExperience()
 	ADD_MESSAGE("You feel magical forces coursing through your body!");
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("You notice an odd glow around %s.", CHARNAME(DEFINITE));
+
+      Edited = true;
     }
   else if(CheckForAttributeDecrease(BaseAttribute[MANA], BaseExperience[MANA]))
     {
@@ -1217,7 +1232,12 @@ void character::ApplyExperience()
 	ADD_MESSAGE("You feel your magical abilities withering slowly.");
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("You notice strange vibrations in the air around %s. But they disappear rapidly.", CHARNAME(DEFINITE));
+
+      Edited = true;
     }
+
+  if(Edited)
+    CalculateAttackInfo();
 }
 
 bool character::HasHeadOfElpuri() const
@@ -1309,20 +1329,22 @@ bool character::ReadItem(item* ToBeRead)
     }
 }
 
-uchar character::GetBurdenState(ulong Mass) const
+void character::CalculateBurdenState()
 {
-  ulong SumOfMasses;
-  if(!Mass)
-    SumOfMasses = GetCarriedWeight();
-  else
-    SumOfMasses = Mass;
+  uchar OldBurdenState = BurdenState;
+  ulong SumOfMasses = GetCarriedWeight();
+
   if(SumOfMasses > ulong(7500 * GetCarryingStrength()))
-    return OVERLOADED;
-  if(SumOfMasses > ulong(5000 * GetCarryingStrength()))
-    return STRESSED;
-  if(SumOfMasses > ulong(2500 * GetCarryingStrength()))
-    return BURDENED;
-  return UNBURDENED;
+    BurdenState = OVERLOADED;
+  else if(SumOfMasses > ulong(5000 * GetCarryingStrength()))
+    BurdenState = STRESSED;
+  else if(SumOfMasses > ulong(2500 * GetCarryingStrength()))
+    BurdenState = BURDENED;
+  else
+    BurdenState = UNBURDENED;
+
+  if(!Initializing && BurdenState != OldBurdenState)
+    CalculateAttackInfo();
 }
 
 bool character::Dip()
@@ -1492,7 +1514,7 @@ bool character::RaiseStats()
   for(c = 0; c < BASEATTRIBUTES; ++c)
     BaseAttribute[c] += 10;
 
-  CalculateBodyPartMaxHPs();
+  CalculateAll();
   RestoreHP();
   game::SendLOSUpdateRequest();
   return false;
@@ -1509,7 +1531,7 @@ bool character::LowerStats()
   for(c = 0; c < BASEATTRIBUTES; ++c)
     BaseAttribute[c] -= 10;
 
-  CalculateBodyPartMaxHPs();
+  CalculateAll();
   RestoreHP();
   game::SendLOSUpdateRequest();
   return false;
@@ -1606,7 +1628,7 @@ bool character::MoveRandomly()
 
 bool character::TestForPickup(item* ToBeTested) const
 {
-  if(GetBurdenState(ToBeTested->GetWeight() + GetCarriedWeight()) != UNBURDENED)
+  if(MakesBurdened(ToBeTested->GetWeight() + GetCarriedWeight()))
     return false;
 
   return true;
@@ -4103,16 +4125,16 @@ ushort character::CheckForBlockWithItem(character* Enemy, item*, item* Blocker, 
 	switch(Type)
 	  {
 	  case UNARMEDATTACK:
-	    Enemy->AddBlockMessage(this, Blocker, UnarmedHitNoun(), Partial);
+	    AddBlockMessage(Enemy, Blocker, Enemy->UnarmedHitNoun(), Partial);
 	    break;
 	  case WEAPONATTACK:
-	    Enemy->AddBlockMessage(this, Blocker, "hit", Partial);
+	    AddBlockMessage(Enemy, Blocker, "hit", Partial);
 	    break;
 	  case KICKATTACK:
-	    Enemy->AddBlockMessage(this, Blocker, KickNoun(), Partial);
+	    AddBlockMessage(Enemy, Blocker, Enemy->KickNoun(), Partial);
 	    break;
 	  case BITEATTACK:
-	    Enemy->AddBlockMessage(this, Blocker, BiteNoun(), Partial);
+	    AddBlockMessage(Enemy, Blocker, Enemy->BiteNoun(), Partial);
 	    break;
 	  }
 
@@ -4759,7 +4781,6 @@ void character::PrintBeginPoisonedMessage() const
     ADD_MESSAGE("You seem to be very ill.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s looks very ill.", CHARNAME(DEFINITE));
-    
 }
 
 void character::PrintEndPoisonedMessage() const
@@ -4768,7 +4789,6 @@ void character::PrintEndPoisonedMessage() const
     ADD_MESSAGE("You feel better again.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("Looks better.");
-    
 }
 
 void character::PoisonedHandler()
@@ -5038,6 +5058,7 @@ void character::CalculateVolumeAndWeight()
 void character::SignalVolumeAndWeightChange()
 {
   CalculateVolumeAndWeight();
+  CalculateBurdenState();
 
   if(MotherEntity)
     MotherEntity->SignalVolumeAndWeightChange();
@@ -5093,6 +5114,8 @@ void character::CalculateAll()
   CalculateEmitation();
   CalculateHP();
   CalculateBodyPartMaxHPs();
+  CalculateBurdenState();
+  CalculateAttackInfo();
 }
 
 void character::CalculateHP()
@@ -5128,10 +5151,14 @@ bool character::EditAttribute(ushort Identifier, short Value)
     {
       if(!Initializing)
 	{
-	  if(Identifier == ENDURANCE)
+	  if(Identifier == LEGSTRENGTH)
+	    CalculateBurdenState();
+	  else if(Identifier == ENDURANCE)
 	    CalculateBodyPartMaxHPs();
 	  else if(Identifier == PERCEPTION && IsPlayer())
 	    game::SendLOSUpdateRequest();
+
+	  CalculateAttackInfo();
 	}
 
       return true;
