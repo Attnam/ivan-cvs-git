@@ -1399,7 +1399,7 @@ int game::AskForKeyPress(const std::string& Topic)
 vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d))
 {
   int Key = 0;
-  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "Press direction keys to move cursor or esc to exit from the mode.");
+  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
   graphics::BlitDBToScreen();
   vector2d Return;
 

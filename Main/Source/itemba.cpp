@@ -53,12 +53,6 @@ short item::CalculateOfferValue(char GodAlignment) const
   return short(OfferValue * (GetOfferModifier() / 250));
 }
 
-/******************************************
-*This fly system seems to have been made, *
-*just to handle only player               *
-*kicking and throwing things...		  *
-******************************************/
-
 bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
   vector2d StartingPos = GetSquareUnder()->GetPos();

@@ -78,7 +78,7 @@ void fluid::Load(inputfile& SaveFile)
   SaveFile >> Picture;
 }
 
-void fluid::DrawToTileBuffer(bool Animate) const
+void fluid::DrawToTileBuffer(bool) const
 {
   Picture->AlphaBlit(igraph::GetTileBuffer());
 }

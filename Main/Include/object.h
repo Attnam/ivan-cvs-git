@@ -49,6 +49,7 @@ class object : public entity, public id
   virtual material* GetMaterial(ushort Index) const { return Index ? 0 : MainMaterial; }
   virtual bool IsAnimated() const { return false; }
   virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
+  virtual ushort GetBaseEmitation() const { return 0; }
  protected:
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);

@@ -1205,7 +1205,7 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
     }
 }
 
-bool lsquare::LockEverything(character* Zapper)
+bool lsquare::LockEverything(character*)
 {
   if(GetOLTerrain()->GetIsLocked())
     {
@@ -1225,5 +1225,6 @@ bool lsquare::RaiseTheDead(character* Summoner)
     {
       return GetCharacter()->RaiseTheDead(Summoner);
     }
+
   return false;
 }

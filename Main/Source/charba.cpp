@@ -1446,7 +1446,7 @@ bool character::DecreaseContrast()
 
 ushort character::GetEmitation() const
 {
-  ushort Emitation = 0;
+  ushort Emitation = GetBaseEmitation();
 
   for(ushort c = 0; c < BodyParts(); ++c)
     if(GetBodyPart(c) && GetBodyPart(c)->GetEmitation() > Emitation)

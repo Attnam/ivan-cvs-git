@@ -178,7 +178,7 @@ ulong object::GetVolume() const
 
 ushort object::GetEmitation() const
 {
-  ushort Emitation = 0;
+  ushort Emitation = GetBaseEmitation();
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && GetMaterial(c)->GetEmitation() > Emitation)

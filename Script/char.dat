@@ -14,6 +14,7 @@ human
 	TotalVolume = 60000;
 	TotalSize = 150;
 	MeleeStrength = 1000;
+	CanRead = true;
 }
 
 petrus
@@ -37,6 +38,7 @@ petrus
 	MeleeStrength = 20000;
 	TotalSize = 225;
 	BaseEmitation = 333;
+	CanRead = true;
 }
 
 farmer
@@ -67,6 +69,7 @@ guard
 	TotalVolume = 60000;
 	MeleeStrength = 2000;
 	TotalSize = 180;
+	CanRead = true;
 }
 
 shopkeeper
@@ -103,6 +106,7 @@ priest
 	TotalVolume = 100000;
 	TotalSize = 180;
 	MeleeStrength = 1000;
+	CanRead = true;
 }
 
 oree
@@ -127,6 +131,7 @@ oree
 	TotalVolume = 110000;
 	MeleeStrength = 30000;
 	TotalSize = 225;
+	CanRead = true;
 }
 
 darkknight
@@ -147,6 +152,7 @@ darkknight
 	TorsoBitmapPos = 128, 0;
 	MeleeStrength = 5000;
 	TotalSize = 200;
+	CanRead = true;
 }
 
 ennerbeast
@@ -384,6 +390,7 @@ communist
 	TotalVolume = 120000;
 	MeleeStrength = 5000;
 	TotalSize = 230;
+	CanRead = true;
 }
 
 hunter
@@ -488,6 +495,7 @@ petrusswife
 	TotalVolume = 50000;
 	MeleeStrength = 500;
 	TotalSize = 170;
+	CanRead = true;
 }
 
 /*petrusswife1
@@ -543,6 +551,7 @@ housewife
 	TotalVolume = 70000;
 	MeleeStrength = 500;
 	TotalSize = 160;
+	CanRead = true;
 }
 
 femaleslave
@@ -579,6 +588,7 @@ librarian
 	TotalVolume = 80000;
 	MeleeStrength = 500;
 	TotalSize = 170;
+	CanRead = true;
 }
 
 zombie
@@ -657,6 +667,7 @@ mistress
 	TotalVolume = 60000;
 	TorsoBitmapPos = 352, 0;
 	TotalSize = 180;
+	CanRead = true;
 }
 
 /*werewolf
@@ -774,6 +785,7 @@ angel
 	TorsoBitmapPos = 432, 0;
 	MeleeStrength = 10000;
 	TotalSize = 180;
+	CanRead = true;
 }
 
 kamikazedwarf
@@ -793,6 +805,7 @@ kamikazedwarf
 	ClothColor = rgb(111, 74, 37);
 	TotalVolume = 60000;
 	TotalSize = 130;
+	CanRead = true;
 }
 
 mammoth
@@ -833,6 +846,7 @@ genie
 	TorsoBitmapPos = 416, 0;
 	MeleeStrength = 5000;
 	TotalSize = 250;
+	CanRead = true;
 }
 
 lion

@@ -42,6 +42,7 @@ valpurium
 	PriceModifier = 40;
 	IsSolid = true;
 	CanBeWished = false;
+	Emitation = 320;
 }	
 
 stone
