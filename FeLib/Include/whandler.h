@@ -55,7 +55,7 @@ class globalwindowhandler
 #endif
 #ifdef USE_SDL
   static void Init(const char*);
-  static void ProcessMessage(SDL_Event);
+  static void ProcessMessage(SDL_Event*);
 #endif
   static int GetKey(bool = true);
   static int ReadKey();
@@ -70,8 +70,8 @@ class globalwindowhandler
   static bool (*QuitMessageHandler)();
   static controlvector ControlLoop;
   static ulong Tick;
-#ifdef WIN32
   static bool Active;
+#ifdef WIN32
   static char KeyboardLayoutName[KL_NAMELENGTH];
 #endif
 };

@@ -1244,5 +1244,13 @@ class ITEM
   ;
 );*/
 
+class ITEM
+(
+  helmet,
+  item,
+ public:
+  virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // Needs improving
+  virtual bool IsHelmet(const character*) const { return true; }
+);
 #endif
 

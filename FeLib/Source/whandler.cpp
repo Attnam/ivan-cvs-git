@@ -302,11 +302,12 @@ void globalwindowhandler::CheckMessages()
 #endif
 
 #ifdef USE_SDL
-
+bool globalwindowhandler::Active = true;
 void globalwindowhandler::Init(const char* Title)
 {
   SDL_WM_SetCaption(Title, 0);
   SDL_EnableUNICODE(1);
+  SDL_EnableKeyRepeat(500, 30);
 }
 
 int globalwindowhandler::GetKey(bool EmptyBuffer)
@@ -315,7 +316,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
   if(EmptyBuffer)
     {
       while(SDL_PollEvent(&event))
-	ProcessMessage(event);	     
+	ProcessMessage(&event);	     
 
       KeyBuffer.clear();
     }
@@ -335,10 +336,10 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
     else
       {
 	if(SDL_PollEvent(&event))
-	  ProcessMessage(event);
+	  ProcessMessage(&event);
 	else
 	  {
-	    if(SDL_APPACTIVE && ControlLoop.size())
+	    if((SDL_GetAppState() & SDL_APPACTIVE)  && ControlLoop.size())
 	      {
 		static ulong LastTick = 0;
 		Tick = clock() * 20 / CLOCKS_PER_SEC;
@@ -361,7 +362,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	    else
 	      {
 		SDL_WaitEvent(&event);
-		ProcessMessage(event);
+		ProcessMessage(&event);
 	      }
 	  }
       }
@@ -371,40 +372,47 @@ int globalwindowhandler::ReadKey()
 {
   SDL_Event event;
 
-  if(!(SDL_GetAppState() & SDL_APPACTIVE))
+  if(SDL_GetAppState() & SDL_APPACTIVE)
     {
-      SDL_WaitEvent(&event);
-      ProcessMessage(event);
+      ProcessMessage(&event);
+      while(SDL_PollEvent(&event))
+	{
+	  ProcessMessage(&event);
+	}
     }
   else
     {
-      while(SDL_PollEvent(&event))
-	ProcessMessage(event);
+      SDL_WaitEvent(&event);
+      ProcessMessage(&event);
     }
-
   if(KeyBuffer.size())
     return GetKey(false);
   else
     return 0;
 }
 
-void globalwindowhandler::ProcessMessage(SDL_Event event)
+void globalwindowhandler::ProcessMessage(SDL_Event* event)
 {
   ushort Index, KeyPressed;
  
-  switch(event.type)
+  switch(event->active.type)
     {
     case SDL_QUIT:
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
+      return;
+    case SDL_ACTIVEEVENT:
+      if(event->active.state & SDL_APPACTIVE)
+	Active = event->active.gain;
+      return;
     case SDL_KEYDOWN:
-      switch(event.key.keysym.sym)
+      switch(event->key.keysym.sym)
 	{
 	case SDLK_RETURN:
-	  if(event.key.keysym.mod & KMOD_ALT)
+	  if(event->key.keysym.mod & KMOD_ALT)
 	     graphics::ToggleFullScreen();
 	  else
-	     KeyPressed = event.key.keysym.unicode;
+	     KeyPressed = event->key.keysym.unicode;
 	  break;
 	case SDLK_DOWN:
 	case SDLK_KP2:
@@ -442,7 +450,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
 	  DOUBLEBUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
 	  return;
 	default:
-	  KeyPressed = event.key.keysym.unicode;
+
+	  KeyPressed = event->key.keysym.unicode;
+	  if(KeyPressed == 0)
+	    return;
 	}
 
       if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end())

@@ -4741,6 +4741,7 @@ stackiterator character::FindRandomOwnBodyPart()
 }
 
 /* This piece of infernally unesthetic code returns a vector with pointers to all friendly characters in neighbouring squares */
+
 std::vector<character*> character::GetFriendsAround() const
 {
   std::vector<character*> ToBeReturned;
@@ -4755,6 +4756,7 @@ std::vector<character*> character::GetFriendsAround() const
 }
 
 /* returns a 0 pointer if no RandomBodyPart can be found else it returns the pointer to the bodypart that was attached back to its place */
+
 bodypart* character::TryAttachRandomOldBodyPart()
 {
   stackiterator Returned = FindRandomOwnBodyPart();
@@ -4765,6 +4767,7 @@ bodypart* character::TryAttachRandomOldBodyPart()
 }
 
 /* Attaches the OldOwnBodyPartIterator back to its place and removes it from FromStack. FromStack is the stack where the item currently is */ 
+
 bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIterator, stack* FromStack)
 {
   bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);

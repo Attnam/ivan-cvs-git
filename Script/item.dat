@@ -1259,3 +1259,19 @@ beartrap
 	BitmapPos = 32, 304;
 	IsTwoHanded = true;
 }
+
+helmet
+{
+	DefaultSize = 30;
+	Possibility = 40;
+	Category = HELMET;
+	DefaultMainVolume = 600;
+	StrengthModifier = 100;
+	BitmapPos = 16, 384;
+	FormModifier = 35;
+	OfferModifier = 4000;
+	NameSingular = "helmet";
+	MainMaterialConfig = { 9, 	BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
+	MaterialConfigChances = { 9, 	30,	10,	10,	2,	4,	20,	5,	3,	30; }
+	Roundness = 50;
+}
