@@ -104,4 +104,3 @@ class object : public entity, public id
 };
 
 #endif
-

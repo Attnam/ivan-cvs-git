@@ -1325,7 +1325,7 @@ void bodypart::SignalVolumeAndWeightChange()
 
   if(Master && !Master->IsInitializing())
     {
-      CalculateMaxHP();
+      CalculateMaxHP(false);
       Master->CalculateMaxHP();
       Master->SignalBodyPartVolumeAndWeightChange();
     }

@@ -29,7 +29,7 @@ and, above all, deep gameplay.
 The game *works* on quite slow systems, but we recommend that
 use at least a:
 
-	Pentium 233 MHz
+	Pentium 200 MHz
 	48 Megs of RAM
 
 	Windows 9x/ME/XP/2000 (at least)
@@ -42,7 +42,7 @@ use at least a:
 	or:
 	
 	Linux with 
-	(SDL library version 1.0.0 or higher)
+	(SDL library version 1.2.0 or higher)
 
 -----------------------------
 
@@ -107,29 +107,40 @@ lawful, when Sophos has the letters L-, which in turn means
 that Sophos is lawful, but still leaning a bit towards
 neutrality and even chaos.
 
-Q: I just loosed a leg. How do I get it back?
+Q: I just lost a leg. How do I get it back?
 
 A: Certain gods, potions and special characters may help you.
 
 Q: How can I compile IVAN source code?
 
 A: See INSTALL.
-  
+
+Q: I am a Linux user. Why can't I access the wizard (cheat) mode?
+
+A: The wizard mode functions aren't compiled by default. In Linux 
+change the environment variable CXXFLAGS to -DWIZARD and recompile.
+
+Q: I am a DOS user. When I try to run IVAN, I get the message
+"Load error: no DPMI - Get csdpmi*b.zip".
+
+The DOS binary is compiled using DJGPP, so you need a DPMI server
+to run it. One should have been provided along with IVAN, but if
+that's not the case, download it from www.delorie.com.
+
 Q: I've found a bug. What should I do?
 
-A: Write a small description on how the bug occured and
-if possible even how we could replicate it and send this
-information by email to ivan-users@lists.sourceforge.net.
-If you are a SourceForge user, you can also report
-this bug at Ivan's SourceForge project page:
+A: Write a small description on how the bug occured and if possible
+even how we could replicate it and send this information by email
+to ivan-users@lists.sourceforge.net. If you are a SourceForge user,
+you can also report this bug at Ivan's SourceForge project page:
 
 http://sourceforge.net/projects/ivan
 
 Q: I've got a great idea to make IVAN better! What should I do?
 
 A: Describe the idea to us by sending it to 
-ivan-users@lists.sourceforge.net or report it at Ivan's
-SourceForge project page (see above).
+ivan-users@lists.sourceforge.net or report it at Ivan's SourceForge
+project page (see above).
 
 Q: I'm a programmer willing to help you. What should I do?
 

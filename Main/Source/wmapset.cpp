@@ -28,7 +28,6 @@ ushort protocontainer<owterrain>::ProtoAmount;
 #include "message.h"
 #include "igraph.h"
 #include "bitmap.h"
-#include "team.h"
 #include "save.h"
 
 #include "cont.cpp"

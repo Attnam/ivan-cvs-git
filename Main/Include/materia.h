@@ -213,4 +213,3 @@ name : public base\
 }; MATERIAL_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
-

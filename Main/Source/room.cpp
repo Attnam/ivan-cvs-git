@@ -68,4 +68,3 @@ bool room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) cons
     }
   return true;
 }
-

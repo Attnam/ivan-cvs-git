@@ -1095,4 +1095,3 @@ void scriptsystem::Initialize()
   teamscript::InitDataMap();
   gamescript::InitDataMap();
 }
-

@@ -128,4 +128,3 @@ uchar owterrain::GetAttachedEntry() const
 {
   return STAIRS_UP;
 }
-

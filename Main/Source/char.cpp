@@ -2731,7 +2731,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushor
   return Damage;
 }
 
-/* Returns 0 if bodypart dissappears */
+/* Returns 0 if bodypart disappears */
 
 item* character::SevereBodyPart(ushort BodyPartIndex)
 {
@@ -4286,7 +4286,7 @@ bodypart* character::GenerateRandomBodyPart()
   return Index ? CreateBodyPart(NeededBodyPart[RAND() % Index]) : 0;
 }
 
-/* searched for character's Stack and if it find some bodyparts there that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
+/* Searches the character's Stack and if it find some bodyparts there that are the character's old bodyparts returns a stackiterator to one of them (choosen in random). If no fitting bodyparts are found the function returns 0 */
 
 bodypart* character::FindRandomOwnBodyPart(bool AllowNonLiving) const
 {

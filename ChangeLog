@@ -9,6 +9,11 @@ is also provided AS IS and is probably completely unreadable.
 
 May 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Corrected a minor bug in the bodypart mutation code
+	* README, NEWS and INSTALL updated
+
+May 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Decreased old walls' HPs by 40%, so that the steel vault is easier to open
 	  with explosives
 	* Corrected a bug that caused the player to die on the first turn if he had

@@ -244,15 +244,6 @@ void worldmap::Generate()
       if(!Correct)
 	continue;
 
-      /*vector2d MondedrPos;
-
-      do
-	MondedrPos = PetrusLikes->GetMember(RAND() % PetrusLikes->GetSize());
-      while(MondedrPos == AttnamPos || MondedrPos == ElpuriCavePos || MondedrPos == TunnelExit);
-
-      GetWSquare(MondedrPos)->ChangeOWTerrain(new mondedr);
-      SetEntryPos(MONDEDR, MondedrPos);*/
-
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);
       RevealEnvironment(AttnamPos, 1);

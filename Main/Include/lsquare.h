@@ -190,4 +190,3 @@ inline bool lsquare::IsDark() const
 }
 
 #endif
-

@@ -469,4 +469,3 @@ name : public base\
 }; ABSTRACT_ITEM_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
-

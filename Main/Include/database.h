@@ -50,4 +50,3 @@ template <class type> inline void databasecreator<type>::InstallDataBase(type* I
 }
 
 #endif
-

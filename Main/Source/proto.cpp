@@ -377,4 +377,3 @@ void protosystem::CreateEveryNormalEnemy(std::vector<character*>& EnemyVector)
 	  EnemyVector.push_back(Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
     }
 }
-

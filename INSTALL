@@ -29,4 +29,10 @@ If you have VC++ 5.0+ installed,
 just open IVAN.dsw and build the
 Main project.
 
+For both compilers you need to
+install SDL development libraries,
+which can be downloaded from:
+
+http://www.libsdl.org/
+
 --------------------------------------

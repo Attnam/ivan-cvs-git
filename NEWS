@@ -1,6 +1,17 @@
 Version 0.420
 -------------
 
+- you can now find a level where you died in a former game (a bonefile)
+- added one new monster, a few items and several materials
+- the player's and monsters' representations on the game screen now depend
+  on what they wield
+- added many new monster animations
+- corrected many balancing problems, especially with magical mushrooms
+- corrected several fatal bugs
+- corrected some memory leaks
+- the game's compile speed increased greatly
+- lots of monster AI and graphics routine optimizations
+
 Version 0.410
 -------------
 

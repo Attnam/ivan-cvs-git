@@ -267,4 +267,3 @@ void god::ApplyDivineTick()
   if(Timer)
     --Timer;
 }
-

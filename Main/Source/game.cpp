@@ -130,12 +130,6 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-/*#include "materias.h"
-#include "item.h"
-#include "stack.h"*/
-
-//#include "confdef.h"
-
 bool game::Init(const festring& Name)
 {
   festring PlayerName;
@@ -249,25 +243,10 @@ bool game::Init(const festring& Name)
 	DefaultPolymorphTo.Empty();
 	Player->GetStack()->AddItem(new encryptedscroll);
 	BaseScore = Player->GetScore();
-
 	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 	Doggie->SetAssignedName(configuration::GetDefaultPetName());
-
-	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
-	  {
-	    const material::prototype* Proto = protocontainer<material>::GetProto(c);
-	    const material::databasemap& Config = Proto->GetConfig();
-
-	    for(material::databasemap::const_iterator i = ++Config.begin(); i != Config.end(); ++i)
-	      {
-		oillamp* Lamp = new oillamp(0, NO_MATERIALS);
-		Lamp->InitMaterials(MAKE_MATERIAL(i->first));
-		Player->GetStack()->AddItem(Lamp);
-	      }
-	  }*/
-
 	ADD_MESSAGE("Game generated successfully.");
 	WizardMode = false;
 	SeeWholeMapCheatMode = MAP_HIDDEN;

@@ -591,4 +591,3 @@ void databasesystem::CreateDataBaseMemberMaps()
   databasecreator<olterrain>::CreateDataBaseMemberMap();
   databasecreator<material>::CreateDataBaseMemberMap();
 }
-

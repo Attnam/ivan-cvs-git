@@ -52,7 +52,7 @@ bool ennerbeast::Hit(character*, bool)
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort ScreamStrength = ushort(75 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
+	ushort ScreamStrength = ushort(70 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(ScreamStrength)
 	  {

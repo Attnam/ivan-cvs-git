@@ -366,4 +366,3 @@ inline bool game::IsDark(ulong Light)
 }
 
 #endif
-

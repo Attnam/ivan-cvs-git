@@ -115,4 +115,3 @@ outputfile& operator<<(outputfile&, const level*);
 inputfile& operator>>(inputfile&, level*&);
 
 #endif
-

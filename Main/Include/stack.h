@@ -123,4 +123,3 @@ class stack
 };
 
 #endif
-

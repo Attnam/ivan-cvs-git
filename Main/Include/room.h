@@ -98,4 +98,3 @@ name : public base\
 }; ROOM_PROTOTYPE(name, base);
 
 #endif
-
