@@ -651,6 +651,7 @@ public:
 	virtual short NutritionValue() const			{ return 10; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 192); }
 	virtual bool CanBeWished() const { return false; }
+	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 protected:
 	virtual std::string NameStem() const	{ return "water"; }
 );

@@ -1,7 +1,7 @@
 #include "materba.h"
 #include "charba.h"
 #include "save.h"
-
+#include "error.h"
 std::string material::Name(uchar Case) const
 {
 	return Case & INDEFINEBIT ? Article() + " " + NameStem() : NameStem();
@@ -39,4 +39,10 @@ void material::NormalFoodEffect(character* Eater, float Amount, float NPModifier
 material* material::CreateWishedMaterial(ulong OldVolume) const
 {
 	return protocontainer<material>::GetProto(Type())->Clone(OldVolume);
+}
+
+
+void material::EatEffect(character*, float, float)
+{ 
+	ABORT("Calling material that does not have eat effect!");
 }

@@ -733,6 +733,7 @@ class CHARACTER
 		SetShieldType(0);
 	},
 public:
+	virtual void MoveRandomly();
 	virtual void CreateInitialEquipment();
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 120000; else return 0; }

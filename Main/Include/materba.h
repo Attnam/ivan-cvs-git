@@ -64,7 +64,7 @@ public:
 	virtual ushort GetEmitation() const { return 0; }
 	virtual ushort OfferValue() const = 0;
 	virtual uchar Alignment() const				{ return NEUTRAL; }
-	virtual void EatEffect(character*, float, float = 1.0f)	{ }
+	virtual void EatEffect(character*, float, float = 1.0);
 	virtual void HitEffect(character*)			{ }
 	virtual short NutritionValue() const			{ return 0; }
 	virtual void MinusAmount(float Amount)			{ SetVolume(GetVolume() > Amount ? GetVolume() - Amount : 0); }

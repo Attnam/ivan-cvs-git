@@ -1401,3 +1401,25 @@ void femaleslave::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new palmbranch)));
 }
+
+void ivan::MoveRandomly()
+{
+	char ToTry = rand() % 8;
+	switch(rand () % 200)
+	{
+		case 0:
+			Engrave("The weapons with which the bourgeoisie felled feudalism to the ground are now turned against the bourgeoisie itself.");
+		break;
+
+		case 1:
+			Engrave("Proletarians of all countries, unite!");
+		break;
+		
+		case 2:
+			Engrave("Capital is therefore not only personal; it is a social power.");
+		break;
+		default:
+			if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
+				TryMove(GetPos() + game::GetMoveVector(ToTry), false);
+	}
+}
