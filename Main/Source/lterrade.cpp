@@ -145,8 +145,11 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 						return false;
 					}
 
-					TempPlayerGroup.push_back(Char);
-					game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+					if(Char->GetTeam() == Who->GetTeam())
+					{
+						TempPlayerGroup.push_back(Char);
+						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+					}
 				}
 			})
 
@@ -327,4 +330,10 @@ void altar::StepOn(character* Stepper)
 		ADD_MESSAGE("You now know the sacred rituals that allow you to contact this deity via prayers.");
 		game::GetGod(OwnerGod)->SetKnown(true);
 	}
+}
+
+void throne::SitOn(character* Sitter)
+{
+	if(Sitter->GetIsPlayer())
+		ADD_MESSAGE("You feel somehow out of place.");
 }

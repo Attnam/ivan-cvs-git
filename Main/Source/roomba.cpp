@@ -1,6 +1,13 @@
 #include "roomba.h"
 #include "save.h"
 #include "lterraba.h"
+#include "error.h"
+
+room::room(bool SetStats) : Master(0)
+{
+	if(SetStats)
+		ABORT("Baa!");
+}
 
 void room::Save(outputfile& SaveFile) const
 {

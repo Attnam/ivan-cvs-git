@@ -5,10 +5,11 @@
 #include "message.h"
 #include "igraph.h"
 #include "lsquare.h"
+#include "worldmap.h"
 
 bool overlevelterrain::GoUp(character* Who) const // Try to go up
 {
-	if(game::GetCurrent() != 0 && game::GetCurrent() != 9 && game::GetWizardMode())
+	if(game::GetCurrent() && game::GetCurrent() != 9 && game::GetWizardMode())
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		game::GetCurrentDungeon()->SaveLevel();
@@ -22,12 +23,45 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 		return true;
 	}
 	else
-	{
-		if(Who == game::GetPlayer())
-			ADD_MESSAGE("You can't go up.");
+		if(!game::GetCurrent() && game::GetWizardMode())
+		{
+			if(Who == game::GetPlayer())
+			{
+				std::vector<character*> TempPlayerGroup;
 
-		return false;
-	}
+				DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+				{
+					character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+
+					if(Char && Char->GetTeam() == Who->GetTeam())
+					{
+						TempPlayerGroup.push_back(Char);
+						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+					}
+				})
+
+				game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
+				game::GetCurrentDungeon()->SaveLevel();
+				game::LoadWorldMap();
+
+				game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
+
+				game::SetInWilderness(true);
+				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
+				game::SendLOSUpdateRequest();
+				game::UpdateCamera();
+				return true;
+			}
+
+			return false;
+		}
+		else
+		{
+			if(Who == game::GetPlayer())
+				ADD_MESSAGE("You can't go up.");
+
+			return false;
+		}
 }
 
 bool overlevelterrain::GoDown(character* Who) const // Try to go down
@@ -108,4 +142,10 @@ void levelterrain::HandleVisualEffects()
 			Flags |= 1 << c;
 
 	SetVisualFlags(Flags);
+}
+
+void overlevelterrain::SitOn(character* Sitter)
+{
+	if(Sitter->GetIsPlayer())
+		ADD_MESSAGE("You sit for some time. Nothing happens.");
 }

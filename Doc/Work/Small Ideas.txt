@@ -32,7 +32,7 @@ Lamps should be white.
 !!!Name too short message.
 Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
-!!!Teleport disabling.
+Teleport disabling.
 Teleport should bounce back from valpurium.
 It should be possible to determine line height as a felist draw function argument.
 Vomiting in a shop should have a special effect.
@@ -63,3 +63,5 @@ A special effect for selling empty potions (it's exemplary recycling after all).
 !!!Higher victory types should be reimplemented.
 NP shouldn't affect score.
 Money should weight something.
+AI should not practise cannibalism.
+!!!Silva must have pray effects.

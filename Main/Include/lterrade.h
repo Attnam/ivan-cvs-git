@@ -43,8 +43,7 @@ public:
 	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
 	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", grass::StaticType()))
 protected:
-	virtual std::string NameSingular() const				{ return "grass"; }
-	virtual std::string NamePlural() const					{ return "grasses"; }
+	virtual std::string NameSingular() const				{ return "grassy ground"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
 );
 
@@ -58,7 +57,7 @@ class OVERLEVELTERRAIN
 public:
 	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
 	virtual bool CanBeDigged() const { return true; }
-	virtual std::string DigMessage() { return "The ground is fairly easy to dig."; }
+	virtual std::string DigMessage() const { return "The ground is fairly easy to dig."; }
 	virtual bool GetIsWalkable() const { return false; }
 protected:
 	virtual std::string NameSingular() const				{ return "earth"; }
@@ -75,7 +74,7 @@ class OVERLEVELTERRAIN
 public:
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual bool CanBeDigged() const { return true; }
-	virtual std::string DigMessage() { return "The wall is pretty hard, but you still manage to go through it."; }
+	virtual std::string DigMessage() const { return "The wall is pretty hard, but you still manage to go through it."; }
 	virtual bool GetIsWalkable() const { return false; }
 protected:
 	virtual std::string NameSingular() const				{ return "wall"; }
@@ -90,7 +89,7 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
-	virtual std::string DigMessage() { return "The square you are trying to dig is empty."; }
+	virtual std::string DigMessage() const { return "The square you are trying to dig is empty."; }
 protected:
 	virtual std::string NameSingular() const				{ return "atmosphere"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 480); }
@@ -109,7 +108,7 @@ public:
 	virtual bool Open(character*);
 	virtual bool Close(character*);
 	virtual bool CanBeOpened() const { return !GetIsWalkable(); }
-	virtual std::string DigMessage() { return "The door is too hard to dig through."; }
+	virtual std::string DigMessage() const { return "The door is too hard to dig through."; }
 	virtual void Kick(ushort, bool, uchar);
 	virtual void SetIsOpen(bool What) { IsOpen = What; }
 	virtual void Save(outputfile&) const;
@@ -134,7 +133,7 @@ class OVERLEVELTERRAIN
 public:
 	virtual bool GoUp(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
-	virtual std::string DigMessage() { return "The stairs are too hard to dig."; }
+	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
 protected:
 	virtual std::string NameSingular() const				{ return "stairway upwards"; }
 	virtual std::string NamePlural() const					{ return "stairways upwards"; }
@@ -151,7 +150,7 @@ class OVERLEVELTERRAIN
 public:
 	virtual bool GoDown(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
-	virtual std::string DigMessage() { return "The stairs are too hard to dig."; }
+	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
 protected:
 	virtual std::string NameSingular() const				{ return "stairway downwards"; }
 	virtual std::string NamePlural() const					{ return "stairways downwards"; }
@@ -175,7 +174,7 @@ public:
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual uchar OKVisualEffects() const { return 0; }
-	virtual std::string DigMessage() { return "An invisible wall stops your feeble attempt."; }
+	virtual std::string DigMessage() const { return "An invisible wall stops your feeble attempt."; }
 	virtual void StepOn(character*);
 protected:
 	virtual std::string NameSingular() const		{ return "altar"; }
@@ -192,7 +191,8 @@ class OVERLEVELTERRAIN
 	},
 public:
 	virtual bool CanBeDigged() const { return false; }
-	virtual std::string DigMessage() { return "The throne resists."; }
+	virtual std::string DigMessage() const { return "The throne resists."; }
+	virtual void SitOn(character*);
 protected:
 	virtual std::string NameSingular() const				{ return "throne"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 416); }

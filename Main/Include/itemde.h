@@ -120,7 +120,6 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 112))
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(16,48)
-	virtual bool CanBeWished() const RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(0)->RawPrice(); }
 protected:
@@ -370,7 +369,6 @@ public:
 	virtual std::string NameSingular() const RET("corpse")
 	virtual float OfferModifier() const RET(0.01f)
 	virtual vector2d GetBitmapPos() const RETV(16,192)
-	virtual bool CanBeWished() const RET(false)
 	virtual bool CanBeDippedInto(item*) const RET(true)
 	virtual material* BeDippedInto();
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60000; default: return 0; } }

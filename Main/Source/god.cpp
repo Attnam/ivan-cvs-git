@@ -451,7 +451,7 @@ void pestifer::PrayGoodEffect()
 void pestifer::PrayBadEffect()
 {
 	character* EnnerBeast = new ennerbeast;
-	EnnerBeast->SetTeam(game::GetTeam(1));
+	EnnerBeast->SetTeam(game::GetTeam(4));
 	game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(true))->AddCharacter(EnnerBeast);
 	ADD_MESSAGE("You hear the roaring of a new enner beast!");
 }
@@ -700,20 +700,20 @@ void venius::AddPriestMessage() const
 void dulcis::AddPriestMessage() const
 {
 	ADD_MESSAGE("\"%s is the Creator of everything that we call Art and Beauty.", GOD_NAME);
-	ADD_MESSAGE("When thou prayeth for Her help, She may calm thine worst enemies with Her love.");
+	ADD_MESSAGE("When thou pray for Her help, She may calm thine worst enemies with Her love.");
 	ADD_MESSAGE("But beware! There areth some villains that may resist even Her call!\"");
 }
 
 void seges::AddPriestMessage() const
 {
-	ADD_MESSAGE("\"%s bringeth Life, Health and Nutrition to all who follow Her.", GOD_NAME);
-	ADD_MESSAGE("When thou calleth upon Her with an empty stomach, a miracle may indeed fill it.\"");
+	ADD_MESSAGE("\"%s brings Life, Health and Nutrition to all who follow Her.", GOD_NAME);
+	ADD_MESSAGE("When thou call upon Her with an empty stomach, a miracle may indeed fill it.\"");
 }
 
 void consummo::AddPriestMessage() const
 {
 	ADD_MESSAGE("\"The Wise bow before %s, for He maketh the Universe as rational as it is.", GOD_NAME);
-	ADD_MESSAGE("Those who follow Him are not bound to place and time, since knowledge controlleth them.");
+	ADD_MESSAGE("Those who follow Him are not bound to space and time, since knowledge controls them.");
 	ADD_MESSAGE("This is why those chosen by Him may escape any danger with their wisdom.");
-	ADD_MESSAGE("Alas, beware! Soon thou may findeth thyself in an even worse situation!\"");
+	ADD_MESSAGE("Alas, beware! Soon thou may find thyself in an even worse situation!\"");
 }

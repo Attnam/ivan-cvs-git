@@ -78,7 +78,8 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 		}
 		else
 		{
-			ADD_MESSAGE("\"Don't touch that, beggar! It is worth %d squirrels!\"", Price);
+			ADD_MESSAGE("\"Don't touch that %s, beggar!", ForSale->CNAME(UNARTICLED));
+			ADD_MESSAGE("It is worth %d squirrels!\"", Price);
 			return false;
 		}
 	}
@@ -211,10 +212,10 @@ bool shop::ConsumeItem(character* Customer, item*)
 
 void cathedral::Enter(character* Visitor)
 {
-	if(Visitor->GetIsPlayer())
+	if(Visitor->GetIsPlayer() && !Entered)
 	{
-		ADD_MESSAGE("The enormous Cathedral of Valpuri looms before you.");
-		ADD_MESSAGE("You watch it with respect.");
+		ADD_MESSAGE("The enormous Cathedral of Valpuri looms before you. You watch it with utter respect.");
+		Entered = true;
 	}
 }
 
@@ -290,4 +291,18 @@ bool cathedral::ConsumeItem(character* HungryMan, item* Food)
 	}
 
 	return false;
+}
+
+void cathedral::Save(outputfile& SaveFile) const
+{
+	room::Save(SaveFile);
+
+	SaveFile << Entered;
+}
+
+void cathedral::Load(inputfile& SaveFile)
+{
+	room::Load(SaveFile);
+
+	SaveFile >> Entered;
 }

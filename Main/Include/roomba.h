@@ -16,7 +16,7 @@ class levelsquare;
 class room : public typeable
 {
 public:
-	room() : Master(0) {}
+	room(bool);
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual void Enter(character*) {}
@@ -38,6 +38,7 @@ public:
 	virtual void KickSquare(character*, levelsquare*) { }
 	virtual bool ConsumeItem(character*, item*) { return true; }
 protected:
+	virtual void SetDefaultStats() = 0;
 	std::vector<vector2d> Door;
 	vector2d Pos, Size;
 	character* Master;
@@ -46,7 +47,7 @@ protected:
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define ROOM_PROTOINSTALLER(name, base)\
+	#define ROOM_PROTOINSTALLER(name, base, setstats)\
 	\
 	class name##_protoinstaller\
 	{\
@@ -58,20 +59,22 @@ protected:
 	} static name##_ProtoInstaller;\
 	\
 	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
+	void name::SetDefaultStats() { setstats }\
 	const room* const name::GetPrototype() { return protocontainer<room>::GetProto(StaticType()); }\
 	ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
-	#define ROOM_PROTOINSTALLER(name, base)
+	#define ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif
 
-#define ROOM(name, base, data)\
+#define ROOM(name, base, setstats, data)\
 \
 name : public base\
 {\
 public:\
+	name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
 	virtual room* Clone() const { return new name; }\
 	virtual typeable* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
 	static ushort StaticType();\
@@ -79,7 +82,8 @@ public:\
 	virtual std::string ClassName() const { return #name; }\
 protected:\
 	virtual ushort Type() const;\
+	virtual void SetDefaultStats();\
 	data\
-}; ROOM_PROTOINSTALLER(name, base)
+}; ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif

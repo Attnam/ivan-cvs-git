@@ -237,6 +237,7 @@ public:
 	virtual void SetHomeRoom(uchar What) { HomeRoom = What; }
 	virtual uchar GetHomeRoom() const { return HomeRoom; }
 	virtual bool Displace(character*);
+	virtual bool Sit();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

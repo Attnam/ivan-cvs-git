@@ -18,6 +18,11 @@
 #include "strover.h"
 #include "team.h"
 
+perttu::~perttu()
+{
+	game::SetPerttu(0);
+}
+
 void humanoid::VirtualConstructor()
 {
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
@@ -393,6 +398,8 @@ void perttu::Load(inputfile& SaveFile)
 	humanoid::Load(SaveFile);
 
 	SaveFile >> HealTimer >> StoryState;
+
+	game::SetPerttu(this);
 }
 
 bool humanoid::Throw()
@@ -761,6 +768,8 @@ void perttu::BeTalkedTo(character* Talker)
 			highscore HScore;
 			HScore.Draw();
 		}
+
+		return;
 	}
 	else
 		if(StoryState >= 2)
@@ -803,7 +812,7 @@ void perttu::BeTalkedTo(character* Talker)
 			iosystem::TextScreen(	"Perttu raises his hand as a salutation, and talks:\n"
 						"\"Fare thee well, adventurer! Should thou seek glory, I have a task for thee!\n"
 						"An evil dark frog named Elpuri is pestering our fine city in many ways.\n"
-						"Valpuri hast told that this wile beast can be found in a nearby cave.\n"
+						"Valpuri hast told that this vile beast can be found in a nearby cave.\n"
 						"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
 
 			game::GetCurrentArea()->SendNewDrawRequest();

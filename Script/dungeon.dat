@@ -1,9 +1,22 @@
 Dungeons=2;
-Teams=3;
+Teams=5;
 
 Team 2;
 {
 	Relation 0, FRIEND;
+}
+
+Team 3;
+{
+	Relation 0, NEUTRAL;
+	Relation 2, NEUTRAL;
+}
+
+Team 4;
+{
+	Relation 0, HOSTILE;
+	Relation 2, HOSTILE;
+	Relation 3, HOSTILE;
 }
 
 Dungeon 0;
@@ -390,7 +403,7 @@ Dungeon 1;
 			Pos=15,15;
 			Size=27,25;
 			AltarPossible=false;
-			WallSquare=floor,wall;
+			WallSquare=grassterrain,wall;
 			FloorSquare=grassterrain,empty;
 			GenerateDoor=false;
 			ReCalculate=false;

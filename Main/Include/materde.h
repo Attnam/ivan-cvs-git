@@ -441,7 +441,7 @@ public:
 	virtual ushort GetDensity() const 				{ return 5000; }
 	virtual ushort OfferValue() const				{ return 25; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
 	virtual ulong RawPrice() const { return GetVolume() >> 1; }
 protected:
 	virtual std::string NameStem() const	{ return "mithril"; }
@@ -495,7 +495,7 @@ public:
 	virtual ushort GetDensity() const				{ return 3000; }
 	virtual ushort OfferValue() const				{ return 7; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
 protected:
 	virtual std::string NameStem() const	{ return "marble"; }
 );

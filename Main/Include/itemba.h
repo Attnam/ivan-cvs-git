@@ -77,7 +77,6 @@ public:
 	virtual float GetThrowStrengthModifier() const { return 1; }
 	virtual bool UseThrowStrengthModifier() const { return false; }
 	virtual void GetStepOnEffect(character*) {}
-	virtual bool CanAIPickup() const { return true; }
 	virtual ulong Price() const { return 0; }
 	virtual bool IsTheAvatar() const RET(false)
 protected:

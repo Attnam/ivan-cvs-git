@@ -731,8 +731,11 @@ bool character::TryMove(vector2d MoveTo)
 							return false;
 						}
 
-						TempPlayerGroup.push_back(Char);
-						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+						if(Char->GetTeam() == GetTeam())
+						{
+							TempPlayerGroup.push_back(Char);
+							game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+						}
 					}
 				})
 
@@ -1428,57 +1431,39 @@ bool character::WizardMode()
 
 bool character::RaiseStats()
 {
-	if(game::GetWizardMode())
-	{
-		Strength += 10;   // I won't touch these just in case we'd do something
-		Endurance += 10;  // really odd with GetStrength() etc.
-		Agility += 10;
-		Perception += 10;
-		HP = GetMaxHP();
-		game::SendLOSUpdateRequest();
-	}
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	Strength += 10;   // I won't touch these just in case we'd do something
+	Endurance += 10;  // really odd with GetStrength() etc.
+	Agility += 10;
+	Perception += 10;
+	HP = GetMaxHP();
+	game::SendLOSUpdateRequest();
 
 	return false;
 }
 
 bool character::LowerStats()
 {
-	if(game::GetWizardMode())
-	{
-		Strength -= 10;
-		Endurance -= 10;
-		Agility -= 10;
-		Perception -= 10;
-		HP = GetMaxHP();
-		game::SendLOSUpdateRequest();
-	}
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	Strength -= 10;
+	Endurance -= 10;
+	Agility -= 10;
+	Perception -= 10;
+	HP = GetMaxHP();
+	game::SendLOSUpdateRequest();
 
 	return false;
 }
 
 bool character::GainAllItems()
 {
-	if(game::GetWizardMode())
-		for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-			Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+		Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
 
 	return false;
 }
 
 bool character::SeeWholeMap()
 {
-	if(game::GetWizardMode())
-	{
-		game::SeeWholeMap();
-	}
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	game::SeeWholeMap();
 
 	return false;
 }
@@ -1524,10 +1509,7 @@ void character::SetSquareUnder(square* Square)
 
 bool character::WalkThroughWalls()
 {
-	if(game::GetWizardMode())
-		game::GoThroughWalls();
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	game::GoThroughWalls();
 
 	return false;
 }
@@ -1540,12 +1522,13 @@ bool character::ShowKeyLayout()
 	List.AddDescription("Key       Description");
 
 	for(uchar c = 1; game::GetCommand(c); ++c)
-	{
-		std::string Buffer;
-		Buffer += game::GetCommand(c)->GetKey();
-		Buffer.resize(10, ' ');
-		List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), RED);
-	}
+		if(game::GetWizardMode() || !game::GetCommand(c)->GetWizardModeFunction())
+		{
+			std::string Buffer;
+			Buffer += game::GetCommand(c)->GetKey();
+			Buffer.resize(10, ' ');
+			List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), RED);
+		}
 
 	List.Draw();
 
@@ -1624,8 +1607,8 @@ bool character::Look()
 						if(Relation == HOSTILE)
 							ADD_MESSAGE("%s is hostile.", game::PersonalPronoun(Character->GetSex()));
 						else if(Relation == NEUTRAL)
-							ADD_MESSAGE("%s is neutral.", game::PersonalPronoun(Character->GetSex()));
-						else if(Relation == FRIEND)
+							ADD_MESSAGE("%s does not care about you.", game::PersonalPronoun(Character->GetSex()));
+						else
 							ADD_MESSAGE("%s is friendly.", game::PersonalPronoun(Character->GetSex()));
 					}
 				}
@@ -2059,7 +2042,10 @@ void character::GetPlayerCommand()
 				if(game::GetInWilderness() && !game::GetCommand(c)->GetCanBeUsedInWilderness())
 					ADD_MESSAGE("This function cannot be used while in wilderness.");
 				else
-					HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
+					if(!game::GetWizardMode() && game::GetCommand(c)->GetWizardModeFunction())
+						ADD_MESSAGE("Activate wizardmode to use this function.");
+					else
+						HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
 
 				ValidKeyPressed = true;
 			}
@@ -2507,7 +2493,7 @@ bool character::CheckForUsefulItemsOnGround()
 {
 	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
 	{
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->CanAIPickup() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
+		if(CanWield() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED)
 			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
 			{
 				item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
@@ -2523,7 +2509,7 @@ bool character::CheckForUsefulItemsOnGround()
 				return true;
 			}
 
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
+		if(CanWear() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED)
 			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
 			{
 				item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
@@ -2699,26 +2685,16 @@ ulong character::Danger() const
 
 bool character::RaiseGodRelations()
 {
-	if(game::GetWizardMode())
-	{
-		for(ushort c = 1; game::GetGod(c); ++c)
-			game::GetGod(c)->AdjustRelation(50);
-	}
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	for(ushort c = 1; game::GetGod(c); ++c)
+		game::GetGod(c)->AdjustRelation(50);
 
 	return false;
 }
 
 bool character::LowerGodRelations()
 {
-	if(game::GetWizardMode())
-	{
-		for(ushort c = 1; game::GetGod(c); ++c)
-			game::GetGod(c)->AdjustRelation(-50);
-	}
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	for(ushort c = 1; game::GetGod(c); ++c)
+		game::GetGod(c)->AdjustRelation(-50);
 
 	return false;
 }
@@ -2737,13 +2713,8 @@ ushort character::LOSRangeSquare() const
 
 bool character::GainDivineKnowledge()
 {
-	if(game::GetWizardMode())
-	{
-		for(ushort c = 1; game::GetGod(c); ++c)
-			game::GetGod(c)->SetKnown(true);
-	}
-	else
-		ADD_MESSAGE("Activate wizardmode to use this function.");
+	for(ushort c = 1; game::GetGod(c); ++c)
+		game::GetGod(c)->SetKnown(true);
 
 	return false;
 }
@@ -2772,4 +2743,10 @@ bool character::Displace(character* Who)
 
 		return false;
 	}
+}
+
+bool character::Sit()
+{
+	GetLevelSquareUnder()->GetOverLevelTerrain()->SitOn(this);
+	return true;
 }

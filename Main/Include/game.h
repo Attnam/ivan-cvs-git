@@ -35,6 +35,7 @@ class inputfile;
 class gamescript;
 class team;
 class bitmap;
+class perttu;
 
 /* Presentation of the game class */
 
@@ -156,8 +157,8 @@ public:
 	static void LOSTurn();
 	static ulong GetLOSTurns() { return LOSTurns; }
 	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
-	static character* GetPerttu() { return Perttu; }
-	static void SetPerttu(character* What) { Perttu = What; }
+	static perttu* GetPerttu() { return Perttu; }
+	static void SetPerttu(perttu* What) { Perttu = What; }
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
@@ -192,7 +193,7 @@ private:
 	static std::vector<team*> Team;
 	static ulong LOSTurns;
 	static bool LOSUpdateRequested;
-	static character* Perttu;
+	static perttu* Perttu;
 };
 
 #endif

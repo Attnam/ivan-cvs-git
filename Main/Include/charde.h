@@ -112,6 +112,7 @@ class CHARACTER
 		game::SetPerttu(this);
 	},
 public:
+	virtual ~perttu();
 	virtual void Load(inputfile&);
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual void BeTalkedTo(character*);
@@ -126,6 +127,7 @@ public:
 	virtual bool Polymorph() RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
 	virtual void AddHitMessage(character*, const bool = false) const;
+	virtual uchar GetStoryState() const { return StoryState; }
 	virtual void SetStoryState(uchar What) { StoryState = What; }
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")

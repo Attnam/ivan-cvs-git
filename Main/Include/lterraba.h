@@ -64,11 +64,12 @@ public:
 	virtual bool GoUp(character*) const;
 	virtual bool GoDown(character*) const;
 	virtual uchar GetOwnerGod() const { return 0; }
-	virtual std::string DigMessage() { return "The ground is too hard to dig."; }
+	virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
 	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
 	virtual void Kick(ushort, bool, uchar) {}
 	virtual bool IsDoor() const { return false; }
+	virtual void SitOn(character*);
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
