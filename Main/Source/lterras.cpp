@@ -408,7 +408,8 @@ bool fountain::Drink(character* Drinker)
 		      {
 			Created = true;
 			GetNearLSquare(TryToCreate)->AddCharacter(Monster);
-			if(rand() % 5)
+
+			if(RAND() % 5)
 			  {
 			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 

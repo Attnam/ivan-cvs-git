@@ -7,10 +7,17 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected some bugs in Igor's Linux port
+	* Igor works again under Win32
+	* ESC now works in Igor's file menu
+	* Project line etc. stats updated
+
 February 9 2003 Heikki Sairanen <sonor@phpoint.fi>
 
 	* Monsters appearing from fountains are sometimes friendly.
-	
+
 February 9 2003 Heikki Sairanen <sonor@phpoint.fi>
 
 	* Igor portated to Linux

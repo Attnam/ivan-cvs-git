@@ -301,7 +301,7 @@ wterra.pcx
 All world map graphics are contained here. Index 255 is used for
 the transparent color, and it must be 255:0:255.
 
-Ground terrains dominate the upper part of the file and they
+Ground terrains dominate the upper part of the file and they are
 stored in 48x48 squares so that the middle 16x16 square is the
 actual tile and the others are so called border tiles which may
 be drawn over lower terrain to make forest borders etc. look

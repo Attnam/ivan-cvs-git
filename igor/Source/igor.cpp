@@ -16,23 +16,30 @@ int Main(int, char**)
 {
   std::string OldDirectory;
   std::ifstream IConfigFile("igor.cfg");
-  if(IConfigFile)
+
+  if(IConfigFile.is_open())
     {
       char ch;
+
       while(IConfigFile.get(ch))
 	OldDirectory += ch;
     }
-  IConfigFile.close();
 
-  std::cout << std::endl << std::endl << "Where is the Graphics/ directory. [" + OldDirectory + "] ";
-  char ch;
+  IConfigFile.close();
+  std::cout << "Where is the graphics directory? ";
+
+  if(OldDirectory.length())
+    std::cout << '[' << OldDirectory << "] ";
+
   std::string Directory;
+  char ch;
+
   while((ch = getchar()) != '\n')
     Directory += ch;
 
-
-  if(Directory == "")
+  if(!Directory.length())
     Directory = OldDirectory;
+
   if(Directory.empty() || Directory[Directory.size() - 1] != '/')
     Directory += '/';
 
@@ -44,6 +51,7 @@ int Main(int, char**)
   graphics::SetMode("IGOR 1.203", 0, vector2d(800, 600), true);
   graphics::LoadDefaultFont(Directory + "Font.pcx");
   DOUBLE_BUFFER->Fill(0);
+
   colorizablebitmap* CBitmap;
   felist List("Choose file to edit:");
   List.AddEntry("Char.pcx", LIGHT_GRAY);
@@ -56,19 +64,21 @@ int Main(int, char**)
   List.SetPos(vector2d(300, 250));
   List.SetWidth(200);
 
-  while((Selected = List.Draw()) & FELIST_ERROR_BIT);
+  while((Selected = List.Draw()) & FELIST_ERROR_BIT)
+    if(Selected == ESCAPED)
+      return 0;
 
   switch(Selected)
     {
-    case 0: FileName = Directory + "Char.pcx"; break;
-    case 1: FileName = Directory + "Humanoid.pcx"; break;
-    case 2: FileName = Directory + "Item.pcx"; break;
-    case 3: FileName = Directory + "GLTerra.pcx"; break;
-    case 4: FileName = Directory + "OLTerra.pcx"; break;
+    case 0: FileName = "Char.pcx"; break;
+    case 1: FileName = "Humanoid.pcx"; break;
+    case 2: FileName = "Item.pcx"; break;
+    case 3: FileName = "GLTerra.pcx"; break;
+    case 4: FileName = "OLTerra.pcx"; break;
     }
 
-  CBitmap = new colorizablebitmap(FileName);
-  bitmap CursorBitmap(Directory + "Cursor.pcx");
+  CBitmap = new colorizablebitmap(Directory + FileName);
+  bitmap CursorBitmap("Graphics/Cursor.pcx");
   vector2d Cursor(0, 0);
   int k = 0;
   Selected = 0;
