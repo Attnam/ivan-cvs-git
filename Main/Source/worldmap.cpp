@@ -39,7 +39,9 @@ worldmap::~worldmap()
 	delete [] AltitudeBuffer;
 	delete [] ContinentBuffer;
 
-	for(uchar c = 1; c < Continent.size(); ++c)
+	uchar c;
+
+	for(c = 1; c < Continent.size(); ++c)
 		delete Continent[c];
 
 	for(c = 0; c < PlayerGroup.size(); ++c)
@@ -109,7 +111,9 @@ void worldmap::Generate()
 
 		vector2d AttnamPos, ElpuriCavePos;
 
-		for(ushort CounterOne = 0;;)
+		ushort CounterOne;
+
+		for(CounterOne = 0;;)
 		{
 			continent* PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
 

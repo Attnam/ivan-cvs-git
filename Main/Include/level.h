@@ -13,7 +13,6 @@
 #include "area.h"
 #include "roomba.h"
 
-class room;
 class levelsquare;
 class character;
 class area;
@@ -28,7 +27,7 @@ class roomscript;
 class level : public area
 {
 public:
-	level() : Room(1, 0) {}
+	level() : Room(1, (room*)0) {}
 	virtual ~level() {}
 	virtual void Generate(levelscript*);
 	virtual vector2d RandomSquare(bool, bool = false) const;

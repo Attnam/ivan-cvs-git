@@ -243,7 +243,9 @@ void level::Generate(levelscript* GenLevelScript)
 			Map[x][y]->ChangeLevelTerrain(LevelScript->GetFillSquare()->GetGroundTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOverTerrain()->Instantiate());
 		}
 
-	for(ushort c = 0; c < *LevelScript->GetRooms(); ++c)
+	ushort c;
+
+	for(c = 0; c < *LevelScript->GetRooms(); ++c)
 	{
 		std::map<uchar, roomscript*>::iterator RoomIterator = LevelScript->GetRoom().find(c);
 
@@ -714,7 +716,9 @@ void level::Save(outputfile& SaveFile) const
 
 	SaveFile << Length;
 
-	for(ushort c = 0; c < Length; ++c)
+	ushort c;
+
+	for(c = 0; c < Length; ++c)
 		SaveFile << KeyPoint.Access(c);
 
 	Length = Door.Length();
@@ -746,7 +750,9 @@ void level::Load(inputfile& SaveFile)
 
 	SaveFile >> Length;
 
-	for(ushort c = 0; c < Length; ++c)
+	ushort c;
+
+	for(c = 0; c < Length; ++c)
 	{
 		vector2d Pos;
 
@@ -845,7 +851,7 @@ ushort level::GetLOSModifier() const
 ushort level::CalculateMinimumEmitationRadius(ushort Emitation) const
 {
 	ushort Ambient = *LevelScript->GetAmbientLight();
-	return sqrt(float(Emitation << 7) / (Ambient < LIGHT_BORDER ? LIGHT_BORDER : Ambient) - 128);
+	return ushort(sqrt(float(Emitation << 7) / (Ambient < LIGHT_BORDER ? LIGHT_BORDER : Ambient) - 128));
 }
 
 void level::AddRoom(room* NewRoom)

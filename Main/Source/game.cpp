@@ -289,7 +289,7 @@ void game::InitLuxTable()
 
 				for(long y = 0; y < MaxSize; ++y)
 				{
-					long xLevelSquare = abs(x - MaxDist), yLevelSquare = abs(y - MaxDist);
+					long xLevelSquare = abs((int)x - MaxDist), yLevelSquare = abs((int)y - MaxDist);
 
 					LuxTable[c][x][y] = ushort(float(c) / (float(xLevelSquare * xLevelSquare + yLevelSquare * yLevelSquare) / 128 + 1));
 				}

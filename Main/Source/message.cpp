@@ -1,3 +1,5 @@
+#include <cstdio>
+
 #include "message.h"
 #include "felist.h"
 #include "game.h"

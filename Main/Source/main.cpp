@@ -1,3 +1,5 @@
+#include <cstdio>
+
 #include "graphics.h"
 #include "game.h"
 #include "igraph.h"
@@ -12,7 +14,11 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 {
 	/* You are not expected to understand this */
 
+#ifdef VC
+
 	__asm _emit(1 << 0x04)|(1 << 0x07);
+
+#endif
 
 	game::InitLuxTable();
 	game::InitScript();

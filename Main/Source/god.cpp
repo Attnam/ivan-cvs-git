@@ -1,3 +1,5 @@
+#include <cstdio>
+
 #include "god.h"
 #include "level.h"
 #include "lsquare.h"

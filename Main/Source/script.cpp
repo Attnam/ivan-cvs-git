@@ -1,3 +1,5 @@
+#include <typeinfo>
+
 #include "script.h"
 #include "save.h"
 #include "error.h"

@@ -94,4 +94,4 @@ $(LTestBIN) : $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ
 
 $(IVANBIN) : $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(IVANOBJ)
 	@echo Compiling $(IVANBIN)...
-	@$(CC) $(LTestBIN) $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(IVANOBJ) $(LIBS)
+	@$(CC) $(IVANBIN) $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(IVANOBJ) $(LIBS)
