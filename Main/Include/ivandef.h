@@ -15,7 +15,7 @@
  */
 
 #ifndef VERSION
-#define VERSION "0.40d"
+#define VERSION "0.40"
 #endif
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }

@@ -1,5 +1,23 @@
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Fixed the Foul Iron Penetrating Light of Death Bug
+	* Added "Please send bug report..." message to aborts
+	* Wands that have run out of charges are now worth nothing
+	* Corrected probably all gcc warnings
+	* Corrected a bug in innermost SpillFluid() function that caused fluid to
+	  appear on the ground with a slight delay
+	* Panicked monsters are now much better in escaping along long tunnels
+	* Dipping wielded items is now possible
+	* Corrected a typo in potions' break message
+	* Zombie flesh is now initially spoiled
+	* Pick-axes are now more sturdy
+	* Digging consumes henceforth more NP
+	* Floating eye picture added to char.pcx by Kahvi
+	* I had to decrease the ambient light of New Attnam, since otherwise lanterns
+	  would not have been visible there, which certainly would have looked like a bug
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Cloak and ring of invisibility can no more be wished, since they were so
 	  much more powerful than any other wishable items
 	* Charisma now affects shop prices (both buying and selling)

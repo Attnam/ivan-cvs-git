@@ -4087,3 +4087,15 @@ void nonhumanoid::AddSpecialStethoscopeInfo(felist& Info) const
   Info.AddEntry(std::string("Strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
   Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
+
+void zombie::CreateCorpse()
+{
+  corpse* Corpse = new corpse(0, NO_MATERIALS);
+  Corpse->SetDeceased(this);
+  GetStackUnder()->AddItem(Corpse);
+  Disable();
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(Exists() && GetBodyPart(c))
+      GetBodyPart(c)->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
+}

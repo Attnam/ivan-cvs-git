@@ -60,7 +60,7 @@
 //OfferModifiers. (timo)
 //NPModifiers. (timo)
 //1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.
-Dipping to corpses, containers etc.
+//?Dipping to corpses, containers etc.
 //Aliases!!!!!!!!!!!!!! (timo)
 //Potion of poison. (timo)
 //One handed penalties. (timo)
@@ -72,14 +72,14 @@ Dipping to corpses, containers etc.
 //Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns
-Effect and exp for charisma.
+//Effect and exp for charisma.
 (s) ?Shirt.
 //Kamikaze dwarves.
 //Naming hostile monsters.
 (s) ?The flight of wielded item and amulet.
 (s) ?Cats & rat corpses.
 //Things thrown at doors.
-%s"
+//%s"
 //CollectCreatures
 //Drinking should be separated.
 //Skeleton volume.
@@ -117,7 +117,7 @@ Effect and exp for charisma.
 (r) ?Temporary invisibility should be cancelled if the character hits something.
 //Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
 //Prevent digging with a broken pick-axe.
-Stethoscope should show relative danger.
+(s) Stethoscope should show relative danger.
 //Remove the school food effects of scabies (or make them a lot more seldom).
 (s) ?Raven.
 Kicking chests.
@@ -166,9 +166,9 @@ Kicking chests.
 //If a monster is polymorphed and kills the player, this should be shown in the high score entry.
 //High score entry should show the dungeon where the player died. (killed by a bat in level 1 isn't informative as there are two such levels)
 //Invisibility + selling.
-Bear traps should break eventually.
+//Bear traps should break eventually.
 //More color states to silhouette.
 //Digging walls should yield stones.
-Abort messages should tell the user to e-mail ivan-users@sourceforge.net. Remember to tell the user to state their version number/OS etc.
-?Zombie flesh should already be spoiled when a zombie dies
+//Abort messages should tell the user to e-mail ivan-users@sourceforge.net. Remember to tell the user to state their version number/OS etc.
+//?Zombie flesh should already be spoiled when a zombie dies
 //Wait for keypress when player gets stuck in a bear trap.

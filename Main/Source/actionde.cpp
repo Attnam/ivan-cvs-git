@@ -237,6 +237,7 @@ void dig::Handle()
   Square->GetOLTerrain()->EditHP(-Max<ushort>(Damage, 1));
   GetActor()->EditExperience(ARM_STRENGTH, 10);
   GetActor()->EditAP(-100000 / APBonus(GetActor()->GetAttribute(DEXTERITY)));
+  GetActor()->EditNP(-30);
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
     {

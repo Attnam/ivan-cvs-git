@@ -36,14 +36,17 @@ int main(int argc, char** argv)
     {
 #ifdef WIN32
       ShowWindow(hWnd, SW_HIDE);
-      MessageBox(NULL, "Fatal Error: Unknown exception thrown.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
+      char Buffer[256];
+      strcpy(Buffer, "Fatal Error: Unknown exception thrown.");
+      strcat(Buffer, globalerrorhandler::GetBugMsg());
+      MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
 #ifdef USE_SDL
-      std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
+      std::cout << "Fatal Error: Unknown exception thrown." << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
 #ifdef __DJGPP__
       graphics::DeInit();
-      std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
+      std::cout << "Fatal Error: Unknown exception thrown." << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
       exit(3);
 

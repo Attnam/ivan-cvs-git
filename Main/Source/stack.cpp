@@ -546,7 +546,10 @@ void stack::SignalEmitationIncrease(ulong EmitationUpdate)
       game::CombineLights(Emitation, EmitationUpdate);
 
       if(MotherEntity)
-	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+	{
+	  if(MotherEntity->AllowContentEmitation())
+	    MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+	}
       else
 	GetLSquareTrulyUnder()->SignalEmitationIncrease(EmitationUpdate);
     }
@@ -562,7 +565,10 @@ void stack::SignalEmitationDecrease(ulong EmitationUpdate)
       if(Backup != Emitation)
 	{
 	  if(MotherEntity)
-	    MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+	    {
+	      if(MotherEntity->AllowContentEmitation())
+		MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+	    }
 	  else
 	    GetLSquareTrulyUnder()->SignalEmitationDecrease(EmitationUpdate);
 	}

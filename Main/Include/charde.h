@@ -568,6 +568,8 @@ class CHARACTER
   virtual void BeTalkedTo();
   virtual bool BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
   virtual void CreateBodyParts(ushort);
+ protected:
+  virtual void CreateCorpse();
 );
 
 class CHARACTER

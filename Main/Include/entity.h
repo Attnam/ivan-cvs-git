@@ -41,6 +41,7 @@ class entity
   virtual void SignalSpoil(material*) { }
   virtual void SignalSpoilLevelChange(material*) { }
   virtual bool IsOnGround() const = 0;
+  virtual bool AllowContentEmitation() const { return true; }
  protected:
   std::list<entity*>::iterator PoolIterator;
   ulong Emitation;

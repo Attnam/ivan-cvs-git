@@ -7,5 +7,6 @@
 (r) Lion appearing on first level.
 //Bone helmet is too weak with 1 ap.
 //Banana peels can be abused.
-Bats should be made more dangerous or easier
-Snakes are too fast. (normal snakes can all be easily outrun by a human)
+//Bats should be made more dangerous or easier
+//Snakes are too fast. (normal snakes can all be easily outrun by a human)
+Halberd requires too much strength (weapons experts opinion).

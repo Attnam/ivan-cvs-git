@@ -18,10 +18,6 @@ class ABSTRACT_ITEM
   materialcontainer,
   item,
  public:
-  /*virtual void ReceiveHitEffect(character*, character*);
-  virtual void DipInto(material*, character*);
-  virtual ulong GetPrice() const;
-  virtual bool IsDippable(character*) const { return true; }*/
   materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
@@ -409,6 +405,7 @@ class ABSTRACT_ITEM
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual bool IsExplosive() const { return true; }
   virtual ulong GetTotalExplosivePower() const { return 40; }
+  virtual ulong GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
  protected:
   virtual ushort GetBeamColor() const { return WHITE; }
   virtual void VirtualConstructor(bool);
@@ -1155,7 +1152,6 @@ class ITEM
   virtual bool CanBeEatenByAI(const character*) const;
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
-  //virtual bool IsDipDestination(const character*) const { return true; }
   character* GetDeceased() const { return Deceased; }
   void SetDeceased(character*);
   virtual void Save(outputfile&) const;
@@ -1264,6 +1260,7 @@ class ITEM
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
   virtual void GenerateLeftOvers(character*);
   virtual long GetScore() const;
+  virtual bool AllowContentEmitation() const { return false; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }

@@ -149,6 +149,7 @@ class OLTERRAIN
   virtual void Save(outputfile&) const;
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
   virtual void Break();
+  virtual bool AllowContentEmitation() const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   stack* Contained;

@@ -98,14 +98,14 @@ void organicsubstance::EatEffect(character* Eater, ulong Amount, float NPModifie
 
   if(GetSpoilLevel() > 0)
     {
-      Eater->BeginTemporaryState(CONFUSED, Amount * GetSpoilLevel() * sqrt(NPModifier) / 2500);
+      Eater->BeginTemporaryState(CONFUSED, ushort(Amount * GetSpoilLevel() * sqrt(NPModifier) / 2500));
 
       if(CanHaveParasite() && !(RAND() % (5000 / GetSpoilLevel())))
 	Eater->GainIntrinsic(PARASITIZED);
     }
 
   if(GetSpoilLevel() > 4)
-    Eater->BeginTemporaryState(POISONED, Amount * (GetSpoilLevel() - 4) * sqrt(NPModifier) / 2500);
+    Eater->BeginTemporaryState(POISONED, ushort(Amount * (GetSpoilLevel() - 4) * sqrt(NPModifier) / 2500));
 
   SetVolume(Volume - Amount);
 }
@@ -121,4 +121,25 @@ void organicsubstance::AddConsumeEndMessage(character* Eater) const
     }
 
   material::AddConsumeEndMessage(Eater);
+}
+
+void organicsubstance::SetSpoilCounter(ushort What)
+{
+  SpoilCounter = What;
+
+  if(SpoilCounter < GetSpoilModifier())
+    {
+      if(SpoilCounter << 1 >= GetSpoilModifier())
+	{
+	  uchar NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+
+	  if(NewSpoilLevel != SpoilLevel)
+	    {
+	      SpoilLevel = NewSpoilLevel;
+	      MotherEntity->SignalSpoilLevelChange(this);
+	    }
+	}
+    }
+  else
+    MotherEntity->SignalSpoil(this);
 }

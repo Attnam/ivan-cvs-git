@@ -562,7 +562,7 @@ pickaxe /* meleeweapon-> */
 	Alias == "pick-ax";
 	Roundness = 20;
 	WeaponCategory = AXES;
-	StrengthModifier = 40;
+	StrengthModifier = 75;
 	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }

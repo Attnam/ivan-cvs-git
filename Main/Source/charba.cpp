@@ -1500,17 +1500,17 @@ void character::CalculateBurdenState()
 
 bool character::Dip()
 {
-  if(!GetStack()->SortedItems(this, &item::DippableSorter))
+  if(!GetStack()->SortedItems(this, &item::DippableSorter) && !EquipsSomething(&item::DippableSorter))
     {
       ADD_MESSAGE("You have nothing to dip!");
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", 0, &item::DippableSorter);
+  item* Item = SelectFromPossessions("What do you want to dip?", &item::DippableSorter);
 
   if(Item)
     {
-      bool HasDipDestination = GetStack()->SortedItems(this, &item::DipDestinationSorter);
+      bool HasDipDestination = GetStack()->SortedItems(this, &item::DipDestinationSorter) || EquipsSomething(&item::DippableSorter);
 
       if(!HasDipDestination || game::BoolQuestion("Do you wish to dip in a nearby square? [y/N]"))
 	{
@@ -1523,7 +1523,7 @@ bool character::Dip()
 	}
       else
 	{
-	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", 0, &item::DipDestinationSorter);
+	  item* DipTo = SelectFromPossessions("Into what do you wish to dip it?", &item::DipDestinationSorter);
 
 	  if(DipTo)
 	    {
@@ -2481,22 +2481,16 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	  BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	}
 
-      if(StateIsActivated(PANIC))
-	{
-	  if(!MoveTowards((GetPos() << 1) - NearestChar->GetPos()))
-	    return MoveRandomly();
-
-	  return true;
-	}
-
-      if(!GetTeam()->GetLeader() && NearestChar->IsPlayer())
+      if(!StateIsActivated(PANIC))
 	WayPoint = NearestChar->GetPos();
+      else
+	WayPoint = (GetPos() << 1) - NearestChar->GetPos();
 
-      return MoveTowards(NearestChar->GetPos());
+      return MoveTowards(WayPoint);
     }
   else
     {
-      if(!GetTeam()->GetLeader() && WayPoint.X != -1 && !StateIsActivated(PANIC))
+      if(!GetTeam()->GetLeader() && WayPoint.X != -1)
 	{
 	  if(!MoveTowards(WayPoint))
 	    {
@@ -4939,9 +4933,9 @@ character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, usho
 	{
 	  switch(GetSex())
 	    {
-	    case UNDEFINED: NewForm = new frog(GREATER_DARK, NO_EQUIPMENT); break;
+	    case UNDEFINED: NewForm = new golem(DIAMOND, NO_EQUIPMENT); break;
 	    case MALE: NewForm = new communist(0, NO_EQUIPMENT); break;
-	    case FEMALE: NewForm = new mistress(WAR_LADY, NO_EQUIPMENT); break;
+	    case FEMALE: NewForm = new mistress(WHIP_CHAMPION, NO_EQUIPMENT); break;
 	    }
 	}
     }

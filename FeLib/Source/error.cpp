@@ -12,6 +12,12 @@
 
 #include "error.h"
 
+/* Shouldn't be initialized here! */
+
+const char* globalerrorhandler::BugMsg = "\n\nPlease send bug report to ivan-users@sourceforge.net\n"
+					 "including a brief description of what you did, what version\n"
+					 "you are running and which kind of system you are using.";
+
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
 #else
@@ -61,12 +67,14 @@ void globalerrorhandler::DeInstall()
 
 void globalerrorhandler::Abort(const char* Format, ...)
 {
-  char Buffer[256];
+  char Buffer[512];
 
   va_list AP;
   va_start(AP, Format);
   vsprintf(Buffer, Format, AP);
   va_end(AP);
+
+  strcat(Buffer, BugMsg);
 
 #ifdef WIN32
   ShowWindow(*hWnd, SW_HIDE);
@@ -150,7 +158,12 @@ void globalerrorhandler::SignalHandler(int Signal)
 	  std::cout << "Unknown";
 	}
 
-      std::cout << " exception signalled." << std::endl;
+      std::cout << " exception signalled.";
+
+      if(Signal != SIGINT)
+	std::cout << BugMsg;
+
+      std::cout << std::endl;
     }
 
   exit(2);

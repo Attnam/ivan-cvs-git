@@ -405,3 +405,4 @@ When many same kind of items on ground the message should say "5 Xs here" not ".
 (d) There should be many types of attack damage with physical object. (eg blunt, sting, chop)
 Movement modes. (walk, run, stealth)
 "No load" mode. (if weight of stack < 1 kg)
+Lanterns inside glass chests should still emit light.

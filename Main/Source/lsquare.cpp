@@ -518,6 +518,7 @@ void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Var
 
   GetFluid()->SpillFluid(Amount, Color, Lumpiness, Variation);
   SendMemorizedUpdateRequest();
+  SendNewDrawRequest();
 }
 
 void lsquare::CalculateLuminance()
@@ -1056,7 +1057,7 @@ void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, u
 
       Char->ReceiveDamage(Zapper, Damage, ENERGY, ALL);
       Zapper->Hostility(Char);
-      Char->CheckDeath("killed by a burst of energy", Zapper);
+      Char->CheckDeath(DeathMsg, Zapper);
     }
 
   GetOLTerrain()->ReceiveDamage(Zapper, Damage, ENERGY);	
@@ -1201,9 +1202,6 @@ void lsquare::DrawMemorized()
 	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
       else
 	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
-
-      if(dynamic_cast<dog*>(Character) != 0)
-	int esko = 2;
 
       if(Character && Character->CanBeSeenByPlayer())
 	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen != 0, true);

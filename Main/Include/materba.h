@@ -132,6 +132,8 @@ class material
   DATA_BASE_BOOL(IsSparkling);
   DATA_BASE_BOOL(IsMetal);
   DATA_BASE_BOOL(CanHaveParasite);
+  DATA_BASE_VALUE(ushort, EffectStrength);
+  DATA_BASE_VALUE(ushort, DigProductMaterial);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
@@ -154,12 +156,11 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue(const item*) const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
-  DATA_BASE_VALUE(ushort, EffectStrength);
   virtual void SetWetness(ulong) { }
   virtual uchar GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
   virtual bool CanBeEatenByAI() const { return !IsBadFoodForAI(); }
-  DATA_BASE_VALUE(ushort, DigProductMaterial);
+  virtual void SetSpoilCounter(ushort) { }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

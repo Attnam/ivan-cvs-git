@@ -25,6 +25,7 @@ class MATERIAL
   virtual void EatEffect(character*, ulong, float = 1.0);
   virtual bool CanBeEatenByAI() const { return !IsBadFoodForAI() && !SpoilLevel; }
   virtual void AddConsumeEndMessage(character*) const;
+  virtual void SetSpoilCounter(ushort);
  protected:
   virtual void VirtualConstructor(bool);
   ushort SpoilCounter;

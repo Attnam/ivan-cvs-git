@@ -23,10 +23,12 @@ class globalerrorhandler
   static void Install();
   static void DeInstall();
   static void Abort(const char*, ...);
+  static const char* GetBugMsg() { return BugMsg; }
 #ifdef WIN32
   static void SetWindow(HWND* NewhWnd) { hWnd = NewhWnd; }
 #endif
  private:
+  static const char* BugMsg;
 #ifdef VC
   static int NewHandler(size_t);
   static int (*OldNewHandler)(size_t);

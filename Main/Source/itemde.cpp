@@ -3653,7 +3653,7 @@ ulong itemcontainer::GetPrice() const
 void potion::Break()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("The %s shatters to pieces.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
