@@ -18,3 +18,4 @@ If a monster is hitting you and your HPs are low (HP < 4) and you try to run bac
 Ligths should be updated when terrain changes.
 Material volume is undefined in 
 The door material bug.
+"What direction do you wish to dig?" question stays on screen until save / load or quit.
