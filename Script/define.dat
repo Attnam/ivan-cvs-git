@@ -208,6 +208,8 @@
 #define EFFECT_OMMEL_TEARS 27
 #define EFFECT_OMMEL_SNOT 28
 #define EFFECT_OMMEL_BONE 29
+#define EFFECT_MUSTARD_GAS 30
+#define EFFECT_MUSTARD_GAS_LIQUID 31
 
 /* CEM = Consume End Message */
 
@@ -336,6 +338,7 @@
 #define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
 #define FART (GAS_ID + 9)
+#define MUSTARD_GAS (GAS_ID + 9)
 
 #define LIQUID_ID (4096 * 4)
 

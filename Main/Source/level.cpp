@@ -2912,3 +2912,16 @@ spawnresult level::SpawnMonsters(characterspawner Spawner, team* Team,
 
   return SR;
 }
+
+bool level::GasExplosion(gas* GasMaterial, lsquare* Square) 
+{
+    for(int d = 0; d < 9; ++d)
+    {
+      lsquare* Neighbour = Square->GetNeighbourLSquare(d);
+
+      if(Neighbour && Neighbour->IsFlyable())
+      {
+	Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
+      }
+    }  
+}

@@ -2872,3 +2872,22 @@ void itemcontainer::Disappear()
   Contained->MoveItemsTo(GetSlot());
   item::Disappear();
 }
+
+truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
+{
+  if(Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (!(RAND_N(5 / Damage + 1))))
+  {
+    if(GetSquareUnder()->CanBeSeenByPlayer(true))
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
+
+    material* GasMaterial = GetSecondaryMaterial();
+    GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder());
+    
+    RemoveFromSlot();
+    SendToHell();
+    
+    return true;
+  }
+
+  return false;
+}

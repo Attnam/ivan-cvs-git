@@ -1334,6 +1334,17 @@ gas
     BreatheMessage = "Ugh. It smells horrible here.";
     CategoryFlags = Base|IS_SCARY;
   }
+
+  Config MUSTARD_GAS;
+  {
+    Color = rgb16(120, 70, 40);
+    NameStem = "mustard gas";
+    Alpha = 200;
+    AttachedGod = CRUENTUS;
+    BreatheMessage = "It smells like mustard here.";
+    CategoryFlags = Base|IS_SCARY;    
+    Effect = EFFECT_MUSTARD_GAS;
+  }
 }
 
 liquid
@@ -1732,6 +1743,18 @@ liquid
     Flexibility = 40;
     AttachedGod = SCABIES;
     CategoryFlags = IS_BLOOD;
+  }
+
+  Config MUSTARD_GAS_LIQUID;
+  {
+    StrengthValue = 1;
+    NutritionValue = 10;
+    Color = rgb16(144, 144, 240);
+    NameStem = "mustard gas in liquid form";
+    Alpha = 150;
+    AttachedGod = CRUENTUS;
+    Effect = MUSTARD_GAS_LIQUID;
+    EffectStrength = 100;
   }
 }
 

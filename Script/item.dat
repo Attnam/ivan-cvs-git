@@ -3460,3 +3460,20 @@ scrollofgolemcreation /* scroll-> */
   AttachedGod = SOPHOS;
   ReadDifficulty = 1000;
 }
+
+gasgrenade 
+{
+  DefaultSize = 15;
+  Category = MISC;
+  BitmapPos = 110, 32;
+  DefaultMainVolume = 200;
+  NameSingular = "gas grenade";
+  FormModifier = 15;
+  AttachedGod = CRUENTUS;
+  Possibility = 10;
+  Price = 50;
+  MainMaterialConfig == IRON;
+  SecondaryMaterialConfig == MUSTARD_GAS; /* Needs to be a gas. */
+  Adjective = "dwarven";
+  Alias == "gas grenade";
+}

@@ -593,4 +593,10 @@ ITEM(scrollofgolemcreation, scroll)
   virtual void FinishReading(character*);
 };
 
+
+ITEM(gasgrenade, materialcontainer)
+{
+ protected:
+  truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int);
+};
 #endif
