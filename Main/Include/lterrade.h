@@ -283,6 +283,7 @@ class OLTERRAIN
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(FABRIC)); }
   virtual std::string GetAdjective() const { return "expensive"; }
+  virtual std::string GetAdjectiveArticle() const { return "an"; }
   virtual std::string GetNameSingular() const { return "carpet"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 272); }
 );

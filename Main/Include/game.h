@@ -163,6 +163,11 @@ class game
   static void SetAnimationControllerActive(bool What) { AnimationControllerActive = What; }
   static bool AnimationControllerIsActive() { return AnimationControllerActive; }
   static void TextScreen(const std::string&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
+  static vector2d GetCursorPos() { return CursorPos; }
+  static void SetCursorPos(vector2d What) { CursorPos = What; }
+  static bool DoZoom() { return Zoom; }
+  static void SetDoZoom(bool What) { Zoom = What; }
+  static bool PositionQuestionController();
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -199,6 +204,8 @@ class game
   static gamescript* GameScript;
   static valuemap GlobalValueMap;
   static bool AnimationControllerActive;
+  static vector2d CursorPos;
+  static bool Zoom;
 };
 
 #endif

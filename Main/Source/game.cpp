@@ -62,6 +62,8 @@ std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 bool game::AnimationControllerActive = true;
+vector2d game::CursorPos;
+bool game::Zoom;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
@@ -1372,12 +1374,16 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
   int Key = 0;
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
   graphics::BlitDBToScreen();
+  globalwindowhandler::InstallControlLoop(PositionQuestionController);
+  SetDoZoom(Zoom);
   vector2d Return;
 
   while(true)
     {
-      if(!game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen())
-	DOUBLEBUFFER->Fill(game::CalculateScreenCoordinates(CursorPos), vector2d(16, 16), 0);
+      if(!GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() && !GetSeeWholeMapCheat())
+	DOUBLEBUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), 0);
+      else
+	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 
       if(Key == ' ')
 	{
@@ -1397,33 +1403,43 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 	{
 	  CursorPos += DirectionVector;
 
-	  if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize() - 1) CursorPos.X = 0;
-	  if(short(CursorPos.X) < 0) CursorPos.X = game::GetCurrentArea()->GetXSize() - 1;
-	  if(short(CursorPos.Y) > game::GetCurrentArea()->GetYSize() - 1) CursorPos.Y = 0;
-	  if(short(CursorPos.Y) < 0) CursorPos.Y = game::GetCurrentArea()->GetYSize() - 1;
+	  if(short(CursorPos.X) > GetCurrentArea()->GetXSize() - 1) CursorPos.X = 0;
+	  if(short(CursorPos.X) < 0) CursorPos.X = GetCurrentArea()->GetXSize() - 1;
+	  if(short(CursorPos.Y) > GetCurrentArea()->GetYSize() - 1) CursorPos.Y = 0;
+	  if(short(CursorPos.Y) < 0) CursorPos.Y = GetCurrentArea()->GetYSize() - 1;
 	}
 
-      if(CursorPos.X < game::GetCamera().X + 2 || CursorPos.X > game::GetCamera().X + game::GetScreenSize().X - 2)
-	game::UpdateCameraXWithPos(CursorPos.X);
+      if(CursorPos.X < GetCamera().X + 2 || CursorPos.X > GetCamera().X + GetScreenSize().X - 2)
+	UpdateCameraXWithPos(CursorPos.X);
 
-      if(CursorPos.Y < game::GetCamera().Y + 2 || CursorPos.Y > game::GetCamera().Y + game::GetScreenSize().Y - 2)
-	game::UpdateCameraYWithPos(CursorPos.Y);
+      if(CursorPos.Y < GetCamera().Y + 2 || CursorPos.Y > GetCamera().Y + GetScreenSize().Y - 2)
+	UpdateCameraYWithPos(CursorPos.Y);
 
       if(Handler)
 	Handler(CursorPos);
 
-      game::DrawEverythingNoBlit();
-      vector2d ScreenCordinates = game::CalculateScreenCoordinates(CursorPos);
-      if(Zoom) 
-	DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates.X, ScreenCordinates.Y, RES.X - 96, RES.Y - 96, 16, 16, 5);
-      igraph::DrawCursor(ScreenCordinates);
-      game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
+      DrawEverythingNoBlit();
+      SetCursorPos(CursorPos);
+      PositionQuestionController();
       graphics::BlitDBToScreen();
       Key = GETKEY();
     }
 
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, BLACK);
+  DOUBLEBUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
+  DOUBLEBUFFER->Fill(RES.X - 96, RES.Y - 96, 80, 80, BLACK);
+  globalwindowhandler::DeInstallControlLoop(PositionQuestionController);
   return Return;
+}
+
+bool game::PositionQuestionController()
+{
+  vector2d ScreenCordinates = CalculateScreenCoordinates(GetCursorPos());
+  igraph::DrawCursor(ScreenCordinates);
+
+  if(DoZoom())
+    DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates, RES.X - 96, RES.Y - 96, 16, 16, 5);
+
+  return true;
 }
 
 void game::LookHandler(vector2d CursorPos)
