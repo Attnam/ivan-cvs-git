@@ -179,7 +179,6 @@ void game::Init(std::string Name)
 
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
-		Player->GetStack()->FastAddItem(new wandofpolymorph);
 
 		Perttu = 0;
 
@@ -855,8 +854,10 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 	while(true)
 	{
 		int Key = GETKEY();
+
 		if(AcceptYourself && Key == '.')
 			return '.';
+
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 			if(Key == game::GetMoveCommandKey(c))
 				return c;

@@ -256,13 +256,12 @@ void seges::PrayGoodEffect()
 
 void seges::PrayBadEffect()
 {
-	ADD_MESSAGE("You suddenly feel more hungry.");
-	game::GetPlayer()->SetNP(game::GetPlayer()->GetNP() - 400);
+	ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
+
+	game::GetPlayer()->SetNP(game::GetPlayer()->GetNP() - 100);
+
 	if(game::GetPlayer()->GetNP() < 1)
-	{
-		ADD_MESSAGE("In fact you feel extremely hungry.");
-		game::GetPlayer()->CheckDeath(std::string("starved by ") + Name());
-	}
+		game::GetPlayer()->CheckStarvationDeath(std::string("starved by ") + Name());
 }
 
 void atavus::PrayGoodEffect()

@@ -883,7 +883,7 @@ public:
 class ITEM
 (
 	brokenplatemail,
-	item,
+	torsoarmor,
 	InitMaterials(new iron),
 	{
 		SetSize(70);
@@ -895,6 +895,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,352)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
+	virtual ushort GetArmorValue() const;
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );

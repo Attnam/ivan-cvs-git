@@ -175,7 +175,7 @@ public:
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
-	virtual void SetNP(long What) { NP = What; }
+	virtual void SetNP(long);
 	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
 	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
 	virtual void SetRegenerationCounter(long What) { RegenerationCounter = What; }
@@ -242,6 +242,7 @@ public:
 	virtual void AddSpecialItemInfo(std::string&, item*) {}
 	virtual void AddSpecialItemInfoDescription(std::string&) {}
 	virtual long StatScore() const;
+	virtual bool CheckStarvationDeath(std::string);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

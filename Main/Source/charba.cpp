@@ -24,7 +24,7 @@
 #include "graphics.h"
 #include "script.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(300), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -59,8 +59,6 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 
 void character::Hunger(ushort Turns) 
 {
-	ulong BNP = GetNP();
-
 	switch(GetBurdenState())
 	{
 	case UNBURDENED:
@@ -82,15 +80,7 @@ void character::Hunger(ushort Turns)
 	if(GetNP() < HUNGERLEVEL)
 		SetStrengthExperience(GetStrengthExperience() - 10 * Turns);
 
-	if(GetNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL) if(GetIsPlayer()) ADD_MESSAGE("You are getting hungry.");
-	if(GetNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL) if(GetIsPlayer()) ADD_MESSAGE("You are getting very hungry.");
-	if(GetNP() < 1)
-	{
-		if(!game::GetWizardMode())
-			AddScoreEntry("starved to death");
-
-		Die();
-	}
+	CheckStarvationDeath("starved to death");
 }
 
 bool character::Hit(character* Enemy)
@@ -308,7 +298,7 @@ bool character::Open()
 		if(Key == 'i') 
 			return OpenItem();
 
-		if(Key == 0x1B)
+		if(Key == 0x1B || Key == ' ')
 			return false;
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
@@ -331,7 +321,7 @@ bool character::Close()
 	{
 		int Key = GETKEY();
 
-		if(Key == 0x1B)
+		if(Key == 0x1B || Key == ' ')
 			return false;
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
@@ -1045,11 +1035,11 @@ bool character::Talk()
 	{
 		k = GETKEY();
 
-		if(k == 0x1B)
+		if(k == 0x1B || k == ' ')
 			CorrectKey = true;
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-			if(k == game::GetMoveCommandKey(c) || (k ^ 32) == game::GetMoveCommandKey(c))
+			if(k == game::GetMoveCommandKey(c))
 			{
 				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter())
 				{
@@ -1934,7 +1924,22 @@ void character::AddScoreEntry(std::string Description, float Multiplier) const
 
 bool character::CheckDeath(std::string Msg)
 {
-	if(GetHP() < 1)
+	if(GetHP() < 1 || GetNP() < 1)
+	{
+		if(GetIsPlayer() && !game::GetWizardMode())
+			AddScoreEntry(Msg);
+
+		Die();
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool character::CheckStarvationDeath(std::string Msg)
+{
+	if(GetNP() < 1)
 	{
 		if(GetIsPlayer() && !game::GetWizardMode())
 			AddScoreEntry(Msg);
@@ -2777,4 +2782,22 @@ bool character::Sit()
 {
 	GetLevelSquareUnder()->GetOverLevelTerrain()->SitOn(this);
 	return true;
+}
+
+void character::SetNP(long What)
+{
+	long BNP = GetNP();
+
+	NP = What;
+
+	if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL)
+	{
+		ADD_MESSAGE("You are getting very hungry.");
+		DeActivateVoluntaryStates();
+	}
+	else if(GetIsPlayer() && GetNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL)
+	{
+		ADD_MESSAGE("You are getting hungry.");
+		DeActivateVoluntaryStates();
+	}
 }

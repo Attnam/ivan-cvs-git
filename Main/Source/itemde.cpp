@@ -276,6 +276,19 @@ ushort chainmail::GetArmorValue() const
 	return ushort(Base);
 }
 
+ushort brokenplatemail::GetArmorValue() const
+{
+	float Base = 95 - sqrt(Material[0]->GetHitValue());
+
+	if(Base < 1)
+		Base = 1;
+
+	if(Base > 100)
+		Base = 100;
+
+	return ushort(Base);
+}
+
 bool wand::Apply(character* StupidPerson, stack* MotherStack)
 {
 	if(StupidPerson->GetIsPlayer())
