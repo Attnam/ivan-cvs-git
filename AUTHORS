@@ -1,27 +1,55 @@
-Programming (in order of actual code completed):
-	Timo Kiviluoto
-	Heikki Sairanen
-	Ilari Kaartinen
-	Mark Schreiber
-	Perttu Luukko
-	Niko Kosonen
+Iter Vehemens ad Necem credits
+------------------------------
 
-Special thanks for the random number generator we use:
-	Takuji Nishimura
-	Makoto Matsumoto
+Programming
+-----------
 
-Graphics (in order of actual graphics completed):
-	Tuukka Virtaperko
-	Vesa Peltonen
+Timo Kiviluoto
+Heikki Sairanen
 
-Bug hunting (alphabetical order):
-	Ilari Kaartinen
-	Timo Kiviluoto
-	Niko Kosonen
-	Perttu Luukko
-	Janne Miettinen
-	Nihil
-	Vesa Peltonen
-	Heikki Sairanen
-	Renne Sairanen
-	Tuukka Virtaperko
+Graphics
+--------
+
+Tuukka Virtaperko
+
+Additional coders
+-----------------
+
+In order of importance
+
+Ilari Kaartinen
+Mark Schreiber
+Perttu Luukko
+Niko Kosonen
+
+Additional graphics
+-------------------
+
+Vesa Peltonen
+
+Authors of the RNG we use
+-------------------------
+
+Takuji Nishimura
+Makoto Matsumoto
+
+Author of the line algorithm and the font we use
+------------------------------------------------
+
+Shawn Hargreaves's Allegro, a game programming library
+
+Idea providers and bugs hunters
+-------------------------------
+
+In alphabetical order
+
+Ilari Kaartinen
+Timo Kiviluoto
+Niko Kosonen
+Perttu Luukko
+Janne Miettinen
+Nihil
+Vesa Peltonen
+Heikki Sairanen
+Renne Sairanen
+Tuukka Virtaperko
