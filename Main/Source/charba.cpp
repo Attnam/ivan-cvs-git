@@ -1578,7 +1578,6 @@ void character::SetSquareUnder(square* Square)
 bool character::WalkThroughWalls()
 {
 	game::GoThroughWalls();
-
 	return false;
 }
 
@@ -3053,6 +3052,7 @@ void character::SetHP(short What)
 void character::EndGoing()
 {
 	DeActivateState(GOING);
+	game::GetCurrentArea()->SendNewDrawRequest();
 }
 
 bool character::Go()

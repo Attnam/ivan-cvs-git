@@ -1,8 +1,6 @@
 #ifndef __SAVE_H__
 #define __SAVE_H__
 
-#pragma warning(disable : 4786)
-
 #include <fstream>
 #include <vector>
 #include <map>
