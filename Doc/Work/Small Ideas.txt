@@ -541,4 +541,6 @@ Shopkeepers should dislike Cleptia. (for example they shouldn't buy or sell holy
 Petrus's wives should wear chastity belts.
 SmileyWorm should be a hidden minigame somewhere in IVAN.
 Popup ads of Decos Bananas Co. in some areas of the game.
-When confused, the player should occasionally zap the wrong wand or drink the wrong potion.
+Wait for yourself to calm done command instead of "You are too scared to rest"==When confused, the player should occasionally zap the wrong wand or drink the wrong potion.
+If the player is very intelligent, he should be able to decrypt the encrypted scroll.
+Spilling blood on chaotic altars should better relationships with those gods.
