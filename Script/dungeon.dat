@@ -799,7 +799,7 @@ Dungeon 1;
 					t = scrollofteleportation;
 					s = meleeweapon(SPEAR);
 					p = pickaxe;
-					A = pineapple;
+					A = potion { ContainedMaterial = HEALINGLIQUID; }
 					b = banana;
 					l = WOLFFLESH lump;
 					i = can { ContainedMaterial = POLARBEARFLESH; }

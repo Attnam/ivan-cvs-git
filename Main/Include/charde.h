@@ -234,7 +234,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual void HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
-  virtual ushort GetHealTimer() { return HealTimer; }
+  virtual ushort GetHealTimer() const { return HealTimer; }
   virtual void Save(outputfile&) const;
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
@@ -1276,6 +1276,10 @@ class CHARACTER
   virtual void SetDivineMaster(uchar);
   virtual uchar GetDivineMaster() const { return DivineMaster; }
   virtual bool CanFly() const { return true; }
+  virtual bool AttachBodyPartsOfFriendsNear(); 
+  virtual void SetHealTimer(ushort What) { HealTimer = What; }
+  virtual ushort GetHealTimer() const { return HealTimer; }
+  virtual void VirtualConstructor(bool);
  protected:
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " leaves this mortal plane behind."; }
@@ -1286,7 +1290,9 @@ class CHARACTER
   virtual ushort TotalSize() const { return 180; }
   //virtual std::string GetArticle() const { return "an"; }
   virtual std::string GetPostFix() const { return GetDivineMasterDescription(DivineMaster); }
+  virtual void GetAICommand();
   uchar DivineMaster;
+  ushort HealTimer;
 );
 
 class ABSTRACT_CHARACTER

@@ -323,6 +323,7 @@
 #define BRONZE FIRSTMATERIAL + 27
 #define COPPER FIRSTMATERIAL + 28
 #define TIN FIRSTMATERIAL + 29
+#define STEEL FIRSTMATERIAL + 30
 
 #define FIRSTORGANICSUBSTANCE 4096 * 2
 
@@ -449,4 +450,9 @@
 #define PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR 50
 #define PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR 100
 /* The logic will go bad, if a new limb cost less than an old one */
+
+#define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
+/* Sorry about the name. This means how many turns it takes for a angel to attach a bodypart again */
+
+
 #endif

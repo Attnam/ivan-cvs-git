@@ -1531,6 +1531,12 @@ ushort character::GetEmitation() const
 
 void character::SetSquareUnder(square* Square)
 {
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->SetSquareUnder(Square);
+
+  if(GetAction())
+    GetAction()->SetSquareUnder(Square);
   entity::SetSquareUnder(Square);
   Stack->SetSquareUnder(Square);
 }
@@ -3764,13 +3770,27 @@ void character::InstallDataBase()
 void character::ReceiveHeal(long Amount)
 {
   for(ushort c = 0; c < BodyParts(); ++c)
-    if(GetBodyPart(c))
-      {
-	if(GetBodyPart(c)->GetHP() + Amount / BodyParts() > GetBodyPart(c)->GetMaxHP())
-	  GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
-	else
-	  GetBodyPart(c)->EditHP(Amount / BodyParts());
-      }
+    {
+      if(!GetBodyPart(c) && Amount > 1000)
+	{
+	  bodypart* NewBodyPart = GenerateRandomBodyPart();
+	  AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+	  NewBodyPart->SetHP(1);
+	  Amount -= 1000;
+	}
+    }
+
+
+  for(ushort c = 0; c < BodyParts(); ++c)
+    {
+      if(GetBodyPart(c))
+	{
+	  if(GetBodyPart(c)->GetHP() + Amount / BodyParts() > GetBodyPart(c)->GetMaxHP())
+	    GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+	  else
+	    GetBodyPart(c)->EditHP(Amount / BodyParts());
+	}
+    }
 }
 
 void character::AddHealingLiquidConsumeEndMessage() const
@@ -4700,7 +4720,7 @@ bodypart* character::GenerateRandomBodyPart()
   return NewBodyPart;
 }
 
-/* searched for character's Stack and if it find some bodyparts their that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
+/* searched for character's Stack and if it find some bodyparts there that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
 stackiterator character::FindRandomOwnBodyPart()
 {
   std::vector<stackiterator> LostAndFound;
@@ -4718,4 +4738,40 @@ stackiterator character::FindRandomOwnBodyPart()
     return 0;
   else
     return LostAndFound[RAND() % LostAndFound.size()];
+}
+
+/* This piece of infernally unesthetic code returns a vector with pointers to all friendly characters in neighbouring squares */
+std::vector<character*> character::GetFriendsAround() const
+{
+  std::vector<character*> ToBeReturned;
+  character* Char;
+  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(), 
+  {
+    Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter();
+    if(Char->GetTeam()->GetRelation(GetTeam()) == FRIEND)
+      ToBeReturned.push_back(Char);
+  });
+  return ToBeReturned;
+}
+
+/* returns a 0 pointer if no RandomBodyPart can be found else it returns the pointer to the bodypart that was attached back to its place */
+bodypart* character::TryAttachRandomOldBodyPart()
+{
+  stackiterator Returned = FindRandomOwnBodyPart();
+  if(Returned != 0)
+    return AttachOldBodyPartFromStack(Returned, GetStack());
+  else
+    return 0;
+}
+
+/* Attaches the OldOwnBodyPartIterator back to its place and removes it from FromStack. FromStack is the stack where the item currently is */ 
+bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIterator, stack* FromStack)
+{
+  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
+  if(!OldOwnBodyPart)
+    ABORT("character::AttachOldBodyPartFromStack doesn't take 0 as the first argument. Sorry. Programmer's bad.");
+	  
+  AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
+  GetStack()->RemoveItem(OldOwnBodyPartIterator);
+  return OldOwnBodyPart;  
 }

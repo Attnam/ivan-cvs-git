@@ -1,3 +1,10 @@
+June 19 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Loricatus, Scabies, Cruentus fix players BodyParts (each with their own specialities of course)
+	* Angels also fix players bodyparts.
+	* Tweaked the healing methods for the other healing gods for slight elegance in code.
+	* Some small changes in proto.cpp to make it compile with gcc 3.1 (one typename added).
+
 June 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* AP system remade: it is now the actions' duty to decrease AP, not Be()'s

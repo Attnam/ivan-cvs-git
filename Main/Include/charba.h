@@ -595,6 +595,9 @@ class character : public entity, public id
   virtual bool HasAllBodyParts() const;
   virtual stackiterator FindRandomOwnBodyPart();
   virtual bodypart* GenerateRandomBodyPart();
+  virtual std::vector<character*> GetFriendsAround() const;
+  virtual bodypart* TryAttachRandomOldBodyPart();
+  virtual bodypart* AttachOldBodyPartFromStack(stackiterator, stack*);
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);

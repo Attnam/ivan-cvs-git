@@ -305,6 +305,23 @@ void petrus::HealFully(character* ToBeHealed)
     ADD_MESSAGE("%s heals you fully.", CHARDESCRIPTION(DEFINITE));
   else
     ADD_MESSAGE("%s heals %s fully.", CHARDESCRIPTION(DEFINITE), ToBeHealed->CHARDESCRIPTION(DEFINITE));
+
+  if(!ToBeHealed->HasAllBodyParts())
+    {
+      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+
+      if(OldOwnBodyPartIterator != 0)
+	{
+	  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
+	  if(!OldOwnBodyPart)
+	    ABORT("character::FindRandomOwnBodyPart seems to be returning odd iterators...");
+	  
+	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
+	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
+	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHARNAME(DEFINITE), OldOwnBodyPart->GetNameSingular().c_str());  
+	}
+    }
 }
 
 void petrus::Save(outputfile& SaveFile) const
@@ -1478,13 +1495,13 @@ void mistress::BeTalkedTo(character* Talker)
 void angel::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << DivineMaster;
+  SaveFile << DivineMaster << HealTimer;
 }
 
 void angel::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-  SaveFile >> DivineMaster;
+  SaveFile >> DivineMaster >> HealTimer;
 }
 
 void angel::SetDivineMaster(uchar NewMaster)
@@ -3533,5 +3550,70 @@ bool humanoid::DetachBodyPart()
     {
       ADD_MESSAGE("That bodypart has already been detached.");
       return false;
+    }
+}
+
+void angel::GetAICommand()
+{
+  SetHealTimer(GetHealTimer() + 1);
+  if(GetHealTimer() > LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP && AttachBodyPartsOfFriendsNear())
+    {
+      SetHealTimer(0);
+      return;
+    }
+  humanoid::GetAICommand();
+}
+
+/* Returns true if the angel founds somebody near to heal else false */
+bool angel::AttachBodyPartsOfFriendsNear()
+{
+  std::vector<character*> HurtFriends = GetFriendsAround();
+  
+  /* Now analize HurtFriendsAround for really hurt friends and delete unhurt ones. */
+  std::vector<character*>::iterator i;
+  for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
+      if((*i)->HasAllBodyParts() == 0)
+	HurtFriends.erase(i);
+
+  /* Check whether the HurtFriends are curable (ie. they have one of their bodyparts in their stack) */
+  
+  for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
+    if((*i)->FindRandomOwnBodyPart() == 0)
+      HurtFriends.erase(i);
+  
+  /* Now if there are no friends left return false */
+  if(HurtFriends.empty())
+    return false;
+
+  /* Check whether the player is in the list */
+  character* TheOneWhoWillBeCured = 0;
+  for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
+    if(!(*i)->IsPlayer())
+      {
+	TheOneWhoWillBeCured = *i;
+	break;
+      }
+
+  /* If no player found, take one friend at random */
+  if(!TheOneWhoWillBeCured)
+    TheOneWhoWillBeCured = HurtFriends[RAND() % HurtFriends.size()];
+
+  bodypart* JustCreated = TheOneWhoWillBeCured->TryAttachRandomOldBodyPart();
+  if(JustCreated)
+    {
+      JustCreated->SetHP(1);
+      return true;
+    }
+  else
+    ABORT("Dark forces attack angel. Too Bad. Sorry.");
+}
+
+void angel::VirtualConstructor(bool Load)
+{
+  humanoid::VirtualConstructor(Load);
+
+  if(!Load)
+    {
+      SetHealTimer(LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP);
     }
 }

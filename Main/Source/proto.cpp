@@ -158,7 +158,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 {
   std::string Identifier = " " + What + " ";
   bool Illegal = false;
-  std::pair<const type::prototype*, ushort> Id(0, 0);
+  std::pair<const typename type::prototype*, ushort> Id(0, 0);
   ushort Best = 0;
 
   for(ushort c = 1; c < protocontainer<type>::GetProtoAmount(); ++c)

@@ -787,6 +787,7 @@ class ABSTRACT_ITEM
   virtual void LoadGearSlot(inputfile&, gearslot&);
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalEquipmentRemoval(gearslot*);
+  virtual void Mutate();
  protected:
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
@@ -924,6 +925,11 @@ class ABSTRACT_ITEM
   virtual void SetDexterity(ushort What) { Dexterity = What; }
   virtual ushort GetEmitation() const;
   virtual void InitSpecialAttributes();
+  //virtual arm* GetPairArm() const = 0;
+  //virtual void SignalEquipmentRemoval(gearslot*);
+  virtual void Mutate();
+  virtual ushort GetDexterity() const { return Dexterity; }
+  virtual ushort GetStrength() const { return Strength; }
   virtual arm* GetPairArm() const = 0;
   //virtual void SignalEquipmentRemoval(gearslot*);
   virtual sweaponskill* GetCurrentSingleWeaponSkill() const = 0;
@@ -1005,11 +1011,14 @@ class ABSTRACT_ITEM
   virtual void LowerStats();
   virtual void SetStrength(ushort What) { Strength = What; }
   virtual void SetAgility(ushort What) { Agility = What; }
+  virtual ushort GetAgility() const { return Agility; }
+  virtual ushort GetStrength() const { return Strength; }
   virtual ushort GetEmitation() const;
   virtual void InitSpecialAttributes();
   //virtual void SignalEquipmentAdd(gearslot*);
   //virtual void SignalEquipmentRemoval(gearslot*);
   //virtual leg* GetPairLeg() const = 0;
+  virtual void Mutate();
   virtual long CalculateKickAPCost() const;
  protected:
   virtual void VirtualConstructor(bool);

@@ -14,6 +14,7 @@ class action;
 class outputfile;
 class inputfile;
 class actionslot;
+class square;
 
 class actionprototype
 {
@@ -59,9 +60,9 @@ class action
   void SetVolume(ulong What) { Volume = What; }
   ulong GetWeight() const { return Weight; }
   void SetWeight(ulong What) { Weight = What; }
+  virtual void SetSquareUnder(square*) {}
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }
-
  protected:
   virtual void VirtualConstructor() { }
   character* Actor;

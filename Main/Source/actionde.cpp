@@ -386,6 +386,27 @@ void dig::VirtualConstructor()
   LeftBackup.Init(this);
 }
 
+void dig::SetSquareUnder(square* Square)
+{
+  if(GetRightBackup())
+      GetRightBackup()->SetSquareUnder(Square);
+
+  if(GetLeftBackup())
+    GetLeftBackup()->SetSquareUnder(Square);
+}
+
+/*void read::SetSquareUnder(square* Square)
+{
+  if(GetLiterature())
+      GetLiterature()->SetSquareUnder(Square);
+}*/
+
+void consume::SetSquareUnder(square* Square)
+{
+  if(GetConsuming())
+      GetConsuming()->SetSquareUnder(Square);
+}
+
 void read::Handle()
 {
   if(!*Literature || (GetActor()->GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat()))

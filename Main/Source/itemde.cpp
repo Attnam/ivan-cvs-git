@@ -3214,6 +3214,25 @@ bool beartrap::IsPickable(character* Picker) const
   return Picker->GetStuckTo() != (item*)this;
 }
 
+void bodypart::Mutate()
+{
+  GetMainMaterial()->SetVolume(ulong(GetVolume() * ((1.1 - (RAND() % 2000 / 1000)))));
+}
+
+void leg::Mutate()
+{
+  bodypart::Mutate();
+  SetAgility(ulong(GetAgility() * ((1.1 - (RAND() % 2000 / 1000)))));
+  SetStrength(ulong(GetStrength() * ((1.1 - (RAND() % 2000 / 1000)))));
+}
+
+void arm::Mutate()
+{
+  bodypart::Mutate();
+  SetStrength(ulong(GetStrength() * ((1.1 - (RAND() % 2000 / 1000)))));
+  SetDexterity(ulong(GetDexterity() * ((1.1 - (RAND() % 2000 / 1000)))));
+}
+
 arm* rightarm::GetPairArm() const
 {
   if(GetHumanoidMaster())

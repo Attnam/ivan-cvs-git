@@ -48,6 +48,7 @@ class ACTION
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return Description; }
   virtual void SetDescription(const std::string& What) { Description = What; }
+  virtual void SetSquareUnder(square*);
  protected:
   virtual void VirtualConstructor();
   std::string Description;
@@ -92,6 +93,7 @@ class ACTION
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return "digging"; }
+  virtual void SetSquareUnder(square*);
  protected:
   virtual void VirtualConstructor();
   actionslot RightBackup;

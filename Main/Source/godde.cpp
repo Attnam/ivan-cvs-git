@@ -116,12 +116,7 @@ void seges::PrayGoodEffect()
 
       if(OldOwnBodyPartIterator != 0)
 	{
-	  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
-	  if(!OldOwnBodyPart)
-	    ABORT("character::FindRandomOwnBodyPart seems to be returning odd iterators...");
-	  
-	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
-	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
+	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
 	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
 	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());  
 	}
@@ -205,14 +200,9 @@ void silva::PrayGoodEffect()
 
       if(OldOwnBodyPartIterator != 0)
 	{
-	  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
-	  if(!OldOwnBodyPart)
-	    ABORT("character::FindRandomOwnBodyPart seems to be returning odd iterators...");
-	  
-	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
-	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
+	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
 	  OldOwnBodyPart->SetHP(1);
-	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());  
+	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());
 	}
       else
 	{
@@ -413,6 +403,16 @@ void loricatus::PrayGoodEffect()
       Plate->InitMaterials(Old->GetMainMaterial());
       game::GetPlayer()->GetStack()->AddItem(Plate);
     }*/
+
+  if(!game::GetPlayer()->HasAllBodyParts())
+    {
+      bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
+      game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
+      NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
+      ADD_MESSAGE("You grow a new %s that is made from mithril.", NewBodyPart->GetNameSingular().c_str());
+      return;
+    }
 	
   if(game::GetPlayer()->GetMainWielded())
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
@@ -679,6 +679,27 @@ void macellarius::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
+  if(!game::GetPlayer()->HasAllBodyParts())
+    {
+      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+
+      if(OldOwnBodyPartIterator != 0)
+	{
+	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
+	  OldOwnBodyPart->SetHP(1);
+	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());
+	}
+      else
+	{
+	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
+	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+	  NewBodyPart->SetHP(1);
+	  NewBodyPart->Mutate();
+	  ADD_MESSAGE("You grow a new %s, which seems to be a bit strange.", NewBodyPart->GetNameSingular().c_str()); 
+	}
+      return;
+    }
+
   ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
 
   for(ushort c = 0; c < 5; ++c)
@@ -716,8 +737,20 @@ void infuscor::PrayGoodEffect()
 
 void cruentus::PrayGoodEffect()
 {
+  if(!game::GetPlayer()->HasAllBodyParts())
+    {
+      bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
+      if(!NewBodyPart)
+	ABORT("Cruentus does not like wierdness.");
+      game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
+      NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
+      ADD_MESSAGE("You grow a new %s, which seems to be made from steel.", NewBodyPart->GetNameSingular().c_str()); 
+      return;
+    }
   ADD_MESSAGE("Cruentus recommends you to its master, Erado.");
   game::GetGod(16)->AdjustRelation(100);
+
 }
 
 void cruentus::PrayBadEffect()

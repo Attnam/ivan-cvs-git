@@ -291,7 +291,7 @@ material
 
 	Config UNICORNHORN;
 	{
-		StrengthValue = 125;
+		StrengthValue = 200;
 		ConsumeType = MISC_ORGANIC;
 		Density = 2000;
 		OfferValue = 10;
@@ -386,6 +386,18 @@ material
 		Color = rgb(100, 100, 100);
 		PriceModifier = 15;
 		NameStem = "tin";
+	}
+	Config STEEL;
+	{
+		StrengthValue = 175;
+		ConsumeType = METAL;
+		Density =  7850;
+		OfferValue = 10;
+		Color = rgb(128, 128, 128);
+		PriceModifier = 40;
+		IsSolid = true;
+		PriceModifier = 40;
+		NameStem = "steel";
 	}
 }
 
