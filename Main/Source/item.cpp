@@ -214,7 +214,7 @@ bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
 	    CurrentStack = Stack;
 	}
 
-      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, true));
+      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true));
       RemoveFromSlot();
       SendToHell();
       return true;

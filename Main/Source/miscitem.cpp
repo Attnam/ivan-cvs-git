@@ -2063,7 +2063,7 @@ void itemcontainer::SortAllItems(itemvector& AllItems, const character* Characte
 
 int materialcontainer::GetAttachedGod() const
 {
-  return DataBase->AttachedGod ? DataBase->AttachedGod : SecondaryMaterial ? SecondaryMaterial->GetAttachedGod() : 0;
+  return DataBase->AttachedGod ? DataBase->AttachedGod : SecondaryMaterial ? SecondaryMaterial->GetAttachedGod() : MainMaterial->GetAttachedGod();
 }
 
 void beartrap::Search(const character* Char, int Perception)

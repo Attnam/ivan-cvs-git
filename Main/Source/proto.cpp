@@ -96,7 +96,7 @@ character* protosystem::BalancedCreateMonster()
   return 0;
 }
 
-item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory, int SpecialFlags, int ConfigFlags, bool Polymorph)
+item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory, int SpecialFlags, int ConfigFlags, int RequiredGod, bool Polymorph)
 {
   typedef item::database database;
   database** PossibleCategory[ITEM_CATEGORIES];
@@ -130,7 +130,7 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 	  }
     }
 
-  for(;;)
+  for(int c0 = 0;; ++c0)
     {
       for(int c1 = 0; c1 < BALANCED_CREATE_ITEM_ITERATIONS; ++c1)
 	{
@@ -201,12 +201,16 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 	      if(Item->HandleInPairs())
 		Price <<= 1;
 
-	      if(Price >= MinPrice && Price <= MaxPrice)
+	      if(Price >= MinPrice && Price <= MaxPrice
+	      && (!RequiredGod || Item->GetAttachedGod() == RequiredGod))
 		return Item;
 
 	      delete Item;
 	    }
 	}
+
+      if(c0 == 100 && RequiredGod)
+	return 0;
 
       MinPrice = MinPrice * 3 >> 2;
       MaxPrice = MaxPrice * 5 >> 2;

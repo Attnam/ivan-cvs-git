@@ -27,6 +27,21 @@ void god::Pray()
 		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
+	else if(Relation > 100)// && !(RAND() % 20))
+	  {
+	    long Category = RAND() & ANY_CATEGORY;
+
+	    if(!Category)
+	      Category = ANY_CATEGORY;
+
+	    item* Gift = protosystem::BalancedCreateItem(Relation / 2, Relation * 5, Category, 0, 0, GetType());
+
+	    if(Gift)
+	      {
+		ADD_MESSAGE("You notice %s in your inventory which you don't recall picking up anywhere.", Gift->CHAR_NAME(INDEFINITE));
+		PLAYER->GetStack()->AddItem(Gift);
+	      }
+	  }
       }
     else
       {

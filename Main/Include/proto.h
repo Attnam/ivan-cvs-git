@@ -60,7 +60,7 @@ class protosystem
 {
  public:
   static character* BalancedCreateMonster();
-  static item* BalancedCreateItem(long = 0, long = MAX_PRICE, long = ANY_CATEGORY, int = 0, int = 0, bool = false);
+  static item* BalancedCreateItem(long = 0, long = MAX_PRICE, long = ANY_CATEGORY, int = 0, int = 0, int = 0, bool = false);
   static character* CreateMonster(int = 1, int = 999999, int = 0);
   static character* CreateMonster(const festring&, int = 0, bool = true);
   static item* CreateItem(const festring&, bool = true);
