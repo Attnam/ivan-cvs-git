@@ -2380,6 +2380,87 @@ SNonExistent(ushort What)
 	Sets NonExistent to What.
 
 
+object (object.h)
+-----------------
+
+
+object()
+
+	The default constructor which doesen't do anything.
+
+object(std::ifstream* SaveFile)
+
+	Loads the object from SaveFile.
+
+Save(std::ofstream* SaveFile)
+
+	Saves the object to SaveFile.
+
+InitMaterials(ushort Materials, ...);
+
+	Initilize Materials-amount of materials 
+	Example: InitMaterials(2, Material2, Material3)
+	where Material2 and Material3 are pointers to 
+	a material.
+
+InitMaterials(material* FirstMaterial)
+
+	Initilize only material FirstMaterial.
+
+ushort CEmitation()
+
+	Returns the emitation of the object.
+
+std::string NameArtifact(uchar Case, uchar DefaultMaterial)
+	
+	Returns the name of the item like an artifact type of item.
+	DefaultMaterial is the Index of the normal material from which 
+	this object is made up.
+
+std::string NameWithMaterial(uchar Case)
+
+	Returns the name of the object with the name attached. (Case works
+	like case normally works.)
+
+std::string NameHandleDefaultMaterial(uchar Case, std::string Article, uchar DefaultMaterial)
+
+	If the material is the DefaultMaterial this function returns what ever NameNormal returns
+	with Case and Article as parameters. If the material is not the Default Material this
+	function returns what NameWithMaterial returns with Case as parameter.
+
+std::string object::NameContainer(uchar Case)
+
+	Returns the name of a container object (for example: cans). Case works like
+	case normally works.
+
+std::string NameSized(uchar Case, std::string Article, ushort LillaBorder, 
+ushort StoraBorder)
+
+	Returns the name of item with size categorizing adjectives. 
+	Case works like case normally works. Article is the article
+	for this. LillaBorder is the maximum size for the object
+	to be considered small. StoraBorder is the maximum size
+	for an object to be considered large.
+
+std::string NameThingsThatAreLikeLumps(uchar Case, std::string Article)
+
+	Case works like case normally works. Article is the possible article.
+
+EraseMaterials(void)
+
+	Deletes all materials from this object.
+
+material* CMaterial(ushort Index)
+
+	Returns the material that has the index of Index.
+
+ushort CSize()
+	
+	Returns the size of the object.
+
+ushort CMaterials(void)
+	
+	Returns the number of materials in this object.
 
 
 ----------------------------------------------------------------------------
