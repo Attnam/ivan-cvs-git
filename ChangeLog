@@ -1,3 +1,35 @@
+June 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The New Attribute System is now working
+	* Most likely very badly
+	* Wishing works again and probably better than before, since the spelling rules have been relaxed.
+	  For instance, if one wishes (in WizardMode) for "the holy ultra-powerful broadsword
+	  named "Valpurus's Justifier" that this Perttu-dude carries", the game will instantly know you mean
+	  "holy broadsword "Valpurus's Justifier"", since the three key parts of the name exist somewhere in the wish string
+	* Also added an alias system that allows one to define alternative names for items used by the wish system
+	* Panel is now more informative
+	* Kicking works again
+	* If a character is armless, he kicks enemies, if also one- or zero-legged, bites them
+	* Added an AttackStyle attribute to characterdatabase that controls how monsters will attack (with arms, legs and/or head)
+	* Unicorns, mammoths and buffalos can now both kick and bite their enemies
+	* If a chest is locked, the chest::Open doesn't ask whether the player wants to put in or take from it
+	* Chest's contents are now deleted properly
+	* BoolQuestion's OtherKeyForTrue works again
+	* Doors can again be opened
+	* Chests can now be unlocked and locked (well, the latter was in theory sometimes possible before, but only in theory)
+	* The names of chests, doors and keys show their LockType verbally
+	* Petrus's face turns correctly red during the Final Battle
+	* Message history isn't drawn under highscores anymore
+	* Added a system to determine whether a bodypart is the character's original one
+	* Gear items emitate light correctly but updating still bugs
+	* The game asks for key press when a bodypart is severed
+	* Explosion sever bodyparts and spill blood more correctly
+	* Polymorphing items works correctly
+	* Decreased the characters' global possibility to hit weaker bodyparts
+	* Corrected a bug that caused lights falling during an explosion to crash
+	* Corrected a bug with doors that caused dummy boobytraps to spawn all the time
+	* Probably much else that I have forgotten...
+
 June 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Taking and putting things in chests is now handled correctly in special rooms.

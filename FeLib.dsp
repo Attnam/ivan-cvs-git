@@ -218,7 +218,7 @@ SOURCE=.\FeLib\Include\save.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\strover.h
+SOURCE=.\FeLib\Include\stdover.h
 # End Source File
 # Begin Source File
 

@@ -8,7 +8,7 @@
 #include "femath.h"
 #include "wterraba.h"
 #include "game.h"
-#include "strover.h"
+#include "stdover.h"
 #include "igraph.h"
 #include "save.h"
 #include "proto.h"
@@ -122,3 +122,4 @@ owterrainprototype::owterrainprototype()
 {
   Index = protocontainer<owterrain>::Add(this);
 }
+

@@ -40,7 +40,7 @@ bool door::Open(character* Opener)
 	  
 	  return false;
 	}
-      else if(RAND() % 20 < Opener->GetStrength())
+      else if(RAND() % 20 < Opener->GetAttribute(ARMSTRENGTH))
 	{
 	  MakeWalkable();
 
@@ -77,7 +77,7 @@ bool door::Close(character* Closer)
 {
   if(Closer->IsPlayer())
     if(IsWalkable())
-      if(RAND() % 20 < Closer->GetStrength())
+      if(RAND() % 20 < Closer->GetAttribute(ARMSTRENGTH))
 	ADD_MESSAGE("You close the door.");
       else
 	{
@@ -97,9 +97,9 @@ bool door::Close(character* Closer)
 void altar::DrawToTileBuffer(bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
   else
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
 
   igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetDivineMaster() << 4, 0, 0, 0, 16, 16);
 }
@@ -225,34 +225,36 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
     }
 }
 
-void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
+void door::BeKicked(character*, float KickStrength)
 {
   if(!IsWalkable()) 
     {
-      if(!IsLocked() && Strength > RAND() % 20)
+      if(!IsLocked() && KickStrength > RAND() % 100000)
 	{
-	  if(ShowOnScreen) ADD_MESSAGE("The door opens.");
+	  if(GetSquareUnder()->CanBeSeen())
+	    ADD_MESSAGE("The door opens.");
+
 	  MakeWalkable();
 	}
-      else if(Strength > RAND() % 40)
+      else if(KickStrength > RAND() % 200000)
 	{
 	  if(IsLocked() && RAND() % 2)	// _can't really think of a good formula for this... 
 	    {				//Strength isn't everything
-	      if(ShowOnScreen)
+	      if(GetSquareUnder()->CanBeSeen())
 		ADD_MESSAGE("The lock breaks and the door is damaged.");
 
 	      SetIsLocked(false);
 	    }
 	  else
 	    {
-	      if(ShowOnScreen)
+	      if(GetSquareUnder()->CanBeSeen())
 		ADD_MESSAGE("The door is damaged.");
 	    }
 
 	  Break();
 	}
       else
-	if(ShowOnScreen)
+	if(GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("The door won't budge!");
 
       // The door may have been destroyed here, so don't do anything!
@@ -338,16 +340,8 @@ bool throne::SitOn(character* Sitter)
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
       game::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new High Priest!\"\n\nYou are victorious!");
-      game::RemoveSaves();
-
-      if(!game::GetWizardMode())
-	{
-	  game::GetPlayer()->AddScoreEntry("became the new High Priest of the Great Frog", 5, false);
-	  highscore HScore;
-	  HScore.Draw();
-	}
-
-      game::Quit();
+      game::GetPlayer()->AddScoreEntry("became the new High Priest of the Great Frog", 5, false);
+      game::End();
       return true;
     }
 
@@ -355,20 +349,23 @@ bool throne::SitOn(character* Sitter)
   return true;
 }
 
-void altar::Kick(ushort, bool ShowOnScreen, uchar)
+void altar::BeKicked(character* Kicker, float)
 {
-  // This function does not currently support AI kicking altars when they are in player's LOS
-
-  if(ShowOnScreen)
+  if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
+  else if(Kicker->GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s looks like a sinner.", Kicker->CHARNAME(DEFINITE));
 
-  game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerKickedAltar();
+  if(Kicker->IsPlayer())
+    {
+      game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerKickedAltar();
 
-  if(GetLSquareUnder()->GetDivineMaster() > 1)
-    game::GetGod(GetLSquareUnder()->GetDivineMaster() - 1)->PlayerKickedFriendsAltar();
+      if(GetLSquareUnder()->GetDivineMaster() > 1)
+	game::GetGod(GetLSquareUnder()->GetDivineMaster() - 1)->PlayerKickedFriendsAltar();
 
-  if(GetLSquareUnder()->GetDivineMaster() < game::GetGods() - 1)
-    game::GetGod(GetLSquareUnder()->GetDivineMaster() + 1)->PlayerKickedFriendsAltar();
+      if(GetLSquareUnder()->GetDivineMaster() < game::GetGods() - 1)
+	game::GetGod(GetLSquareUnder()->GetDivineMaster() + 1)->PlayerKickedFriendsAltar();
+    }
 }
 
 void altar::ReceiveVomit(character* Who)
@@ -544,40 +541,40 @@ void fountain::DryOut()
     }
 }
 
-void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
+void brokendoor::BeKicked(character*, float KickStrength)
 {
   if(!IsWalkable())
     if(IsLocked())
       {
-	if(Strength > RAND() % 30)
+	if(KickStrength > RAND() % 150000)
 	  {
-	    if(ShowOnScreen)
-	      ADD_MESSAGE("The doors opens from the force of your kick.");
+	    if(GetSquareUnder()->CanBeSeen())
+	      ADD_MESSAGE("The door opens from the force of your kick.");
 
 	    SetIsLocked(false);
 	    MakeWalkable();
 	  }
-	else if(Strength > RAND() % 20)
+	else if(KickStrength > RAND() % 100000)
 	  {
-	    if(ShowOnScreen)
+	    if(GetSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("The lock breaks from the force of your kick.");
 
 	    SetIsLocked(false);
 	  }
 	else
-	  if(ShowOnScreen)
+	  if(GetSquareUnder()->CanBeSeen())
 	    ADD_MESSAGE("The door won't budge!");
       }
     else
-      if(Strength > RAND() % 20)
+      if(KickStrength > RAND() % 100000)
 	{
-	  if(ShowOnScreen)
+	  if(GetSquareUnder()->CanBeSeen())
 	    ADD_MESSAGE("The broken door opens.");
 
 	  MakeWalkable();
 	}
       else
-	if(ShowOnScreen)
+	if(GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("The door resists.");
 }
 
@@ -690,7 +687,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // Newton is rolling in his grave. 
-      if(Visible && game::GetWizardMode())
+      if(Visible && game::WizardModeActivated())
 	{
 	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
 	}
@@ -731,7 +728,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // I hear Newton screaming in his grave.
-      if(Visible && game::GetWizardMode())
+      if(Visible && game::WizardModeActivated())
 	{
 	  ADD_MESSAGE("Energy hitting the broken door: %f.", Energy);
 	}
@@ -847,6 +844,7 @@ void door::VirtualConstructor(bool Load)
 
   if(!Load)
     {
+      SetBoobyTrap(0);
       SetIsOpened(false);
       SetIsLocked(false);
       SetBoobyTrap(0);
@@ -901,3 +899,4 @@ bool door::TryKey(item* Thingy, character* Applier)
       return false;
     }
 }
+

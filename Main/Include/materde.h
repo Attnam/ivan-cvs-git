@@ -34,7 +34,7 @@ class MATERIAL
 (
   liquid,
   material,
-  ;
+  virtual std::string GetConsumeVerb() const { return "drinking"; }
 );
 
 class MATERIAL

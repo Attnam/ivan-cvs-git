@@ -13,6 +13,7 @@
 class character;
 class item;
 class material;
+struct itemdatabase;
 template <class type> class database;
 
 template <class type> class protocontainer
@@ -56,6 +57,8 @@ class protosystem
   static material* CreateRandomSolidMaterial(ulong);
   static material* CreateMaterial(const std::string&, ulong, bool = true);
   static void GenerateCodeNameMaps();
+ private:
+  static bool CheckWhetherItemNameCorrect(const itemdatabase&, const std::string&);
 };
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, type* Class)

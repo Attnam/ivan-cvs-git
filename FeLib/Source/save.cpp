@@ -1,7 +1,7 @@
 #include <ctype.h>
 
 #include "save.h"
-#include "strover.h"
+#include "stdover.h"
 #include "error.h"
 #include "femath.h"
 #include "graphics.h"
@@ -423,6 +423,43 @@ void ReadData(std::vector<long>& Vector, inputfile& SaveFile, const valuemap& Va
 
   for(ushort c = 0; c < Size; ++c)
     Vector.push_back(SaveFile.ReadNumber(ValueMap));
+
+  if(SaveFile.ReadWord() != "}")
+    ABORT("Illegal array terminator \"%s\" encountered!", Word.c_str());
+}
+
+void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
+{
+  Vector.clear();
+  std::string Word;
+  SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    {
+      Vector.push_back(SaveFile.ReadWord());
+
+      if(SaveFile.ReadWord() != ";")
+	ABORT("Array syntax error \"%s\" found!", Word.c_str());
+
+      return;
+    }
+
+  if(Word != "{")
+    ABORT("Array syntax error \"%s\" found!", Word.c_str());
+
+  ushort Size = SaveFile.ReadNumber(ValueMap);
+
+  for(ushort c = 0; c < Size; ++c)
+    {
+      Vector.push_back(SaveFile.ReadWord());
+      SaveFile.ReadWord(Word);
+
+      if(Word != "," && Word != ";")
+	ABORT("Array syntax error \"%s\" found!", Word.c_str());
+    }
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered!", Word.c_str());

@@ -238,15 +238,18 @@ character* contentscript<character>::Instantiate() const
 
 contentscript<olterrain>::contentscript<olterrain>()
 {
-  INITMEMBER(VisualFlags);
+  INITMEMBER(VisualEffects);
 }
 
 olterrain* contentscript<olterrain>::Instantiate() const
 {
   olterrain* Instance = contentscripttemplate<olterrain>::Instantiate();
 
-  if(GetVisualFlags(false))
-    Instance->SetVisualFlags(*GetVisualFlags());
+  if(GetVisualEffects(false))
+    {
+      Instance->SetVisualEffects(*GetVisualEffects());
+      Instance->UpdatePictures();
+    }
 
   return Instance;
 }
@@ -665,3 +668,4 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 	ABORT("Odd script term %s encountered in game script!", Word.c_str());
     }
 }
+

@@ -7,7 +7,7 @@
 #include "level.h"
 #include "itemba.h"
 #include "message.h"
-#include "strover.h"
+#include "stdover.h"
 #include "script.h"
 #include "charba.h"
 #include "team.h"
@@ -489,7 +489,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 bool lsquare::Open(character* Opener)
 {
-  return !GetStack()->Open(Opener) || !GetOLTerrain()->Open(Opener); 
+  return GetStack()->Open(Opener) || GetOLTerrain()->Open(Opener); 
 }
 
 bool lsquare::Close(character* Closer)
@@ -700,27 +700,17 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-bool lsquare::Kick(character* Kicker, ushort Strength, uchar KickWay)
+void lsquare::BeKicked(character* Kicker, float KickStrength, float KickToHitValue, short Success, bool Critical)
 {
-  if(GetCharacter() && Kicker->GetTeam()->GetRelation(GetCharacter()->GetTeam()) != HOSTILE)
-    if(Kicker->IsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
-      return false;
-    else
-      Kicker->Hostility(GetCharacter());
-
   if(Room)
     GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
 
-  GetStack()->Kick(Kicker, Strength, KickWay);
+  GetStack()->BeKicked(Kicker, KickStrength);
 
   if(GetCharacter())
-    GetCharacter()->BeKicked(Kicker, Strength, KickWay);
+    GetCharacter()->BeKicked(Kicker, KickStrength, KickToHitValue, Success, Critical);
 
-  GetOLTerrain()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
-  Kicker->EditStrengthExperience(25);
-  Kicker->EditAgilityExperience(50);
-  Kicker->EditNP(-50);
-  return true;
+  GetOLTerrain()->BeKicked(Kicker, KickStrength);
 }
 
 bool lsquare::Dig(character*, item*) // early prototype. Probably should include more checking with lterrains etc
@@ -995,8 +985,8 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   game::GetCurrentArea()->UpdateLOS();
 
   for(ushort c = 0; c < 4; ++c)
-    for(stackiterator i = GetSideStack(c)->GetBottomSlot(); i != GetSideStack(c)->GetSlotAboveTop(); ++i)
-      GetSideStack(c)->MoveItem(i, GetStack())->SignalSquarePositionChange(false);
+    while(GetSideStack(c)->GetItems())
+      GetSideStack(c)->MoveItem(GetSideStack(c)->GetBottomSlot(), GetStack())->SignalSquarePositionChange(false);
 }
 
 void lsquare::PolymorphEverything(character* Zapper)
@@ -1113,8 +1103,8 @@ void lsquare::TeleportEverything(character* Teleporter)
 
   GetStack()->TeleportRandomly();
 
-  Teleporter->EditPerceptionExperience(50);
-  Teleporter->EditNP(-50);
+  //Teleporter->EditPerceptionExperience(50);
+  //Teleporter->EditNP(-50);
 }
 
 bool lsquare::DipInto(item* Thingy, character* Dipper)

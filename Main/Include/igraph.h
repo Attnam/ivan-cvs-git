@@ -28,7 +28,7 @@ struct graphic_id
   uchar BaseAlpha;
   uchar Alpha[4];
   uchar FileIndex;
-  uchar SpecialType;
+  uchar SpecialFlags;
 };
 
 inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
@@ -54,8 +54,8 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.Color[3] != GI2.Color[3])
     return GI1.Color[3] < GI2.Color[3];
 
-  if(GI1.SpecialType != GI2.SpecialType)
-    return GI1.SpecialType < GI2.SpecialType;
+  if(GI1.SpecialFlags != GI2.SpecialFlags)
+    return GI1.SpecialFlags < GI2.SpecialFlags;
 
   if(GI1.BaseAlpha != GI2.BaseAlpha)
     return GI1.BaseAlpha < GI2.BaseAlpha;

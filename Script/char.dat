@@ -4,10 +4,16 @@
 
 character
 {
+	/* Obligatory: DefaultArmStrength */
+	/* Obligatory for humanoids: DefaultLegStrength */
+	/* Obligatory for humanoids: DefaultDexterity */
 	/* Obligatory: DefaultAgility */
-	/* Obligatory: DefaultStrength */
 	/* Obligatory: DefaultEndurance */
 	/* Obligatory: DefaultPerception */
+	/* Obligatory: DefaultIntelligence */
+	/* Obligatory: DefaultWisdom */
+	/* Obligatory: DefaultCharisma */
+	/* Obligatory: DefaultMana */
 	DefaultMoney = 0;
 	/* Obligatory: TotalSize */
 	CanRead = false;
@@ -34,7 +40,6 @@ character
 	IsUnique = false;
 	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED;
 	/* Obligatory: TotalVolume */
-	/* Obligatory: MeleeStrength */
 	TalkVerb = "grunts";
 	IsNameable = true;
 	BaseEmitation = 0;
@@ -48,6 +53,11 @@ character
 	ArticleMode = NORMALARTICLE;
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
+	/* At least one of the following three is obligatory: */
+	/* UnarmedStrength */
+	/* BiteStrength, if not defined then equals UnarmedStrength / 2 */
+	/* KickStrength, if not defined then equals UnarmedStrength * 2 */
+	AttackStyle = USE_ARMS;
 }
 
 humanoid
@@ -69,16 +79,28 @@ humanoid
 	ArmBonePercentile = 30;
 	GroinBonePercentile = 40;
 	LegBonePercentile = 30;
-	MeleeStrength = 1000;
+	IsAbstract = true;
+	UnarmedStrength = 2500;
+	Sex = MALE;
+}
+
+nonhumanoid
+{
 	IsAbstract = true;
 }
 
 human
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 15;
 	DefaultAgility = 15;
-	DefaultStrength = 10;
 	DefaultEndurance = 10;
 	DefaultPerception = 10;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
 	DefaultMoney = 200;
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
@@ -92,10 +114,16 @@ human
 
 petrus
 {
-	DefaultAgility = 75;
-	DefaultStrength = 75;
-	DefaultEndurance = 75;
-	DefaultPerception = 75;
+	DefaultArmStrength = 42;
+	DefaultLegStrength = 42;
+	DefaultDexterity = 42;
+	DefaultAgility = 42;
+	DefaultEndurance = 42;
+	DefaultPerception = 42;
+	DefaultIntelligence = 42;
+	DefaultWisdom = 42;
+	DefaultCharisma = 42;
+	DefaultMana = 42;
 	IsCharmable = false;
 	HasInfraVision = true;
 	CanBeDisplaced = false;
@@ -108,7 +136,6 @@ petrus
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 0;
 	TotalVolume = 80000;
-	MeleeStrength = 20000;
 	TotalSize = 225;
 	BaseEmitation = 333;
 	CanRead = true;
@@ -118,32 +145,42 @@ petrus
 
 farmer
 {
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 20;
 	DefaultAgility = 10;
-	DefaultStrength = 15;
 	DefaultEndurance = 20;
 	DefaultPerception = 18;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 5;
 	DefaultMoney = 20;
 	TorsoSpecialColor = rgb(0, 96, 0);
 	TorsoBitmapPos = 32, 32;
 	TotalVolume = 30000;
 	TotalSize = 170;
-	MeleeStrength = 1000;
 	NameSingular = "farmer";
 }
 
 guard
 {
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 15;
 	DefaultAgility = 15;
-	DefaultStrength = 20;
-	DefaultEndurance = 20;
+	DefaultEndurance = 25;
 	DefaultPerception = 24;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 15;
+	DefaultMana = 10;
 	ClothColor = rgb(0, 128, 128);
 	HeadBitmapPos = 96, 112;
 	TorsoBitmapPos = 32, 128;
 	ArmBitmapPos = 64, 80;
 	LegBitmapPos = 0, 64;
 	TotalVolume = 60000;
-	MeleeStrength = 2000;
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "guard";
@@ -151,11 +188,16 @@ guard
 
 shopkeeper
 {
-
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 30;
+	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultStrength = 30;
-	DefaultEndurance = 25;
+	DefaultEndurance = 10;
 	DefaultPerception = 30;
+	DefaultIntelligence = 25;
+	DefaultWisdom = 15;
+	DefaultCharisma = 30;
+	DefaultMana = 10;
 	DefaultMoney = 3000;
 	TorsoSpecialColor = rgb(0, 96, 0);
 	HeadBitmapPos = 96, 64;
@@ -163,7 +205,6 @@ shopkeeper
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 32;
 	TotalVolume = 100000;
-	MeleeStrength = 2000;
 	TotalSize = 160;
 	NameSingular = "shopkeeper";
 	IsPolymorphable = false;
@@ -171,10 +212,16 @@ shopkeeper
 
 priest
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 30;
+	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultStrength = 20;
-	DefaultEndurance = 15;
+	DefaultEndurance = 10;
 	DefaultPerception = 18;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 25;
+	DefaultCharisma = 20;
+	DefaultMana = 20;
 	CanSwim = true;
 	CapColor = rgb(180, 0, 80);
 	TorsoSpecialColor = rgb(0, 96, 0);
@@ -184,17 +231,22 @@ priest
 	LegBitmapPos = 0, 32;
 	TotalVolume = 100000;
 	TotalSize = 180;
-	MeleeStrength = 1000;
 	CanRead = true;
 	NameSingular = "priest";
 }
 
 oree
 {
-	DefaultAgility = 50;
-	DefaultStrength = 30;
+	DefaultArmStrength = 60;
+	DefaultLegStrength = 60;
+	DefaultDexterity = 90;
+	DefaultAgility = 90;
 	DefaultEndurance = 30;
 	DefaultPerception = 30;
+	DefaultIntelligence = 30;
+	DefaultWisdom = 20;
+	DefaultCharisma = 3;
+	DefaultMana = 30;
 	IsCharmable = false;
 	HasInfraVision = true;
 	CanBeDisplaced = false;
@@ -208,21 +260,26 @@ oree
 	SkinColor = rgb(160, 0, 0);
 	EyeColor = rgb(64, 0, 0);
 	TotalVolume = 110000;
-	MeleeStrength = 30000;
 	TotalSize = 225;
 	CanRead = true;
 	NameSingular = "Blood Daemon King";
 	IsPolymorphable = false;
+	AttackStyle = USE_HEAD;
+	BiteStrength = 30000;
 }
 
 darkknight
 {
-
-	DefaultAgility = 30;
-	DefaultStrength = 30;
+	DefaultArmStrength = 30;
+	DefaultLegStrength = 30;
+	DefaultDexterity = 25;
+	DefaultAgility = 25;
 	DefaultEndurance = 30;
 	DefaultPerception = 30;
-	CanBeGenerated = true;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 15;
+	DefaultCharisma = 15;
+	DefaultMana = 15;
 	HeadBitmapPos = 96, 240; 
 	TorsoBitmapPos = 32, 176;
 	ArmBitmapPos = 64, 16;
@@ -231,45 +288,56 @@ darkknight
 	EyeColor = rgb(100, 0, 0);
 	TotalVolume = 110000;
 	TorsoBitmapPos = 128, 0;
-	MeleeStrength = 5000;
 	TotalSize = 200;
 	CanRead = true;
 	NameSingular = "dark knight";
+	CanBeGenerated = true;
 }
 
 ennerbeast
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultStrength = 10;
-	DefaultEndurance = 25;
+	DefaultEndurance = 10;
 	DefaultPerception = 12;
+	DefaultIntelligence = 1;
+	DefaultWisdom = 1;
+	DefaultCharisma = 1;
+	DefaultMana = 0;
 	CanOpen = false;
-	CanBeGenerated = false;
 	TotalVolume = 30000;
 	TorsoBitmapPos = 96, 0;
-	MeleeStrength = 100000;
 	TotalSize = 150;
 	SkinColor = rgb(112, 112, 64);
 	NameSingular = "enner beast";
 	Article = "an";
 	IsPolymorphable = false;
+	AttackStyle = USE_HEAD;
+	BiteStrength = 100000;
 }
 
 frog
 {
 	CanOpen = false;
-	MeleeStrength = 20000;
 	TalkVerb = "croaks";
 	NameSingular = "frog";
 	IsAbstract = true;
+	AttackStyle = USE_HEAD;
+	BiteStrength = 20000;
 }
 
 darkfrog
 {
-	DefaultAgility = 30;
-	DefaultStrength = 5;
-	DefaultEndurance = 5;
+	DefaultArmStrength = 5;
+	DefaultAgility = 40;
+	DefaultEndurance = 15;
 	DefaultPerception = 18;
+	DefaultIntelligence = 40;
+	DefaultWisdom = 30;
+	DefaultCharisma = 5;
+	DefaultMana = 20;
 	BloodColor = rgb(0, 0, 0);
 	HasInfraVision = true;
 	TotalVolume = 2500;
@@ -277,16 +345,19 @@ darkfrog
 	TotalSize = 25;
 	SkinColor = rgb(48, 48, 48);
 	Adjective = "dark";
+	CanBeGenerated = true;
 }
 
 elpuri
 {
-
+	DefaultArmStrength = 90;
 	DefaultAgility = 10;
-	DefaultStrength = 30;
-	DefaultEndurance = 50;
+	DefaultEndurance = 40;
 	DefaultPerception = 30;
-	CanBeGenerated = false;
+	DefaultIntelligence = 40;
+	DefaultWisdom = 30;
+	DefaultCharisma = 2;
+	DefaultMana = 30;
 	IsCharmable = false;
 	CanBeDisplaced = false;
 	IsNameable = false;
@@ -298,33 +369,44 @@ elpuri
 	CanOpen = true;
 	NameSingular = "Master Dark Frog";
 	IsPolymorphable = false;
+	CanBeGenerated = false;
 }
 
 billswill
 {
-	DefaultAgility = 40;
-	DefaultStrength = 5;
-	DefaultEndurance = 20;
+	DefaultArmStrength = 5;
+	DefaultAgility = 50;
+	DefaultEndurance = 5;
 	DefaultPerception = 27;
+	DefaultIntelligence = 2;
+	DefaultWisdom = 2;
+	DefaultCharisma = 5;
+	DefaultMana = 10;
 	HasInfraVision = true;
 	StandVerb = "floating";
 	Frequency = 100;
 	CanFly = true;
 	TotalVolume = 500000;
 	TorsoBitmapPos = 48, 0;
-	MeleeStrength = 20000;
 	TotalSize = 100;
 	NameSingular = "pure mass of Bill's will";
 	NamePlural = "pure masses of Bill's will";
+	UnarmedStrength = 20000;
+	CanBeGenerated = true;
 }
 
 skeleton
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultStrength = 5;
-	DefaultEndurance = 10;
+	DefaultEndurance = 5;
 	DefaultPerception = 15;
-	CanBeGenerated = true;
+	DefaultIntelligence = 4;
+	DefaultWisdom = 4;
+	DefaultCharisma = 3;
+	DefaultMana = 5;
 	SkinColor = rgb(144, 144, 144);
 	EyeColor = rgb(100, 0, 0);
 	ClothColor = rgb(111,74, 37);
@@ -333,19 +415,23 @@ skeleton
 	ArmBitmapPos = 64, 96;
 	LegBitmapPos = 0, 80;
 	TotalVolume = 60000;
-	MeleeStrength = 1000;
 	TotalSize = 150;
 	NameSingular = "skeleton";
+	CanBeGenerated = true;
 }
 
 goblin
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 10;
 	DefaultAgility = 15;
-	DefaultStrength = 10;
-	DefaultEndurance = 15;
+	DefaultEndurance = 10;
 	DefaultPerception = 18;
-	CanBeGenerated = true;
-	Sex = UNDEFINED;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 5;
+	DefaultMana = 5;
 	SkinColor = rgb(0, 128, 0);
 	ClothColor = rgb(111,74,37); 
 	HeadBitmapPos = 96, 48;
@@ -354,28 +440,35 @@ goblin
 	LegBitmapPos = 16, 64;
 	TotalVolume = 25000;
 	TorsoBitmapPos = 144, 0;
-	MeleeStrength = 2000;
 	TotalSize = 100;
 	NameSingular = "goblin";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
 }
 
 mommo
 {
 	CanOpen = "false";
 	StandVerb = "bubbling";
-	MeleeStrength = 20000;
 	TalkVerb = "vibrates oddly";
 	BloodColor = rgb(7, 155, 0);
 	NameSingular = "mommo slime";
 	IsAbstract = true;
+	AttackStyle = USE_HEAD;
+	BiteStrength = 20000;
+	CanBeGenerated = true;
 }
 
 conicalmommo
 {
+	DefaultArmStrength = 4;
 	DefaultAgility = 2;
-	DefaultStrength = 4;
-	DefaultEndurance = 50;
+	DefaultEndurance = 20;
 	DefaultPerception = 9;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 2;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
 	TotalVolume = 250000;
 	TorsoBitmapPos = 176, 0;
 	TotalSize = 100;
@@ -384,10 +477,14 @@ conicalmommo
 
 flatmommo
 {
+	DefaultArmStrength = 2;
 	DefaultAgility = 4;
-	DefaultStrength = 2;
-	DefaultEndurance = 25;
+	DefaultEndurance = 20;
 	DefaultPerception = 9;
+	DefaultIntelligence = 2;
+	DefaultWisdom = 3;
+	DefaultCharisma = 3;
+	DefaultMana = 0;
 	TotalVolume = 150000;
 	TorsoBitmapPos = 192, 0;
 	TotalSize = 75;
@@ -396,103 +493,143 @@ flatmommo
 
 golem
 {
-	DefaultAgility = 5;
-	DefaultStrength = 20;
-	DefaultEndurance = 20;
+	/* Strengths, dexterity and agility depend on material */
+	/* Endurance has no effect */
 	DefaultPerception = 12;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 5;
+	DefaultMana = 5;
 	TotalVolume = 100000;
 	TorsoBitmapPos = 256, 0;
 	TotalSize = 250;
-	/* MeleeStrength depends on material */
 	NameSingular = "golem";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
 }
 
 wolf
 {
-	DefaultAgility = 20;
-	DefaultStrength = 10;
-	DefaultEndurance = 10;
+	DefaultArmStrength = 10;
+	DefaultAgility = 25;
+	DefaultEndurance = 15;
 	DefaultPerception = 24;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 5;
+	DefaultCharisma = 10;
+	DefaultMana = 0;
 	TotalVolume = 40000;
 	TorsoBitmapPos = 224, 0;
-	MeleeStrength = 7500;
 	TalkVerb = "howls";
 	TotalSize = 100;
 	SkinColor = rgb(64, 64, 64);
 	NameSingular = "wolf";
 	NamePlural = "wolves";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 15000;
+	CanBeGenerated = true;
 }
 
 dog
 {
-	DefaultAgility = 15;
-	DefaultStrength = 5;
-	DefaultEndurance = 5;
+	DefaultArmStrength = 5;
+	DefaultAgility = 20;
+	DefaultEndurance = 10;
 	DefaultPerception = 21;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 5;
+	DefaultCharisma = 15;
+	DefaultMana = 0;
 	TotalVolume = 30000;
 	TorsoBitmapPos = 240, 0;
-	MeleeStrength = 5000;
 	TalkVerb = "barks";
 	TotalSize = 70;
 	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONY;
 	SkinColor = rgb(111, 74, 37);
 	NameSingular = "dog";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 10000;
+	CanBeGenerated = true;
 }
 
 spider
 {
-	DefaultAgility = 5;
-	DefaultStrength = 2;
-	DefaultEndurance = 1;
+	DefaultArmStrength = 2;
+	DefaultAgility = 4;
+	DefaultEndurance = 4;
 	DefaultPerception = 9;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
 	BloodColor = rgb(0, 0, 0);
 	HasInfraVision = true;
 	CanOpen = false;
 	TotalVolume = 100;
 	TorsoBitmapPos = 272, 0;
-	MeleeStrength = 10000;
 	TalkVerb = "says nothing";
 	TotalSize = 10;
 	SkinColor = rgb(160, 160, 160);
 	NameSingular = "spider";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 20000;
+	CanBeGenerated = true;
 }
 
 jackal
 {
-	DefaultAgility = 10;
-	DefaultStrength = 3;
-	DefaultEndurance = 3;
+	DefaultArmStrength = 3;
+	DefaultAgility = 15;
+	DefaultEndurance = 5;
 	DefaultPerception = 18;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 7;
+	DefaultMana = 0;
 	TotalVolume = 20000;
 	TorsoBitmapPos = 304, 0;
-	MeleeStrength = 5000;
 	TalkVerb = "howls";
 	TotalSize = 80;
 	SkinColor = rgb(224, 224, 224);
 	NameSingular = "jackal";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 10000;
+	CanBeGenerated = true;
 }
 
 donkey
 {
+	DefaultArmStrength = 15;
 	DefaultAgility = 5;
-	DefaultStrength = 10;
-	DefaultEndurance = 10;
+	DefaultEndurance = 15;
 	DefaultPerception = 15;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 5;
+	DefaultMana = 0;
 	TotalVolume = 40000;
 	TorsoBitmapPos = 288, 0;
-	MeleeStrength = 1000;
 	TalkVerb = "neighs";
 	TotalSize = 150;
 	SkinColor = rgb(80, 80, 80);
 	NameSingular = "mutant donkey";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 2500;
+	CanBeGenerated = true;
 }
 
-communist
+communist /* Ivan */
 {
+	DefaultArmStrength = 50;
+	DefaultLegStrength = 50;
+	DefaultDexterity = 20;
 	DefaultAgility = 20;
-	DefaultStrength = 50;
-	DefaultEndurance = 50;
+	DefaultEndurance = 30;
 	DefaultPerception = 18;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 5;
+	DefaultCharisma = 10;
+	DefaultMana = 5;
 	HasInfraVision = true;
 	CriticalModifier = 4;
 	IsNameable = false;
@@ -504,7 +641,6 @@ communist
 	ArmBitmapPos = 64, 112;
 	LegBitmapPos = 0, 0;
 	TotalVolume = 120000;
-	MeleeStrength = 5000;
 	TotalSize = 230;
 	CanRead = true;
 	NameSingular = "communist";
@@ -512,10 +648,16 @@ communist
 
 hunter
 {
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 15;
 	DefaultAgility = 20;
-	DefaultStrength = 15;
 	DefaultEndurance = 15;
 	DefaultPerception = 24;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 15;
+	DefaultMana = 5;
 	ClothColor = rgb(128, 80, 48);
 	BeltColor = rgb(144, 96, 60);
 	HeadBitmapPos = 96, 192;
@@ -523,56 +665,66 @@ hunter
 	ArmBitmapPos = 64, 128;
 	LegBitmapPos = 0, 96;
 	TotalVolume = 80000;
-	MeleeStrength = 2000;
 	TotalSize = 180;
 	NameSingular = "hunter";
 }
 
 polarbear
 {
+	DefaultArmStrength = 50;
 	DefaultAgility = 10;
-	DefaultStrength = 30;
-	DefaultEndurance = 30;
+	DefaultEndurance = 25;
 	DefaultPerception = 24;
-	CanBeGenerated = false;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 7;
+	DefaultCharisma = 15;
+	DefaultMana = 0;
 	TotalVolume = 500000;
-	MeleeStrength = 10000;
 	TorsoBitmapPos = 336, 0;
 	TalkVerb = "growls";
 	TotalSize = 250;
 	SkinColor = rgb(128, 128, 128);
 	NameSingular = "polar bear";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 10000;
 }
 
 dolphin
 {
+	DefaultArmStrength = 10;
 	DefaultAgility = 30;
-	DefaultStrength = 10;
 	DefaultEndurance = 10;
 	DefaultPerception = 30;
-	CanBeGenerated = false;
+	DefaultIntelligence = 99;
+	DefaultWisdom = 99;
+	DefaultCharisma = 30;
+	DefaultMana = 0;
 	StandVerb = "swimming";
 	CanBeDisplaced = false;
 	CanOpen = false;
 	CanWalk = false;
 	CanSwim = true;
 	TotalVolume = 150000;
-	MeleeStrength = 1000;
 	TorsoBitmapPos = 320, 0;
 	TalkVerb = "peeps passionately to you";
 	TotalSize = 300;
 	SkinColor = rgb(64, 64, 64);
 	NameSingular = "female dolphin";
 	IsPolymorphable = false;
+	AttackStyle = USE_HEAD;
+	BiteStrength = 5000;
 }
 
 lightfrog
 {
-	DefaultAgility = 30;
-	DefaultStrength = 5;
-	DefaultEndurance = 5;
+	DefaultArmStrength = 5;
+	DefaultAgility = 40;
+	DefaultEndurance = 15;
 	DefaultPerception = 18;
-	CanBeGenerated = false;
+	DefaultIntelligence = 30;
+	DefaultWisdom = 40;
+	DefaultCharisma = 15;
+	DefaultMana = 20;
 	CanSwim = true;
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
@@ -583,10 +735,16 @@ lightfrog
 
 slave
 {
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 15;
 	DefaultAgility = 10;
-	DefaultStrength = 20;
-	DefaultEndurance = 15;
+	DefaultEndurance = 25;
 	DefaultPerception = 15;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 5;
 	SkinColor = rgb(128, 80, 48);
 	HairColor = rgb(80, 48, 32);
 	EyeColor = rgb(64, 48, 24);
@@ -597,24 +755,28 @@ slave
 	LegBitmapPos = 0,16;
 	TotalVolume = 60000;
 	TotalSize = 160;
-	MeleeStrength = 1000;
 	NameSingular = "slave";
 }
 
 petrusswife
 {
-	DefaultAgility = 10;
-	DefaultStrength = 5;
+	DefaultArmStrength = 7;
+	DefaultLegStrength = 7;
+	DefaultDexterity = 7;
+	DefaultAgility = 7;
 	DefaultEndurance = 5;
 	DefaultPerception = 21;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 10;
+	DefaultCharisma = 80;
+	DefaultMana = 20;
 	Sex = FEMALE;
 	ClothColor = rgb(150, 0, 0);
 	BeltColor = rgb(180, 180, 0);
 	TorsoBitmapPos = 32, 160;
 	ArmBitmapPos = 64, 160;
 	LegBitmapPos = 0, 112;
-	TotalVolume = 50000;
-	MeleeStrength = 500;
+	TotalVolume = 40000;
 	TotalSize = 170;
 	CanRead = true;
 	NameSingular = "Petrus's wife";
@@ -665,10 +827,16 @@ petrusswife
 
 housewife
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 15;
 	DefaultAgility = 15;
-	DefaultStrength = 10;
 	DefaultEndurance = 15;
 	DefaultPerception = 24;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 20;
+	DefaultCharisma = 20;
+	DefaultMana = 10;
 	Sex = FEMALE;
 	TorsoMainColor = rgb(160, 160, 160);
 	ArmMainColor = rgb(100, 100, 100);
@@ -678,7 +846,6 @@ housewife
 	ArmBitmapPos = 64, 160;
 	LegBitmapPos = 0, 112;
 	TotalVolume = 70000;
-	MeleeStrength = 500;
 	TotalSize = 160;
 	CanRead = true;
 	NameSingular = "housewife";
@@ -686,10 +853,16 @@ housewife
 
 femaleslave
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultStrength = 10;
-	DefaultEndurance = 15;
+	DefaultEndurance = 10;
 	DefaultPerception = 18;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 25;
+	DefaultMana = 5;
 	Sex = FEMALE;
 	SkinColor = rgb(160, 100, 64);
 	HairColor = rgb(80, 48, 32);
@@ -698,17 +871,22 @@ femaleslave
 	ArmBitmapPos = 64, 208;
 	LegBitmapPos = 0, 144;
 	TotalVolume = 40000;
-	MeleeStrength = 500;
 	TotalSize = 170;
 	NameSingular = "female slave";
 }
 
 librarian
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 5;
 	DefaultAgility = 5;
-	DefaultStrength = 5;
 	DefaultEndurance = 5;
 	DefaultPerception = 12;
+	DefaultIntelligence = 30;
+	DefaultWisdom = 15;
+	DefaultCharisma = 10;
+	DefaultMana = 20;
 	HairColor = rgb(160, 160, 160);
 	ClothColor = rgb(48, 48, 48);
 	ArmMainColor = rgb(144, 144, 144);
@@ -717,7 +895,6 @@ librarian
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 0;
 	TotalVolume = 80000;
-	MeleeStrength = 500;
 	TotalSize = 170;
 	CanRead = true;
 	NameSingular = "librarian";
@@ -725,13 +902,16 @@ librarian
 
 zombie
 {
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 5;
 	DefaultAgility = 5;
-	DefaultStrength = 10;
 	DefaultEndurance = 5;
 	DefaultPerception = 12;
-	CanBeGenerated = true;
-	MeleeStrength = 1500;
-	Sex = UNDEFINED;
+	DefaultIntelligence = 4;
+	DefaultWisdom = 4;
+	DefaultCharisma = 3;
+	DefaultMana = 0;
 	SkinColor = rgb(0, 120, 120);
 	EyeColor = rgb(200, 0, 0);
 	ClothColor = rgb(56, 16, 96);
@@ -742,15 +922,22 @@ zombie
 	TotalVolume = 50000;
 	TotalSize = 160;
 	NameSingular = "zombie";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
 }
 
 imp
 {
-	DefaultAgility = 15;
-	DefaultStrength = 10;
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 10;
+	DefaultAgility = 10;
 	DefaultEndurance = 10;
 	DefaultPerception = 15;
-	Sex = UNDEFINED;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 5;
+	DefaultMana = 10;
 	SkinColor = rgb(128, 0, 0);
 	EyeColor = rgb(150, 80, 0);
 	ClothColor = rgb(111, 74, 37);
@@ -760,40 +947,51 @@ imp
 	ArmBitmapPos = 64, 32;
 	LegBitmapPos = 16, 80;
 	TotalVolume = 40000;
-	MeleeStrength = 20000;
 	TotalSize = 100;
 	NameSingular = "imp";
 	Article = "an";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
 }
 
 bat
 {
-	DefaultAgility = 40;
-	DefaultStrength = 2;
-	DefaultEndurance = 1;
+	DefaultArmStrength = 2;
+	DefaultAgility = 50;
+	DefaultEndurance = 10;
 	DefaultPerception = 24;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 5;
+	DefaultCharisma = 5;
+	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
 	HasInfraVision = true;
 	CanFly = true;
 	TotalVolume = 1000;
 	TorsoBitmapPos = 464, 0;
-	MeleeStrength = 20000;
 	TalkVerb = "squeaks";
 	TotalSize = 20;
 	SkinColor = rgb(48, 48, 48);
 	NameSingular = "bat";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 15000;
+	CanBeGenerated = true;
 }
 
 mistress
 {
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 35;
 	DefaultAgility = 35;
-	DefaultStrength = 25;
-	DefaultEndurance = 50;
+	DefaultEndurance = 25;
 	DefaultPerception = 30;
-	CanBeGenerated = true;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 15;
+	DefaultCharisma = 40;
+	DefaultMana = 15;
 	Sex = FEMALE;
-	MeleeStrength = 5000;
 	SkinColor = rgb(255, 212, 192);
 	HairColor = rgb(35, 35, 35);
 	ClothColor = rgb(35, 35, 35);
@@ -806,11 +1004,11 @@ mistress
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "mistress";
+	CanBeGenerated = true;
 }
 
 /*werewolf
 {
-	CanBeGenerated = true;
 	Load(inputfile&;
 	Save(outputfile&) const;
 	HasInfraVision = GetIsWolf(;
@@ -835,7 +1033,6 @@ mistress
 	TotalVolume = 80000;
 	material* CreateBodyPartFlesh(ushort, Volume) const { return new werewolfflesh(Volume;
 	std::string NameSingular() const { return "werewolf";
-	//float GetMeleeStrength() const;
 	TalkVerb = IsWolf ? "howls" : "screams";
 	TotalSize = 170;
 	ChangeCounter;
@@ -845,12 +1042,16 @@ mistress
 
 kobold
 {
+	DefaultArmStrength = 5;
+	DefaultLegStrength = 5;
+	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultStrength = 5;
 	DefaultEndurance = 5;
 	DefaultPerception = 12;
-	Sex = UNDEFINED;
-	CanBeGenerated = true;
+	DefaultIntelligence = 4;
+	DefaultWisdom = 4;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
 	SkinColor = rgb(30, 100, 110);
 	HairColor = rgb(35, 35, 35);
 	ClothColor = rgb(111, 74, 37);
@@ -859,19 +1060,25 @@ kobold
 	ArmBitmapPos = 64, 176;
 	LegBitmapPos = 16, 112;
 	TotalVolume = 30000;
-	MeleeStrength = 2000;
 	TotalSize = 90;
 	SkinColor = rgb(30, 100, 110);
 	NameSingular = "kobold";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
 }
 
 gibberling
 {
+	DefaultArmStrength = 5;
+	DefaultLegStrength = 5;
+	DefaultDexterity = 5;
 	DefaultAgility = 20;
-	DefaultStrength = 5;
-	DefaultEndurance = 5;
+	DefaultEndurance = 10;
 	DefaultPerception = 15;
-	Sex = UNDEFINED;
+	DefaultIntelligence = 4;
+	DefaultWisdom = 4;
+	DefaultCharisma = 5;
+	DefaultMana = 0;
 	SkinColor = rgb(100, 100, 200);
 	HairColor = rgb(50, 20, 80);
 	ClothColor = rgb(111, 74, 37);
@@ -881,56 +1088,74 @@ gibberling
 	ArmBitmapPos = 80, 144;
 	LegBitmapPos = 16, 128;
 	TotalVolume = 30000;
-	MeleeStrength = 10000;
 	TotalSize = 90;
 	SkinColor = rgb(100, 100, 200);
 	NameSingular = "gibberling";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
 }
 
 largecat
 {
-	DefaultAgility = 25;
-	DefaultStrength = 5;
-	DefaultEndurance = 5;
+	DefaultArmStrength = 5;
+	DefaultAgility = 35;
+	DefaultEndurance = 10;
 	DefaultPerception = 21;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 20;
+	DefaultMana = 0;
 	TotalVolume = 15000;
 	TorsoBitmapPos = 496, 0;
-	MeleeStrength = 20000;
 	TalkVerb = "mews";
 	TotalSize = 60;
 	SkinColor = rgb(50, 50, 50);
 	NameSingular = "large cat";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 20000;
+	CanBeGenerated = true;
 }
 
 largerat
 {
-	DefaultAgility = 10;
-	DefaultStrength = 3;
-	DefaultEndurance = 2;
+	DefaultArmStrength = 3;
+	DefaultAgility = 30;
+	DefaultEndurance = 10;
 	DefaultPerception = 12;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
 	CanOpen = false;
 	TotalVolume = 2000;
 	TorsoBitmapPos = 512, 0;
-	MeleeStrength = 20000;
 	TalkVerb = "squeaks";
 	TotalSize = 30;
 	SkinColor = rgb(180, 100, 40);
 	NameSingular = "large rat";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 20000;
+	CanBeGenerated = true;
 }
 
 angel
 {
+	DefaultArmStrength = 35;
+	DefaultLegStrength = 35;
+	DefaultDexterity = 35;
 	DefaultAgility = 35;
-	DefaultStrength = 35;
 	DefaultEndurance = 35;
 	DefaultPerception = 45;
+	DefaultIntelligence = 35;
+	DefaultWisdom = 35;
+	DefaultCharisma = 50;
+	DefaultMana = 35;
 	IsCharmable = false;
 	HasInfraVision = true;
 	Sex = FEMALE;
 	CanFly = true;
 	TotalVolume = 60000;
 	TorsoBitmapPos = 432, 0;
-	MeleeStrength = 10000;
 	TotalSize = 180;
 	CanRead = true;
 	SkinColor = rgb(200, 200, 200);
@@ -945,12 +1170,16 @@ dwarf
 
 kamikazedwarf
 {
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 20;
 	DefaultAgility = 20;
-	DefaultStrength = 20;
-	DefaultEndurance = 20;
+	DefaultEndurance = 15;
 	DefaultPerception = 24;
-	CanBeGenerated = true;
-	MeleeStrength = 2000;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 5;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
 	Frequency = 1000;
 	HeadBitmapPos = 112, 160;
 	TorsoBitmapPos = 48, 16;
@@ -962,35 +1191,50 @@ kamikazedwarf
 	TotalSize = 130;
 	CanRead = true;
 	NameSingular = "kamikaze dwarf";
+	CanBeGenerated = true;
 }
 
 mammoth
 {
+	DefaultArmStrength = 80;
 	DefaultAgility = 20;
-	DefaultStrength = 80;
-	DefaultEndurance = 80;
+	DefaultEndurance = 25;
 	DefaultPerception = 18;
-	TotalVolume = 5000000;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 7;
+	DefaultCharisma = 10;
+	DefaultMana = 0;
+	TotalVolume = 500000;
 	TorsoBitmapPos = 528, 0;
-	MeleeStrength = 5000;
 	TalkVerb = "roars";
 	TotalSize = 500;
 	SkinColor = rgb(100, 130, 160);
 	NameSingular = "mammoth";
+	AttackStyle = USE_LEGS|USE_HEAD;
+	KickStrength = 10000;
+	BiteStrength = 5000;
+	CanBeGenerated = true;
 }
 
 unicorn
 {
+	DefaultArmStrength = 15;
 	DefaultAgility = 40;
-	DefaultStrength = 10;
-	DefaultEndurance = 25;
+	DefaultEndurance = 10;
 	DefaultPerception = 18;
-	MeleeStrength = 5000;
+	DefaultIntelligence = 25;
+	DefaultWisdom = 20;
+	DefaultCharisma = 30;
+	DefaultMana = 25;
 	TalkVerb = "neighs";
 	TotalVolume = 200000;
 	TorsoBitmapPos = 544, 0;
 	TotalSize = 200;
 	NameSingular = "unicorn";
+	AttackStyle = USE_LEGS|USE_HEAD;
+	KickStrength = 10000;
+	BiteStrength = 5000;
+	CanBeGenerated = true;
 
 	Config GOOD;
 	{
@@ -1013,15 +1257,20 @@ unicorn
 
 genie
 {
+	DefaultArmStrength = 30;
+	DefaultLegStrength = 30; /* not used */
+	DefaultDexterity = 30;
 	DefaultAgility = 30;
-	DefaultStrength = 30;
-	DefaultEndurance = 30;
+	DefaultEndurance = 15;
 	DefaultPerception = 18;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 25;
+	DefaultCharisma = 20;
+	DefaultMana = 50;
 	StandVerb = "floating";
 	CanFly = true;
 	TotalVolume = 200000;
 	TorsoBitmapPos = 416, 0;
-	MeleeStrength = 5000;
 	TotalSize = 250;
 	CanRead = true;
 	NameSingular = "genie";
@@ -1029,46 +1278,62 @@ genie
 
 lion
 {
-	DefaultAgility = 40;
-	DefaultStrength = 30;
-	DefaultEndurance = 30;
+	DefaultArmStrength = 25;
+	DefaultAgility = 25;
+	DefaultEndurance = 20;
 	DefaultPerception = 24;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 15;
+	DefaultCharisma = 20;
+	DefaultMana = 0;
 	TotalVolume = 150000;
 	TorsoBitmapPos = 576, 0;
-	MeleeStrength = 3000;
 	TalkVerb = "growls";
 	TotalSize = 200;
 	SkinColor = rgb(192, 160, 112);
 	NameSingular = "lion";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 15000;
 }
 
 carnivorousplant
 {
-	DefaultAgility = 5;
-	DefaultStrength = 30;
-	DefaultEndurance = 4;
-	DefaultPerception = 5;
+	DefaultArmStrength = 10;
+	DefaultAgility = 1;
+	DefaultEndurance = 5;
+	DefaultPerception = 6;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 2;
+	DefaultCharisma = 5;
+	DefaultMana = 0;
 	CanOpen = false;
 	TotalVolume = 20000;
 	TorsoBitmapPos = 0,16;
-	MeleeStrength = 2500;
 	TalkVerb = "is silent";
 	TotalSize = 250;
 	SkinColor = rgb(0, 160, 0);
 	NameSingular = "carnivorous plant";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 2500;
 }
 
 buffalo
 {
-	DefaultAgility = 4;
-	DefaultStrength = 3;
-	DefaultEndurance = 30;
+	DefaultArmStrength = 40;
+	DefaultAgility = 25;
+	DefaultEndurance = 25;
 	DefaultPerception = 24;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 5;
+	DefaultMana = 0;
 	TotalVolume = 200000;
 	TorsoBitmapPos = 16,16;
-	MeleeStrength = 500;
 	TalkVerb = "snarls";
 	TotalSize = 250;
 	SkinColor = rgb(60, 55, 50);
 	NameSingular = "buffalo";
+	AttackStyle = USE_LEGS|USE_HEAD;
+	KickStrength = 10000;
+	BiteStrength = 5000;
 }

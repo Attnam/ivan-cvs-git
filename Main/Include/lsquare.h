@@ -72,7 +72,7 @@ class lsquare : public square
   virtual bool Engrave(const std::string& What) { Engraved = What; return true; }
   virtual void SetEmitation(ushort What) { Emitation = What; }
   virtual void UpdateMemorizedDescription(bool = false);
-  virtual bool Kick(character*, ushort, uchar);
+  virtual void BeKicked(character*, float, float, short, bool);
   virtual uchar GetDivineMaster() const { return DivineMaster; }
   virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual bool DrawTerrain(bool) const;

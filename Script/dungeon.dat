@@ -559,14 +559,14 @@ Dungeon 1;
 					D = VALPURIUM door;
 					L = VALPURIUM door { Parameters = LOCKED; }
 					b = linden;
-					1 = poolcorner { VisualFlags = NONE; }
-					2 = poolcorner { VisualFlags = MIRROR; }
-					3 = poolcorner { VisualFlags = MIRROR | FLIP; }
-					4 = poolcorner { VisualFlags = FLIP; }
-					5 = poolborder { VisualFlags = NONE; }
-					6 = poolborder { VisualFlags = ROTATE; }
-					7 = poolborder { VisualFlags = FLIP; }
-					8 = poolborder { VisualFlags = MIRROR | ROTATE; }
+					1 = poolcorner { VisualEffects = NONE; }
+					2 = poolcorner { VisualEffects = MIRROR; }
+					3 = poolcorner { VisualEffects = MIRROR | FLIP; }
+					4 = poolcorner { VisualEffects = FLIP; }
+					5 = poolborder { VisualEffects = NONE; }
+					6 = poolborder { VisualEffects = ROTATE; }
+					7 = poolborder { VisualEffects = FLIP; }
+					8 = poolborder { VisualEffects = MIRROR | ROTATE; }
 					s = couch;
 					f = fountain;
 					d = doublebed;

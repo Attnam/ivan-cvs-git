@@ -25,7 +25,7 @@ Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
 Blindness of pets.
 Uses for vomiting.
-CNAME should be clarified.
+//CNAME should be clarified.
 Hit rate of thrown items should be lowered.
 /You must be able to open door by throwing items.
 One should be able to summon tame Bill's Wills from Windoze keys in WMode.
@@ -50,7 +50,7 @@ Some variety to monster death messages, e.g. some messages influenced by the cau
 *You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 *Script should have an initial blood level of square option.
 *Balancing offervalues.
-*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
+/*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
 Donkey should be named "an ass".
 Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
@@ -239,3 +239,7 @@ Wand levels.
 Talking to oneself should abuse intelligence.
 *If you are illiterate you shouldn't be able to read engraved messages.
 Chatting shouldn't be possible if you aren't intelligent.
+Possibility to override keys that felist accepts.
+Angels should become hostile if the player's relation to their DivineMaster drops radically.
+Shields.
+Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".

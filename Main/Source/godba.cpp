@@ -6,7 +6,7 @@
 #include "level.h"
 #include "lsquare.h"
 #include "itemba.h"
-#include "strover.h"
+#include "stdover.h"
 #include "game.h"
 #include "save.h"
 
@@ -77,7 +77,7 @@ std::string god::CompleteDescription() const
   Desc += Name();
   Desc.resize(17, ' ');
 
-  if(game::GetWizardMode())
+  if(game::WizardModeActivated())
     {
       Desc += Timer;
       Desc += " - ";

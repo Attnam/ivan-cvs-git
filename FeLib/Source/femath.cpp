@@ -206,16 +206,21 @@ float femath::CalculateAngle(vector2d Direction)
   if(Direction.X < 0)
     return atan(float(Direction.Y) / Direction.X) + PI;
   else if(Direction.X > 0)
-    return atan(float(Direction.Y) / Direction.X);
+    {
+      if(Direction.Y < 0)
+	return atan(float(Direction.Y) / Direction.X) + 2 * PI;
+      else
+	return atan(float(Direction.Y) / Direction.X);
+    }
   else
     {
       if(Direction.Y < 0)
 	return 3 * PI / 2;
-      else if (Direction.Y > 0)
+      else if(Direction.Y > 0)
 	return PI / 2;
       else
 	{
-	  ABORT("Illegal direction passed to femath::CalculateAngle()!");
+	  ABORT("Illegal direction (0, 0) passed to femath::CalculateAngle()!");
 	  return 0;
 	}
     }

@@ -67,8 +67,10 @@ struct itemdatabase
   std::vector<long> MaterialConfigChances;
   bool IsAbstract;
   bool IsPolymorphable;
+  std::vector<std::string> Alias;
   uchar OKVisualEffects;
   bool CanBeGeneratedInContainer;
+  uchar ForcedVisualEffects;
 };
 
 class itemprototype
@@ -87,8 +89,11 @@ class itemprototype
   DATABASEBOOL(CanBeWished);
   DATABASEBOOL(IsPolymorphSpawnable);
   DATABASEVALUE(ushort, Possibility);
+  DATABASEVALUE(const std::string&, Adjective);
   DATABASEVALUE(const std::string&, NameSingular);
   DATABASEVALUE(const std::string&, NamePlural);
+  DATABASEVALUE(const std::string&, PostFix);
+  DATABASEVALUE(const std::vector<std::string>&, Alias);
   DATABASEBOOL(IsAbstract);
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
  protected:
@@ -135,7 +140,7 @@ class item : public object
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
   virtual bool IsBadFoodForAI(character*) const;
-  virtual std::string GetConsumeVerb() const { return "eating"; }
+  virtual std::string GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
@@ -197,11 +202,10 @@ class item : public object
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
-  virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
+  //virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
+  virtual uchar GetBodyPartIndex() const { return 0xFF; }
   virtual const prototype* GetProtoType() const;
   virtual const database* GetDataBase() const { return DataBase; }
-  //virtual bool CanOpenDoors() const { return false; }
-  //virtual uchar GetLockType() const { return 0xFF; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
 
@@ -247,16 +251,16 @@ class item : public object
   DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
   DATABASEBOOL(IsPolymorphable);
+  DATABASEVALUE(const std::vector<std::string>&, Alias);
   DATABASEVALUE(uchar, OKVisualEffects);
   DATABASEBOOL(CanBeGeneratedInContainer);
+  DATABASEVALUE(uchar, ForcedVisualEffects);
   virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
-  //virtual bool ReceiveApply(character*) { return false; }
   virtual bool TryKey(item*, character*) { return false; }
-  virtual uchar GetVisualFlags() const { return VisualFlags; }
-  virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
-  virtual void HandleVisualEffects();
+  virtual uchar GetVisualEffects() const { return VisualEffects; }
+  virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
@@ -266,7 +270,6 @@ class item : public object
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
   virtual ushort RandomizeMaterialConfiguration();
   virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
-  //virtual bool ShowMaterial() const { return true; }
   virtual bool ShowMaterial() const;
   slot* Slot;
   bool Cannibalised;
@@ -274,7 +277,7 @@ class item : public object
   ulong ID;
   graphic_id InHandsGraphicId;
   const database* DataBase;
-  uchar VisualFlags;
+  uchar VisualEffects;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__

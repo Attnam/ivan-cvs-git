@@ -39,10 +39,16 @@ template <class type> class database;
 struct characterdatabase
 {
   void InitDefaults() { IsAbstract = false; }
+  ushort DefaultArmStrength;
+  ushort DefaultLegStrength;
+  ushort DefaultDexterity;
   ushort DefaultAgility;
-  ushort DefaultStrength;
   ushort DefaultEndurance;
   ushort DefaultPerception;
+  ushort DefaultIntelligence;
+  ushort DefaultWisdom;
+  ushort DefaultCharisma;
+  ushort DefaultMana;
   ulong DefaultMoney;
   ushort TotalSize;
   bool CanRead;
@@ -69,7 +75,6 @@ struct characterdatabase
   bool IsUnique;
   ushort EatFlags;
   ulong TotalVolume;
-  ulong MeleeStrength;
   std::string TalkVerb;
   vector2d HeadBitmapPos;
   vector2d TorsoBitmapPos;
@@ -112,6 +117,10 @@ struct characterdatabase
   uchar ArticleMode;
   bool IsAbstract;
   bool IsPolymorphable;
+  ulong UnarmedStrength;
+  ulong BiteStrength;
+  ulong KickStrength;
+  uchar AttackStyle;
 };
 
 class characterprototype
@@ -156,7 +165,7 @@ class character : public entity, public id
   virtual bool CheckBulimia() const;
   virtual bool CheckDeath(const std::string&, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
-  virtual bool Hit(character*);
+  virtual bool Hit(character*) = 0;
   virtual bool OpenItem();
   virtual bool OpenPos(vector2d);
   virtual bool ReadItem(item*);
@@ -204,30 +213,22 @@ class character : public entity, public id
   virtual bool WizardMode();
   virtual void AddScoreEntry(const std::string&, float = 1, bool = true) const;
   virtual long GetScore() const;
-  virtual float GetAttackStrength() const;
   virtual wsquare* GetWSquareUnder() const;
-  virtual long GetAgilityExperience() const { return AgilityExperience; }
   virtual long GetAP() const { return AP; }
-  virtual long GetEnduranceExperience() const { return EnduranceExperience; }
   virtual long GetNP() const { return NP; }
-  virtual long GetPerceptionExperience() const { return PerceptionExperience; }
-  virtual long GetStrengthExperience() const { return StrengthExperience; }
   virtual short GetHP() const;
   virtual stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState(ulong = 0) const;
-  virtual uchar TakeHit(character*, item*, float, float, short, bool);
+  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
   virtual ulong CurrentDanger() const;
   virtual ulong MaxDanger() const;
-  virtual ushort GetAgility() const { return Agility; }
   virtual ushort GetEmitation() const;
-  virtual ushort GetEndurance() const { return Endurance; }
-  virtual ushort GetPerception() const { return Perception; }
-  virtual ushort GetStrength() const { return Strength; }
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
   virtual vector2d GetPos() const;
   virtual void AddMissMessage(character*) const;
-  virtual void AddHitMessage(character*, item*, uchar, bool = false) const;
+  virtual void AddPrimitiveHitMessage(character*, const std::string&, const std::string&, uchar) const;
+  virtual void AddWeaponHitMessage(character*, item*, uchar, bool = false) const;
   virtual void ApplyExperience();
   virtual void BeTalkedTo(character*);
   virtual void ReceiveDarkness(long);
@@ -243,26 +244,18 @@ class character : public entity, public id
   virtual void ReceivePepsi(long);
   virtual void ReceivePoison(long);
   virtual void Regenerate(ushort = 1);
-  virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; if(Agility > 99) Agility = 99; }
-  virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
   virtual void SetAP(long What) { AP = What; }
-  virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; if(Endurance > 99) Endurance = 99; }
-  virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
   virtual void SetIsPlayer(bool What) { Player = What; }
   virtual void SetNP(long);
-  virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; if(Perception > 99) Perception = 99; }
-  virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
   virtual void SetSquareUnder(square* Square);
-  virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; if(Strength > 99) Strength = 99; }
-  virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
   virtual void SpillBlood(uchar);
   virtual void SpillBlood(uchar, vector2d);
   virtual void Vomit(ushort);
   virtual void Be();
   virtual bool Zap();
   virtual bool Polymorph(character*, ushort);
-  virtual void BeKicked(character*, ushort, uchar);
-  virtual void FallTo(vector2d, bool);
+  virtual void BeKicked(character*, float, float, short, bool);
+  virtual void FallTo(character*, vector2d);
   virtual bool CheckCannibalism(ushort) const;
   virtual void CharacterSpeciality(ushort = 1) { }
   virtual void ActivateState(uchar What) { State |= What; }
@@ -281,9 +274,8 @@ class character : public entity, public id
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
   virtual short GetMaxHP() const;
-  virtual ushort GetMeleeAttributeModifier() const;
-  virtual float GetToHitValue() const;
-  virtual float GetDodgeValue() const;
+  virtual float GetBattleAttributeModifier() const;
+  virtual float CalculateDodgeValue() const;
   virtual bool RaiseGodRelations();
   virtual bool LowerGodRelations();
   virtual bool GainDivineKnowledge();
@@ -299,7 +291,6 @@ class character : public entity, public id
   virtual bool CheckStarvationDeath(const std::string&);
   virtual void ShowNewPosInfo() const;
   virtual void Hostility(character*);
-  virtual void KickHit() { }
   virtual stack* GetGiftStack() const;
   virtual bool MoveRandomlyInRoom();
   virtual bool Go();
@@ -316,10 +307,6 @@ class character : public entity, public id
   virtual void TestWalkability();
   virtual void EditAP(long What) { AP += What; }
   virtual void EditNP(long What) { NP += What; }
-  virtual void EditStrengthExperience(long What) { StrengthExperience += What; }
-  virtual void EditEnduranceExperience(long What) { EnduranceExperience += What; }
-  virtual void EditAgilityExperience(long What) { AgilityExperience += What; }
-  virtual void EditPerceptionExperience(long What) { PerceptionExperience += What; }
   virtual void SetSize(ushort);
   virtual ushort GetSize() const;
   virtual torso* GetTorso() const;
@@ -385,7 +372,7 @@ class character : public entity, public id
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
-  virtual bool DrawSilhouette(bitmap*, vector2d) { return false; }
+  virtual bool DrawSilhouette(bitmap*, vector2d) const { return false; }
   virtual void TalkTo(character*);
   virtual bool ClosePos(vector2d);
   virtual ushort GetResistance(uchar) const;
@@ -410,7 +397,7 @@ class character : public entity, public id
   virtual void AddKoboldFleshHitMessage() const;
   virtual void AddBoneConsumeEndMessage() const;
   virtual ulong GetTotalWeight() const;
-  virtual void AddInfo(felist&) const;
+  virtual void AddInfo(felist&) const = 0;
   virtual void PrintInfo() const;
   virtual bodypart* SevereBodyPart(ushort);
   virtual bool IsAnimated() const { return false; }
@@ -422,10 +409,16 @@ class character : public entity, public id
   virtual const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
 
+  DATABASEVALUE(ushort, DefaultArmStrength);
+  DATABASEVALUE(ushort, DefaultLegStrength);
+  DATABASEVALUE(ushort, DefaultDexterity);
   DATABASEVALUE(ushort, DefaultAgility);
-  DATABASEVALUE(ushort, DefaultStrength);
   DATABASEVALUE(ushort, DefaultEndurance);
   DATABASEVALUE(ushort, DefaultPerception);
+  DATABASEVALUE(ushort, DefaultIntelligence);
+  DATABASEVALUE(ushort, DefaultWisdom);
+  DATABASEVALUE(ushort, DefaultCharisma);
+  DATABASEVALUE(ushort, DefaultMana);
   DATABASEVALUE(ulong, DefaultMoney);
   DATABASEVALUE(ushort, TotalSize);
   DATABASEBOOL(CanRead);
@@ -452,7 +445,6 @@ class character : public entity, public id
   DATABASEBOOL(IsUnique);
   DATABASEVALUE(ushort, EatFlags);
   DATABASEVALUE(ulong, TotalVolume);
-  DATABASEVALUE(ulong, MeleeStrength);
   DATABASEVALUE(const std::string&, TalkVerb);
   DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
   DATABASEVALUEWITHPARAMETER(vector2d, TorsoBitmapPos, ushort);
@@ -494,15 +486,35 @@ class character : public entity, public id
   DATABASEVALUE(std::string, PostFix);
   DATABASEVALUE(uchar, ArticleMode);
   DATABASEBOOL(IsPolymorphable);
+  DATABASEVALUE(ulong, UnarmedStrength);
+  DATABASEVALUE(ulong, BiteStrength);
+  DATABASEVALUE(ulong, KickStrength);
+  DATABASEVALUE(uchar, AttackStyle);
 
   virtual item* GetLifeSaver() const;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
   static character* Clone(ushort, bool, bool) { return 0; }
+  virtual void InitSpecialAttributes() { }
+  virtual void Kick(lsquare*) = 0;
+  virtual void SpecialBiteEffect(character*) { }
+  virtual float GetAttackStrengthDanger() const = 0;
+  virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier]; }
+  virtual bool EditAttribute(ushort Identifier, short Value) { return RawEditAttribute(BaseAttribute[Identifier], Value); }
+  virtual void EditExperience(ushort Identifier, long Value) { BaseExperience[Identifier] += Value; }
+  virtual bool CheckForAttributeIncrease(ushort&, long&, bool = false);
+  virtual bool CheckForAttributeDecrease(ushort&, long&, bool = false);
+  virtual bool RawEditAttribute(ushort&, short&, bool = false);
+  virtual void DrawPanel() const;
+  virtual ushort DrawStats() const = 0;
+  virtual ushort GetCarryingStrength() const = 0;
+  virtual ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
+  virtual void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
+  virtual bool DamageTypeAffectsInventory(uchar) const;
  protected:
   virtual void Initialize(uchar, bool, bool);
-  virtual void VirtualConstructor(bool) { }
+  virtual void VirtualConstructor(bool);
   virtual void LoadDataBaseStats();
   virtual void InstallDataBase();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -536,24 +548,20 @@ class character : public entity, public id
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);
-  virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
-  virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
-  virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return NormalFirstPersonHitVerb(Critical); }
-  virtual std::string AICombatHitVerb(character*, bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
-  virtual std::string NormalFirstPersonHitVerb(bool Critical) const { return Critical ? "critically hit" : "hit"; }
-  virtual std::string NormalThirdPersonHitVerb(bool Critical) const { return Critical ? "critically hits" : "hits"; }
-  virtual std::string FirstPersonBiteVerb(bool Critical) const { return Critical ? "critically bite" : "bite"; }
-  virtual std::string ThirdPersonBiteVerb(bool Critical) const { return Critical ? "critically bites" : "bites"; }
-  virtual std::string FirstPersonPSIVerb(bool Critical) const { return Critical ? "emit powerful psi waves at" : "emit psi waves at"; }
-  virtual std::string ThirdPersonPSIVerb(bool Critical) const { return Critical ? "emits powerful psi waves at" : "emits psi waves at"; }
-  virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const { return Critical ? "vomit very acidous brown slime at" : "vomit brown slime at"; }
-  virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const { return Critical ? "vomits very acidous brown slime at" : "vomits brown slime at"; }
-  virtual std::string FirstPersonBloodVerb(bool Critical) const { return Critical ? "vomit very acidous blood at" : "vomit acidous blood at"; }
-  virtual std::string ThirdPersonBloodVerb(bool Critical) const { return Critical ? "vomits very acidous blood at" : "vomits acidous blood at"; }
+  virtual std::string FirstPersonUnarmedHitVerb() const { return "hit"; }
+  virtual std::string FirstPersonCriticalUnarmedHitVerb() const { return "critically hit"; }
+  virtual std::string ThirdPersonUnarmedHitVerb() const { return "hits"; }
+  virtual std::string ThirdPersonCriticalUnarmedHitVerb() const { return "critically hits"; }
+  virtual std::string FirstPersonKickVerb() const { return "kick"; }
+  virtual std::string FirstPersonCriticalKickVerb() const { return "critically kick"; }
+  virtual std::string ThirdPersonKickVerb() const { return "kicks"; }
+  virtual std::string ThirdPersonCriticalKickVerb() const { return "critically kicks"; }
+  virtual std::string FirstPersonBiteVerb() const { return "bite"; }
+  virtual std::string FirstPersonCriticalBiteVerb() const { return "critically bite"; }
+  virtual std::string ThirdPersonBiteVerb() const { return "bites"; }
+  virtual std::string ThirdPersonCriticalBiteVerb() const { return "critically bites"; }
   stack* Stack;
-  ushort Strength, Endurance, Agility, Perception;
   long NP, AP;
-  long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
   bool Player;
   uchar State;
   short StateCounter[STATES];
@@ -568,6 +576,10 @@ class character : public entity, public id
   action* Action;
   ushort Config;
   const database* DataBase;
+  ushort BaseAttribute[BASEATTRIBUTES];
+  long BaseExperience[BASEATTRIBUTES];
+  static std::string StateDescription[STATES];
+  ulong* OriginalBodyPartID;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

@@ -36,6 +36,7 @@ class id
   virtual uchar GetArticleMode() const { return NORMALARTICLE; }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string GetDivineMasterDescription(uchar) const;
+  virtual std::string GetLockPostFix(uchar) const;
 };
 
 #endif

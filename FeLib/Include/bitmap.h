@@ -20,7 +20,7 @@ class bitmap
   friend class graphics;
   friend class colorizablebitmap;
   bitmap(const std::string&);
-  bitmap(bitmap*);
+  bitmap(bitmap*, uchar = 0);
   bitmap(ushort, ushort);
   bitmap(vector2d);
   bitmap(ushort, ushort, ushort);

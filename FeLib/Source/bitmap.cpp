@@ -55,11 +55,11 @@ bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
       }
 }
 
-bitmap::bitmap(bitmap* Bitmap) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), IsIndependent(true)
+bitmap::bitmap(bitmap* Bitmap, uchar Flags) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), IsIndependent(true)
 {
   SetImage(Alloc2D<ushort>(YSize, XSize));
   SetAlphaMap(0);
-  Bitmap->Blit(this, 0, 0, 0, 0, XSize, YSize);
+  Bitmap->Blit(this, 0, 0, 0, 0, XSize, YSize, Flags);
 }
 
 bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), IsIndependent(true)
@@ -199,6 +199,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
+  if(Flags & ROTATE && Width != Height)
+    ABORT("Blit error: FeLib supports only square rotating!");
+
   Flags &= 0x7;
   ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
@@ -322,6 +325,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
+
+  if(Flags & ROTATE && Width != Height)
+    ABORT("MaskedBlit error: FeLib supports only square rotating!");
 
   Flags &= 0x7;
 
@@ -479,6 +485,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
       return;
     }
+
+  if(Flags & ROTATE && Width != Height)
+    ABORT("AlphaBlit error: FeLib supports only square rotating!");
 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap alpha blit attempt detected!");

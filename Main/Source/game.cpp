@@ -1,6 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <algorithm>
+#include <cstdarg>
 
 #ifdef WIN32
 #include <direct.h>	// Needed for _mkdir
@@ -23,7 +24,7 @@
 #include "charde.h"
 #include "itemba.h"
 #include "godba.h"
-#include "strover.h"
+#include "stdover.h"
 #include "whandler.h"
 #include "lsquare.h"
 #include "lterraba.h"
@@ -40,6 +41,7 @@
 #include "error.h"
 #include "command.h"
 #include "save.h"
+#include "stack.h"
 
 #define SAVEFILE_VERSION 110 // Increment this if changes make savefiles incompatible
 
@@ -70,7 +72,8 @@ bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = SAVE_DIR + "AutoSave";
-std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
+std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
+std::string game::LockDescription[] = { "round", "square", "triangular" };
 std::vector<god*> game::God;
 
 command* game::Command[] =
@@ -127,8 +130,8 @@ command* game::Command[] =
   0
 };
 
-int game::MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.'};
-const vector2d game::MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0)};
+int game::MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS] = { 0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.' };
+const vector2d game::MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 
 bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable;
@@ -153,9 +156,9 @@ void game::InitScript()
   GameScript->ReadFrom(ScriptFile);
 }
 
-#include "materde.h"
+/*#include "materde.h"
 #include "itemde.h"
-#include "stack.h"
+#include "stack.h"*/
 
 void game::Init(const std::string& Name)
 {
@@ -254,14 +257,14 @@ void game::Init(const std::string& Name)
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 
-	for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  {
 	    const material::prototype* Proto = protocontainer<material>::GetProto(c);
 	    const material::databasemap& Config = Proto->GetConfig();
 
 	    for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	      Player->GetStack()->AddItem(new oillamp(MAKE_MATERIAL(i->first)));
-	  }
+	  }*/
 
 	ADD_MESSAGE("Game generated successfully.");
 	break;
@@ -372,15 +375,6 @@ void game::DeInitLuxTable()
     }
 }
 
-void game::Quit()
-{
-  SetIsRunning(false);
-
-  /* This prevents monster movement etc. after death. */
-
-  throw quitrequest();
-}
-
 bool game::LOSHandler(vector2d Pos, vector2d Origo)
 {
   if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
@@ -392,81 +386,6 @@ bool game::LOSHandler(vector2d Pos, vector2d Origo)
     return true;
   else
     return GetCurrentArea()->GetSquare(Pos)->GetOTerrain()->IsWalkable();
-}
-
-void game::DrawPanel()
-{
-  DOUBLEBUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
-
-  FONT->Printf(DOUBLEBUFFER, 16, 45 + GetScreenSize().Y * 16, WHITE, "%s", game::GetPlayer()->CHARNAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
-
-  vector2d PanelPos(RES.X - 96, 12);
-
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "St %d", Player->GetStrength());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "En %d", Player->GetEndurance());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "Ag %d", Player->GetAgility());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "Pe %d", Player->GetPerception());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "Sz %d", Player->GetSize());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, Player->GetHP() < Player->GetMaxHP() / 3 ? RED : WHITE, "HP %d/%d", Player->GetHP(), Player->GetMaxHP());
-
-  /*if(Player->GetMainWielded())
-    FONT->Printf(DOUBLEBUFFER, 200, 574, WHITE, "Wielded: %s", Player->GetMainWielded()->CHARNAME(INDEFINITE));
-
-  if(Player->GetBodyArmor())
-    FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetBodyArmor()->CHARNAME(INDEFINITE));
-
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 66667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 40000 + 1));
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, WHITE, "Money: %d", Player->GetMoney());
-
-  //FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
-
-  if(GetWizardMode())
-    {
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Danger: %d", Player->CurrentDanger());
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, WHITE, "NP: %d", Player->GetNP());
-    }
-  else
-    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Danger Level: %d", Player->DangerLevel());
-
-  if(IsInWilderness())
-    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Worldmap");
-  else
-    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "%s", GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
-
-  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "Time: %d", GetTicks() / 10);
-
-  //if(Player->StateIsActivated(FAINTED))
-    //FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainted");
-  if(Player->GetHungerState() == VERYHUNGRY)
-    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, RED, "Fainting");
-  else
-    if(Player->GetHungerState() == HUNGRY)
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, BLUE, "Hungry");
-  else 
-    if(Player->GetHungerState() == SATIATED)
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, GREEN, "Satiated");
-  else
-    if(Player->GetHungerState() == BLOATED)
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, RED, "Bloated");
-
-  switch(Player->GetBurdenState())
-    {
-    case OVERLOADED:
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, RED, "Overload!");
-      break;
-    case STRESSED:
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, BLUE, "Stressed");
-      break;
-    case BURDENED:
-      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, BLUE, "Burdened!");
-    case UNBURDENED:
-      break;
-
-      }*/
-  Player->DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 16, 32));
 }
 
 void game::UpdateCameraX()
@@ -535,21 +454,18 @@ const char* game::Insult()
 }
 
 /* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
-bool game::BoolQuestion(const std::string& String, char DefaultAnswer, int OtherKeyForTrue)
-{
-  int LaterDefaultAnswer = 0;
-  
-  if(DefaultAnswer == true)
-    LaterDefaultAnswer = 'y';
 
-  if(DefaultAnswer == false)
-    LaterDefaultAnswer = 'n';
+bool game::BoolQuestion(const std::string& String, int DefaultAnswer, int OtherKeyForTrue)
+{
+  if(DefaultAnswer == NO)
+    DefaultAnswer = 'n';
+  else if(DefaultAnswer == YES)
+    DefaultAnswer = 'y';
+  else if(DefaultAnswer != REQUIRES_ANSWER)
+    ABORT("Illegal BoolQuestion DefaultAnswer send!");
   
-  int FromKeyQuestion = KeyQuestion(String, LaterDefaultAnswer , 4, 'y', 'Y', 'n', 'N');
-  if(FromKeyQuestion == 'y' || FromKeyQuestion == 'Y')
-    return true;
-  else
-    return false;
+  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
+  return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
 }
 
 void game::DrawEverything()
@@ -576,7 +492,7 @@ void game::DrawEverythingNoBlit()
   if(OnScreen(GetPlayer()->GetPos()))
     igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
 
-  DrawPanel();
+  GetPlayer()->DrawPanel();
   msgsystem::Draw();
 }
 
@@ -756,13 +672,13 @@ void game::UpdateCameraYWithPos(ushort Coord)
   GetCurrentArea()->SendNewDrawRequest();
 }
 
-int game::GetMoveCommandKey(vector2d A, vector2d B)
+int game::GetMoveCommandKeyBetweenPoints(vector2d A, vector2d B)
 {
   for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if((A + game::GetMoveVector(c)) == B)
       return game::MoveCommandKey[c];
 
-  return 0xFF;
+  return DIR_ERROR;
 }
 
 void game::ApplyDivineTick(ushort Ticks)
@@ -778,22 +694,22 @@ void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Mult
       GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
 }
 
-uchar game::GetDirectionIndexForKey(int Key)
+/*uchar game::GetDirectionIndexForKey(int Key)
 {
   for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c))
       return c;
 
-  return 0xFF;
-}
+  return DIR_ERROR;
+}*/
 
 vector2d game::GetDirectionVectorForKey(int Key)
 {
-  for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+  for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c))
       return game::GetMoveVector(c);
 
-  return vector2d(0,0);
+  return DIR_ERROR_VECTOR;
 }
 
 bool game::EyeHandler(vector2d Pos, vector2d Origo)
@@ -870,7 +786,7 @@ void game::TriggerQuestForGoldenEagleShirt()
   GetDungeon(0)->SaveLevel(SaveName(), 6);
 }
 
-uchar game::DirectionQuestion(const std::string& Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
+uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
 {
   while(true)
     {
@@ -879,16 +795,12 @@ uchar game::DirectionQuestion(const std::string& Topic, uchar DefaultAnswer, boo
       if(AcceptYourself && Key == '.')
 	return YOURSELF;
 
-      uchar DIndex = GetDirectionIndexForKey(Key);
-
-      if(DIndex < DIRECTION_COMMAND_KEYS)
-	return DIndex;
-
-      if(DefaultAnswer < EXTENDED_DIRECTION_COMMAND_KEYS)
-	return DefaultAnswer;
+      for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+	if(Key == game::GetMoveCommandKey(c))
+	  return c;
 
       if(!RequireAnswer)
-	return 0xFF;
+	return DIR_ERROR;
     }
 }
 
@@ -1211,16 +1123,8 @@ bool game::HandleQuitMessage()
 #endif
 	      return false;
 	    default:
-	      RemoveSaves();
-	      SetIsRunning(false);
-
-	      if(!GetWizardMode())
-		{
-		  GetPlayer()->AddScoreEntry("cowardly quit the game", 0.75f);
-		  highscore HScore;
-		  HScore.Draw();
-		}
-
+	      GetPlayer()->AddScoreEntry("cowardly quit the game", 0.75f);
+	      End(true, false);
 	      break;
 	    }
 	}
@@ -1257,7 +1161,7 @@ uchar game::GetDirectionForVector(vector2d Vector)
     if(Vector == game::GetMoveVector(c))
       return c;
 
-  return DIRECTION_COMMAND_KEYS;
+  return DIR_ERROR;
 }
 
 std::string game::GetVerbalPlayerAlignment()
@@ -1358,6 +1262,7 @@ int game::AskForKeyPress(const std::string& Topic)
    BadKeyHandler is called when the key has NOT been identified as a movement key
    Both can be deactivated by passing 0 as parameter
  */  
+
 vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*BadKeyHandler)(vector2d, int), bool Zoom)
 {
   int Key = 0;
@@ -1388,7 +1293,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 
       vector2d DirectionVector = GetDirectionVectorForKey(Key);
 
-      if(DirectionVector != vector2d(0, 0))
+      if(DirectionVector != DIR_ERROR_VECTOR)
 	{
 	  CursorPos += DirectionVector;
 
@@ -1419,6 +1324,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
   DOUBLEBUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
   DOUBLEBUFFER->Fill(RES.X - 96, RES.Y - 96, 80, 80, BLACK);
   globalwindowhandler::DeInstallControlLoop(PositionQuestionController);
+  DrawEverythingNoBlit();
   return Return;
 }
 
@@ -1461,9 +1367,13 @@ void game::LookHandler(vector2d CursorPos)
       if(Character && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
 	Character->DisplayInfo();
 
-      lsquare* LevelSquare = game::GetCurrentLevel()->GetLSquare(CursorPos);
-      if(!IsInWilderness() && LevelSquare->CanBeSeen() && LevelSquare->GetStack()->GetItems() > 1)
-	ADD_MESSAGE("[press i to see all items]");
+      if(!IsInWilderness())
+	{
+	  lsquare* LSquare = game::GetCurrentLevel()->GetLSquare(CursorPos);
+
+	  if(LSquare->CanBeSeen() && LSquare->GetStack()->GetItems() > 1)
+	    ADD_MESSAGE("[press i to see all items]");
+	}
     }
   else
     ADD_MESSAGE("You have no idea what might lie here.");
@@ -1474,7 +1384,7 @@ void game::LookHandler(vector2d CursorPos)
       game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
     }
 
-  if(game::GetWizardMode())
+  if(game::WizardModeActivated())
     ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 }
 
@@ -1530,21 +1440,26 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Message.c_str());
   graphics::BlitDBToScreen();
-  bool Return;
+  int Return;
+
   while(true)
     {
       int k = GETKEY();
-      DrawEverythingNoBlit(); // Possibily not really needed
-      DOUBLEBUFFER->Fill(0, 0, game::GetScreenSize().X * 16, 30, BLACK);
       std::vector<int>::iterator i = std::find(KeyVector.begin(), KeyVector.end(), k);
 
       if(i != KeyVector.end())
 	{
-	  return *i;
+	  Return = k;
+	  break;
 	}
       else if(DefaultAnswer != REQUIRES_ANSWER)
-	return DefaultAnswer;
+	{
+	  Return = DefaultAnswer;
+	  break;
+	}
     }
+
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
@@ -1553,9 +1468,10 @@ void game::LookBadKeyHandler(vector2d CursorPos, int Key)
   switch(Key)
     {
     case 'i':
-      if(!IsInWilderness() && (game::GetCurrentLevel()->GetLSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
+      if(!IsInWilderness() && (GetCurrentLevel()->GetLSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
 	{
 	  stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
+
 	  if(Stack->GetItems() > 1)
 	    {
 	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
@@ -1566,4 +1482,50 @@ void game::LookBadKeyHandler(vector2d CursorPos, int Key)
       /* Bad Key */
       break;
     }
+}
+
+void game::End(bool Permanently, bool AndGoToMenu)
+{
+  SetIsRunning(false);
+  RemoveSaves(Permanently);
+
+  if(Permanently && !WizardModeActivated())
+    {
+      highscore HScore;
+      HScore.Draw();
+    }
+
+  if(AndGoToMenu)
+    {
+      /* This prevents monster movement etc. after death. */
+
+      throw quitrequest();
+    }
+}
+
+uchar game::CalculateRoughDirection(vector2d Vector)
+{
+  if(!Vector.X && !Vector.Y)
+    return YOURSELF;
+
+  float Angle = femath::CalculateAngle(Vector);
+
+  if(Angle < PI / 8)
+    return 4;
+  else if(Angle < 3 * PI / 8)
+    return 7;
+  else if(Angle < 5 * PI / 8)
+    return 6;
+  else if(Angle < 7 * PI / 8)
+    return 5;
+  else if(Angle < 9 * PI / 8)
+    return 3;
+  else if(Angle < 11 * PI / 8)
+    return 0;
+  else if(Angle < 13 * PI / 8)
+    return 1;
+  else if(Angle < 15 * PI / 8)
+    return 2;
+  else
+    return 4;
 }

@@ -8,7 +8,7 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "colorbit.h"
-#include "strover.h"
+#include "stdover.h"
 #include "error.h"
 #include "save.h"
 

@@ -188,7 +188,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   virtual olterrain* Instantiate() const;
  protected:
   virtual std::string ClassName() const { return "olterrain"; }
-  DATAMEMBER(uchar, VisualFlags);
+  DATAMEMBER(uchar, VisualEffects);
 };
 
 class squarescript : public script
@@ -323,3 +323,4 @@ class gamescript : public script
 };
 
 #endif
+

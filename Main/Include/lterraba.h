@@ -27,23 +27,16 @@ class item;
 class lterrain : public object
 {
  public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
   virtual bool Open(character* Opener);
   virtual bool Close(character* Closer);
   virtual vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
   virtual bool CanBeOffered() const { return false; }
   virtual bool CanBeDug() const { return false; }
-  virtual uchar GetOKVisualEffects() const { return 0; }
-  virtual uchar GetVisualFlags() const { return VisualFlags; }
-  virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
-  virtual void HandleVisualEffects();
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual bool Polymorph(character*) { return false; }
-  //virtual bool ReceiveApply(item*, character*) { return false; }
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
   virtual void SetDivineMaster(uchar) { }
@@ -54,7 +47,6 @@ class lterrain : public object
   virtual void VirtualConstructor(bool) { }
   virtual ulong GetDefaultMainVolume() const { return 10000000; }
   virtual bool ShowMaterial() const { return true; }
-  uchar VisualFlags;
 };
 
 class glterrainprototype
@@ -106,7 +98,7 @@ class olterrain : public lterrain, public oterrain
   virtual bool GoDown(character*) const;
   virtual uchar GetDivineMaster() const { return 0; }
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
-  virtual void Kick(ushort, bool, uchar) { }
+  virtual void BeKicked(character*, float) { }
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }
   virtual bool HasConsumeEffect() const { return false; } 

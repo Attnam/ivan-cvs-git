@@ -22,6 +22,7 @@ class ACTION
   virtual bool IsVoluntary() const { return false; }
   virtual void Terminate(bool);
   virtual bool AllowFaint() const { return false; }
+  virtual std::string GetDescription() const { return "fainted"; }
  protected:
   ushort Counter;
 );
@@ -46,8 +47,11 @@ class ACTION
   virtual ulong GetWeight() const;
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
+  virtual std::string GetDescription() const { return Description; }
+  virtual void SetDescription(const std::string& What) { Description = What; }
  protected:
   virtual void VirtualConstructor();
+  std::string Description;
   actionslot Consuming;
   bool WasOnGround;
   bool Eaten;
@@ -65,6 +69,7 @@ class ACTION
   virtual void SetGoalHP(short What) { GoalHP = What; }
   virtual void Terminate(bool);
   virtual bool GetRestRegenerationBonus() const { return true; }
+  virtual std::string GetDescription() const { return "resting"; }
  protected:
   short GoalHP;
 );
@@ -88,6 +93,7 @@ class ACTION
   virtual ulong GetWeight() const;
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
+  virtual std::string GetDescription() const { return "digging"; }
  protected:
   virtual void VirtualConstructor();
   actionslot RightBackup;
@@ -108,6 +114,7 @@ class ACTION
   virtual bool GetWalkingInOpen() const { return WalkingInOpen; }
   virtual void SetWalkingInOpen(bool What) { WalkingInOpen = What; }
   virtual bool AllowDisplace() const { return false; }
+  virtual std::string GetDescription() const { return "going"; }
  protected:
   uchar Direction;
   bool WalkingInOpen;

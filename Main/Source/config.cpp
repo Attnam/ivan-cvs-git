@@ -3,7 +3,7 @@
 #include "config.h"
 #include "felist.h"
 #include "graphics.h"
-#include "strover.h"
+#include "stdover.h"
 #include "feio.h"
 #include "game.h"
 #include "area.h"

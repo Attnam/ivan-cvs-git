@@ -1,7 +1,7 @@
 Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
 Nostoteko‰ly.
-Kick ja bite toimimaan, jos k‰det irti. (timo)
-Pertun kasvot. (timo)
+/Kick ja bite toimimaan, jos k‰det irti. (timo)
+//Pertun kasvot. (timo)
 //Zoom lookiin. (hex)
 V‰rien tarkistusl‰pik‰yminen.
 Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
@@ -20,7 +20,7 @@ Luut kuntoon. (timo)
 BloodColorin animaatiostuktuuri. (timo)
 Paniikki. (timo)
 Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
-Leather armorin nimi kuntoon. (hex)
+//Leather armorin nimi kuntoon. (hex)
 Taistelun tasapainotus. (timo)
 Animaatiot: Artifaktit, lamput...
 /Amulet of life saving. (hex)
@@ -56,3 +56,10 @@ NPModifiers. (timo)
 1-2 spesiaali helmetti‰, cloakkia, gauntlettia, beltti‰ ja boottia.
 Dipping to corpses, containers etc.
 Aliases!!!!!!!!!!!!!! (timo)
+Potion of poison. (hex)
+One handed penalties. (timo)
+Poisonous snake. (hex)
+Biting shouldn't make bodyparts fly.
+People shouldn't "die screaming" if their heads are not present.
+Shields. (timo)
+Lower all unarmed to hit values. (timo)

@@ -962,6 +962,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	lsquare* Square = GetLSquare(XPointer, YPointer);
 	character* Char = Square->GetCharacter();
 	ushort Damage = Strength / (DistanceSquare + 1);
+	uchar DamageDirection = game::CalculateRoughDirection(vector2d(XPointer, YPointer) - Pos);
 
 	if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
 	  if(Char->IsPlayer())
@@ -973,20 +974,17 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	    {
 	      if(Terrorist)
 		Terrorist->GetTeam()->Hostility(Char->GetTeam());
+
 	      Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 
-	      DO_FOR_SQUARES_AROUND(Char->GetPos().X, Char->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	      {
-		if(!(RAND() % 3))
-		  {
-		    vector2d Where(DoX, DoY);
+	      if(game::IsValidPos(vector2d(XPointer, YPointer) + game::GetMoveVector(DamageDirection)))
+		Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, vector2d(XPointer, YPointer) + game::GetMoveVector(DamageDirection));
 
-		    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->IsWalkable())
-		      Char->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
-		  }
-	      });
+	      if(Square->CanBeSeen())
+		ADD_MESSAGE("%s is hit by the explosion.", Char->CHARNAME(DEFINITE));
 
-	      Char->ReceiveDamage(Terrorist, Damage, FIRE, ALL);
+	      Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
+	      Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true);
 	      Char->CheckDeath(DeathMsg);
 	    }
 
@@ -999,23 +997,19 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
   if(PlayerHurt)
     {
+      uchar DamageDirection = game::CalculateRoughDirection(game::GetPlayer()->GetPos() - Pos);
+
       if(Terrorist)
 	Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
+
       game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 
-      DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-      {
-	if(!(RAND() % 3))
-	  {
-	    vector2d Where(DoX, DoY);
+      if(game::IsValidPos(game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection)))
+	game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection));
 
-	    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->IsWalkable())
-	      game::GetPlayer()->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
-	  }
-      });
-
-      game::GetPlayer()->GetStack()->ReceiveDamage(Terrorist, PlayerDamage, FIRE);
-      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage, FIRE, ALL);
+      ADD_MESSAGE("You are hit by the explosion!");
+      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
+      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, FIRE, ALL, DamageDirection, true);
       game::GetPlayer()->CheckDeath(DeathMsg);
     }
 }

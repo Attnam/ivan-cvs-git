@@ -3,7 +3,7 @@
 #include "terra.h"
 #include "area.h"
 #include "materba.h"
-#include "strover.h"
+#include "stdover.h"
 #include "config.h"
 #include "femath.h"
 #include "bitmap.h"

@@ -1,5 +1,5 @@
 #include "cont.h"
-#include "strover.h"
+#include "stdover.h"
 #include "proto.h"
 #include "error.h"
 #include "femath.h"
@@ -86,3 +86,4 @@ inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
 
   return SaveFile;
 }
+

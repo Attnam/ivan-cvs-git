@@ -93,55 +93,56 @@ character* protosystem::CreateMonster(bool CreateItems)
 
 item* protosystem::CreateItem(const std::string& What, bool Output)
 {
+  std::string Identifier = " " + What + " ";
+  bool Illegal = false;
+
   for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-    if(protocontainer<item>::GetProto(c)->IsAbstract())
-      {
-	if(protocontainer<item>::GetProto(c)->GetNameSingular() == What)
-	  if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
-	    return protocontainer<item>::GetProto(c)->Clone();
-	  else if(Output)
-	    {
-	      ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-	      return 0;
-	    }
-      }
+    {
+      const item::prototype* Proto = protocontainer<item>::GetProto(c);
+      const item::databasemap& Config = Proto->GetConfig();
+
+      if(!Config.size())
+	{
+	  if(!Proto->IsAbstract() && CheckWhetherItemNameCorrect(*Proto->GetDataBase(), Identifier))
+	    if(Proto->CanBeWished() || game::WizardModeActivated())
+	      return Proto->Clone();
+	    else
+	      Illegal = true;
+	}
+      else
+	for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	  if(!i->second.IsAbstract && CheckWhetherItemNameCorrect(i->second, Identifier))
+	    if(i->second.CanBeWished || game::WizardModeActivated())
+	      return Proto->Clone(i->first);
+	    else
+	      Illegal = true;
+    }
 
   if(Output)
-    ADD_MESSAGE("There is no such item.");
+    {
+      if(Illegal)
+	ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+      else
+	ADD_MESSAGE("There is no such item.");
+    }
 
   return 0;
 }
 
+bool protosystem::CheckWhetherItemNameCorrect(const item::database& DataBase, const std::string& Identifier)
+{
+  if(Identifier.find(" " + DataBase.NameSingular + " ") != ulong(-1) && (DataBase.Adjective == "" || Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1)) && (DataBase.PostFix == "" || Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1)))
+    return true;
+  else
+    for(ushort c = 0; c < DataBase.Alias.size(); ++c)
+      if(Identifier == " " + DataBase.Alias[c] + " ")
+	return true;
+
+  return false;
+}
+
 material* protosystem::CreateMaterial(const std::string& What, ulong Volume, bool Output)
 {
-  /*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
-    {
-      const material::prototype* Proto = protocontainer<material>::GetProto(c);
-      material::databasemap& Config = Proto->GetConfig();
-
-      if(!Config.size())
-	{
-	  if(Proto->GetNameSingular() == What)
-	    if(Proto->CanBeWished())
-	      return Proto->Clone(0, Volume);
-	    else if(Output)
-	      {
-		ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-		return 0;
-	      }
-	}
-      else
-	for(material::databasemap::iterator i = Config.begin(); i != Config.end(); ++i)
-	  if(i->second.NameSingular == What)
-	    if(i->second.CanBeWished)
-	      return Proto->Clone(i->first, Volume);
-	    else if(Output)
-	      {
-		ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-		return 0;
-	      }
-    }*/
-
   for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
     {
       const material::prototype* Proto = protocontainer<material>::GetProto(c);
@@ -149,7 +150,7 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
 
       for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(i->second.NameStem == What)
-	  if(i->second.CanBeWished)
+	  if(i->second.CanBeWished || game::WizardModeActivated())
 	    return Proto->Clone(i->first, Volume);
 	  else if(Output)
 	    {
@@ -197,3 +198,4 @@ void protosystem::GenerateCodeNameMaps()
   protocontainer<owterrain>::GenerateCodeNameMap();
   protocontainer<gwterrain>::GenerateCodeNameMap();
 }
+

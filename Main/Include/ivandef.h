@@ -90,16 +90,16 @@
 #define HASTE 2
 #define SLOW 4
 
-#define HEAD 0
-#define TORSO 1
-#define RIGHTARM 2
-#define LEFTARM 4
+#define HEAD 1
+#define TORSO 2
+#define RIGHTARM 4
+#define LEFTARM 8
 #define ARMS RIGHTARM|LEFTARM
-#define GROIN 8
-#define RIGHTLEG 16
-#define LEFTLEG 32
+#define GROIN 16
+#define RIGHTLEG 32
+#define LEFTLEG 64
 #define LEGS RIGHTLEG|LEFTLEG
-#define OTHER 64
+#define OTHER 128
 #define ALL 255
 
 #define PHYSICALDAMAGE 1
@@ -170,12 +170,12 @@
 #define GRSYMBOL 3
 #define GRMENU 4
 
-#define STNORMAL 0
-#define STRIGHTARM 1
-#define STLEFTARM 2
-#define STGROIN 3
-#define STRIGHTLEG 4
-#define STLEFTLEG 5
+#define STNORMAL 0 << 3
+#define STRIGHTARM 1 << 3
+#define STLEFTARM 2 << 3
+#define STGROIN 3 << 3
+#define STRIGHTLEG 4 << 3
+#define STLEFTLEG 5 << 3
 
 #define SILHOUETTE_X_SIZE 64
 #define SILHOUETTE_Y_SIZE 64
@@ -202,6 +202,10 @@
 #define MISC 17
 
 #define NUMBER_OF_LOCK_TYPES 3
+
+#define ROUND 0
+#define SQUARE 1
+#define TRIANGULAR 2
 
 #define GOOD 0
 #define NEUTRAL 1
@@ -231,21 +235,23 @@
 #define UNCARING 1
 #define FRIEND 2
 
-#define WEAPON_SKILL_GATEGORIES 13
+#define WEAPON_SKILL_GATEGORIES 15
 
 #define UNCATEGORIZED 0
 #define UNARMED 1
-#define DAGGERS 2
-#define SMALL_SWORDS 3
-#define LARGE_SWORDS 4
-#define CLUBS 5
-#define HAMMERS 6
-#define MACES 7
-#define FLAILS 8
-#define AXES 9
-#define HALBERDS 10
-#define SPEARS 11
-#define WHIPS 12
+#define KICK 2
+#define BITE 3
+#define DAGGERS 4
+#define SMALL_SWORDS 5
+#define LARGE_SWORDS 6
+#define CLUBS 7
+#define HAMMERS 8
+#define MACES 9
+#define FLAILS 10
+#define AXES 11
+#define HALBERDS 12
+#define SPEARS 13
+#define WHIPS 14
 
 #define LOCKED 1
 
@@ -359,5 +365,37 @@
 #define LIONFLESH FIRSTFLESH + 28
 #define BUFFALOFLESH FIRSTFLESH + 29
 
-#define REQUIRES_ANSWER 2
+#define UNARMEDATTACK 0
+#define WEAPONATTACK 1
+#define KICKATTACK 2
+#define BITEATTACK 3
+
+#define USE_ARMS 1
+#define USE_LEGS 2
+#define USE_HEAD 4
+
+#define ATTRIBUTES 10
+#define BASEATTRIBUTES 6
+
+#define ENDURANCE 0
+#define PERCEPTION 1
+#define INTELLIGENCE 2
+#define WISDOM 3
+#define CHARISMA 4
+#define MANA 5
+
+#define ARMSTRENGTH 6
+#define LEGSTRENGTH 7
+#define DEXTERITY 8
+#define AGILITY 9
+
+#define NO 0
+#define YES 1
+#define REQUIRES_ANSWER -1
+
+#define DIR_ERROR 0xFF
+#define DIR_ERROR_VECTOR vector2d(666, 666)
+
+#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 0.10f
+
 #endif

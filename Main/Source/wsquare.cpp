@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "strover.h"
+#include "stdover.h"
 #include "wsquare.h"
 #include "charba.h"
 #include "worldmap.h"

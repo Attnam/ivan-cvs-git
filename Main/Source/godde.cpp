@@ -21,7 +21,7 @@ valuemap protocontainer<god>::CodeNameMap;
 #include "script.h"
 #include "lterrade.h"
 #include "slot.h"
-#include "strover.h"
+#include "stdover.h"
 
 void consummo::PrayGoodEffect()
 {
@@ -146,17 +146,17 @@ void atavus::PrayBadEffect()
       else
 	{
 	  ADD_MESSAGE("%s tries to remove your %s, but fails. You feel you are not so gifted anymore.", GOD_NAME, Disappearing->CHARNAME(UNARTICLED));
-	  game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
-	  game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
-	  game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);
+	  game::GetPlayer()->EditAttribute(AGILITY, -1);
+	  game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
+	  game::GetPlayer()->EditAttribute(ENDURANCE, -1);
 	}
     }
   else
     {
       ADD_MESSAGE("You feel you are not so gifted anymore.");
-      game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
-      game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
-      game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);
+      game::GetPlayer()->EditAttribute(AGILITY, -1);
+      game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
+      game::GetPlayer()->EditAttribute(ENDURANCE, -1);
     }
 }
 
@@ -386,15 +386,15 @@ void loricatus::PrayBadEffect()
 void calamus::PrayGoodEffect()
 {
   ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
-  game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() + 1);
+  game::GetPlayer()->EditAttribute(AGILITY, 1);
 }
 
 void calamus::PrayBadEffect()
 {
-  if(game::GetPlayer()->GetAgility() > 5)
+  if(game::GetPlayer()->GetAttribute(AGILITY) > 5)
     {
       ADD_MESSAGE("%s slows you down.", GOD_NAME);
-      game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
+      game::GetPlayer()->EditAttribute(AGILITY, -1);
     }
   else
     ADD_MESSAGE("Suprisingly you feel nothing.");
@@ -413,9 +413,9 @@ void erado::PrayBadEffect()
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
   game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, ENERGY, ALL);
 
-  game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
-  game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
-  game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);
+  game::GetPlayer()->EditAttribute(AGILITY, -1);
+  game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
+  game::GetPlayer()->EditAttribute(ENDURANCE, -1);
   game::GetPlayer()->CheckDeath("obliterated by the unholy power of " + Name());
 }
 
@@ -640,8 +640,8 @@ void scabies::PrayBadEffect()
 
   ADD_MESSAGE("You feel your muscles softening terribly...");
 
-  game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
-  game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
+  game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
+  game::GetPlayer()->EditAttribute(DEXTERITY, -1);
 }
 
 void infuscor::PrayGoodEffect()
@@ -771,3 +771,4 @@ std::string valpurus::GetPriestMessage() const
 {
   return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
 }
+

@@ -25,9 +25,9 @@ item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()
 void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer(), GetVisualFlags());
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
   else
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), GetVisualFlags());
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
 }
 
 bool item::IsConsumable(character* Eater) const
@@ -159,6 +159,7 @@ bool item::Zap(character*, vector2d, uchar)
 }
 
 /* returns bool that tells whether the Polymorph really happened */
+
 bool item::Polymorph(stack* CurrentStack)
 {
   if(!IsPolymorphable())
@@ -166,6 +167,7 @@ bool item::Polymorph(stack* CurrentStack)
   else
     {
       CurrentStack->AddItem(protosystem::BalancedCreateItem());
+      RemoveFromSlot();
       SetExists(false);
       return true;
     }
@@ -388,14 +390,16 @@ void item::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
+      RandomizeVisualEffects();
+
+      if(CallGenerateMaterials)
+	GenerateMaterials();
     }
 
   VirtualConstructor(Load);
 
-  if(!Load && CallGenerateMaterials)
-    GenerateMaterials();
-  if(!Load)
-      HandleVisualEffects();
+  if(CallGenerateMaterials)
+    UpdatePictures();
 }
 
 itemprototype::itemprototype(itemprototype* Base) : Base(Base)
@@ -430,7 +434,6 @@ bool item::ShowMaterial() const
 void item::GenerateMaterials()
 {
   InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), RandomizeMaterialConfiguration());
-  UpdatePictures();
 }
 
 ushort item::RandomizeMaterialConfiguration()
@@ -448,13 +451,7 @@ void item::InitChosenMaterial(material*& Material, const std::vector<long>& Mate
     ABORT("MaterialConfig array of illegal size detected!");
 }
 
-void item::HandleVisualEffects()
+std::string item::GetConsumeVerb() const
 {
-  uchar Flags = 0, AcceptedFlags = GetOKVisualEffects();
-
-  for(ushort c = 0; c < 8; ++c)
-    if((AcceptedFlags & (1 << c)) && (RAND() % 2))
-      Flags |= 1 << c;
-
-  SetVisualFlags(Flags);
+  return GetConsumeMaterial()->GetConsumeVerb();
 }

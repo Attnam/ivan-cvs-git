@@ -1,6 +1,6 @@
 #include "itemba.h"
 #include "stack.h"
-#include "strover.h"
+#include "stdover.h"
 #include "felist.h"
 #include "lsquare.h"
 #include "message.h"
@@ -179,7 +179,7 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
   return Item;
 }
 
-ushort stack::GetEmitation() const // Calculates the biggest light emmision of the lsquare...
+ushort stack::GetEmitation() const
 {
   ushort Emitation = 0;
 
@@ -241,17 +241,15 @@ void stack::DeletePointers()
     FastRemoveItem(GetBottomSlot());
 }
 
-void stack::Kick(character* Kicker, ushort Strength, uchar Direction)
+void stack::BeKicked(character* Kicker, float KickStrength)
 {
-  if(Strength > 3)
+  if(KickStrength >= 25000)
     {
-      ReceiveDamage(Kicker, Strength, PHYSICALDAMAGE);
+      ReceiveDamage(Kicker, short(KickStrength / 5000), PHYSICALDAMAGE);
 
-      if(GetItems())
-	(***Item->begin())->Fly(Kicker, Direction, Strength);
-
-      if(GetItems() && RAND() % 2)
-	(***Item->begin())->Fly(Kicker, Direction, Strength);
+      for(ushort c = 0; c < 1 + RAND() % 2; ++c)
+	if(GetItems())
+	  (*Item->back())->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), short(KickStrength / 5000));
     }
   else
     if(GetItems() && Kicker->IsPlayer())
@@ -290,7 +288,6 @@ void stack::Polymorph()
 void stack::CheckForStepOnEffect(character* Stepper)
 {
   itemvector ItemVector;
-
   FillItemVector(ItemVector);
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
@@ -330,7 +327,6 @@ square* stack::GetSquareTrulyUnder() const
 void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
 {
   itemvector ItemVector;
-
   FillItemVector(ItemVector);
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
@@ -341,7 +337,6 @@ void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
 void stack::TeleportRandomly()
 {
   itemvector ItemVector;
-
   FillItemVector(ItemVector);
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
@@ -422,7 +417,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::strin
   felist ItemNames(Topic, WHITE, 0);
 
   ItemNames.AddDescription("");
-  ItemNames.AddDescription(std::string("Overall weight: ") + GetTotalWeight() + (MergeStack ? MergeStack->GetTotalWeight() : 0) + " grams");
+  ItemNames.AddDescription(std::string("Overall weight: ") + (GetTotalWeight() + (MergeStack ? MergeStack->GetTotalWeight() : 0)) + " grams");
   ItemNames.AddDescription("");
 
   std::string Buffer = "Icon  Name                                         Weight SV   Str";
@@ -545,8 +540,6 @@ bool stack::Open(character* Opener)
   if(ToBeOpened == 0)
     return false;
 
-  //  item* ItemInside = ToBeOpened->TryToOpen(Opener);
-
   return ToBeOpened->Open(Opener);
 }
 
@@ -562,11 +555,6 @@ ulong stack::GetTotalVolume() const
 
 void stack::MoveAll(stack* ToStack)
 {
-  itemvector ItemVector;
-  FillItemVector(ItemVector);
-  ushort p = 0;
-
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->Exists())
-      ItemVector[c]->MoveTo(ToStack);
+  while(GetItems())
+    MoveItem(GetBottomSlot(), ToStack);
 }

@@ -249,7 +249,6 @@ class ITEM
  public:
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual item* BetterVersion() const;
-  virtual std::string GetConsumeVerb() const { return "drinking"; }
   virtual void DipInto(material*, character*);
   virtual material* CreateDipMaterial();
   virtual bool IsDippable(character*) const { return !GetContainedMaterial(); }
@@ -657,6 +656,7 @@ class ITEM
   virtual bool CanOpenDoors() const { return true; }
   virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
  protected:
+  virtual std::string GetAdjective() const;
   virtual void VirtualConstructor(bool);
   uchar LockType;
 );
@@ -748,13 +748,13 @@ class ABSTRACT_ITEM
   virtual void SetUnique(bool What) { Unique = What; }
   virtual characterslot* GetCharacterSlot() const;
   virtual void SignalGearUpdate() { }
-  virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
-  virtual void SetRegenerationCounter(ushort What) { RegenerationCounter = What; }
-  virtual void EditRegenerationCounter(short What) { RegenerationCounter += What; }
+  virtual ulong GetRegenerationCounter() const { return RegenerationCounter; }
+  virtual void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
+  virtual void EditRegenerationCounter(long What) { RegenerationCounter += What; }
   virtual void Regenerate(ushort);
   virtual ushort DangerWeight() const = 0;
   virtual ushort Danger(ulong, bool) const;
-  virtual ulong GetTotalWeight() const { return 0; }
+  virtual ulong GetTotalWeight() const { return GetWeight(); }
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
@@ -765,6 +765,10 @@ class ABSTRACT_ITEM
   virtual std::vector<ushort>& GetColor1Vector() { return Color1; }
   virtual std::vector<ushort>& GetColor2Vector() { return Color2; }
   virtual std::vector<ushort>& GetColor3Vector() { return Color3; }
+  virtual void ApplyExperience() { }
+  virtual void RaiseStats() { }
+  virtual void LowerStats() { }
+  virtual void InitSpecialAttributes() { }
  protected:
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
@@ -785,7 +789,7 @@ class ABSTRACT_ITEM
   ushort AnimationFrames;
   short HP;
   bool Unique;
-  ushort RegenerationCounter;
+  ulong RegenerationCounter;
 );
 
 class ITEM
@@ -804,11 +808,16 @@ class ITEM
   virtual ushort DangerWeight() const;
   virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
+  virtual float CalculateBiteToHitValue() const { return 1.0f; }
+  virtual float CalculateBiteStrength() const;
+  virtual ushort GetEmitation() const;
+  virtual void InitSpecialAttributes();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
   gearslot AmuletSlot;
+  DATAVALUE(ulong, BiteStrength);
 );
 
 class ABSTRACT_ITEM
@@ -817,7 +826,7 @@ class ABSTRACT_ITEM
   bodypart,
  public:
   virtual ushort DangerWeight() const;
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return TORSOINDEX; }
  protected:
   virtual bool ReceiveDamage(character*, short, uchar);
 );
@@ -849,6 +858,7 @@ class ITEM
   virtual item* GetBelt() const { return *BeltSlot; }
   virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
+  virtual ushort GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BodyArmorSlot;
@@ -871,10 +881,8 @@ class ABSTRACT_ITEM
   virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
   virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
   virtual void Be();
-  virtual float GetWieldedStrength(bool);
-  virtual float GetMeleeStrength();
-  virtual float GetWieldedToHitValue(bool);
-  virtual float GetMeleeToHitValue();
+  virtual float CalculateWieldedStrength(bool) const;
+  virtual float CalculateWieldedToHitValue(bool) const;
   virtual void SetWielded(item*);
   virtual item* GetWielded() const { return *WieldedSlot; }
   virtual void SetGauntlet(item* What) { GauntletSlot.SetItem(What); }
@@ -886,6 +894,19 @@ class ABSTRACT_ITEM
   virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
   virtual void AddCurrentSingleWeaponSkillInfo(felist&);
+  virtual float CalculateUnarmedToHitValue() const;
+  virtual float CalculateUnarmedStrength() const;
+  virtual void Hit(character*, float, float);
+  virtual ushort GetAttribute(ushort) const;
+  virtual bool EditAttribute(ushort, short);
+  virtual void EditExperience(ushort, long);
+  virtual void ApplyExperience();
+  virtual void RaiseStats();
+  virtual void LowerStats();
+  virtual void SetStrength(ushort What) { Strength = What; }
+  virtual void SetDexterity(ushort What) { Dexterity = What; }
+  virtual ushort GetEmitation() const;
+  virtual void InitSpecialAttributes();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -893,6 +914,11 @@ class ABSTRACT_ITEM
   gearslot RingSlot;
   std::vector<sweaponskill*> SingleWeaponSkill;
   sweaponskill* CurrentSingleWeaponSkill;
+  ushort Strength;
+  ushort Dexterity;
+  long StrengthExperience;
+  long DexterityExperience;
+  DATAVALUE(ulong, UnarmedStrength);
 );
 
 class ITEM
@@ -900,9 +926,9 @@ class ITEM
   rightarm,
   arm,
  public:
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return RIGHTARMINDEX; }
  protected:
-  virtual uchar GetSpecialType(ushort) const { return STRIGHTARM; }
+  virtual uchar GetSpecialFlags(ushort) const { return STRIGHTARM; }
 );
 
 class ITEM
@@ -910,9 +936,9 @@ class ITEM
   leftarm,
   arm,
  public:
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return  LEFTARMINDEX; }
  protected:
-  virtual uchar GetSpecialType(ushort) const { return STLEFTARM; }
+  virtual uchar GetSpecialFlags(ushort) const { return STLEFTARM; }
 );
 
 class ITEM
@@ -922,9 +948,9 @@ class ITEM
  public:
   virtual ushort GetTotalResistance(uchar) const;
   virtual ushort DangerWeight() const;
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return GROININDEX; }
  protected:
-  virtual uchar GetSpecialType(ushort) const { return STGROIN; }
+  virtual uchar GetSpecialFlags(ushort) const { return STGROIN; }
 );
 
 class ABSTRACT_ITEM
@@ -941,9 +967,26 @@ class ABSTRACT_ITEM
   virtual ushort DangerWeight() const;
   virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
+  virtual float CalculateKickToHitValue() const;
+  virtual float CalculateKickStrength() const;
+  virtual ushort GetAttribute(ushort) const;
+  virtual bool EditAttribute(ushort, short);
+  virtual void EditExperience(ushort, long);
+  virtual void ApplyExperience();
+  virtual void RaiseStats();
+  virtual void LowerStats();
+  virtual void SetStrength(ushort What) { Strength = What; }
+  virtual void SetAgility(ushort What) { Agility = What; }
+  virtual ushort GetEmitation() const;
+  virtual void InitSpecialAttributes();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
+  ushort Strength;
+  ushort Agility;
+  long StrengthExperience;
+  long AgilityExperience;
+  DATAVALUE(ulong, KickStrength);
 );
 
 class ITEM
@@ -951,9 +994,9 @@ class ITEM
   rightleg,
   leg,
  public:
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return RIGHTLEGINDEX; }
  protected:
-  virtual uchar GetSpecialType(ushort) const { return STRIGHTLEG; }
+  virtual uchar GetSpecialFlags(ushort) const { return STRIGHTLEG; }
 );
 
 class ITEM
@@ -961,9 +1004,9 @@ class ITEM
   leftleg,
   leg,
  public:
-  virtual bool FitsBodyPartIndex(uchar, character*) const;
+  virtual uchar GetBodyPartIndex() const { return LEFTLEGINDEX; }
  protected:
-  virtual uchar GetSpecialType(ushort) const { return STLEFTLEG; }
+  virtual uchar GetSpecialFlags(ushort) const { return STLEFTLEG; }
 );
 
 class ITEM
@@ -1011,6 +1054,7 @@ class ITEM
   virtual uchar GetMaterials() const { return 2; }
   virtual material* GetMaterial(ushort) const;
   virtual bool RaiseTheDead(character*);
+  virtual std::string GetConsumeVerb() const;
  protected:
   virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColor0(ushort) const;
@@ -1080,19 +1124,20 @@ class ITEM
   virtual void BlowEffect(character*);
 );
 
-
-/* chest probably requires destructor that deletes the Contained stack, but I have got the skill to do that with the current system. By Hex */
 class ITEM
 (
   chest,
   item,
- public: 
+ public:
+  virtual ~chest();
   virtual bool Open(character*);
   virtual bool IsOpenable(character*) const { return true; }
   virtual bool TryKey(item*, character*);
   virtual void Lock() { Locked = true; }
   virtual uchar GetLockType() const { return LockType; }
+  virtual void SetLockType(uchar What) { LockType = What; }
   virtual bool IsLocked() const { return Locked; }
+  virtual void SetIsLocked(bool What) { Locked = What; }
   virtual stack* GetContained() const { return Contained; }
   virtual bool TakeSomethingFrom(character*);
   virtual bool PutSomethingIn(character*);
@@ -1102,7 +1147,9 @@ class ITEM
   virtual ulong GetWeight() const;
   virtual bool Polymorph(stack*);
   virtual bool FitsIn(item*) const;
+  virtual void SetSquareUnder(square*);
  protected:
+  virtual std::string GetPostFix() const { return GetLockPostFix(LockType); }
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;
   stack* Contained;

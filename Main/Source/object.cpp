@@ -7,6 +7,7 @@
 #include "save.h"
 #include "proto.h"
 #include "materba.h"
+#include "femath.h"
 
 object::~object()
 {
@@ -18,13 +19,13 @@ void object::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   entity::Save(SaveFile);
-  SaveFile << GraphicId << MainMaterial << Config;
+  SaveFile << GraphicId << MainMaterial << Config << VisualEffects;
 }
 
 void object::Load(inputfile& SaveFile)
 {
   entity::Load(SaveFile);
-  SaveFile >> GraphicId >> MainMaterial >> Config;
+  SaveFile >> GraphicId >> MainMaterial >> Config >> VisualEffects;
 
   Picture.resize(GraphicId.size());
 
@@ -131,7 +132,7 @@ void object::UpdatePictures()
       GraphicId[c].Alpha[3] = GetAlpha3(c);
       GraphicId[c].BitmapPos = GetBitmapPos(c);
       GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
-      GraphicId[c].SpecialType = GetSpecialType(c);
+      GraphicId[c].SpecialFlags = (GetVisualEffects() & 0x7)|GetSpecialFlags(c);
       Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
     }
 }
@@ -227,4 +228,16 @@ uchar object::GetAlpha0(ushort) const
     return GetMainMaterial()->GetAlpha();
   else
     return 255;
+}
+
+void object::RandomizeVisualEffects()
+{
+  uchar Flags = 0, AcceptedFlags = GetOKVisualEffects();
+  ushort c;
+
+  for(c = 0; c < 8; ++c)
+    if((AcceptedFlags & (1 << c)) && (RAND() % 2))
+      Flags |= 1 << c;
+
+  SetVisualEffects(Flags | GetForcedVisualEffects());
 }

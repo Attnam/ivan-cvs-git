@@ -1,6 +1,6 @@
 #include "dungeon.h"
 #include "level.h"
-#include "strover.h"
+#include "stdover.h"
 #include "script.h"
 #include "feio.h"
 #include "save.h"

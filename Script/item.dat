@@ -72,6 +72,7 @@ banana /* materialcontainer-> */
 	NameSingular = "banana";
 	MainMaterialConfig == BANANAPEAL;
 	ContainedMaterialConfig == BANANAFLESH;
+	Alias == "gun";
 }
 
 holybanana /* materialcontainer->banana-> */
@@ -106,6 +107,7 @@ lantern
 	OfferModifier = 10000;
 	NameSingular = "lantern";
 	MainMaterialConfig == GLASS;
+	Alias == "light";
 }
 
 can /* materialcontainer-> */
@@ -141,7 +143,7 @@ lump
 	NameSingular = "lump";
 	MainMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
-	OKVisualEffects = ROTATE|MIRROR|FLIP;
+	OKVisualEffects = MIRROR|FLIP;
 }
 
 meleeweapon
@@ -168,6 +170,7 @@ longsword /* meleeweapon-> */
 	MainMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 50, 150, 50, 10; }
+	Alias == "sword";
 }
 
 twohandedsword /* meleeweapon->longsword-> */
@@ -216,6 +219,7 @@ valpurusjustifier /* meleeweapon->longsword-> */
 	SecondaryMaterialConfig == VALPURIUM;
 	MaterialConfigChances == 100;
 	IsPolymorphable = false;
+	Alias == "Justifier";
 }
 
 axe /* meleeweapon-> */
@@ -247,6 +251,7 @@ pickaxe /* meleeweapon->axe-> */
 	BitmapPos = 0, 96;
 	FormModifier = 100;
 	NameSingular = "pick-axe";
+	Alias == "pick-ax";
 }
 
 spear /* meleeweapon-> */
@@ -283,9 +288,10 @@ platemail /* bodyarmor-> */
 	BitmapPos = 16, 128;
 	Possibility = 50;
 	OfferModifier = 5000;
-	/* NameSingular depends on flexibility */
+	NameSingular = "plate mail"; /* this is used only for wishing, otherwise it depends on flexibility */
 	MainMaterialConfig = { 3, LEATHER, BRONZE, IRON; }
 	MaterialConfigChances = { 3, 250, 20, 10; }
+	Alias == "armor";
 }
 
 chainmail /* bodyarmor-> */
@@ -343,6 +349,7 @@ potion /* materialcontainer-> */
 	MainMaterialConfig == GLASS;
 	ContainedMaterialConfig = { 4, 0, WATER, HEALINGLIQUID, OMLEURINE; }
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
+	Alias = { 2, "potion", "drink"; }
 }
 
 bananapeals
@@ -515,6 +522,7 @@ neercseulb /* meleeweapon->spikedmace-> */
 	ContainedMaterialConfig == FROGFLESH;
 	MaterialConfigChances == 100;
 	IsPolymorphable = false;
+	Alias == "Neerc Se-ulb";
 }
 
 loaf
@@ -533,6 +541,7 @@ loaf
 	NamePlural = "loaves";
 	MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
 	MaterialConfigChances = { 3, 50, 50, 200; }
+	Alias == "food";
 }	
 
 scrollofwishing /* scroll-> */
@@ -556,6 +565,7 @@ cheapcopyofleftnutofpetrus /* nut-> */
 	NamePlural = "copies of the left nut of Petrus";
 	Adjective = "cheap";
 	MainMaterialConfig == GLASS; /* should be plastic */
+	Alias == "left nut of Petrus";
 }
 
 wand
@@ -650,7 +660,6 @@ kiwi
 	MainMaterialConfig == KIWIFLESH;
 }
 
-
 pineapple
 {
 	DefaultSize = 20;
@@ -712,6 +721,7 @@ backpack /* materialcontainer-> */
 	NameSingular = "backpack";
 	MainMaterialConfig == LEATHER;
 	ContainedMaterialConfig == GUNPOWDER;
+	Alias == "explosives";
 }
 
 holybook
@@ -746,6 +756,7 @@ fiftymillionroubles
 	NameSingular = "pile";
 	PostFix = "of 50 million roubles";
 	MainMaterialConfig == PARCHMENT;
+	Alias = { 2, "money", "riches"; }
 }
 
 oillamp
@@ -779,6 +790,7 @@ stone
 	NameSingular = "stone";
 	MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
 	MaterialConfigChances = { 5, 30, 20, 15, 10, 5; }
+	Alias == "jewel";
 }
 
 wandoffireballs /* wand-> */
@@ -1026,7 +1038,7 @@ leftleg /* bodypart->leg-> */
 	NameSingular = "left leg";
 }
 
-headofelpuri
+headofelpuri /* cannot wear helmet etc, so NOT head-> */
 {
 	CanBeWished = false;
 	DefaultSize = 60;
@@ -1104,7 +1116,7 @@ whistle
 
 magicalwhistle /* whistle-> */
 {
-	NameSingular = "super whistle";
+	NameSingular = "whistle";
 	Adjective = "magical";
 }
 

@@ -45,10 +45,8 @@ class game
   static area* GetCurrentArea();
   static level* GetCurrentLevel();
   static bool LOSHandler(vector2d, vector2d);
-  static void DrawPanel();
   static ushort*** GetLuxTable() { return LuxTable; }
   static ushort* GetLuxTableSize() { return LuxTableSize; }
-  static void Quit();
   static character* GetPlayer() { return Player; }
   static void SetPlayer(character*);
   static vector2d GetCamera() { return Camera; }
@@ -60,14 +58,14 @@ class game
   static void InitLuxTable();
   static void DeInitLuxTable();
   static const char* Insult();
-  static bool BoolQuestion(const std::string&, char = 0, int = 0);
+  static bool BoolQuestion(const std::string&, int = NO, int = 0);
   static void DrawEverything();
   static bool Save(const std::string& = SaveName(""));
   static uchar Load(const std::string& = SaveName(""));
   static bool IsRunning() { return Running; }
   static void SetIsRunning(bool What) { Running = What; }
-  static void EnableWizardMode() { WizardMode = true; }
-  static bool GetWizardMode() { return WizardMode; }
+  static void ActivateWizardMode() { WizardMode = true; }
+  static bool WizardModeActivated() { return WizardMode; }
   static void SeeWholeMap();
   static bool GetSeeWholeMapCheat() { return SeeWholeMapCheat; }
   static bool EmitationHandler(vector2d, vector2d);
@@ -79,11 +77,11 @@ class game
   static bool KeyIsOK(char);
   static void SetCurrent(ushort What) { Current = What; }
   static ushort GetCurrent() { return Current; }
-  static int GetMoveCommandKey(vector2d, vector2d);
+  static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit();
   static god* GetGod(ushort Index) { return God[Index]; }
   static uchar GetGods() { return God.size(); }
-  static std::string GetAlignment(ushort Index) { return Alignment[Index]; }
+  static const std::string& GetAlignment(ushort Index) { return Alignment[Index]; }
   static void ApplyDivineTick(ushort = 1);
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
   static vector2d GetDirectionVectorForKey(int);
@@ -98,7 +96,7 @@ class game
   static void Tick(ushort Tick = 1) { Ticks += Tick; }
   static ulong GetTicks() { return Ticks; }
   static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
-  static uchar DirectionQuestion(const std::string&, uchar = 8, bool = true, bool = false);
+  static uchar DirectionQuestion(const std::string&, bool = true, bool = false);
   static command* GetCommand(ushort Index) { return Command[Index]; }
   static void RemoveSaves(bool = true);
   static bool IsInWilderness() { return InWilderness; }
@@ -151,7 +149,7 @@ class game
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
   static vector2d CalculateScreenCoordinates(vector2d);
   static void BusyAnimation(bitmap* = DOUBLEBUFFER);
-  static uchar GetDirectionIndexForKey(int);
+  //static uchar GetDirectionIndexForKey(int);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
@@ -170,6 +168,9 @@ class game
   static bool PositionQuestionController();
   static int KeyQuestion(const std::string&, int, int, ...);
   static void LookBadKeyHandler(vector2d, int);
+  static const std::string& GetLockDescription(ushort Index) { return LockDescription[Index]; }
+  static void End(bool = true, bool = true);
+  static uchar CalculateRoughDirection(vector2d);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -208,6 +209,7 @@ class game
   static bool AnimationControllerActive;
   static vector2d CursorPos;
   static bool Zoom;
+  static std::string LockDescription[];
 };
 
 #endif

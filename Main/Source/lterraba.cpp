@@ -13,7 +13,7 @@
 
 bool olterrain::GoUp(character* Who) const // Try to go up
 {
-  if(game::GetCurrent() && game::GetCurrent() != 9 && game::GetWizardMode())
+  if(game::GetCurrent() && game::GetCurrent() != 9 && game::WizardModeActivated())
     {
       game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
@@ -30,7 +30,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
       return true;
     }
   else
-    if(!game::GetCurrent() && game::GetWizardMode())
+    if(!game::GetCurrent() && game::WizardModeActivated())
       {
 	if(Who->IsPlayer())
 	  {
@@ -68,7 +68,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
 
 bool olterrain::GoDown(character* Who) const // Try to go down
 {
-  if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
+  if(game::GetCurrent() < game::GetLevels() - 2 && game::WizardModeActivated())
     {
       game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
@@ -93,18 +93,6 @@ bool olterrain::GoDown(character* Who) const // Try to go down
     }
 }
 
-void lterrain::Save(outputfile& SaveFile) const
-{
-  object::Save(SaveFile);
-  SaveFile << VisualFlags;
-}
-
-void lterrain::Load(inputfile& SaveFile)
-{
-  object::Load(SaveFile);
-  SaveFile >> VisualFlags;
-}
-
 void olterrain::Save(outputfile& SaveFile) const
 {
   lterrain::Save(SaveFile);
@@ -120,20 +108,20 @@ void olterrain::Load(inputfile& SaveFile)
 void glterrain::DrawToTileBuffer(bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer());
   else
-    Picture[0]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[0]->MaskedBlit(igraph::GetTileBuffer());
 }
 
 void olterrain::DrawToTileBuffer(bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
   else
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
 }
 
-bool lterrain::Open(character* Opener)
+bool lterrain::Open(character*)
 {
   return false;
 }
@@ -149,17 +137,6 @@ bool lterrain::Close(character* Closer)
 vector2d lterrain::GetPos() const
 {
   return GetLSquareUnder()->GetPos();
-}
-
-void lterrain::HandleVisualEffects()
-{
-  uchar Flags = 0, AcceptedFlags = GetOKVisualEffects();
-
-  for(ushort c = 0; c < 8; ++c)
-    if((AcceptedFlags & (1 << c)) && (RAND() % 2))
-      Flags |= 1 << c;
-
-  SetVisualFlags(Flags);
 }
 
 bool glterrain::SitOn(character*)
@@ -189,16 +166,19 @@ olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 
 void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
 {
-  Config = NewConfig;
-  VirtualConstructor(Load);
-
   if(!Load)
     {
-      HandleVisualEffects();
+      Config = NewConfig;
+      RandomizeVisualEffects();
 
       if(CallGenerateMaterials)
 	GenerateMaterials();
     }
+
+  VirtualConstructor(Load);
+
+  if(CallGenerateMaterials)
+    UpdatePictures();
 }
 
 glterrainprototype::glterrainprototype()

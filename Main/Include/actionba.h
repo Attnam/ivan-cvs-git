@@ -30,6 +30,7 @@ class action
 {
  public:
   typedef actionprototype prototype;
+  virtual ~action() { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
   virtual character* GetActor() const { return Actor; }
@@ -46,6 +47,7 @@ class action
   virtual void DeleteUsedItems() { }
   virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  virtual std::string GetDescription() const = 0;
  protected:
   virtual void VirtualConstructor() { }
   character* Actor;

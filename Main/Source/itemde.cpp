@@ -23,16 +23,37 @@ ITEM_PROTOTYPE(item, 0);
 #include "lterraba.h"
 #include "config.h"
 #include "godba.h"
-#include "strover.h"
+#include "stdover.h"
 #include "whandler.h"
 #include "lterrade.h"
 #include "actionba.h"
 #include "felist.h"
 #include "save.h"
 #include "team.h"
+#include "error.h"
 
 bool can::Open(character* Opener)
 {
+  /*if(Opener->GetAttribute(ARMSTRENGTH) > RAND() % 30)
+    {
+      item* Item = new lump(GetContainedMaterial());
+      DonateSlotTo(Item);
+
+      if(!game::IsInWilderness() && configuration::GetAutoDropLeftOvers())
+	  Opener->GetLSquareUnder()->GetStack()->AddItem(this);
+      else
+	  Item->GetSlot()->AddFriendItem(this);
+
+      SetContainedMaterial(0);
+      return Item;
+    }
+  else
+    {
+      if(Opener->IsPlayer())
+	ADD_MESSAGE("The can is shut tight.");
+
+      return 0;
+    }*/
   return false;
 }
 
@@ -106,7 +127,7 @@ void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) co
 
 bool scroll::CanBeRead(character* Reader) const
 {
-  return Reader->CanRead();
+  return Reader->CanRead() || game::GetSeeWholeMapCheat();
 }
 
 bool scrollofcreatemonster::Read(character* Reader)
@@ -181,7 +202,7 @@ void meleeweapon::DipInto(material* Material, character* Dipper)
   ChangeContainedMaterial(Material);
 
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now coveRED with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
+    ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
 }
 
 material* lump::CreateDipMaterial()
@@ -191,7 +212,7 @@ material* lump::CreateDipMaterial()
 
 item* can::PrepareForConsuming(character* Consumer)
 {
-  /*  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + GetName(DEFINITE) + " before eating it? [Y/n]", 'y'))
+  /*  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + GetName(DEFINITE) + " before eating it? [Y/n]", YES))
     return TryToOpen(Consumer);
     else*/
     return 0;
@@ -199,9 +220,9 @@ item* can::PrepareForConsuming(character* Consumer)
 
 bool pickaxe::Apply(character* User)
 {
-  uchar Dir = game::DirectionQuestion("What direction do you want to dig?", 0xFF, false);
+  uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
 
-  if(Dir == 0xFF)
+  if(Dir == DIR_ERROR)
     return false;
 
   vector2d Temp = game::GetMoveVector(Dir);
@@ -268,7 +289,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the polymorph code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -406,7 +427,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a wand of striking", Direction, 15);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -596,7 +617,7 @@ void holybook::Save(outputfile& SaveFile) const
 
 bool holybook::CanBeRead(character* Reader) const
 {
-  return Reader->CanRead();
+  return Reader->CanRead() || game::GetSeeWholeMapCheat();
 }
 
 bool holybook::Read(character* Reader)
@@ -676,11 +697,11 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
 std::string wand::GetPostFix() const
 {
   if(!TimesUsed)
-    return "";
+    return item::GetPostFix();
   else if(TimesUsed == 1)
-    return "(used 1 time)";
+    return item::GetPostFix() + " (used 1 time)";
   else
-    return std::string("(used ") + TimesUsed + " times)";
+    return item::GetPostFix() + " (used " + TimesUsed + " times)";
 }
 
 bool scroll::ReceiveDamage(character*, short, uchar Type)
@@ -804,7 +825,7 @@ bool oillamp::Apply(character* Applier)
 		  game::DrawEverything();
 		  GETKEY();
 
-		  if(game::BoolQuestion("Do you want to wish? [Y/n]", 'y'))
+		  if(game::BoolQuestion("Do you want to wish? [Y/n]", YES))
 		    {
 		      ADD_MESSAGE("You may wish for an item.");
 
@@ -864,6 +885,7 @@ void oillamp::Load(inputfile& SaveFile)
 void holybook::SetDivineMaster(uchar NewDivineMaster)
 {
   DivineMaster = NewDivineMaster;
+  UpdatePictures();
 }
 
 ushort holybook::GetMaterialColor0(ushort) const
@@ -953,7 +975,7 @@ bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a wand of fireballs", Direction, 200);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -1022,7 +1044,7 @@ bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the teleportation code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -1036,7 +1058,7 @@ bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, 
 ushort bodypart::GetStrengthValue() const
 {
   if(GetMaster() && GetMainMaterial()->IsAlive())
-    return ulong(GetStrengthModifier()) * GetMaster()->GetEndurance() / 1000;
+    return ulong(GetStrengthModifier()) * GetMaster()->GetAttribute(ENDURANCE) / 1000;
   else
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
 }
@@ -1048,9 +1070,9 @@ short bodypart::GetMaxHP() const
       short HP = 0;
 
       if(GetMainMaterial()->IsAlive())
-	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMaster()->GetEndurance() / 10000;
+	HP = GetVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
       else
-	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMainMaterial()->GetStrengthValue() / 10000;
+	HP = GetVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
 
       if(HP < 1)
 	HP = 1;
@@ -1153,13 +1175,13 @@ ushort leg::GetTotalResistance(uchar Type) const
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << HelmetSlot << AmuletSlot;
+  SaveFile << HelmetSlot << AmuletSlot << BiteStrength;
 }
 
 void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> HelmetSlot >> AmuletSlot;
+  SaveFile >> HelmetSlot >> AmuletSlot >> BiteStrength;
   HelmetSlot.SetBodyPart(this);
   AmuletSlot.SetBodyPart(this);
 }
@@ -1182,13 +1204,15 @@ void humanoidtorso::Load(inputfile& SaveFile)
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << WieldedSlot << GauntletSlot << RingSlot << SingleWeaponSkill;
+  SaveFile << WieldedSlot << GauntletSlot << RingSlot << SingleWeaponSkill << UnarmedStrength;
+  SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
 }
 
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot >> SingleWeaponSkill;
+  SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot >> SingleWeaponSkill >> UnarmedStrength;
+  SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   WieldedSlot.SetBodyPart(this);
   GauntletSlot.SetBodyPart(this);
   RingSlot.SetBodyPart(this);
@@ -1206,13 +1230,15 @@ void arm::Load(inputfile& SaveFile)
 void leg::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BootSlot;
+  SaveFile << BootSlot << KickStrength;
+  SaveFile << Strength << StrengthExperience << Agility << AgilityExperience;
 }
 
 void leg::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BootSlot;
+  SaveFile >> BootSlot >> KickStrength;
+  SaveFile >> Strength >> StrengthExperience >> Agility >> AgilityExperience;
   BootSlot.SetBodyPart(this);
 }
 
@@ -1231,7 +1257,7 @@ bool bodypart::ReceiveDamage(character*, short Damage, uchar)
       ushort BHP = GetHP();
 
       if(GetHP() <= Damage)
-	if(GetHP() == GetMaxHP() && GetHP() != 1)
+	if(GetHP() == GetMaxHP() && GetHP() != 1 && GetMaster()->BodyPartVital(GetBodyPartIndex()))
 	  Damage = GetHP() - 1;
 
       EditHP(-Damage);
@@ -1326,7 +1352,7 @@ bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the haste code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -1352,7 +1378,7 @@ bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the slow code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -1361,9 +1387,9 @@ bool key::Apply(character* User)
 {
   if(User->IsPlayer())
     {
-      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key or space]", 0xFF, true);
+      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key]", true);
 
-      if(Dir == 0xFF)
+      if(Dir == DIR_ERROR)
 	return false;
 
       vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
@@ -1371,7 +1397,7 @@ bool key::Apply(character* User)
       if(game::IsValidPos(ApplyPos))
 	game::GetCurrentLevel()->GetLSquare(ApplyPos)->TryKey(this, User);
       else
-	ADD_MESSAGE("Can't do that, sir!");
+	return false;
 
       User->EditAP(500);
     }
@@ -1449,9 +1475,9 @@ void arm::Be()
     }
 }
 
-float arm::GetWieldedStrength(bool OneHanded)
+float arm::CalculateWieldedStrength(bool OneHanded) const
 {
-  float Strength = GetWielded()->GetWeaponStrength() * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus();
+  float Strength = GetWielded()->GetWeaponStrength() * this->Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus();
 
   if(OneHanded)
     Strength *= float(100 - GetWielded()->GetOneHandedStrengthPenalty(GetMaster())) / 100;
@@ -1459,16 +1485,24 @@ float arm::GetWieldedStrength(bool OneHanded)
   return Strength;
 }
 
-float arm::GetMeleeStrength()
+float arm::CalculateUnarmedStrength() const
 {
-  /* temporary */
-
-  return 1000 * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus();
+  return GetUnarmedStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus();
 }
 
-float arm::GetWieldedToHitValue(bool OneHanded)
+float leg::CalculateKickStrength() const
 {
-  float ToHit = GetHumanoidMaster()->GetMeleeAttributeModifier() * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
+  return GetKickStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetBonus();
+}
+
+float head::CalculateBiteStrength() const
+{
+  return GetBiteStrength() * 10 * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetBonus();
+}
+
+float arm::CalculateWieldedToHitValue(bool OneHanded) const
+{
+  float ToHit = GetMaster()->GetBattleAttributeModifier() * ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
 
   if(OneHanded)
     ToHit *= float(100 - GetWielded()->GetOneHandedToHitPenalty(GetMaster())) / 100;
@@ -1476,9 +1510,14 @@ float arm::GetWieldedToHitValue(bool OneHanded)
   return ToHit;
 }
 
-float arm::GetMeleeToHitValue()
+float arm::CalculateUnarmedToHitValue() const
 {
-  return (GetMaster()->GetMeleeAttributeModifier() >> 1) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus();
+  return GetMaster()->GetBattleAttributeModifier() * ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus() / 2;
+}
+
+float leg::CalculateKickToHitValue() const
+{
+  return GetMaster()->GetBattleAttributeModifier() * ((Agility << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus() / 4;
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -1523,266 +1562,6 @@ void key::Load(inputfile& SaveFile)
   item::Load(SaveFile);
   SaveFile >> LockType;
 }
-
-/*void can::GenerateMaterials()
-{
-  static ushort Possibility[] = { 50, 10 };
-
-  switch(femath::WeightedRand(2, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(BANANAFLESH)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOLFOOD)); break;
-    }
-}
-
-void lump::GenerateMaterials()
-{
-  static ushort Possibility[] = { 50, 10 };
-
-  switch(femath::WeightedRand(2, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(BANANAFLESH)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(SCHOOLFOOD)); break;
-    }
-}
-
-void potion::GenerateMaterials()
-{
-  static ushort Possibility[] = { 100, 100, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(GLASS), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(WATER)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(HEALINGLIQUID)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(OMLEURINE)); break;
-    }
-}
-
-void loaf::GenerateMaterials()
-{
-  static ushort Possibility[] = { 50, 50, 200 };
-
-  switch(femath::WeightedRand(3, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(BEEF)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(PORK)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(BREAD)); break;
-    }
-}
-
-void longsword::GenerateMaterials()
-{
-  static ushort Possibility[] = { 50, 150, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(WOOD), MAKE_MATERIAL(WOOD), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(BRONZE), 0); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(IRON), 0); break;
-    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0); break;
-    }
-}
-
-void twohandedsword::GenerateMaterials()
-{
-  static ushort Possibility[] = { 100, 10 };
-
-  switch(femath::WeightedRand(2, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(IRON), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0); break;
-    }
-}
-
-void curvedtwohandedsword::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 10 };
-
-  switch(femath::WeightedRand(2, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(IRON), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0); break;
-    }
-}
-
-void axe::GenerateMaterials()
-{
-  static ushort Possibility[] = { 100, 100, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(COPPER), MAKE_MATERIAL(WOOD), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(WOOD), 0); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
-    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
-    }
-}
-
-void pickaxe::GenerateMaterials()
-{
-  static ushort Possibility[] = { 100, 100, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(COPPER), MAKE_MATERIAL(WOOD), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(WOOD), 0); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
-    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
-    }
-}
-
-void spear::GenerateMaterials()
-{
-  static ushort Possibility[] = { 500, 50, 250, 150, 50, 10 };
-
-  switch(femath::WeightedRand(6, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(WOOD), MAKE_MATERIAL(WOOD), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BONE), MAKE_MATERIAL(WOOD), 0); break;
-    case 2: InitMaterials(MAKE_MATERIAL(COPPER), MAKE_MATERIAL(WOOD), 0); break;
-    case 3: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(WOOD), 0); break;
-    case 4: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
-    case 5: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
-    }
-}
-
-void platemail::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 20, 10 };
-
-  switch(femath::WeightedRand(3, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    }
-}
-
-void chainmail::GenerateMaterials()
-{
-  static ushort Possibility[] = { 150, 50, 10 };
-
-  switch(femath::WeightedRand(3, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
-    }
-}
-
-void poleaxe::GenerateMaterials()
-{
-  static ushort Possibility[] = { 50, 10 };
-
-  switch(femath::WeightedRand(2, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
-    }
-}
-
-void spikedmace::GenerateMaterials()
-{
-  static ushort Possibility[] = { 100, 10 };
-
-  switch(femath::WeightedRand(2, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
-    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
-    }
-}
-
-void brokenplatemail::GenerateMaterials()
-{
-  static ushort Possibility[] = { 100, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
-    }
-}
-
-void stone::GenerateMaterials()
-{
-  static ushort Possibility[] = { 30, 20, 15, 10, 5 };
-
-  switch(femath::WeightedRand(5, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(SILVER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(GOLD)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(SAPPHIRE)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(RUBY)); break;
-    case 4: InitMaterials(MAKE_MATERIAL(DIAMOND)); break;
-    }
-}
-
-void shield::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 150, 150, 50, 10 };
-
-  switch(femath::WeightedRand(5, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(WOOD)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(COPPER)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    case 4: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
-    }
-}
-
-void cloak::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 50, 50 };
-
-  switch(femath::WeightedRand(3, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(CLOTH)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(FABRIC)); break;
-    }
-}
-
-void boot::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 100, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
-    }
-}
-
-void gauntlet::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 100, 50, 10 };
-
-  switch(femath::WeightedRand(4, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
-    }
-}
-
-void belt::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 50, 50 };
-
-  switch(femath::WeightedRand(3, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(CLOTH)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(FABRIC)); break;
-    }
-}*/
 
 /*void helmet::GenerateMaterials()
 {
@@ -1949,22 +1728,22 @@ void bodypart::Regenerate(ushort Turns)
 {
   if(GetMainMaterial()->IsAlive())
     {
-      ulong RegenerationBonus = GetMaster()->GetEndurance() * Turns;
+      ulong RegenerationBonus = ulong(GetMaxHP()) * GetMaster()->GetAttribute(ENDURANCE) * Turns;
 
       if(GetMaster()->GetAction() && GetMaster()->GetAction()->GetRestRegenerationBonus())
 	RegenerationBonus *= GetMaster()->GetSquareUnder()->RestModifier();
 
       EditRegenerationCounter(RegenerationBonus);
 
-      while(GetRegenerationCounter() > 1000)
+      while(GetRegenerationCounter() > 100000)
 	{
 	  if(GetHP() < GetMaxHP())
 	    {
 	      EditHP(1);
-	      GetMaster()->EditEnduranceExperience(100);
+	      GetMaster()->EditExperience(ENDURANCE, 100);
 	    }
 
-	  EditRegenerationCounter(-1000);
+	  EditRegenerationCounter(-100000);
 	}
     }
 }
@@ -2008,7 +1787,7 @@ ushort bodypart::Danger(ulong DangerEstimate, bool MaxDanger) const
 
 ulong head::GetTotalWeight() const
 {
-  ulong Weight = 0;//GetWeight();
+  ulong Weight = GetWeight();
 
   if(GetHelmet())
     Weight += GetHelmet()->GetWeight();
@@ -2021,7 +1800,7 @@ ulong head::GetTotalWeight() const
 
 ulong humanoidtorso::GetTotalWeight() const
 {
-  ulong Weight = 0;//GetWeight();
+  ulong Weight = GetWeight();
 
   if(GetBodyArmor())
     Weight += GetBodyArmor()->GetWeight();
@@ -2037,7 +1816,7 @@ ulong humanoidtorso::GetTotalWeight() const
 
 ulong arm::GetTotalWeight() const
 {
-  ulong Weight = 0;//GetWeight();
+  ulong Weight = GetWeight();
 
   if(GetWielded())
     Weight += GetWielded()->GetWeight();
@@ -2053,7 +1832,7 @@ ulong arm::GetTotalWeight() const
 
 ulong leg::GetTotalWeight() const
 {
-  ulong Weight = 0;//GetWeight();
+  ulong Weight = GetWeight();
 
   if(GetBoot())
     Weight += GetBoot()->GetWeight();
@@ -2239,7 +2018,7 @@ bool wandoflocking::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the wand locking code", Direction, 10);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -2364,7 +2143,7 @@ bool wandofresurrection::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a wand of resurrection", Direction, 15);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditPerceptionExperience(50);
+  Zapper->EditExperience(PERCEPTION, 50);
   Zapper->EditAP(500);
   return true;
 }
@@ -2382,41 +2161,6 @@ bool corpse::RaiseTheDead(character* Summoner)
   Deceased = 0;
   SetExists(false);
   return true;
-}
-
-bool head::FitsBodyPartIndex(uchar c, character*) const 
-{ 
-  return c == HEADINDEX; 
-}
-
-bool torso::FitsBodyPartIndex(uchar c, character*) const
-{
-  return c == TORSOINDEX;
-}
-
-bool rightarm::FitsBodyPartIndex(uchar c, character*) const
-{
-  return c == RIGHTARMINDEX;
-}
-
-bool leftarm::FitsBodyPartIndex(uchar c, character*) const
-{
-  return c == LEFTARMINDEX;
-}
-
-bool groin::FitsBodyPartIndex(uchar c, character*) const
-{
-  return c == GROININDEX;
-}
-
-bool rightleg::FitsBodyPartIndex(uchar c, character*) const
-{
-  return c == RIGHTLEGINDEX;
-}
-
-bool leftleg::FitsBodyPartIndex(uchar c, character*) const
-{
-  return c == LEFTLEGINDEX;
 }
 
 void banana::VirtualConstructor(bool Load)
@@ -2457,7 +2201,7 @@ void holybook::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
 
-  /* Don't use SetDivineMaster, since it calls UpdatePicture()! */
+  /* Don't use SetDivineMaster, since it calls UpdatePictures()! */
 
   if(!Load)
     DivineMaster = 1 + RAND() % (game::GetGods() - 1);
@@ -2549,12 +2293,18 @@ void arm::VirtualConstructor(bool Load)
   RingSlot.Init(this);
   SetCurrentSingleWeaponSkill(0);
   SetHasBe(true);
+
+  if(!Load)
+    StrengthExperience = DexterityExperience = 0;
 }
 
 void leg::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
   BootSlot.Init(this);
+
+  if(!Load)
+    StrengthExperience = AgilityExperience = 0;
 }
 
 void wandoflocking::VirtualConstructor(bool Load)
@@ -2609,14 +2359,24 @@ void magicalwhistle::BlowEffect(character* Whistler)
 void chest::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  StorageVolume = 1000;
-  Contained = new stack;
-  uchar ItemNumber = RAND() % 5; 
-  for(uchar c = 0; c < ItemNumber; ++c)
+  Contained = new stack(0, HIDDEN);
+
+  if(!Load)
     {
-      item* NewItem = protosystem::BalancedCreateItem();
-      if(NewItem->CanBeGeneratedInContainer() && FitsIn(NewItem))
-	GetContained()->AddItem(NewItem);
+      StorageVolume = 1000;
+      SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+      SetIsLocked(RAND() % 3 ? true : false);
+      uchar ItemNumber = RAND() % 5;
+
+      for(ushort c = 0; c < ItemNumber; ++c)
+	{
+	  item* NewItem = protosystem::BalancedCreateItem();
+
+	  if(NewItem->CanBeGeneratedInContainer() && FitsIn(NewItem))
+	    GetContained()->AddItem(NewItem);
+	  else
+	    delete NewItem;
+	}
     }
 }
 
@@ -2624,18 +2384,28 @@ bool chest::TryKey(item* Key, character* Applier)
 {
   if(Key->CanOpenLockType(GetLockType()))
     {
-      Lock();
+      if(IsLocked())
+	{
+	  if(Applier->IsPlayer())
+	    ADD_MESSAGE("You unlock %s.", CHARNAME(DEFINITE));
+	  else if(Applier->GetSquareUnder()->CanBeSeen())
+	    ADD_MESSAGE("%s unlocks %s.", Applier->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	}
+      else
+	{
+	  if(Applier->IsPlayer())
+	    ADD_MESSAGE("You lock %s.", CHARNAME(DEFINITE));
+	  else if(Applier->GetSquareUnder()->CanBeSeen())
+	    ADD_MESSAGE("%s locks %s.", Applier->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	}
 
-      if(Applier->IsPlayer())
-	ADD_MESSAGE("You lock %s.", Key->CHARNAME(DEFINITE));
-      else if(Applier->GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s locks %s.", Applier->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+      SetIsLocked(!IsLocked());
     }
   else
     {
       if(Applier->IsPlayer())
 	ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHARNAME(DEFINITE));
-      else
+      else if(Applier->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHARNAME(DEFINITE), Key->CHARNAME(DEFINITE));
     }
 
@@ -2647,7 +2417,6 @@ void materialcontainer::GenerateMaterials()
   ushort Chosen = RandomizeMaterialConfiguration();
   InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
   InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
-  UpdatePictures();
 }
 
 void meleeweapon::GenerateMaterials()
@@ -2656,36 +2425,243 @@ void meleeweapon::GenerateMaterials()
   InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
   InitChosenMaterial(SecondaryMaterial, GetSecondaryMaterialConfig(), GetDefaultSecondaryVolume(), Chosen);
   InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
-  UpdatePictures();
+}
+
+void arm::ApplyExperience()
+{
+  if(GetMaster()->CheckForAttributeIncrease(Strength, StrengthExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
+    }
+  else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
+    }
+
+  if(GetMaster()->CheckForAttributeIncrease(Dexterity, DexterityExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels quite dextrous.", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHARNAME(DEFINITE));
+    }
+  else if(GetMaster()->CheckForAttributeDecrease(Dexterity, DexterityExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels clumsy.", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHARNAME(DEFINITE));
+    }
+}
+
+void leg::ApplyExperience()
+{
+  if(GetMaster()->CheckForAttributeIncrease(Strength, StrengthExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
+    }
+  else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
+    }
+
+  if(GetMaster()->CheckForAttributeIncrease(Agility, AgilityExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels very agile!", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHARNAME(DEFINITE));
+    }
+  else if(GetMaster()->CheckForAttributeDecrease(Agility, AgilityExperience))
+    {
+      if(GetMaster()->IsPlayer())
+	ADD_MESSAGE("Your %s feels slower.", CHARNAME(UNARTICLED));
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHARNAME(DEFINITE));
+    }
+}
+
+void arm::Hit(character* Enemy, float AttackStrength, float ToHitValue)
+{
+  switch(Enemy->TakeHit(GetMaster(), GetWielded(), AttackStrength, ToHitValue, RAND() % 26 - RAND() % 26, GetWielded() ? WEAPONATTACK : UNARMEDATTACK, !(RAND() % GetMaster()->GetCriticalModifier())))
+    {
+    case HASHIT:
+    case HASBLOCKED:
+      if(GetWielded())
+	GetWielded()->ReceiveHitEffect(Enemy, GetMaster());
+    case HASDIED:
+      EditExperience(ARMSTRENGTH, 50);
+
+      if(GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetMaster()->IsPlayer())
+	GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
+
+      if(GetWielded())
+	{
+	  if(GetCurrentSingleWeaponSkill()->AddHit() && GetMaster()->IsPlayer())
+	    GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->GetName(UNARTICLED));
+
+	  GetWielded()->ReceiveDamage(GetMaster(), GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
+	}
+    case HASDODGED:
+      EditExperience(DEXTERITY, 25);
+    }
+}
+
+ushort arm::GetAttribute(ushort Identifier) const
+{
+  if(Identifier == ARMSTRENGTH)
+    {
+      if(GetMainMaterial()->IsAlive())
+	return Strength;
+      else
+	return GetMainMaterial()->GetStrengthValue();
+    }
+  else if(Identifier == DEXTERITY)
+    {
+      if(GetMainMaterial()->IsAlive())
+	return Dexterity;
+      else
+	return GetMainMaterial()->IsFlexible() ? 10 : 1;
+    }
+  else
+    {
+      ABORT("Illegal arm attribute %d request!", Identifier);
+      return 0xACCA;
+    }
+}
+
+bool arm::EditAttribute(ushort Identifier, short Value)
+{
+  if(Identifier == ARMSTRENGTH)
+    return GetMaster()->RawEditAttribute(Strength, Value);
+  else if(Identifier == DEXTERITY)
+    return GetMaster()->RawEditAttribute(Dexterity, Value);
+  else
+    {
+      ABORT("Illegal arm attribute %d edit request!", Identifier);
+      return false;
+    }
+}
+
+void arm::EditExperience(ushort Identifier, long Value)
+{
+  if(Identifier == ARMSTRENGTH)
+    StrengthExperience += Value;
+  else if(Identifier == DEXTERITY)
+    DexterityExperience += Value;
+  else
+    ABORT("Illegal arm attribute %d experience edit request!", Identifier);
+}
+
+ushort leg::GetAttribute(ushort Identifier) const
+{
+  if(Identifier == LEGSTRENGTH)
+    {
+      if(GetMainMaterial()->IsAlive())
+	return Strength;
+      else
+	return GetMainMaterial()->GetStrengthValue();
+    }
+  else if(Identifier == AGILITY)
+    {
+      if(GetMainMaterial()->IsAlive())
+	return Agility;
+      else
+	return GetMainMaterial()->IsFlexible() ? 10 : 1;
+    }
+  else
+    {
+      ABORT("Illegal leg attribute %d request!", Identifier);
+      return 0xECCE;
+    }
+}
+
+bool leg::EditAttribute(ushort Identifier, short Value)
+{
+  if(Identifier == LEGSTRENGTH)
+    return GetMaster()->RawEditAttribute(Strength, Value);
+  else if(Identifier == AGILITY)
+    return GetMaster()->RawEditAttribute(Agility, Value);
+  else
+    {
+      ABORT("Illegal leg attribute %d edit request!", Identifier);
+      return false;
+    }
+}
+
+void leg::EditExperience(ushort Identifier, long Value)
+{
+  if(Identifier == LEGSTRENGTH)
+    StrengthExperience += Value;
+  else if(Identifier == AGILITY)
+    AgilityExperience += Value;
+  else
+    ABORT("Illegal leg attribute %d experience edit request!", Identifier);
+}
+
+void arm::RaiseStats()
+{
+  Strength += 10;
+  Dexterity += 10;
+}
+
+void arm::LowerStats()
+{
+  Strength -= 10;
+  Dexterity -= 10;
+}
+
+void leg::RaiseStats()
+{
+  Strength += 10;
+  Agility += 10;
+}
+
+void leg::LowerStats()
+{
+  Strength -= 10;
+  Agility -= 10;
 }
 
 /* Returns true if chest opens fine else false */
+
 bool chest::Open(character* Opener)
 {
-  std::string Question = "Do you want to (t)ake something from or (p) something in this " + GetName(UNARTICLED) + "? [t,p]";
+  if(IsLocked())
+    {
+      ADD_MESSAGE("The chest seems to be locked.");
+      return false;
+    }
+
+  std::string Question = "Do you want to (t)ake something from or (p) something in this chest? [t,p]";
+
   switch(game::KeyQuestion(Question, KEYESC, 3, 't', 'p', KEYESC))
     {
     case 't':
-      if(!IsLocked())
-	{
-	  return TakeSomethingFrom(Opener);
-	}
-      else
-	{
-	  ADD_MESSAGE("The chest seems to be locked.");
-	  return false;
-	}
+      return TakeSomethingFrom(Opener);
     case 'p':
-      if(!IsLocked())
-	{
-	  return PutSomethingIn(Opener);
-	}
-      else
-	{
-	  ADD_MESSAGE("The chest seems to be locked.");
-	  return false;
-	}
-    case KEYESC:
+      return PutSomethingIn(Opener);
+    default:
       return false;
     }
 }
@@ -2697,13 +2673,19 @@ bool chest::TakeSomethingFrom(character* Opener)
       ADD_MESSAGE("There is nothing in %s.", CHARNAME(DEFINITE));
       return false;
     }
+
   item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
   uchar RoomNumber = GetLSquareUnder()->GetRoom();
+
   if(ToBeTaken && (!RoomNumber || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
     {
       ToBeTaken->MoveTo(Opener->GetStack());
+      return true;
     }
+  else
+    return false;
 }
+
 bool chest::PutSomethingIn(character* Opener)
 {
   if(Opener->GetStack()->GetItems() == 0)
@@ -2711,11 +2693,14 @@ bool chest::PutSomethingIn(character* Opener)
       ADD_MESSAGE("You have nothing to put in %s.", CHARNAME(DEFINITE));
       return false;
     }
+
   std::string Message = "What do you want to put in " + GetName(DEFINITE) + "?";
   item* ToBePut = Opener->GetStack()->DrawContents(Opener, Message);
+
   if(ToBePut)
     {
       uchar RoomNumber = GetLSquareUnder()->GetRoom();
+
       if((RoomNumber == 0 || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, this)))
 	{
 	  if(FitsIn(ToBePut))
@@ -2725,11 +2710,12 @@ bool chest::PutSomethingIn(character* Opener)
 	    }
 	  else
 	    {
-	      ADD_MESSAGE("%s doesn't fit in %s", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s doesn't fit in %s.", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	      return false;
 	    }
 	}
     }
+
   return false;
 }
 
@@ -2761,5 +2747,100 @@ bool chest::Polymorph(stack* CurrentStack)
 
 bool chest::FitsIn(item* ToBePut) const
 {
-  return GetContained()->GetTotalVolume() + ToBePut->GetVolume() < GetStorageVolume();
+  return GetContained()->GetTotalVolume() + ToBePut->GetVolume() <= GetStorageVolume();
+}
+
+chest::~chest()
+{
+  delete Contained;
+}
+
+std::string key::GetAdjective() const
+{
+  return game::GetLockDescription(LockType);
+}
+
+ushort head::GetEmitation() const
+{
+  ushort Emitation = item::GetEmitation();
+
+  if(GetHelmet() && GetHelmet()->GetEmitation() > Emitation)
+    Emitation = GetHelmet()->GetEmitation();
+
+  if(GetAmulet() && GetAmulet()->GetEmitation() > Emitation)
+    Emitation = GetAmulet()->GetEmitation();
+
+  return Emitation;
+}
+
+ushort humanoidtorso::GetEmitation() const
+{
+  ushort Emitation = item::GetEmitation();
+
+  if(GetBodyArmor() && GetBodyArmor()->GetEmitation() > Emitation)
+    Emitation = GetBodyArmor()->GetEmitation();
+
+  if(GetCloak() && GetCloak()->GetEmitation() > Emitation)
+    Emitation = GetCloak()->GetEmitation();
+
+  if(GetBelt() && GetBelt()->GetEmitation() > Emitation)
+    Emitation = GetBelt()->GetEmitation();
+
+  return Emitation;
+}
+
+ushort arm::GetEmitation() const
+{
+  ushort Emitation = item::GetEmitation();
+
+  if(GetWielded() && GetWielded()->GetEmitation() > Emitation)
+    Emitation = GetWielded()->GetEmitation();
+
+  if(GetGauntlet() && GetGauntlet()->GetEmitation() > Emitation)
+    Emitation = GetGauntlet()->GetEmitation();
+
+  if(GetRing() && GetRing()->GetEmitation() > Emitation)
+    Emitation = GetRing()->GetEmitation();
+
+  return Emitation;
+}
+
+ushort leg::GetEmitation() const
+{
+  ushort Emitation = item::GetEmitation();
+
+  if(GetBoot() && GetBoot()->GetEmitation() > Emitation)
+    Emitation = GetBoot()->GetEmitation();
+
+  return Emitation;
+}
+
+void head::InitSpecialAttributes()
+{
+  SetBiteStrength(GetMaster()->GetBiteStrength());
+}
+
+void arm::InitSpecialAttributes()
+{
+  SetStrength(GetMaster()->GetDefaultArmStrength());
+  SetDexterity(GetMaster()->GetDefaultDexterity());
+  SetUnarmedStrength(GetMaster()->GetUnarmedStrength());
+}
+
+void leg::InitSpecialAttributes()
+{
+  SetStrength(GetMaster()->GetDefaultLegStrength());
+  SetAgility(GetMaster()->GetDefaultAgility());
+  SetKickStrength(GetMaster()->GetKickStrength());
+}
+
+std::string corpse::GetConsumeVerb() const
+{
+  return GetDeceased()->GetTorso()->GetConsumeVerb();
+}
+
+void chest::SetSquareUnder(square* Square)
+{
+  item::SetSquareUnder(Square);
+  GetContained()->SetSquareUnder(Square);
 }

@@ -530,7 +530,7 @@ void library::KickSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool library::ConsumeItem(character* Customer, item*)
+bool library::ConsumeItem(character*, item*)
 {
   return true;
 }
@@ -546,11 +546,12 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
       Infidel->Hostility(Master);
     }
 }
+
 /* returns true if player agrees to continue */
 bool library::DestroyTerrain(character* Infidel, olterrain*) 
 { 
   ADD_MESSAGE("The librarian might not like this.");
-  if(game::BoolQuestion("Are you sure you want to do this? [y,N]"))
+  if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
       if(Master)
 	{
@@ -567,7 +568,7 @@ bool library::DestroyTerrain(character* Infidel, olterrain*)
 bool cathedral::DestroyTerrain(character* Infidel, olterrain*) 
 { 
   ADD_MESSAGE("This is prohibited in the cathedral.");
-  if(game::BoolQuestion("Are you sure? [y,N]"))
+  if(game::BoolQuestion("Are you sure? [y/N]"))
     {
       Infidel->GetTeam()->Hostility(game::GetTeam(2));
       return true;
@@ -579,7 +580,7 @@ bool cathedral::DestroyTerrain(character* Infidel, olterrain*)
 bool shop::DestroyTerrain(character* Infidel, olterrain*) 
 { 
   ADD_MESSAGE("The shopkeeper might not like this.");
-  if(game::BoolQuestion("Are you sure you want to do this? [y,N]"))
+  if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
       if(Master)
 	{

@@ -80,10 +80,16 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
 
+  ANALYZEDATA(DefaultArmStrength);
+  ANALYZEDATA(DefaultLegStrength);
+  ANALYZEDATA(DefaultDexterity);
   ANALYZEDATA(DefaultAgility);
-  ANALYZEDATA(DefaultStrength);
   ANALYZEDATA(DefaultEndurance);
   ANALYZEDATA(DefaultPerception);
+  ANALYZEDATA(DefaultIntelligence);
+  ANALYZEDATA(DefaultWisdom);
+  ANALYZEDATA(DefaultCharisma);
+  ANALYZEDATA(DefaultMana);
   ANALYZEDATA(DefaultMoney);
   ANALYZEDATA(TotalSize);
   ANALYZEDATA(CanRead);
@@ -110,7 +116,6 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(IsUnique);
   ANALYZEDATA(EatFlags);
   ANALYZEDATA(TotalVolume);
-  ANALYZEDATA(MeleeStrength);
   ANALYZEDATA(TalkVerb);
   ANALYZEDATA(HeadBitmapPos);
   ANALYZEDATA(TorsoBitmapPos);
@@ -153,6 +158,10 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(IsAbstract);
   ANALYZEDATA(IsPolymorphable);
+  ANALYZEDATA(UnarmedStrength);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(BiteStrength, UnarmedStrength, DataBase->UnarmedStrength / 2);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(KickStrength, UnarmedStrength, DataBase->UnarmedStrength * 2);
+  ANALYZEDATA(AttackStyle);
 }
 
 void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
@@ -202,8 +211,10 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(MaterialConfigChances);
   ANALYZEDATA(IsAbstract);
   ANALYZEDATA(IsPolymorphable);
+  ANALYZEDATA(Alias);
   ANALYZEDATA(OKVisualEffects);
   ANALYZEDATA(CanBeGeneratedInContainer);
+  ANALYZEDATA(ForcedVisualEffects);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

@@ -53,6 +53,10 @@ class object : public entity, public id
   virtual ushort GetBaseEmitation() const { return 0; }
   virtual ushort GetType() const = 0;
   virtual void SetParameters(uchar) { }
+  virtual uchar GetOKVisualEffects() const { return 0; }
+  virtual uchar GetVisualEffects() const { return VisualEffects; }
+  virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
+  virtual uchar GetForcedVisualEffects() const { return 0; }
  protected:
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
@@ -63,7 +67,7 @@ class object : public entity, public id
   virtual material* SetMaterial(material*&, material*, ulong);
   virtual void ChangeMaterial(material*&, material*, ulong);
   virtual bool CalculateHasBe() const;
-  virtual uchar GetSpecialType(ushort) const { return STNORMAL; }
+  virtual uchar GetSpecialFlags(ushort) const { return STNORMAL; }
   virtual uchar GetGraphicsContainerIndex(ushort) const = 0;
   virtual ushort GetMaterialColor0(ushort) const;
   virtual ushort GetMaterialColor1(ushort) const { return 0; }
@@ -79,10 +83,12 @@ class object : public entity, public id
   virtual std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
   virtual ushort GetAnimationFrames() const { return 1; }
+  virtual void RandomizeVisualEffects();
   material* MainMaterial;
   std::vector<graphic_id> GraphicId;
   std::vector<bitmap*> Picture;
   ushort Config;
+  uchar VisualEffects;
 };
 
 #endif

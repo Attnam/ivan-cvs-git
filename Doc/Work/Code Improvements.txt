@@ -15,7 +15,7 @@ done (or understood) by anyone else than the writer.
 //*Tuonpuoleisen prototyypitys.
 Tasovaihdosten funktionaalisuuden kohotus.
 //Syöntisallimusten liputtaminen.
-Karakterin atribuuttien kollektivointi?
+(r) Karakterin atribuuttien kollektivointi?
 Karakterin atribuuttien luokitus.
 (r) Tarkkailijoiden tuhoaminen?
 //Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)

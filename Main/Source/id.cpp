@@ -69,3 +69,10 @@ std::string id::GetAdjective(bool Articled) const
   else
     return "";
 }
+
+std::string id::GetLockPostFix(uchar LockType) const
+{
+  /* doesn't yet support other locktype articles than "a" */
+
+  return "with a " + game::GetLockDescription(LockType) + " lock";
+}

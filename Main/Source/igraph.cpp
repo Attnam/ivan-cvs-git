@@ -105,17 +105,24 @@ tile igraph::AddUser(graphic_id GI)
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
 
-      if(GI.SpecialType == STRIGHTARM)
+      if(GI.SpecialFlags & 0x7)
+	{
+	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
+	  delete Bitmap;
+	  Bitmap = Temp;
+	}
+
+      if(GI.SpecialFlags == STRIGHTARM)
 	{
 	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENTCOL);
 	}
 
-      if(GI.SpecialType == STLEFTARM)
+      if(GI.SpecialFlags == STLEFTARM)
 	{
 	  Bitmap->Fill(0, 0, 8, 16, TRANSPARENTCOL);
 	}
 
-      if(GI.SpecialType == STGROIN)
+      if(GI.SpecialFlags == STGROIN)
 	{
 	  ushort Pixel[9], y, i;
 
@@ -130,7 +137,7 @@ tile igraph::AddUser(graphic_id GI)
 	      Bitmap->PutPixel(x, y, Pixel[i++]);
 	}
 
-      if(GI.SpecialType == STRIGHTLEG)
+      if(GI.SpecialFlags == STRIGHTLEG)
 	{
 	  /* Right leg from the character's, NOT the player's point of view */
 
@@ -143,7 +150,7 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
 
-      if(GI.SpecialType == STLEFTLEG)
+      if(GI.SpecialFlags == STLEFTLEG)
 	{
 	  /* Left leg from the character's, NOT the player's point of view */
 
@@ -176,7 +183,7 @@ void igraph::RemoveUser(graphic_id GI)
 
 outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
 {
-  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialType;
+  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialFlags << GI.BaseAlpha;
   SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
   SaveFile << GI.Alpha[0] << GI.Alpha[1] << GI.Alpha[2] << GI.Alpha[3];
   return SaveFile;
@@ -184,8 +191,9 @@ outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
 
 inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
 {
-  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialType;
+  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialFlags >> GI.BaseAlpha;
   SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
   SaveFile >> GI.Alpha[0] >> GI.Alpha[1] >> GI.Alpha[2] >> GI.Alpha[3];
   return SaveFile;
 }
+

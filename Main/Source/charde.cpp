@@ -26,7 +26,7 @@ CHARACTER_PROTOTYPE(character, 0);
 #include "feio.h"
 #include "wskill.h"
 #include "felist.h"
-#include "strover.h"
+#include "stdover.h"
 #include "team.h"
 #include "lterraba.h"
 #include "error.h"
@@ -102,7 +102,7 @@ void darkknight::CreateInitialEquipment()
     SetMainWielded(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword));
   else
     {
-      longsword* DoomsDay = new longsword;
+      longsword* DoomsDay = new longsword(0, false);
       DoomsDay->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
       SetMainWielded(DoomsDay);
     }
@@ -118,9 +118,9 @@ void skeleton::CreateInitialEquipment()
     {
       SetMainWielded(new spikedmace);
       SetSize(200);
-      SetAgility(15);
+      /*Sety(15);
       SetStrength(18);
-      SetEndurance(15);
+      SetEndurance(15);*/
     }
 }
 
@@ -143,7 +143,7 @@ bool ennerbeast::Hit(character*)
   DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
   {
     character* Char = game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetCharacter();
-    ushort ScreamStrength = ushort(GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
+    ushort ScreamStrength = ushort(1000000 / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
 
     if(Char && Char != this)
       {
@@ -163,9 +163,7 @@ bool ennerbeast::Hit(character*)
       game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
   });
 
-  EditStrengthExperience(100);
   EditNP(-100);
-
   return true;
 }
 
@@ -341,76 +339,64 @@ item* humanoid::GetMainWielded() const
 
 item* humanoid::GetSecondaryWielded() const
 {
-  if(GetSecondaryArm())
+  if(GetMainArm() && GetMainArm()->GetWielded() && GetSecondaryArm())
     return GetSecondaryArm()->GetWielded();
   else
     return 0;
 }
 
-float humanoid::GetMainAttackStrength() const
+float humanoid::CalculateRightAttackStrength() const
 {
-  if(GetMainArm())
-    if(GetMainArm()->GetWielded())
-      return GetMainArm()->GetWieldedStrength(!GetSecondaryArm() || GetSecondaryArm()->GetWielded());
+  if(GetRightArm())
+    if(GetRightArm()->GetWielded())
+      return GetRightArm()->CalculateWieldedStrength(!GetLeftArm() || GetLeftArm()->GetWielded());
     else
-      if(GetSecondaryArm() && GetSecondaryArm()->GetWielded())
-	return GetSecondaryArm()->GetWieldedStrength(false);
-      else
-	return GetMainArm()->GetMeleeStrength();
-  else
-    if(GetSecondaryArm())
-      if(GetSecondaryArm()->GetWielded())
-	return GetSecondaryArm()->GetWieldedStrength(true);
-      else
-	return GetSecondaryArm()->GetMeleeStrength();
-    else
-      return 0;
-}
-
-float humanoid::GetSecondaryAttackStrength() const
-{
-  if(GetSecondaryArm())
-    if(GetSecondaryArm()->GetWielded())
-      return GetSecondaryArm()->GetWieldedStrength(!GetMainArm() || GetMainArm()->GetWielded());
-    else
-      if(GetMainArm() && GetMainArm()->GetWielded())
+      if(GetLeftArm() && GetLeftArm()->GetWielded())
 	return 0;
       else
-	return GetSecondaryArm()->GetMeleeStrength();
+	return GetRightArm()->CalculateUnarmedStrength();
   else
     return 0;
 }
 
-float humanoid::GetMainToHitValue() const
+float humanoid::CalculateLeftAttackStrength() const
 {
-  if(GetMainArm())
-    if(GetMainArm()->GetWielded())
-      return GetMainArm()->GetWieldedToHitValue(!GetSecondaryArm() || GetSecondaryArm()->GetWielded());
+  if(GetLeftArm())
+    if(GetLeftArm()->GetWielded())
+      return GetLeftArm()->CalculateWieldedStrength(!GetRightArm() || GetRightArm()->GetWielded());
     else
-      if(GetSecondaryArm() && GetSecondaryArm()->GetWielded())
-	return GetSecondaryArm()->GetWieldedToHitValue(false);
-      else
-	return GetMainArm()->GetMeleeToHitValue();
-  else
-    if(GetSecondaryArm())
-      if(GetSecondaryArm()->GetWielded())
-	return GetSecondaryArm()->GetWieldedToHitValue(true);
-      else
-	return GetSecondaryArm()->GetMeleeToHitValue();
-    else
-      return 0;
-}
-
-float humanoid::GetSecondaryToHitValue() const
-{
-  if(GetSecondaryArm())
-    if(GetSecondaryArm()->GetWielded())
-      return GetSecondaryArm()->GetWieldedToHitValue(!GetMainArm() || GetMainArm()->GetWielded());
-    else
-      if(GetMainArm() && GetMainArm()->GetWielded())
+      if(GetRightArm() && GetRightArm()->GetWielded())
 	return 0;
       else
-	return GetSecondaryArm()->GetMeleeToHitValue();
+	return GetLeftArm()->CalculateUnarmedStrength();
+  else
+    return 0;
+}
+
+float humanoid::CalculateRightToHitValue() const
+{
+  if(GetRightArm())
+    if(GetRightArm()->GetWielded())
+      return GetRightArm()->CalculateWieldedToHitValue(!GetLeftArm() || GetLeftArm()->GetWielded());
+    else
+      if(GetLeftArm() && GetLeftArm()->GetWielded())
+	return 0;
+      else
+	return GetRightArm()->CalculateUnarmedToHitValue();
+  else
+    return 0;
+}
+
+float humanoid::CalculateLeftToHitValue() const
+{
+ if(GetLeftArm())
+    if(GetLeftArm()->GetWielded())
+      return GetLeftArm()->CalculateWieldedToHitValue(!GetRightArm() || GetRightArm()->GetWielded());
+    else
+      if(GetRightArm() && GetRightArm()->GetWielded())
+	return 0;
+      else
+	return GetLeftArm()->CalculateUnarmedToHitValue();
   else
     return 0;
 }
@@ -430,77 +416,52 @@ bool humanoid::Hit(character* Enemy)
       return true;
     }
 
-  if(GetMainAttackStrength())
-    MainHit(Enemy);
-
-  if(GetSecondaryAttackStrength())
-    SecondaryHit(Enemy);
-
-  // add kicking and biting!!!
-
   EditNP(-50);
+  ushort c, AttackStyles;
 
-  return true;
-}
+  for(c = 0, AttackStyles = 0; c < 8; ++c)
+    if(GetAttackStyle() & (1 << c))
+      ++AttackStyles;
 
-arm* humanoid::GetMainWeaponArm() const
-{
-  if(!GetMainArm() || !GetMainArm()->GetWielded())
-    return GetSecondaryArm();
-  else
-    return GetMainArm();
-}
+  ushort Chosen = RAND() % AttackStyles;
 
-arm* humanoid::GetSecondaryWeaponArm() const
-{
-  return GetSecondaryArm();
-}
+  for(c = 0, AttackStyles = 0; c < 8; ++c)
+    if(GetAttackStyle() & (1 << c) && AttackStyles++ == Chosen)
+      {
+	Chosen = 1 << c;
+	break;
+      }
 
-void humanoid::MainHit(character* Enemy)
-{
-  switch(Enemy->TakeHit(this, GetMainWielded(), GetMainAttackStrength(), GetMainToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier()))) //there's no breaks and there shouldn't be any
+  switch(Chosen)
     {
-    case HASHIT:
-    case HASBLOCKED:
-      if(GetMainWielded())
-	GetMainWielded()->ReceiveHitEffect(Enemy, this);
-    case HASDIED:
-      EditStrengthExperience(50);
-      if(GetCategoryWeaponSkill(GetMainWielded() ? GetMainWielded()->GetWeaponCategory() : UNARMED)->AddHit() && IsPlayer())
-	GetCategoryWeaponSkill(GetMainWielded() ? GetMainWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
-      if(GetMainWielded())
+    case USE_ARMS:
+      if(CalculateRightAttackStrength() || CalculateLeftAttackStrength())
 	{
-	  if(GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && IsPlayer())
-	    GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->GetName(UNARTICLED));
+	  if(CalculateRightAttackStrength())
+	    GetRightArm()->Hit(Enemy, CalculateRightAttackStrength(), CalculateRightToHitValue());
 
-	  GetMainWielded()->ReceiveDamage(this, GetStrength() / 2, PHYSICALDAMAGE);
+	  if(Enemy->IsEnabled() && CalculateLeftAttackStrength())
+	    GetLeftArm()->Hit(Enemy, CalculateLeftAttackStrength(), CalculateLeftToHitValue());
+
+	  return true;
 	}
-    case HASDODGED:
-      EditAgilityExperience(25);
-    }
-}
-
-void humanoid::SecondaryHit(character* Enemy)
-{
-  switch(Enemy->TakeHit(this, GetSecondaryWielded(), GetSecondaryAttackStrength(), GetSecondaryToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier()))) //there's no breaks and there shouldn't be any
-    {
-    case HASHIT:
-    case HASBLOCKED:
-      if(GetSecondaryWielded())
-	GetSecondaryWielded()->ReceiveHitEffect(Enemy, this);
-    case HASDIED:
-      EditStrengthExperience(50);
-      if(GetCategoryWeaponSkill(GetSecondaryWeaponArm() ? GetSecondaryWeaponArm()->GetWeaponCategory() : UNARMED)->AddHit() && IsPlayer())
-	GetCategoryWeaponSkill(GetSecondaryWeaponArm() ? GetSecondaryWeaponArm()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
-      if(GetSecondaryWielded())
+    case USE_LEGS:
+      if(GetRightLeg() && GetLeftLeg())
 	{
-	  if(GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && IsPlayer())
-	    GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->GetName(UNARTICLED));
-
-	  GetSecondaryWielded()->ReceiveDamage(this, GetStrength() / 2, PHYSICALDAMAGE);
+	  Kick(Enemy->GetLSquareUnder());
+	  return true;
 	}
-    case HASDODGED:
-      EditAgilityExperience(25);
+    case USE_HEAD:
+      if(GetHead())
+	{
+          Bite(Enemy);
+	  return true;
+	}
+    default:
+      if(IsPlayer())
+	ADD_MESSAGE("You are currently quite unable to damage anything.");
+
+      return true;
     }
 }
 
@@ -576,30 +537,28 @@ void petrus::BeTalkedTo(character* Talker)
     {
       ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life! And thou possess the Shirt of the Golden Eagle, the symbol of my status! Return it now, please.\"");
 
-      if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [Y/n]", 'y'))
+      if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]", REQUIRES_ANSWER))
 	{
 	  game::TextScreen("Thou hast slain the Blood Daemon King, and Petrus is happy!\n\nYou are victorious!");
-	  game::RemoveSaves();
-
-	  if(!game::GetWizardMode())
-	    {
-	      AddScoreEntry("retrieved the Shirt of the Golden Eagle and became the Avatar of Law", 4, false);
-	      highscore HScore;
-	      HScore.Draw();
-	    }
-
-	  game::Quit();
+	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and became the Avatar of Law", 4, false);
+	  game::End();
 	  return;
 	}
       else
 	{
-	  ADD_MESSAGE("Petrus's face turns RED. \"I see. Thine greed hast overcome thine wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
+	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 
 	  /* And now we actually make his face change color ;-) */
 
-	  //GetHead()->SetColor(0, MAKE_RGB(255, 75, 50));
-	  //GetHead()->UpdatePictures();
-	  //GetSquareUnder()->SendNewDrawRequest();
+	  if(GetHead()->GetMainMaterial()->IsFlesh())
+	    {
+	      std::vector<ushort>& SkinColor = ((flesh*)GetHead()->GetMainMaterial())->GetSkinColorVector();
+	      SkinColor.clear();
+	      SkinColor.push_back(MAKE_RGB(255, 75, 50));
+	    }
+
+	  GetHead()->UpdatePictures();
+	  GetSquareUnder()->SendNewDrawRequest();
 	  Talker->GetTeam()->Hostility(GetTeam());
 	  return;
 	}
@@ -617,7 +576,7 @@ void petrus::BeTalkedTo(character* Talker)
 	{
 	  ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee.");
 
-	  if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
+	  if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [y/n]", REQUIRES_ANSWER))
 	    {
 	      game::TextScreen(	"Champion of Law!\n\n"
 				"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
@@ -632,16 +591,8 @@ void petrus::BeTalkedTo(character* Talker)
 	}
 
       game::TextScreen("Thou hast slain Elpuri, and Petrus is happy!\n\nYou are victorious!");
-      game::RemoveSaves();
-
-      if(!game::GetWizardMode())
-	{
-	  AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
-	  highscore HScore;
-	  HScore.Draw();
-	}
-
-      game::Quit();
+      AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
+      game::End();
     }
   else
     if(!StoryState)
@@ -913,12 +864,6 @@ void humanoid::AddSpecialItemInfoDescription(std::string& Description)
   Description += "SSL";
 }
 
-void humanoid::KickHit()
-{
-  if(GetCategoryWeaponSkill(UNARMED)->AddHit() && IsPlayer())
-    GetCategoryWeaponSkill(UNARMED)->AddLevelUpMessage();
-}
-
 void communist::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
@@ -1007,7 +952,7 @@ void hunter::BeTalkedTo(character* Talker)
       if(GetMainWielded())
 	ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", GetMainWielded()->CHARNAME(UNARTICLED), GetMainWielded()->CHARNAME(UNARTICLED));
       else
-	ADD_MESSAGE("\"I am the Great WHITE Hunter. Get out of My way!\"");
+	ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
       break;
     case 3:
       ADD_MESSAGE("\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"");
@@ -1034,7 +979,7 @@ void slave::BeTalkedTo(character* Talker)
     {
       if(Talker->GetMoney() >= 50)
 	{
-	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 squirrels. I work very hard.\"", CHARDESCRIPTION(DEFINITE));
+	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHARDESCRIPTION(DEFINITE));
 
 	  if(game::BoolQuestion("Do you want to buy him? [y/N]"))
 	    {
@@ -1046,7 +991,7 @@ void slave::BeTalkedTo(character* Talker)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch sale items. I'm worth 50 squirrels, you know!\"");
+	  ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch sale items. I'm worth 50 gold pieces, you know!\"");
 	}
 
       return;
@@ -1054,15 +999,17 @@ void slave::BeTalkedTo(character* Talker)
 
   if(GetTeam() == Talker->GetTeam())
     {
+      /* What if the whip is in the off hand? */
+
       if(Talker->GetMainWielded() && Talker->GetMainWielded()->IsWhip())
 	{
 	  ADD_MESSAGE("\"Don't hit me! I work! I obey! I not think!\"");
 	}
       else
 	{
-	  static bool Said[4];
+	  static bool Said[5];
 
-	  switch(RandomizeReply(4, Said))
+	  switch(RandomizeReply(5, Said))
 	    {
 	    case 0:
 	      ADD_MESSAGE("\"Whatever the master wants.\"");
@@ -1117,30 +1064,16 @@ bool elpuri::Hit(character* Enemy)
     character* ByStander = Square->GetCharacter();
 
     if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
-      {
-	Hostility(ByStander);
+      nonhumanoid::Hit(ByStander);
 
-	switch(ByStander->TakeHit(this, 0, GetAttackStrength(), GetToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier())))
-	  {
-	  case HASHIT:
-	  case HASBLOCKED:
-	  case HASDIED:
-	    //ByStander->GetStack()->ReceiveDamage(this, GetStrength(), PHYSICALDAMAGE);
-	    EditStrengthExperience(50);
-	  case HASDODGED:
-	    EditAgilityExperience(25);
-	  }
-      }
-
-    Square->GetStack()->ReceiveDamage(this, GetStrength(), PHYSICALDAMAGE);
+    Square->GetStack()->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
 
     for(ushort c = 0; c < 4; ++c)
       if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
-	Square->GetSideStack(c)->ReceiveDamage(this, GetStrength(), PHYSICALDAMAGE);
+	Square->GetSideStack(c)->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
   });
 
   EditNP(-50);
-
   return true;
 }
 
@@ -1306,7 +1239,7 @@ void librarian::BeTalkedTo(character* Talker)
 	  break;
 	}
     case 6:
-      ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog. He holds the Shirt of the Golden Eagle and has always killed his pREDecessor.\"");
+      ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog. He holds the Shirt of the Golden Eagle and has always killed his predecessor.\"");
       break;
     case 7:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
@@ -1378,7 +1311,7 @@ void zombie::BeTalkedTo(character* Talker)
     if(RAND() % 5)
       ADD_MESSAGE("\"Need brain!!\"");
     else
-      ADD_MESSAGE("\"REDrum! REDrum! REDrum!\"");
+      ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
   else
     ADD_MESSAGE("\"Need brain, but not your brain.\"");
 }
@@ -1413,7 +1346,7 @@ void mistress::CreateInitialEquipment()
 
 void werewolf::ChangeIntoHuman()
 {
-  SetSize(170);
+  /*SetSize(170);
   SetAgility(15);
   SetStrength(15);
   SetEndurance(15);
@@ -1422,7 +1355,7 @@ void werewolf::ChangeIntoHuman()
   SetStrengthExperience(0);
   SetEnduranceExperience(0);
   SetAgilityExperience(0);
-  SetPerceptionExperience(0);
+  SetPerceptinExperience(0);*/
   RestoreHP();
   UpdateBodyPartPictures();
 
@@ -1432,7 +1365,7 @@ void werewolf::ChangeIntoHuman()
 
 void werewolf::ChangeIntoWolf()
 {
-  SetSize(200);
+  /*SetSize(200);
   SetAgility(25);
   SetStrength(25);
   SetEndurance(25);
@@ -1443,7 +1376,7 @@ void werewolf::ChangeIntoWolf()
   SetStrengthExperience(0);
   SetEnduranceExperience(0);
   SetAgilityExperience(0);
-  SetPerceptionExperience(0);
+  SetPerceptionExperience(0);*/
   RestoreHP();
   UpdateBodyPartPictures();
 
@@ -1552,20 +1485,20 @@ void angel::SetDivineMaster(uchar NewMaster)
   switch(game::GetGod(NewMaster)->BasicAlignment())
     {
     case GOOD:
-      SetAgility(99);
+      EditAttribute(AGILITY, 99);
       SetMainWielded(new longsword(MAKE_MATERIAL(DIAMOND)));
       SetBodyArmor(new chainmail(MAKE_MATERIAL(DIAMOND)));
       RestoreHP();
       break;
     case NEUTRAL:
-      SetEndurance(99);
+      EditAttribute(ENDURANCE, 99);
       SetMainWielded(new poleaxe(MAKE_MATERIAL(SAPPHIRE)));
       SetBodyArmor(new chainmail(MAKE_MATERIAL(SAPPHIRE)));
       RestoreHP();
       break;
     case EVIL:
       {
-	SetStrength(99);
+	EditAttribute(ARMSTRENGTH, 99);
 	spikedmace* SpikedMace = new spikedmace(0, false);
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
@@ -1706,22 +1639,6 @@ void unicorn::Load(inputfile& SaveFile)
   character::Load(SaveFile);
   SaveFile >> Alignment;
 }
-
-/*std::string unicorn::NameSingular() const
-{
-  switch(Alignment)
-    {
-    case EVIL:
-      return "BLACK unicorn";
-    case NEUTRAL:
-      return "gray unicorn";
-    case GOOD:
-      return "WHITE unicorn";
-    }
-
-  ABORT("Unicorns do not exist.");
-  return "";
-}*/
 
 void kamikazedwarf::GetAICommand()
 {
@@ -1945,20 +1862,11 @@ bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar
 {
   std::vector<uchar> ChooseFrom;
 
-  if(TargetFlags & TORSO && GetTorso())
-    ChooseFrom.push_back(0);
-
-  if(TargetFlags & HEAD && GetHead())
-    ChooseFrom.push_back(1);
-
   if(TargetFlags & RIGHTARM && GetRightArm())
     ChooseFrom.push_back(2);
 
   if(TargetFlags & LEFTARM && GetLeftArm())
     ChooseFrom.push_back(3);
-
-  if(TargetFlags & GROIN && GetGroin())
-    ChooseFrom.push_back(4);
 
   if(TargetFlags & RIGHTLEG && GetRightLeg())
     ChooseFrom.push_back(5);
@@ -1966,21 +1874,53 @@ bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar
   if(TargetFlags & LEFTLEG && GetLeftLeg())
     ChooseFrom.push_back(6);
 
+  if(TargetFlags & HEAD && GetHead())
+    ChooseFrom.push_back(1);
+
+  if(TargetFlags & TORSO && GetTorso())
+    ChooseFrom.push_back(0);
+
+  if(TargetFlags & GROIN && GetGroin())
+    ChooseFrom.push_back(4);
+
   if(!ChooseFrom.size())
     return false;
 
+  ulong TotalVolume = 0;
+  ushort c;
+
+  for(c = 0; c < ChooseFrom.size(); ++c)
+    TotalVolume += GetBodyPart(ChooseFrom[c])->GetVolume();
+
+  bool Affected = false;
+
   if(Divide)
     {
-      bool Affected = false;
-
-      for(ushort c = 0; c < ChooseFrom.size(); ++c)
-	if(ReceiveBodyPartDamage(Damager, Amount / ChooseFrom.size(), Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
+      for(c = 0; c < ChooseFrom.size(); ++c)
+	if(ReceiveBodyPartDamage(Damager, long(Amount) * GetBodyPart(ChooseFrom[c])->GetVolume() / TotalVolume, Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
 	  Affected = true;
-
-      return Affected;
     }
   else
-    return ReceiveBodyPartDamage(Damager, Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
+    Affected = ReceiveBodyPartDamage(Damager, Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
+
+  if(!Affected)
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You are not hurt.");
+      else if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s is not hurt.", PersonalPronoun().c_str());
+    }
+
+  if(DamageTypeAffectsInventory(Type))
+    {
+      for(ushort c = 0; c < EquipmentSlots(); ++c)
+	if(GetEquipment(c))
+	  GetEquipment(c)->ReceiveDamage(Damager, Amount, Type);
+
+      GetStack()->ReceiveDamage(Damager, Amount, Type);
+    }
+
+  return Affected;
 }
 
 arm* humanoid::GetMainArm() const
@@ -2159,13 +2099,13 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
   dig* Dig = new dig(this);
 
   if(GetRightArm())
-      Dig->SetRightBackup(GetRightArm()->GetWielded()); // slot cleaRED automatically
+    Dig->SetRightBackup(GetRightArm()->GetWielded()); // slot cleared automatically
 
   if(GetLeftArm())
-      Dig->SetRightBackup(GetLeftArm()->GetWielded()); // slot cleaRED automatically
+    Dig->SetRightBackup(GetLeftArm()->GetWielded()); // slot cleared automatically
 
   DigItem->RemoveFromSlot();
-  GetMainArm()->SetWielded(DigItem);
+  SetMainWielded(DigItem); // bug, this may change arm?
   Dig->SetSquareDug(Square);
   SetAction(Dig);
 }
@@ -2199,6 +2139,7 @@ uchar humanoid::GetLegs() const
 
   if(GetRightLeg())
     ++Legs;
+
   if(GetLeftLeg())
     ++Legs;
 
@@ -2211,6 +2152,7 @@ uchar humanoid::GetArms() const
 
   if(GetRightArm())
     ++Arms;
+
   if(GetLeftArm())
     ++Arms;
 
@@ -2309,7 +2251,7 @@ void carnivorousplant::GetAICommand()
   GetTorso()->UpdatePictures();
 }*/
 
-bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
+bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where) const
 {
   ushort Color[4], x;
 
@@ -2390,20 +2332,62 @@ void kamikazedwarf::SetDivineMaster(uchar Master)
 
 void humanoid::AddInfo(felist& Info) const
 {
-  if(GetMainWielded())
-    Info.AddEntry("Main wielded: " + GetMainWielded()->GetName(INDEFINITE), LIGHTGRAY);
-  else
-    Info.AddEntry("Main wielded: nothing", LIGHTGRAY);
+  if(GetRightArm())
+    {
+      Info.AddEntry(std::string("Right arm strength: ") + GetRightArm()->GetAttribute(ARMSTRENGTH), LIGHTGRAY);
+      Info.AddEntry(std::string("Right arm dexterity: ") + GetRightArm()->GetAttribute(DEXTERITY), LIGHTGRAY);
+    }
 
-  if(GetSecondaryWielded())
-    Info.AddEntry(std::string("Secondary wielded: ") + GetSecondaryWielded()->GetName(INDEFINITE), LIGHTGRAY);
-  else
-    Info.AddEntry("Secondary wielded: nothing", LIGHTGRAY);
+  if(GetLeftArm())
+    {
+      Info.AddEntry(std::string("Left arm strength: ") + GetLeftArm()->GetAttribute(ARMSTRENGTH), LIGHTGRAY);
+      Info.AddEntry(std::string("Left arm dexterity: ") + GetLeftArm()->GetAttribute(DEXTERITY), LIGHTGRAY);
+    }
 
-  Info.AddEntry(std::string("Main attack strength: ") + ulong(GetMainAttackStrength()), LIGHTGRAY);
-  Info.AddEntry(std::string("Secondary attack strength: ") + ulong(GetSecondaryAttackStrength()), LIGHTGRAY);
-  Info.AddEntry(std::string("Main to hit value: ") + ulong(GetMainToHitValue()), LIGHTGRAY);
-  Info.AddEntry(std::string("Secondary to hit value: ") + ulong(GetSecondaryToHitValue()), LIGHTGRAY);
+  if(GetRightLeg())
+    {
+      Info.AddEntry(std::string("Right leg strength: ") + GetRightLeg()->GetAttribute(LEGSTRENGTH), LIGHTGRAY);
+      Info.AddEntry(std::string("Right leg agility: ") + GetRightLeg()->GetAttribute(AGILITY), LIGHTGRAY);
+    }
+
+  if(GetLeftLeg())
+    {
+      Info.AddEntry(std::string("Left leg strength: ") + GetLeftLeg()->GetAttribute(LEGSTRENGTH), LIGHTGRAY);
+      Info.AddEntry(std::string("Left leg agility: ") + GetLeftLeg()->GetAttribute(AGILITY), LIGHTGRAY);
+    }
+
+  if(GetRightWielded())
+    Info.AddEntry("Right wielded: " + GetRightWielded()->GetName(INDEFINITE), LIGHTGRAY);
+  else
+    Info.AddEntry("Right wielded: nothing", LIGHTGRAY);
+
+  if(GetLeftWielded())
+    Info.AddEntry(std::string("Left wielded: ") + GetLeftWielded()->GetName(INDEFINITE), LIGHTGRAY);
+  else
+    Info.AddEntry("Left wielded: nothing", LIGHTGRAY);
+
+  Info.AddEntry(std::string("Right attack strength: ") + ulong(CalculateRightAttackStrength() / 1000), LIGHTGRAY);
+  Info.AddEntry(std::string("Right to hit value: ") + ulong(CalculateRightToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Left attack strength: ") + ulong(CalculateLeftAttackStrength() / 1000), LIGHTGRAY);
+  Info.AddEntry(std::string("Left to hit value: ") + ulong(CalculateLeftToHitValue()), LIGHTGRAY);
+
+  if(GetRightLeg())
+    {
+      Info.AddEntry(std::string("Right kick strength: ") + ulong(GetRightLeg()->CalculateKickStrength() / 1000), LIGHTGRAY);
+      Info.AddEntry(std::string("Right kick to hit value: ") + ulong(GetRightLeg()->CalculateKickToHitValue()), LIGHTGRAY);
+    }
+
+  if(GetLeftLeg())
+    {
+      Info.AddEntry(std::string("Left kick strength: ") + ulong(GetLeftLeg()->CalculateKickStrength() / 1000), LIGHTGRAY);
+      Info.AddEntry(std::string("Left kick to hit value: ") + ulong(GetLeftLeg()->CalculateKickToHitValue()), LIGHTGRAY);
+    }
+
+  if(GetHead())
+    {
+      Info.AddEntry(std::string("Bite strength: ") + ulong(GetHead()->CalculateBiteStrength() / 1000), LIGHTGRAY);
+      Info.AddEntry(std::string("Bite to hit value: ") + ulong(GetHead()->CalculateBiteToHitValue()), LIGHTGRAY);
+    }
 }
 
 void humanoid::CompleteRiseFromTheDead()
@@ -2413,11 +2397,13 @@ void humanoid::CompleteRiseFromTheDead()
   for(c = 0; c < BodyParts(); ++c)
     if(!GetBodyPart(c))
       {
-	stack* Stack = GetLSquareUnder()->GetStack(); 
+	stack* Stack = GetLSquareUnder()->GetStack();
+
+	/* Let's search for the original bodypart */
 
 	for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
 	  {
-	    if((**i)->FitsBodyPartIndex(c, this))
+	    if((**i)->GetID() == GetOriginalBodyPartID(c))
 	      {
 		item* Item = ***i;
 		Item->RemoveFromSlot();
@@ -2425,6 +2411,20 @@ void humanoid::CompleteRiseFromTheDead()
 		break;
 	      }
 	  }
+
+	/* If not found, take the first that fits */
+
+	if(!GetBodyPart(c))
+	  for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
+	    {
+	      if((**i)->GetBodyPartIndex() == c)
+		{
+		  item* Item = ***i;
+		  Item->RemoveFromSlot();
+		  SetBodyPart(c, (bodypart*)Item);
+		  break;
+		}
+	    }
       }
 
   for(c = 0; c < BodyParts(); ++c)
@@ -2433,7 +2433,8 @@ void humanoid::CompleteRiseFromTheDead()
 	if(!HandleNoBodyPart(c))
 	  return;
 
-      GetBodyPart(c)->SetHP(1);
+      if(GetBodyPart(c))
+	GetBodyPart(c)->SetHP(1);
     }
 }
 
@@ -2531,12 +2532,18 @@ void human::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      SetAgility(GetAgility() + RAND() % 11);
-      SetStrength(GetStrength() + RAND() % 6);
-      SetEndurance(GetEndurance() + RAND() % 6);
-      SetPerception(GetPerception() + RAND() % 6);
+      EditAttribute(ARMSTRENGTH, RAND() % 2 - RAND() % 2);
+      EditAttribute(DEXTERITY, RAND() % 2 - RAND() % 2);
+      EditAttribute(LEGSTRENGTH, RAND() % 2 - RAND() % 2);
+      EditAttribute(AGILITY, RAND() % 2 - RAND() % 2);
+      EditAttribute(ENDURANCE, RAND() % 2 - RAND() % 2);
+      EditAttribute(PERCEPTION, RAND() % 2 - RAND() % 2);
+      EditAttribute(INTELLIGENCE, RAND() % 2 - RAND() % 2);
+      EditAttribute(WISDOM, RAND() % 2 - RAND() % 2);
+      EditAttribute(CHARISMA, RAND() % 2 - RAND() % 2);
+      EditAttribute(MANA, RAND() % 2 - RAND() % 2);
       SetMoney(GetMoney() + RAND() % 101);
-      SetTotalSize(character::GetTotalSize() + RAND() % 51);
+      SetSize(character::GetTotalSize() + RAND() % 51);
     }
 }
 
@@ -2593,12 +2600,18 @@ void kamikazedwarf::VirtualConstructor(bool Load)
     SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
 }
 
-void unicorn::VirtualConstructor(bool Load)
+/*void unicorn::VirtualConstructor(bool Load)
 {
   character::VirtualConstructor(Load);
   
   if(!Load)
     SetAlignment(RAND() % 3);
+}*/
+
+void unicorn::CreateBodyParts()
+{
+  SetAlignment(RAND() % 3);
+  character::CreateBodyParts();
 }
 
 void human::Save(outputfile& SaveFile) const
@@ -2611,5 +2624,545 @@ void human::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> TotalSize;
+}
+
+void nonhumanoid::Save(outputfile& SaveFile) const
+{
+  character::Save(SaveFile);
+  SaveFile << Strength << Agility << StrengthExperience << AgilityExperience;
+}
+
+void nonhumanoid::Load(inputfile& SaveFile)
+{
+  character::Load(SaveFile);
+  SaveFile >> Strength >> Agility >> StrengthExperience >> AgilityExperience;
+}
+
+float nonhumanoid::CalculateUnarmedToHitValue() const
+{
+  return GetBattleAttributeModifier() * ((Agility << 2) + Strength + GetAttribute(PERCEPTION)) / 2;
+}
+
+float nonhumanoid::CalculateKickToHitValue() const
+{
+  return CalculateUnarmedToHitValue() / 2;
+}
+
+float nonhumanoid::CalculateBiteToHitValue() const
+{
+  return CalculateUnarmedToHitValue() / 2;
+}
+
+float nonhumanoid::CalculateUnarmedStrength() const
+{
+  return GetUnarmedStrength() * Strength;
+}
+
+float nonhumanoid::CalculateKickStrength() const
+{
+  return GetKickStrength() * Strength;
+}
+
+float nonhumanoid::CalculateBiteStrength() const
+{
+  return GetBiteStrength() * Strength;
+}
+
+void nonhumanoid::InitSpecialAttributes()
+{
+  Strength = GetDefaultArmStrength() << 1;
+  Agility = GetDefaultAgility() << 1;
+}
+
+void humanoid::Bite(character* Enemy)
+{
+  /* This function ought not to be called without a head */
+
+  switch(Enemy->TakeHit(this, 0, GetHead()->CalculateBiteStrength(), GetHead()->CalculateBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier())))
+    {
+    case HASHIT:
+    case HASBLOCKED:
+      SpecialBiteEffect(Enemy);
+    case HASDIED:
+      if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
+	GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
+    }
+}
+
+void nonhumanoid::Bite(character* Enemy)
+{
+  switch(Enemy->TakeHit(this, 0, CalculateBiteStrength(), CalculateBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier())))
+    {
+    case HASHIT:
+    case HASBLOCKED:
+      SpecialBiteEffect(Enemy);
+    }
+}
+
+void humanoid::Kick(lsquare* Square)
+{
+  /* This function must not be called if a leg is missing */
+
+  if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
+    {
+      Square->BeKicked(this, GetRightLeg()->CalculateKickStrength(), GetRightLeg()->CalculateKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+
+      /* Leg might be destroyed in the process, check needed */
+
+      if(GetRightLeg())
+	{
+	  GetRightLeg()->EditExperience(LEGSTRENGTH, 25);
+	  GetRightLeg()->EditExperience(AGILITY, 50);
+	}
+    }
+  else
+    {
+      Square->BeKicked(this, GetLeftLeg()->CalculateKickStrength(), GetLeftLeg()->CalculateKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+
+      /* Leg might be destroyed in the process, check needed */
+
+      if(GetLeftLeg())
+	{
+	  GetLeftLeg()->EditExperience(LEGSTRENGTH, 25);
+	  GetLeftLeg()->EditExperience(AGILITY, 50);
+	}
+    }
+
+  if(GetCategoryWeaponSkill(KICK)->AddHit() && IsPlayer())
+    GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
+
+  EditNP(-50);
+}
+
+void nonhumanoid::Kick(lsquare* Square)
+{
+  Square->BeKicked(this, CalculateKickStrength(), CalculateKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+  EditNP(-50);
+}
+
+bool nonhumanoid::Hit(character* Enemy)
+{
+  if(IsPlayer() && GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+    return false;
+
+  Hostility(Enemy);
+
+  if(GetBurdenState() == OVERLOADED)
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You cannot fight while carrying so much.");
+
+      return true;
+    }
+
+  EditNP(-50);
+  ushort c, AttackStyles;
+
+  for(c = 0, AttackStyles = 0; c < 8; ++c)
+    if(GetAttackStyle() & (1 << c))
+      ++AttackStyles;
+
+  ushort Chosen = RAND() % AttackStyles;
+
+  for(c = 0, AttackStyles = 0; c < 8; ++c)
+    if(GetAttackStyle() & (1 << c) && AttackStyles++ == Chosen)
+      {
+	Chosen = 1 << c;
+	break;
+      }
+
+  switch(Chosen)
+    {
+    case USE_ARMS:
+      UnarmedHit(Enemy);
+      return true;
+    case USE_LEGS:
+      Kick(Enemy->GetLSquareUnder());
+      return true;
+    case USE_HEAD:
+      Bite(Enemy);
+      return true;
+    default:
+      ADD_MESSAGE("Strange alien attack style requested!");
+      return false;
+    }
+}
+
+void nonhumanoid::AddInfo(felist& Info) const
+{
+  Info.AddEntry(std::string("Strength: ") + GetAttribute(ARMSTRENGTH), LIGHTGRAY);
+  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHTGRAY);
+  Info.AddEntry(std::string("Unarmed attack strength: ") + ulong(CalculateUnarmedStrength() / 1000), LIGHTGRAY);
+  Info.AddEntry(std::string("Unarmed to hit value: ") + ulong(CalculateUnarmedToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Kick attack strength: ") + ulong(CalculateKickStrength() / 1000), LIGHTGRAY);
+  Info.AddEntry(std::string("Kick to hit value: ") + ulong(CalculateKickToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Bite attack strength: ") + ulong(CalculateBiteStrength() / 1000), LIGHTGRAY);
+  Info.AddEntry(std::string("Bite to hit value: ") + ulong(CalculateBiteToHitValue()), LIGHTGRAY);
+}
+
+void nonhumanoid::UnarmedHit(character* Enemy)
+{
+  Enemy->TakeHit(this, 0, CalculateUnarmedStrength(), CalculateUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMEDATTACK, !(RAND() % GetCriticalModifier()));
+}
+
+float humanoid::GetAttackStrengthDanger() const
+{
+  float Danger = 0;
+  ushort AttackStyles = 0;
+  float DodgeValue = CalculateDodgeValue();
+
+  if(GetAttackStyle() & USE_ARMS && (CalculateRightAttackStrength() || CalculateLeftAttackStrength()))
+    {
+      Danger += CalculateRightAttackStrength() * (CalculateRightToHitValue() + DodgeValue);
+      Danger += CalculateLeftAttackStrength() * (CalculateLeftToHitValue() + DodgeValue);
+      ++AttackStyles;
+    }
+
+  if((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && GetRightLeg() && GetLeftLeg())
+    {
+      if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
+	Danger += GetRightLeg()->CalculateKickStrength() * (GetRightLeg()->CalculateKickToHitValue() + DodgeValue);
+      else
+	Danger += GetLeftLeg()->CalculateKickStrength() * (GetLeftLeg()->CalculateKickToHitValue() + DodgeValue);
+
+      ++AttackStyles;
+    }
+
+  if((GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead())
+    {
+      Danger += GetHead()->CalculateBiteStrength() * (GetHead()->CalculateBiteToHitValue() + DodgeValue);
+      ++AttackStyles;
+    }
+
+  return AttackStyles ? Danger / AttackStyles : 0;
+}
+
+float nonhumanoid::GetAttackStrengthDanger() const
+{
+  float Danger = 0;
+  ushort AttackStyles = 0;
+  float DodgeValue = CalculateDodgeValue();
+
+  if(GetAttackStyle() & USE_ARMS)
+    {
+      Danger += CalculateUnarmedStrength() * (CalculateUnarmedToHitValue() + DodgeValue);
+      ++AttackStyles;
+    }
+
+  if(GetAttackStyle() & USE_LEGS)
+    {
+      Danger += CalculateKickStrength() * (CalculateKickToHitValue() + DodgeValue);
+      ++AttackStyles;
+    }
+
+  if(GetAttackStyle() & USE_HEAD)
+    {
+      Danger += CalculateBiteStrength() * (CalculateBiteToHitValue() + DodgeValue);
+      ++AttackStyles;
+    }
+
+  return Danger / AttackStyles;
+}
+
+void nonhumanoid::ApplyExperience()
+{
+  if(CheckForAttributeIncrease(Strength, StrengthExperience, true))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Your feel stronger!");
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks stronger.", CHARNAME(DEFINITE));
+    }
+  else if(CheckForAttributeDecrease(Strength, StrengthExperience, true))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Your feel weaker.");
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks weaker.", CHARNAME(DEFINITE));
+    }
+
+  if(CheckForAttributeIncrease(Agility, AgilityExperience, true))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Your feel very agile!");
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks very agile.", CHARNAME(DEFINITE));
+    }
+  else if(CheckForAttributeDecrease(Agility, AgilityExperience, true))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Your feel slower.");
+      else
+	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("Suddenly %s looks sluggish.", CHARNAME(DEFINITE));
+    }
+
+  character::ApplyExperience();
+}
+
+ushort humanoid::GetAttribute(ushort Identifier) const
+{
+  if(Identifier < BASEATTRIBUTES)
+    return character::GetAttribute(Identifier);
+  else
+    {
+      ushort Attrib = 0;
+
+       if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
+	{
+	  if(GetRightArm())
+	    Attrib += GetRightArm()->GetAttribute(Identifier);
+
+	  if(GetLeftArm())
+	    Attrib += GetLeftArm()->GetAttribute(Identifier);
+	}
+      else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
+	{
+	  if(GetRightLeg())
+	    Attrib += GetRightLeg()->GetAttribute(Identifier);
+
+	  if(GetLeftLeg())
+	    Attrib += GetLeftLeg()->GetAttribute(Identifier);
+	}
+      else
+	{
+	  ABORT("Illegal humanoid attribute %d request!", Identifier);
+	  return 0xEBBA;
+	}
+
+      return Attrib >> 1;
+    }
+}
+
+bool humanoid::EditAttribute(ushort Identifier, short Value)
+{
+  if(Identifier < BASEATTRIBUTES)
+    return character::EditAttribute(Identifier, Value);
+  else if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
+    {
+      bool Success = false;
+
+      if(GetRightArm() && GetRightArm()->EditAttribute(Identifier, Value))
+	Success = true;
+
+      if(GetLeftArm() && GetLeftArm()->EditAttribute(Identifier, Value))
+	Success = true;
+
+      return Success;
+    }
+  else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
+    {
+      bool Success = false;
+
+      if(GetRightLeg() && GetRightLeg()->EditAttribute(Identifier, Value))
+	Success = true;
+
+      if(GetLeftLeg() && GetLeftLeg()->EditAttribute(Identifier, Value))
+	Success = true;
+
+      return Success;
+    }
+  else
+    {
+      ABORT("Illegal humanoid attribute %d edit request!", Identifier);
+      return false;
+    }
+}
+
+void humanoid::EditExperience(ushort Identifier, long Value)
+{
+  if(Identifier < BASEATTRIBUTES)
+    character::EditExperience(Identifier, Value);
+  else if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
+    {
+      /* If the humanoid has only one arm, should the experience be doubled? */
+
+      if(GetRightArm())
+	GetRightArm()->EditExperience(Identifier, Value);
+
+      if(GetLeftArm())
+	GetLeftArm()->EditExperience(Identifier, Value);
+    }
+  else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
+    {
+      /* If the humanoid has only one leg, should the experience be doubled? */
+
+      if(GetRightLeg())
+	GetRightLeg()->EditExperience(Identifier, Value);
+
+      if(GetLeftLeg())
+	GetLeftLeg()->EditExperience(Identifier, Value);
+    }
+  else
+    ABORT("Illegal humanoid attribute %d experience edit request!", Identifier);
+}
+
+ushort nonhumanoid::GetAttribute(ushort Identifier) const
+{
+  if(Identifier < BASEATTRIBUTES)
+    return character::GetAttribute(Identifier);
+  else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
+    return Strength >> 1;
+  else if(Identifier == DEXTERITY || Identifier == AGILITY)
+    return Agility >> 1;
+  else
+    {
+      ABORT("Illegal nonhumanoid attribute %d request!", Identifier);
+      return 0xABBE;
+    }
+}
+
+bool nonhumanoid::EditAttribute(ushort Identifier, short Value)
+{
+  if(Identifier < BASEATTRIBUTES)
+    return character::EditAttribute(Identifier, Value);
+  else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
+    return RawEditAttribute(Strength, Value, true);
+  else if(Identifier == DEXTERITY || Identifier == AGILITY)
+    return RawEditAttribute(Agility, Value, true);
+  else
+    {
+      ABORT("Illegal nonhumanoid attribute %d edit request!", Identifier);
+      return false;
+    }
+}
+
+void nonhumanoid::EditExperience(ushort Identifier, long Value)
+{
+  if(Identifier < BASEATTRIBUTES)
+    character::EditExperience(Identifier, Value);
+  else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
+    StrengthExperience += Value;
+  else if(Identifier == DEXTERITY || Identifier == AGILITY)
+    AgilityExperience += Value;
+  else
+    ABORT("Illegal nonhumanoid attribute %d experience edit request!", Identifier);
+}
+
+bool nonhumanoid::RaiseStats()
+{
+  Strength += 10;
+  Agility += 10;
+  return character::RaiseStats();
+}
+
+bool nonhumanoid::LowerStats()
+{
+  Strength -= 10;
+  Agility -= 10;
+  return character::LowerStats();
+}
+
+ushort humanoid::DrawStats() const
+{
+  ushort PanelPosX = RES.X - 96, PanelPosY = 12;
+
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "ArmStr %d", GetAttribute(ARMSTRENGTH));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LegStr %d", GetAttribute(LEGSTRENGTH));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Dex %d", GetAttribute(DEXTERITY));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Man %d", GetAttribute(MANA));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, GetHP() < GetMaxHP() / 3 ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
+
+  ++PanelPosY;
+
+  if(GetAttackStyle() & USE_ARMS && (CalculateRightAttackStrength() || CalculateLeftAttackStrength()))
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAS %.0f", CalculateRightAttackStrength() / 1000);
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", CalculateRightToHitValue());
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAS %.0f", CalculateLeftAttackStrength() / 1000);
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", CalculateLeftToHitValue());
+    }
+
+  if((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && GetRightLeg() && GetLeftLeg())
+    {
+      if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
+	{
+	  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAS %.0f", GetRightLeg()->CalculateKickStrength() / 1000);
+	  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", GetRightLeg()->CalculateKickToHitValue());
+	}
+      else
+	{
+	  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAS %.0f", GetLeftLeg()->CalculateKickStrength() / 1000);
+	  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", GetLeftLeg()->CalculateKickToHitValue());
+	}
+    }
+
+  if((GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead())
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAS %.0f", GetHead()->CalculateBiteStrength() / 1000);
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", GetHead()->CalculateBiteToHitValue());
+    }
+
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", CalculateDodgeValue());
+
+  if(game::WizardModeActivated())
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Da: %d", CurrentDanger());
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
+    }
+  else
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());
+
+  return PanelPosY;
+}
+
+ushort nonhumanoid::DrawStats() const
+{
+  ushort PanelPosX = RES.X - 96, PanelPosY = 12;
+
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", Strength >> 1);
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", Agility >> 1);
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Man %d", GetAttribute(MANA));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, GetHP() < GetMaxHP() / 3 ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
+
+  ++PanelPosY;
+
+  if(GetAttackStyle() & USE_ARMS)
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "AS %.0f", CalculateUnarmedStrength() / 1000);
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "THV %.0f", CalculateUnarmedToHitValue());
+    }
+
+  if(GetAttackStyle() & USE_LEGS)
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAS %.0f", CalculateKickStrength() / 1000);
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", CalculateKickToHitValue());
+    }
+
+  if(GetAttackStyle() & USE_HEAD)
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAS %.0f", CalculateBiteStrength() / 1000);
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", CalculateBiteToHitValue());
+    }
+
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", CalculateDodgeValue());
+
+  if(game::WizardModeActivated())
+    {
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Da: %d", CurrentDanger());
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
+    }
+  else
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());
+
+  return PanelPosY;
 }
 

@@ -62,7 +62,7 @@ class stack
   bool SortedItems(character*, bool (*)(item*, character*)) const;
   void DrawItemData(ushort, ushort) const;
   void DeletePointers();
-  void Kick(character*, ushort, uchar);
+  void BeKicked(character*, float);
   long Score() const;
   void Polymorph();
   void CheckForStepOnEffect(character*);

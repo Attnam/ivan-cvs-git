@@ -1,6 +1,6 @@
 #include "graphics.h"
 #include "bitmap.h"
-#include "strover.h"
+#include "stdover.h"
 #include "hscore.h"
 #include "whandler.h"
 #include "save.h"

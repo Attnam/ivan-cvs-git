@@ -1,5 +1,5 @@
-#ifndef __STROVER_H__
-#define __STROVER_H__
+#ifndef __STDOVER_H__
+#define __STDOVER_H__
 
 #ifdef VC
 #pragma warning(disable : 4786)
@@ -7,6 +7,7 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 #include "typedef.h"
 
@@ -88,6 +89,12 @@ inline std::string& operator+= (std::string& CppString, const ulong& Int)
 inline std::string operator+ (const char* CString, std::string CppString)
 {
   return std::string(CString) + CppString;
+}
+
+template <class type> std::vector<type>& operator<<(std::vector<type>& Vector, const type& Element)
+{
+  Vector.push_back(Element);
+  return Vector;
 }
 
 #endif

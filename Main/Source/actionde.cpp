@@ -47,7 +47,8 @@ void faint::Handle()
     }
   else
     {
-      GetActor()->EditStrengthExperience(-3);
+      GetActor()->EditExperience(ARMSTRENGTH, -3);
+      GetActor()->EditExperience(LEGSTRENGTH, -3);
     }
 }
 
@@ -162,7 +163,7 @@ void rest::Handle()
   if(GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP())
     Terminate(true);
   else
-    GetActor()->EditAgilityExperience(-1 * GetActor()->GetSquareUnder()->RestModifier());
+    GetActor()->EditExperience(AGILITY, -GetActor()->GetSquareUnder()->RestModifier());
 }
 
 void rest::Terminate(bool Finished)
@@ -203,7 +204,7 @@ void dig::Handle()
     Terminate(false);
 
   lsquare* Square = GetActor()->GetLSquareUnder()->GetLevelUnder()->GetLSquare(SquareDug);
-  Square->GetOLTerrain()->EditHP(-long(GetActor()->GetStrength()) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
+  Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARMSTRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
     {
