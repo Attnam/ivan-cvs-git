@@ -1379,7 +1379,7 @@ oillamp
 	Price = 100;
 	Alias == "lamp";
 	WeaponCategory = BLUNT_WEAPONS;
-	AttachedGod = LORICATUS;
+	AttachedGod = ATAVUS;
 }
 
 stone

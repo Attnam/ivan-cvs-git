@@ -38,6 +38,7 @@ material
 	EffectStrength = 100;
 	CanHaveParasite = false;
 	/* DigProductMaterial defaults to Config */
+	AttachedGod = NONE;
 
 	Config IRON;
 	{
@@ -50,6 +51,7 @@ material
 		NameStem = "iron";
 		Article = "an";
 		IsMetal = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config VALPURIUM;
@@ -67,6 +69,7 @@ material
 		IsSparkling = true;
 		IsMetal = true;
 		Flexibility = 4;
+		AttachedGod = VALPURUS;
 	}	
 
 	Config STONE;
@@ -77,6 +80,7 @@ material
 		IsGolemMaterial = true; 
 		Color = rgb16(80, 80, 80);
 		NameStem = "stone";
+		AttachedGod = SILVA;
 	}
 
 	Config GRAVEL;
@@ -87,6 +91,7 @@ material
 		Color = rgb16(144, 144, 144);
 		NameStem = "gravel";
 		CanBeWished = false;
+		AttachedGod = SILVA;
 	}
 
 	Config MORAINE;
@@ -98,6 +103,7 @@ material
 		NameStem = "moraine";
 		CanBeWished = false;
 		DigProductMaterial = STONE;
+		AttachedGod = SILVA;
 	}
 
 	Config WOOD;
@@ -110,6 +116,7 @@ material
 		NameStem = "wood";
 		AdjectiveStem = "wooden";
 		DigProductMaterial = 0;
+		AttachedGod = SILVA;
 	}
 
 	Config GLASS;
@@ -133,6 +140,7 @@ material
 		IsFlammable = true;
 		NameStem = "parchment";
 		Flexibility = 10;
+		AttachedGod = SOPHOS;
 	}
 
 	Config CLOTH;
@@ -145,6 +153,7 @@ material
 		IsFlammable = true;
 		NameStem = "cloth";
 		Flexibility = 15;
+		AttachedGod = DULCIS;
 	}
 
 	Config MITHRIL;
@@ -160,6 +169,7 @@ material
 		IsMetal = true;
 		Flexibility = 2;
 		CanBeWished = false;
+		AttachedGod = LORICATUS;
 	}
 		
 	Config MARBLE;
@@ -186,6 +196,7 @@ material
 		Flexibility = 3;
 		IsSparkling = true;
 		IsMetal = true;
+		AttachedGod = MELLIS;
 	}
 
 	Config GRASS;
@@ -199,6 +210,7 @@ material
 		AdjectiveStem = "grassy";
 		Flexibility = 15;
 		CanBeWished = false;
+		AttachedGod = SILVA;
 	}
 
 	Config LEATHER;
@@ -211,6 +223,7 @@ material
 		IsFlammable = true;
 		NameStem = "leather";
 		Flexibility = 10;
+		AttachedGod = LORICATUS;
 	}
 
 	Config LEAF;
@@ -223,6 +236,7 @@ material
 		IsFlammable = true;
 		NameStem = "leaf";
 		Flexibility = 10;
+		AttachedGod = SILVA;
 	}
 
 	Config FABRIC;
@@ -235,6 +249,7 @@ material
 		Color = rgb16(176, 0, 0);
 		NameStem = "expensive fabric";
 		Flexibility = 15;
+		AttachedGod = MELLIS;
 	}
 
 	Config PALM_LEAF;
@@ -247,6 +262,7 @@ material
 		IsFlammable = true;
 		NameStem = "palm leaf";
 		Flexibility = 10;
+		AttachedGod = SILVA;
 	}
 
 	Config SULFUR;
@@ -267,6 +283,7 @@ material
 		Density = 2000;
 		Color = rgb16(200, 200, 200);
 		NameStem = "unicorn horn";
+		AttachedGod = SEGES;
 	}
 
 	Config DIAMOND;
@@ -281,6 +298,7 @@ material
 		Alpha = 175;
 		CanBeWished = false;
 		IsSparkling = true;
+		AttachedGod = MELLIS;
 	}
 
 	Config SILVER;
@@ -295,6 +313,7 @@ material
 		NameStem = "silver";
 		IsSparkling = true;
 		IsMetal = true;
+		AttachedGod = MELLIS;
 	}
 
 	Config SAPPHIRE;
@@ -309,6 +328,7 @@ material
 		Alpha = 200;
 		CanBeWished = false;
 		IsSparkling = true;
+		AttachedGod = MELLIS;
 	}
 
 	Config RUBY;
@@ -323,6 +343,7 @@ material
 		Alpha = 200;
 		CanBeWished = false;
 		IsSparkling = true;
+		AttachedGod = MELLIS;
 	}
 
 	Config BRONZE;
@@ -335,6 +356,7 @@ material
 		PriceModifier = 30;
 		NameStem = "bronze";
 		IsMetal = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config COPPER;
@@ -347,6 +369,7 @@ material
 		PriceModifier = 20;
 		NameStem = "copper";
 		IsMetal = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config TIN;
@@ -359,6 +382,7 @@ material
 		PriceModifier = 15;
 		NameStem = "tin";
 		IsMetal = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config STEEL;
@@ -371,6 +395,7 @@ material
 		PriceModifier = 40;
 		NameStem = "steel";
 		IsMetal = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config SPIDER_SILK;
@@ -384,6 +409,7 @@ material
 		Flexibility = 20;
 		CanBeWished = false;
 		IsGolemMaterial = true;
+		AttachedGod = SOPHOS;
 	}
 
 	Config KEVLAR;
@@ -395,6 +421,7 @@ material
 		NameStem = "kevlar";
 		Flexibility = 15;
 		CanBeWished = false;
+		AttachedGod = LORICATUS;
 	}
 
 	Config OMMEL_HAIR;
@@ -408,6 +435,7 @@ material
 		NameStem = "ommel hair";
 		Flexibility = 15;
 		Article = "an";
+		AttachedGod = SILVA;
 	}
 
 	Config HARDENED_LEATHER;
@@ -420,6 +448,7 @@ material
 		IsFlammable = true;
 		NameStem = "hardened leather";
 		Flexibility = 7;
+		AttachedGod = LORICATUS;
 	}
 
 	Config TROLL_HIDE;
@@ -431,6 +460,7 @@ material
 		IsFlammable = true;
 		NameStem = "troll hide";
 		Flexibility = 5;
+		AttachedGod = SILVA;
 	}
 
 	Config NYMPH_HAIR;
@@ -443,6 +473,7 @@ material
 		NameStem = "nymph hair";
 		Flexibility = 20;
 		IsGolemMaterial = true;
+		AttachedGod = SILVA;
 	}
 
 	Config ANGEL_HAIR;
@@ -456,6 +487,7 @@ material
 		Flexibility = 25;
 		Article = "an";
 		CanBeWished = false;
+		AttachedGod = VALPURUS;
 	}
 
 	Config PHOENIX_FEATHER;
@@ -467,6 +499,7 @@ material
 		NameStem = "phoenix feather";
 		Flexibility = 30;
 		IsGolemMaterial = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config GOLDEN_EAGLE_FEATHER;
@@ -478,6 +511,7 @@ material
 		NameStem = "golden eagle feather";
 		Flexibility = 25;
 		CanBeWished = false;
+		AttachedGod = VALPURUS;
 	}
 
 	Config ICE;
@@ -490,6 +524,7 @@ material
 		Article = "an";
 		NameStem = "ice";
 		Alpha = 150;
+		AttachedGod = SILVA;
 	}
 }
 
@@ -508,6 +543,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		PriceModifier = 600;
 		NameStem = "banana flesh";
 		Flexibility = 5;
+		AttachedGod = SEGES;
 	}
 
 	Config SCHOOL_FOOD;
@@ -525,6 +561,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		HitMessage = HM_SCHOOL_FOOD;
 		Flexibility = 5;
 		CanBeWished = false;
+		AttachedGod = SCABIES;
 	}
 
 	Config BANANA_PEEL;

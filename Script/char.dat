@@ -137,6 +137,7 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
+	AttachedGod = SEGES;
 }
 
 petrus
@@ -187,6 +188,7 @@ petrus
 	DefaultName = "Petrus";
 	DeathMessage = "The high priest disappears in a bright light and only his left nut is left behind.";
 	/* Replies overridden */
+	AttachedGod = VALPURUS;
 }
 
 farmer
@@ -222,6 +224,7 @@ farmer
 		"@Dd sighs: \"Again polar bears ate my cattle...\"",
 		"\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
 	}
+	AttachedGod = SEGES;
 }
 
 guard
@@ -247,6 +250,7 @@ guard
 	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
 	IsAbstract = true;
 	HostileReplies == "\"A fair trial? Hah! Prepare to be executed!\"";
+	AttachedGod = LEGIFER;
 
 	Config ROOKIE;
 	{
@@ -444,6 +448,7 @@ shopkeeper
 	IsPolymorphable = false;
 	Inventory == holybook(MELLIS);
 	IsCharmable = false;
+	AttachedGod = MELLIS;
 
 	Config ATTNAM;
 	{
@@ -506,6 +511,7 @@ priest
 	CanBeCloned = false;
 	IsCharmable = false;
 	/* Replies overridden */
+	AttachedGod = VALPURUS; /* there is only one now */
 }
 
 oree
@@ -558,6 +564,7 @@ oree
 	HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
 	FleshMaterial = DAEMON_FLESH;
 	DeathMessage = "@Dd vomits blood for one last time and then dies.";
+	AttachedGod = MORTIFER;
 }
 
 darkknight
@@ -588,6 +595,7 @@ darkknight
 	ClassStates = INFRA_VISION;
 	HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
 	FriendlyReplies == "\"Don't bother me unless you need help to die.\"";
+	AttachedGod = CRUENTUS;
 
 	Config ROOKIE;
 	{
@@ -719,6 +727,7 @@ ennerbeast
 		"\"I only want to talk but everyone is rude and dies when I try.\"",
 		"\"Can you help me with this download problem?\"";
 	}
+	AttachedGod = SCABIES;
 }
 
 frog
@@ -754,6 +763,7 @@ frog
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 100;
 		CanOpen = false;
+		AttachedGod = MORTIFER;
 	}
 
 	Config GREATER_DARK;
@@ -776,6 +786,7 @@ frog
 		CanBeGenerated = true;
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 200;
+		AttachedGod = MORTIFER;
 	}
 
 	Config LIGHT;
@@ -794,6 +805,7 @@ frog
 		SkinColor = rgb16(32, 88, 32);
 		Adjective = "light";
 		CWeaponSkillHits == 100;
+		AttachedGod = VALPURUS;
 	}
 
 	Config GREATER_LIGHT;
@@ -814,6 +826,7 @@ frog
 		Adjective = "greater light";
 		CWeaponSkillHits == 200;
 		CanOpen = false;
+		AttachedGod = VALPURUS;
 	}
 }
 
@@ -850,6 +863,7 @@ elpuri
 	BaseBiteStrength = 1250;
 	FleshMaterial = ELPURI_FLESH;
 	DeathMessage = "@Dd groans horribly and drops @pp head.";
+	AttachedGod = SCABIES;
 }
 
 billswill
@@ -889,6 +903,7 @@ billswill
 	SpillsBlood = false;
 	HasHead = false;
 	UsesNutrition = false;
+	AttachedGod = MELLIS;
 }
 
 skeleton
@@ -926,6 +941,7 @@ skeleton
 	DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
 	SpillsBlood = false;
 	UsesNutrition = false;
+	AttachedGod = MORTIFER;
 
 	Config WARRIOR;
 	{
@@ -1001,6 +1017,7 @@ goblin
 	HostileReplies == "@Dd yells goblin war cries at you.";
 	FriendlyReplies == "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
 	FleshMaterial = GOBLINOID_FLESH;
+	AttachedGod = CRUENTUS;
 
 	Config BERSERKER;
 	{
@@ -1096,6 +1113,7 @@ mommo
 	DeathMessage = "@Dd turns into lifeless goo.";
 	HasEyes = false;
 	HasHead = false;
+	AttachedGod = SCABIES;
 
 	Config CONICAL;
 	{
@@ -1161,6 +1179,7 @@ golem
 	/* FleshMaterial overridden */
 	DeathMessage = "The Holy Words of @dd fly away and the monster collapses.";
 	UsesNutrition = false;
+	AttachedGod = NONE;
 
 	Config VALPURIUM;
 	{
@@ -1218,6 +1237,7 @@ wolf
 	CWeaponSkillHits == 200;
 	ClassStates = INFRA_VISION;
 	FleshMaterial = WOLF_FLESH;
+	AttachedGod = SILVA;
 }
 
 dog
@@ -1244,6 +1264,7 @@ dog
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	FleshMaterial = DOG_FLESH;
+	AttachedGod = SILVA;
 }
 
 spider
@@ -1272,6 +1293,7 @@ spider
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
 	FleshMaterial = SPIDER_FLESH;
+	AttachedGod = SCABIES;
 }
 
 jackal
@@ -1297,6 +1319,7 @@ jackal
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
 	FleshMaterial = JACKAL_FLESH;
+	AttachedGod = SILVA;
 }
 
 ass
@@ -1326,6 +1349,7 @@ ass
 	DeathMessage = "@Dd neighs one last time and dies.";
 	BaseEmitation = rgb24(140, 100, 100);
 	Alias == "donkey";
+	AttachedGod = SCABIES;
 }
 
 communist /* Ivan */
@@ -1386,6 +1410,7 @@ communist /* Ivan */
 		"\"@Nu buy kyber eyes. @Nu see in dark.\"",
 		"\"Uncle Lenin lives in Russia. Lenin strong guy. @Nu like.\"";
 	}
+	AttachedGod = LORICATUS;
 }
 
 hunter
@@ -1431,6 +1456,7 @@ hunter
 		"\"I am the Great White Hunter. Get out of My way!\"",
 		"\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"";
 	}
+	AttachedGod = LORICATUS;
 }
 
 polarbear
@@ -1457,6 +1483,7 @@ polarbear
 	CWeaponSkillHits == 100;
 	FleshMaterial = POLAR_BEAR_FLESH;
 	DeathMessage = "@Dd groans terribly and falls dead to the ground.";
+	AttachedGod = SILVA;
 }
 
 dolphin
@@ -1489,6 +1516,7 @@ dolphin
 	CanRead = true;
 	HasFeet = false;
 	FleshMaterial = DOLPHIN_FLESH;
+	AttachedGod = SOPHOS;
 }
 
 slave
@@ -1524,6 +1552,7 @@ slave
 		"\"I would like to be like Ivan. Ivan is a good worker.\"",
 		"\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
 	}
+	AttachedGod = MELLIS;
 }
 
 petrusswife
@@ -1563,6 +1592,7 @@ petrusswife
 		"\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
 		"\"That head on the wall looks really scary sometimes. Just like we were watched.\"";
 	}
+	AttachedGod = DULCIS;
 
 	Config 1;
 	{

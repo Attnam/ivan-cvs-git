@@ -435,3 +435,4 @@ Bottles should break more easily when kicked.
 There should be an "unusable" state for bodyparts about to be severed.
 There should be more ways to put back or summon missing bodyparts of pets.
 It should be possible to change materials of golems.
+Pets should gain wisdom from trial and error.
