@@ -22,6 +22,8 @@ Mouse interface.
 
 //Removing asm from FeLib.
 
+Converting Ivan's graphics to 32x32 tiles.
+
 Support for multiple resolutions.
 
 Ego-item engine.

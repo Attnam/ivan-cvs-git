@@ -14,7 +14,7 @@ class iosystem
 {
  public:
   static festring ContinueMenu(ushort, ushort, const festring&);
-  static festring StringQuestion(const festring&, vector2d, ushort, ushort, ushort, bool, bool);
+  static ushort StringQuestion(festring&, const festring&, vector2d, ushort, ushort, ushort, bool, bool);
   static long NumberQuestion(const festring&, vector2d, ushort, bool);
   static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, ushort, ushort, ushort, ushort, ushort, bool, void (*)(long) = 0);
   static int Menu(bitmap*, vector2d, const festring&, const festring&, ushort, const festring& = CONST_S(""), const festring& = CONST_S(""));

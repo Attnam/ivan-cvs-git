@@ -45,7 +45,7 @@ void potion::GenerateLeftOvers(character* Eater)
 {
   ChangeConsumeMaterial(0);
 
-  if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
+  if(!game::IsInWilderness() && (!Eater->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
     {
       MoveTo(Eater->GetStackUnder());
       Eater->DexterityAction(1);
@@ -1256,7 +1256,7 @@ void can::GenerateLeftOvers(character* Eater)
 {
   ChangeConsumeMaterial(0);
 
-  if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
+  if(!game::IsInWilderness() && (!Eater->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
     {
       MoveTo(Eater->GetStackUnder());
       Eater->DexterityAction(1);
@@ -1996,7 +1996,7 @@ void banana::GenerateLeftOvers(character* Eater)
   item* Peel = new bananapeels(0, NO_MATERIALS);
   Peel->InitMaterials(GetMainMaterial());
 
-  if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
+  if(!game::IsInWilderness() && (!Eater->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
     {
       Eater->GetStackUnder()->AddItem(Peel);
       Eater->DexterityAction(1);

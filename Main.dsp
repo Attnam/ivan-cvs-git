@@ -183,10 +183,6 @@ SOURCE=.\Main\Source\command.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\config.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Source\cont.cpp
 # PROP Exclude_From_Build 1
 # End Source File
@@ -244,6 +240,10 @@ SOURCE=.\Main\Source\godset.cpp
 
 SOURCE=.\Main\Source\human.cpp
 # PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\iconf.cpp
 # End Source File
 # Begin Source File
 
@@ -446,10 +446,6 @@ SOURCE=.\Main\Include\confdef.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\config.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Include\cont.h
 # End Source File
 # Begin Source File
@@ -487,6 +483,10 @@ SOURCE=.\Main\Include\gods.h
 # Begin Source File
 
 SOURCE=.\Main\Include\human.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\iconf.h
 # End Source File
 # Begin Source File
 
@@ -655,15 +655,6 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # End Target

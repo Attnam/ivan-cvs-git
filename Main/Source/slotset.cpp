@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "config.h"
+#include "iconf.h"
 #include "char.h"
 #include "stack.h"
 #include "message.h"

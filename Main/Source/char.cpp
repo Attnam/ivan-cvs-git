@@ -609,7 +609,7 @@ void character::Be()
 	{
 	  static ushort Timer = 0;
 
-	  if(configuration::GetAutoSaveInterval() && !GetAction() && ++Timer >= configuration::GetAutoSaveInterval())
+	  if(ivanconfig::GetAutoSaveInterval() && !GetAction() && ++Timer >= ivanconfig::GetAutoSaveInterval())
 	    {
 	      game::Save(game::GetAutoSaveFileName());
 	      Timer = 0;
@@ -4683,15 +4683,15 @@ void character::EndESP()
 void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
 {
   if((PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (PLAYER->GetPos() - GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare()) || (PLAYER->StateIsActivated(INFRA_VISION) && IsWarm()))
-    Luminance = configuration::GetContrastLuminance();
+    Luminance = ivanconfig::GetContrastLuminance();
 
   DrawBodyParts(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
   
   if(GetTeam() == PLAYER->GetTeam() && !IsPlayer() && SquareIndex == GetTameSymbolSquareIndex())
-    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 
   if(GetMoveType() & FLY && SquareIndex == GetFlySymbolSquareIndex())
-    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 }
 
 void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
@@ -5755,7 +5755,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
 	  Item.push_back(Equipment);
 	  Entry = GetEquipmentName(c);
 	  Entry << ':';
-	  Entry.Resize(20, ' ');
+	  Entry.Resize(20);
 	  Equipment->AddInventoryEntry(this, Entry, 1, true);
 	  AddSpecialEquipmentInfo(Entry, c);
 	  List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), Equipment->GetAnimationFrames(), true, Equipment->AllowAlphaEverywhere());
@@ -6290,17 +6290,17 @@ bool character::EditAllAttributes(short Amount)
 
 void character::AddAttributeInfo(festring& Entry) const
 {
-  Entry.Resize(57, ' ');
+  Entry.Resize(57);
   Entry << GetAttribute(ENDURANCE);
-  Entry.Resize(60, ' ');
+  Entry.Resize(60);
   Entry << GetAttribute(PERCEPTION);
-  Entry.Resize(63, ' ');
+  Entry.Resize(63);
   Entry << GetAttribute(INTELLIGENCE);
-  Entry.Resize(66, ' ');
+  Entry.Resize(66);
   Entry << GetAttribute(WISDOM);
-  Entry.Resize(69, ' ');
+  Entry.Resize(69);
   Entry << GetAttribute(CHARISMA);
-  Entry.Resize(72, ' ');
+  Entry.Resize(72);
   Entry << GetAttribute(MANA);
 }
 
@@ -6316,9 +6316,9 @@ void character::AddDefenceInfo(felist& List) const
 	{
 	  Entry = CONST_S("   ");
 	  Entry << BodyPart->GetBodyPartName();
-	  Entry.Resize(60, ' ');
+	  Entry.Resize(60);
 	  Entry << BodyPart->GetMaxHP();
-	  Entry.Resize(70, ' ');
+	  Entry.Resize(70);
 	  Entry << BodyPart->GetTotalResistance(PHYSICAL_DAMAGE);
 	  List.AddEntry(Entry, LIGHT_GRAY);
 	}

@@ -20,7 +20,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "wterras.h"
 #include "colorbit.h"
 #include "team.h"
-#include "config.h"
+#include "iconf.h"
 #include "god.h"
 #include "felist.h"
 #include "miscitem.h"

@@ -15,7 +15,7 @@
 #include "message.h"
 #include "feio.h"
 #include "team.h"
-#include "config.h"
+#include "iconf.h"
 #include "allocate.h"
 #include "pool.h"
 #include "god.h"
@@ -136,22 +136,18 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-#include "confdef.h"
-
 bool game::Init(const festring& Name)
 {
   festring PlayerName;
 
-  if(!Name.GetSize())
-    if(!configuration::GetDefaultName().GetSize())
+  if(Name.IsEmpty())
+    if(ivanconfig::GetDefaultName().IsEmpty())
       {
-	PlayerName = iosystem::StringQuestion(CONST_S("What is your name? (1-20 letters)"), vector2d(30, 46), WHITE, 1, 20, true, true);
-
-	if(!PlayerName.GetSize())
+	if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"), vector2d(30, 46), WHITE, 1, 20, true, true) == ABORTED || PlayerName.IsEmpty())
 	  return false;
       }
     else
-      PlayerName = configuration::GetDefaultName();
+      PlayerName = ivanconfig::GetDefaultName();
   else
     PlayerName = Name;
 
@@ -253,7 +249,7 @@ bool game::Init(const festring& Name)
 	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
-	Doggie->SetAssignedName(configuration::GetDefaultPetName());
+	Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
 	ADD_MESSAGE("Game generated successfully.");
 	WizardMode = false;
 	SeeWholeMapCheatMode = MAP_HIDDEN;
@@ -948,7 +944,8 @@ festring game::StringQuestion(const festring& Topic, vector2d Pos, ushort Color,
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0); // pos may be incorrect!
-  festring Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
+  festring Return;
+  iosystem::StringQuestion(Return, Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
@@ -1622,7 +1619,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       for(c = 0; c < Group.size(); ++c)
 	Group[c]->SignalStepFrom(0);
 
-      if(configuration::GetAutoSaveInterval())
+      if(ivanconfig::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
     }
   else
@@ -1637,7 +1634,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       UpdateCamera();
       GetCurrentArea()->UpdateLOS();
 
-      if(configuration::GetAutoSaveInterval())
+      if(ivanconfig::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
     }
 }
@@ -2262,7 +2259,7 @@ character* game::CreateGhost()
 
 int game::GetMoveCommandKey(ushort Index) 
 {
-  if(!configuration::GetUseAlternativeKeys())
+  if(!ivanconfig::GetUseAlternativeKeys())
     return MoveNormalCommandKey[Index];
   else
     return MoveAbnormalCommandKey[Index];

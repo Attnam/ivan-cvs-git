@@ -1208,7 +1208,7 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 
       SimpleAlphaBlit(DOUBLE_BUFFER, c * 50, 0);
       graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
+      while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
     }
 
   DOUBLE_BUFFER->ClearToColor(0);

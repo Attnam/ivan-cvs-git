@@ -24,10 +24,10 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
   if(SquarePosition == CENTER)
     {
       if(VisibleItems > 1)
-	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 0, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 0, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 
       if(IsDangerous(Viewer))
-	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 160, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 160, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
     }
 }
 

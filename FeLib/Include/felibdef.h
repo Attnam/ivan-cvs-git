@@ -99,4 +99,9 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 
 #define HIGHEST 0xFF
 
+#define NORMAL_EXIT 0
+#define ABORTED 1
+
+#define MAX_CONFIG_OPTIONS 0x100
+
 #endif

@@ -65,6 +65,10 @@ class festring
   static bool IgnoreCaseCompare(const festring&, const festring&);
   bool IsEmpty() const { return !Size; }
   char& operator[](sizetype Index) const { return Data[Index]; }
+  void PreProcessForFebot();
+  void PostProcessForFebot();
+  void SwapData(festring&);
+  void ExtractWord(festring&);
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();

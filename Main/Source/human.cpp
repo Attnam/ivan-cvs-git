@@ -403,18 +403,18 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
     {
       List.AddEntry(CONST_S(""), LIGHT_GRAY);
       festring Buffer = CONST_S("right accustomization");
-      Buffer.Resize(30, ' ');
+      Buffer.Resize(30);
       Buffer << CurrentRightSWeaponSkill->GetLevel();
-      Buffer.Resize(40, ' ');
+      Buffer.Resize(40);
       Buffer << CurrentRightSWeaponSkill->GetHits();
-      Buffer.Resize(50, ' ');
+      Buffer.Resize(50);
 
       if(CurrentRightSWeaponSkill->GetLevel() != 10)
 	Buffer << (CurrentRightSWeaponSkill->GetLevelMap(CurrentRightSWeaponSkill->GetLevel() + 1) - CurrentRightSWeaponSkill->GetHits());
       else
 	Buffer << '-';
 
-      Buffer.Resize(60, ' ');
+      Buffer.Resize(60);
       Buffer << '+' << int(CurrentRightSWeaponSkill->GetBonus() - 100) << '%';
       List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
@@ -426,18 +426,18 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 	List.AddEntry(CONST_S(""), LIGHT_GRAY);
 
       festring Buffer = CONST_S("left accustomization");
-      Buffer.Resize(30, ' ');
+      Buffer.Resize(30);
       Buffer << CurrentLeftSWeaponSkill->GetLevel();
-      Buffer.Resize(40, ' ');
+      Buffer.Resize(40);
       Buffer << CurrentLeftSWeaponSkill->GetHits();
-      Buffer.Resize(50, ' ');
+      Buffer.Resize(50);
 
       if(CurrentLeftSWeaponSkill->GetLevel() != 10)
 	Buffer << (CurrentLeftSWeaponSkill->GetLevelMap(CurrentLeftSWeaponSkill->GetLevel() + 1) - CurrentLeftSWeaponSkill->GetHits());
       else
 	Buffer << '-';
 
-      Buffer.Resize(60, ' ');
+      Buffer.Resize(60);
       Buffer << '+' << int(CurrentLeftSWeaponSkill->GetBonus() - 100) << '%';
       List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
@@ -1446,7 +1446,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	if(Equipment)
 	  {
 	    DOUBLE_BUFFER->Fill(Pos, 16, 16, BLACK);
-	    Equipment->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), 0, true, Equipment->AllowAlphaEverywhere());
+	    Equipment->Draw(DOUBLE_BUFFER, Pos, ivanconfig::GetContrastLuminance(), 0, true, Equipment->AllowAlphaEverywhere());
 	  }
       }
 
@@ -3545,13 +3545,13 @@ void golem::BeTalkedTo()
 
 void humanoid::AddAttributeInfo(festring& Entry) const
 {
-  Entry.Resize(45, ' ');
+  Entry.Resize(45);
   Entry << GetAttribute(ARM_STRENGTH);
-  Entry.Resize(48, ' ');
+  Entry.Resize(48);
   Entry << GetAttribute(LEG_STRENGTH);
-  Entry.Resize(51, ' ');
+  Entry.Resize(51);
   Entry << GetAttribute(DEXTERITY);
-  Entry.Resize(54, ' ');
+  Entry.Resize(54);
   Entry << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
 }
@@ -3578,11 +3578,11 @@ void humanoid::AddAttackInfo(felist& List) const
   if(IsUsingHead())
     {
       Entry = CONST_S("   bite attack");
-      Entry.Resize(50, ' ');
+      Entry.Resize(50);
       Entry << GetHead()->GetBiteMinDamage() << '-' << GetHead()->GetBiteMaxDamage();
-      Entry.Resize(60, ' ');
+      Entry.Resize(60);
       Entry << int(GetHead()->GetBiteToHitValue());
-      Entry.Resize(70, ' ');
+      Entry.Resize(70);
       Entry << GetHead()->GetBiteAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }

@@ -126,9 +126,9 @@ void lsquare::Draw()
 	  ulong RealLuminance;
 
 	  if(game::GetSeeWholeMapCheatMode() == SHOW_MAP_IN_UNIFORM_LIGHT || (game::GetSeeWholeMapCheatMode() && !IsTransparent()))
-	    RealLuminance = configuration::GetContrastLuminance();
+	    RealLuminance = ivanconfig::GetContrastLuminance();
 	  else
-	    RealLuminance = configuration::ApplyContrastTo(Luminance);
+	    RealLuminance = ivanconfig::ApplyContrastTo(Luminance);
 
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
@@ -159,14 +159,14 @@ void lsquare::Draw()
 	{
 	  ulong RealLuminance = Luminance;
 	  game::CombineLights(RealLuminance, DIM_LUMINANCE);
-	  DrawStaticContents(DOUBLE_BUFFER, BitPos, configuration::ApplyContrastTo(RealLuminance), true);
+	  DrawStaticContents(DOUBLE_BUFFER, BitPos, ivanconfig::ApplyContrastTo(RealLuminance), true);
 	}
       else
 	{
 	  DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
 	  if(Character && Character->CanBeSeenByPlayer())
-	    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
+	    Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 	}
 
       NewDrawRequested = false;
@@ -1115,12 +1115,12 @@ void lsquare::DrawMemorized()
   vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
   if(LastSeen)
-    Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+    Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, ivanconfig::GetContrastLuminance());
   else
     DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
   if(Character && Character->CanBeSeenByPlayer())
-    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
+    Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 }
 
 void lsquare::DrawMemorizedCharacter()
@@ -1130,11 +1130,11 @@ void lsquare::DrawMemorizedCharacter()
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
       if(LastSeen)
-	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, ivanconfig::GetContrastLuminance());
       else
 	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
-      Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
+      Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
       NewDrawRequested = false;
     }
 }

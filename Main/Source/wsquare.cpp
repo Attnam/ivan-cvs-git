@@ -27,14 +27,14 @@ void wsquare::Draw()
   if(NewDrawRequested || AnimatedEntities)
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-      ulong RealLuminance = configuration::ApplyContrastTo(Luminance);
+      ulong RealLuminance = ivanconfig::ApplyContrastTo(Luminance);
       GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
       if(OWTerrain)
 	OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
+	Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 
       NewDrawRequested = false;
     }

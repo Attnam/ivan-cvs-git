@@ -1251,9 +1251,9 @@ bool nonhumanoid::EditAllAttributes(short Amount)
 
 void nonhumanoid::AddAttributeInfo(festring& Entry) const
 {
-  Entry.Resize(45, ' ');
+  Entry.Resize(45);
   Entry << GetAttribute(ARM_STRENGTH);
-  Entry.Resize(48, ' ');
+  Entry.Resize(48);
   Entry << "-  -  " << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
 }
@@ -1265,11 +1265,11 @@ void nonhumanoid::AddAttackInfo(felist& List) const
   if(IsUsingArms())
     {
       Entry = CONST_S("   unarmed attack");
-      Entry.Resize(50, ' ');
+      Entry.Resize(50);
       Entry << GetUnarmedMinDamage() << '-' << GetUnarmedMaxDamage();
-      Entry.Resize(60, ' ');
+      Entry.Resize(60);
       Entry << int(GetUnarmedToHitValue());
-      Entry.Resize(70, ' ');
+      Entry.Resize(70);
       Entry << GetUnarmedAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -1277,11 +1277,11 @@ void nonhumanoid::AddAttackInfo(felist& List) const
   if(IsUsingLegs())
     {
       Entry = CONST_S("   kick attack");
-      Entry.Resize(50, ' ');
+      Entry.Resize(50);
       Entry << GetKickMinDamage() << '-' << GetKickMaxDamage();
-      Entry.Resize(60, ' ');
+      Entry.Resize(60);
       Entry << int(GetKickToHitValue());
-      Entry.Resize(70, ' ');
+      Entry.Resize(70);
       Entry << GetKickAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -1289,11 +1289,11 @@ void nonhumanoid::AddAttackInfo(felist& List) const
   if(IsUsingHead())
     {
       Entry = CONST_S("   bite attack");
-      Entry.Resize(50, ' ');
+      Entry.Resize(50);
       Entry << GetBiteMinDamage() << '-' << GetBiteMaxDamage();
-      Entry.Resize(60, ' ');
+      Entry.Resize(60);
       Entry << int(GetBiteToHitValue());
-      Entry.Resize(70, ' ');
+      Entry.Resize(70);
       Entry << GetBiteAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }

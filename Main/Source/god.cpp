@@ -72,9 +72,9 @@ void god::Pray()
 festring god::GetCompleteDescription() const
 {
   festring Desc(game::GetAlignment(GetAlignment()));
-  Desc.Resize(4, ' ');
+  Desc.Resize(4);
   Desc << GetName();
-  Desc.Resize(20, ' ');
+  Desc.Resize(20);
 
   if(game::WizardModeIsActive())
     Desc << Timer << " - " << Relation;

@@ -9,7 +9,7 @@
 #include "database.h"
 #include "feio.h"
 #include "igraph.h"
-#include "config.h"
+#include "iconf.h"
 #include "whandler.h"
 #include "hscore.h"
 #include "graphics.h"
@@ -39,7 +39,7 @@ int Main(int argc, char **argv)
   databasesystem::CreateDataBaseMemberMaps();
   databasesystem::Initialize();
   game::InitLuxTable();
-  configuration::Load();
+  ivanconfig::Initialize();
   igraph::Init();
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
@@ -73,7 +73,7 @@ int Main(int argc, char **argv)
 	  break;
 	}
       case 2:
-	configuration::ShowConfigScreen();
+	ivanconfig::Show();
 	break;
       case 3:
 	{

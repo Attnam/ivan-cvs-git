@@ -847,12 +847,12 @@ bool level::DrawExplosion(const explosion* Explosion) const
   uchar Flags = RAND() & 7;
 
   if(!Flags || SizeVect != OldSizeVect)
-    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
+    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, ivanconfig::GetContrastLuminance());
   else
     {
       bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
       igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
-      ExplosionPic.MaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, configuration::GetContrastLuminance());
+      ExplosionPic.MaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, ivanconfig::GetContrastLuminance());
     }
 
   return true;

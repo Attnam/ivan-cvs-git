@@ -350,9 +350,9 @@ bool felist::DrawPage(bitmap* Buffer) const
 	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->AnimationFrames]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16, MaskColor);
 
 	      if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-		  FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
+		FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
 	      else
-		  FONT->Printf(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
+		FONT->Printf(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
 
 	      LastFillBottom += 20;
 	    }
@@ -366,9 +366,9 @@ bool felist::DrawPage(bitmap* Buffer) const
 		  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
 		  if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-		      FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
+		    FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
 		  else
-		      FONT->Printf(Buffer, Pos.X + 37, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
+		    FONT->Printf(Buffer, Pos.X + 37, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
 
 		  LastFillBottom += 10;
 		}

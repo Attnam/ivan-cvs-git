@@ -1,3 +1,5 @@
+#include <cctype>
+
 #include "festring.h"
 #include "allocate.h"
 #include "error.h"
@@ -641,4 +643,121 @@ bool festring::IgnoreCaseCompare(const festring& First, const festring& Second)
     }
 
   return First.GetSize() < Second.GetSize();
+}
+
+void festring::PreProcessForFebot()
+{
+  sizetype c, d, Length;
+
+  for(c = 0, Length = 0; c < Size && (Data[c] == ' ' || Data[c] == '\t'); ++c)
+    ++Length;
+
+  Erase(0, Length);
+
+  if(!Size)
+    return;
+
+  for(c = Size - 1, Length = 0; Data[c] == ' ' || Data[c] == '\t'; --c)
+    ++Length;
+
+  Erase(c + 1, Length);
+
+  for(c = 0; c < Size - 1; ++c)
+    {
+      char Char = Data[c + 1];
+
+      if(Data[c] == '\t')
+	Data[c] = ' ';
+      else if(Data[c] == '\"' || Data[c] == '(' || Data[c] == ')')
+	{
+	  Erase(c--, 1);
+	  continue;
+	}
+
+      if(Data[c] == ' ')
+	{
+	  if(Char == ' ' || Char == '\t')
+	    {
+	      for(d = c + 2, Length = 1; d < Size && (Data[d] == ' ' || Data[d] == '\t'); ++d)
+		++Length;
+
+	      Erase(c + 1, Length);
+	    }
+	}
+      else if((Char == '.' || Char == '!' || Char == '?')
+	    && Data[c] != '.' && Data[c] != '!' && Data[c] != '?'
+	    && (c == Size - 2 || Data[c + 2] == ' ' || Data[c + 2] == '\t'))
+	Insert(c+++1, " ", 1);
+    }
+
+  if(Data[c] == '\"' || Data[c] == '(' || Data[c] == ')')
+    Erase(c--, 1);
+
+  if(!ispunct(Data[c]))
+    *this << ' ' << '.';
+}
+
+void festring::PostProcessForFebot()
+{
+  Capitalize();
+  bool CapitalizeNextChar = false;
+
+  for(sizetype c = 0; c < Size - 1; ++c)
+    {
+      char Char1 = Data[c];
+
+      if(Char1 == ' ')
+	{
+	  char Char2 = Data[c + 1];
+
+	  if((Char2 == '.' || Char2 == '!' || Char2 == '?')
+	  && (c == Size - 2 || Data[c + 2] == ' ' || Data[c + 2] == '\t'))
+	    {
+	      Erase(c++, 1);
+	      CapitalizeNextChar = true;
+	    }
+	}
+      else if((Char1 == '.' || Char1 == '!' || Char1 == '?')
+	  && (c == Size - 2 || Data[c + 2] == ' ' || Data[c + 2] == '\t'))
+	CapitalizeNextChar = true;
+      else if(CapitalizeNextChar) // Erase() guarantees that OwnsData == true && REFS(Data) == 0
+	{
+	  if(Char1 > 0x60 && Char1 < 0x7B)
+	    Data[c] &= ~0x20;
+
+	  CapitalizeNextChar = false;
+	}
+    }
+}
+
+void festring::ExtractWord(festring& To)
+{
+  for(sizetype c = 0; c < Size; ++c)
+    if(Data[c] == ' ')
+      {
+	To.Empty();
+	To.Append(&Data[c + 1], Size - c - 1);
+	Erase(c, Size - c);
+	SwapData(To);
+	return;
+      }
+
+  To = *this;
+  Empty();
+}
+
+void festring::SwapData(festring& Str)
+{
+  char* TData = Data;
+  sizetype TSize = Size;
+  sizetype TReserved = Reserved;
+  bool TOwnsData = OwnsData;
+  Data = Str.Data;
+  Size = Str.Size;
+  Reserved = Str.Reserved;
+  OwnsData = Str.OwnsData;
+  Str.Data = TData;
+  Str.Size = TSize;
+  Str.Reserved = TReserved;
+  Str.OwnsData = TOwnsData;
 }

@@ -22,7 +22,7 @@ ushort protocontainer<owterrain>::ProtoAmount;
 #include "game.h"
 #include "cont.h"
 #include "femath.h"
-#include "config.h"
+#include "iconf.h"
 #include "graphics.h"
 #include "whandler.h"
 #include "message.h"

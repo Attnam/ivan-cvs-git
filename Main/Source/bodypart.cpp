@@ -2244,11 +2244,11 @@ void arm::AddAttackInfo(felist& List) const
       else
 	Entry << "melee attack";
 
-      Entry.Resize(50, ' ');
+      Entry.Resize(50);
       Entry << GetMinDamage() << '-' << GetMaxDamage();
-      Entry.Resize(60, ' ');
+      Entry.Resize(60);
       Entry << int(GetToHitValue());
-      Entry.Resize(70, ' ');
+      Entry.Resize(70);
       Entry << GetAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -2260,9 +2260,9 @@ void arm::AddDefenceInfo(felist& List) const
     {
       festring Entry = CONST_S("   ");
       GetWielded()->AddName(Entry, UNARTICLED);
-      Entry.Resize(50, ' ');
+      Entry.Resize(50);
       Entry << int(GetBlockValue());
-      Entry.Resize(70, ' ');
+      Entry.Resize(70);
       Entry << GetBlockCapability();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -2321,11 +2321,11 @@ void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool 
 void leg::AddAttackInfo(felist& List) const
 {
   festring Entry = CONST_S("   kick attack");
-  Entry.Resize(50, ' ');
+  Entry.Resize(50);
   Entry << GetKickMinDamage() << '-' << GetKickMaxDamage();
-  Entry.Resize(60, ' ');
+  Entry.Resize(60);
   Entry << int(GetKickToHitValue());
-  Entry.Resize(70, ' ');
+  Entry.Resize(70);
   Entry << GetKickAPCost();
   List.AddEntry(Entry, LIGHT_GRAY);
 }

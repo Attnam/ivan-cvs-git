@@ -193,17 +193,16 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const festring& Topic, cons
   return signed(iSelected);
 }
 
-festring iosystem::StringQuestion(const festring& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
+ushort iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
 {
   if(Fade)
     {
       bitmap Buffer(RES_X, RES_Y, 0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.CStr());
-      FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
+      FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       Buffer.FadeToScreen();
     }
 
-  festring Input;
   bool TooShort = false;
   FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, Color, "%s", Topic.CStr());
 
@@ -227,7 +226,7 @@ festring iosystem::StringQuestion(const festring& Topic, vector2d Pos, ushort Co
 	LastKey = GET_KEY(false);
 
       if(LastKey == KEY_ESC && AllowExit)
-	return "";
+	return ABORTED;
 		
       if(LastKey == KEY_BACK_SPACE)
 	{
@@ -257,7 +256,7 @@ festring iosystem::StringQuestion(const festring& Topic, vector2d Pos, ushort Co
       LastAlpha = c;
 
   Input.Resize(LastAlpha + 1);
-  return Input;
+  return NORMAL_EXIT;
 }
 
 long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color, bool Fade)

@@ -13,7 +13,7 @@
 #include "wsquare.h"
 #include "wskill.h"
 #include "actions.h"
-#include "config.h"
+#include "iconf.h"
 #include "whandler.h"
 #include "hscore.h"
 #include "god.h"

@@ -26,7 +26,7 @@ const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_Pr
 #include "action.h"
 #include "message.h"
 #include "stack.h"
-#include "config.h"
+#include "iconf.h"
 #include "miscitem.h"
 #include "room.h"
 #include "game.h"

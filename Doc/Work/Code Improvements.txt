@@ -64,3 +64,4 @@ Massattomat maastot.
 Metsästysvälineiden lokeroittaminen.
 Artikkelien bitittäminen.
 Inttien synninpäästö.
+Tehokkuustietojen välitys ruutuilmiöihin.

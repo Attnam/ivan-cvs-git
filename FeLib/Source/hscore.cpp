@@ -65,9 +65,9 @@ void highscore::Draw() const
     {
       Desc.Empty();
       Desc << c + 1;
-      Desc.Resize(5, ' ');
+      Desc.Resize(5);
       Desc << Score[c];
-      Desc.Resize(13, ' ');
+      Desc.Resize(13);
       Desc << Entry[c];
       List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHT_GRAY, 13);
     }

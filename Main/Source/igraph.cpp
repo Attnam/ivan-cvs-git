@@ -2,7 +2,7 @@
 #include "felist.h"
 #include "bitmap.h"
 #include "graphics.h"
-#include "config.h"
+#include "iconf.h"
 #include "colorbit.h"
 #include "game.h"
 #include "save.h"
@@ -25,10 +25,10 @@ void igraph::Init()
     {
       AlreadyInstalled = true;
       graphics::Init();
-      graphics::SetMode("IVAN " IVAN_VERSION, festring(game::GetGameDir() + "Graphics/Icon.bmp").CStr(), 800, 600, configuration::GetFullScreenMode());
+      graphics::SetMode("IVAN " IVAN_VERSION, festring(game::GetGameDir() + "Graphics/Icon.bmp").CStr(), 800, 600, ivanconfig::GetFullScreenMode());
       DOUBLE_BUFFER->ClearToColor(0);
       graphics::BlitDBToScreen();
-      graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
+      graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
       graphics::LoadDefaultFont(game::GetGameDir() + "Graphics/Font.pcx");
       FONT->CreateFontCache(RED);
       FONT->CreateFontCache(BLUE);
@@ -71,7 +71,7 @@ void igraph::DeInit()
 
 void igraph::DrawCursor(vector2d Pos)
 {
-  igraph::GetCursorGraphic()->MaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
+  igraph::GetCursorGraphic()->MaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 }
 
 tilemap::iterator igraph::AddUser(const graphicid& GI)

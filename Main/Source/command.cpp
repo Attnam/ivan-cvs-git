@@ -6,7 +6,7 @@
 #include "room.h"
 #include "god.h"
 #include "felist.h"
-#include "config.h"
+#include "iconf.h"
 #include "bitmap.h"
 #include "actions.h"
 #include "wskill.h"
@@ -610,7 +610,7 @@ bool commandsystem::ShowKeyLayout(character*)
       {
 	Buffer.Empty();
 	Buffer << GetCommand(c)->GetKey();
-	Buffer.Resize(10, ' ');
+	Buffer.Resize(10);
 	List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
       }
 
@@ -625,7 +625,7 @@ bool commandsystem::ShowKeyLayout(character*)
 	  {
 	    Buffer.Empty();
 	    Buffer << GetCommand(c)->GetKey();
-	    Buffer.Resize(10, ' ');
+	    Buffer.Resize(10);
 	    List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
 	  }
     }
@@ -644,7 +644,7 @@ bool commandsystem::Look(character* Char)
   else
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
 
-  game::PositionQuestion(Msg, Char->GetPos(), &game::LookHandler, &game::LookKeyHandler, configuration::GetLookZoom());
+  game::PositionQuestion(Msg, Char->GetPos(), &game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
   return false;
 }
 
@@ -999,7 +999,7 @@ bool commandsystem::Go(character* Char)
 
 bool commandsystem::ShowConfigScreen(character*)
 {
-  configuration::ShowConfigScreen();
+  ivanconfig::Show();
   return false;
 }
 
@@ -1030,7 +1030,7 @@ bool commandsystem::EquipmentScreen(character* Char)
 	{
 	  Entry = Char->GetEquipmentName(c);
 	  Entry << ':';
-	  Entry.Resize(20, ' ');
+	  Entry.Resize(20);
 	  item* Equipment = Char->GetEquipment(c);
 
 	  if(Equipment)
@@ -1090,18 +1090,18 @@ bool commandsystem::ShowWeaponSkills(character* Char)
       if(Skill->GetHits())
 	{
 	  Buffer = Skill->GetName();
-	  Buffer.Resize(30, ' ');
+	  Buffer.Resize(30);
 	  Buffer << Skill->GetLevel();
-	  Buffer.Resize(40, ' ');
+	  Buffer.Resize(40);
 	  Buffer << Skill->GetHits();
-	  Buffer.Resize(50, ' ');
+	  Buffer.Resize(50);
 
 	  if(Skill->GetLevel() != 10)
 	    Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits());
 	  else
 	    Buffer << '-';
 
-	  Buffer.Resize(60, ' ');
+	  Buffer.Resize(60);
 	  Buffer << '+' << int(Skill->GetBonus() - 100) << '%';
 
 	  if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->GetWeaponCategory() == c)
@@ -1333,9 +1333,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Entry.Resize(47, ' ');
+	      Entry.Resize(47);
 	      Entry << int(Character[c]->GetDodgeValue());
-	      Entry.Resize(57, ' ');
+	      Entry.Resize(57);
 	      Entry << Character[c]->GetMaxHP();
 	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
@@ -1352,15 +1352,15 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Entry.Resize(47, ' ');
+	      Entry.Resize(47);
 	      Entry << int(Character[c]->GetRelativeDanger(Char, true) * 100);
-	      Entry.Resize(57, ' ');
+	      Entry.Resize(57);
 
 	      if(Character[c]->CanBeGenerated())
 		{
 		  const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(), Character[c]->GetConfig()))->second;
 		  Entry << int(DI.NakedDanger * 100);
-		  Entry.Resize(67, ' ');
+		  Entry.Resize(67);
 		  Entry << int(DI.EquippedDanger * 100);
 		}
 	      else
@@ -1431,11 +1431,11 @@ bool commandsystem::SecretKnowledge(character* Char)
 	{
 	  Entry.Empty();
 	  Material[c]->AddName(Entry, false, false);
-	  Entry.Resize(40, ' ');
+	  Entry.Resize(40);
 	  Entry << int(Material[c]->GetStrengthValue());
-	  Entry.Resize(55, ' ');
+	  Entry.Resize(55);
 	  Entry << int(Material[c]->GetFlexibility());
-	  Entry.Resize(70, ' ');
+	  Entry.Resize(70);
 	  Entry << int(Material[c]->GetDensity());
 	  List.AddEntry(Entry, Material[c]->GetColor());
 	}

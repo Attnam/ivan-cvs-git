@@ -832,11 +832,11 @@ void item::AddAttackInfo(felist& List) const
 {
   festring Entry(40, ' ');
   Entry << int(GetWeight());
-  Entry.Resize(50, ' ');
+  Entry.Resize(50);
   Entry << int(GetSize());
-  Entry.Resize(60, ' ');
+  Entry.Resize(60);
   Entry << int(GetStrengthRequirement());
-  Entry.Resize(70, ' ');
+  Entry.Resize(70);
   Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
   List.AddEntry(Entry, LIGHT_GRAY);
 }
@@ -845,9 +845,9 @@ void item::AddMiscellaneousInfo(felist& List) const
 {
   festring Entry(40, ' ');
   Entry << int(GetTruePrice());
-  Entry.Resize(55, ' ');
+  Entry.Resize(55);
   Entry << int(GetOfferValue(0));
-  Entry.Resize(70, ' ');
+  Entry.Resize(70);
   Entry << int(GetNutritionValue());
   List.AddEntry(Entry, LIGHT_GRAY);
 }
