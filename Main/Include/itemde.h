@@ -393,6 +393,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
 	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
 	virtual void SetBloodColor(ushort);
+	virtual bool CatWillCatchAndConsume() const RET(GetMaterial(0)->GetType() == ratflesh::StaticType()) 
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 	virtual float NPModifier() const { return 0.01f; }
@@ -615,7 +616,7 @@ public:
 	virtual std::string NameSingular() const RET("bone")
 	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", bone::StaticType()))
 	virtual float OfferModifier() const RET(0.1f)
-	virtual bool DogWillCatchAndConsume() const RET(true);
+	virtual bool DogWillCatchAndConsume() const RET(GetMaterial(0)->GetType() == bone::StaticType())
 	virtual vector2d GetBitmapPos() const RETV(16,240)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1500; default: return 0; } }

@@ -1707,3 +1707,30 @@ void humanoid::CheckGearExistence()
 	if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
 		SetTorsoArmor(0);
 }
+
+bool largecat::Catches(item* Thingy, float)
+{
+	if(Thingy->CatWillCatchAndConsume())
+	{
+		if(ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack()))
+			if(GetIsPlayer())
+				ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
+			else
+			{
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+
+				ChangeTeam(game::GetPlayer()->GetTeam());
+			}
+		else
+			if(GetIsPlayer())
+				ADD_MESSAGE("You catch %s in mid-air.", Thingy->CNAME(DEFINITE));
+			else
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s catches %s.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+
+		return true;
+	}
+	else
+		return false;
+}

@@ -1239,6 +1239,7 @@ class CHARACTER
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 15000; else return 0; }
+	virtual bool largecat::Catches(item*, float);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(496,0)
 	virtual std::string NameSingular() const RET("large cat")
