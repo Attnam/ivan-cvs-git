@@ -393,7 +393,13 @@ bool character::Drop()
 
 bool character::Consume()
 {
-	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
+	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetOverLevelTerrain()->HasConsumeEffect() && game::BoolQuestion(GetLevelSquareUnder()->GetOverLevelTerrain()->GetConsumeQuestion() + std::string(" [y/N]")))
+	{
+		GetLevelSquareUnder()->GetOverLevelTerrain()->Consume();
+		return true;
+	
+	}
+	else	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
 	{
 		ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents(this, "What do you wish to consume?");
 

@@ -73,6 +73,9 @@ public:
 	virtual void Kick(ushort, bool, uchar) {}
 	virtual bool IsDoor() const { return false; }
 	virtual void SitOn(character*);
+	virtual bool HasConsumeEffect() const { return false; } 
+	virtual std::string GetConsumeQuestion() const { return std::string("Do you want to consume ") + Name(DEFINITE) + std::string("?"); }
+	virtual void Consume() {}
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

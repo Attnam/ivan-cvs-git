@@ -391,3 +391,8 @@ void doublebed::SitOn(character*)
 {
 	ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
 }
+
+void fountain::Consume()
+{
+	ADD_MESSAGE("You feel that the coders have not yet coded this.");
+}

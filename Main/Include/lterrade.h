@@ -355,6 +355,9 @@ class OVERLEVELTERRAIN
 public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 	virtual void SitOn(character*);
+	virtual std::string GetConsumeQuestion() const { return std::string("Do want to drink from ") + Name(DEFINITE) + std::string("?"); }
+	virtual void Consume();
+	virtual bool HasConsumeEffect() const { return true; } 
 protected:
 	virtual std::string NameSingular() const				{ return "fountain"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 288); }
