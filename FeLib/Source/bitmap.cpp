@@ -633,8 +633,8 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 
   for(c = 0; c < NumberOfSides; ++c)
     {
-      float PosX = sin((2 * PI / NumberOfSides) * c + Rotation) * Radius;
-      float PosY = cos((2 * PI / NumberOfSides) * c + Rotation) * Radius;
+      float PosX = sin((2 * FPI / NumberOfSides) * c + Rotation) * Radius;
+      float PosY = cos((2 * FPI / NumberOfSides) * c + Rotation) * Radius;
       Points.push_back(vector2d(short(PosX), short(PosY)) + Center);
     }
 
@@ -1158,9 +1158,9 @@ void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
 
   for(uchar c = 0; c < FlyAmount; ++c)
     {
-      double Constant = double(RAND() % 10000) / 10000 * PI;
+      double Constant = double(RAND() % 10000) / 10000 * FPI;
       vector2d StartPos = vector2d(5 + RAND() % 6, 5 + RAND() % 6);
-      double Temp = (double(16 - Frame) * PI) / 16;
+      double Temp = (double(16 - Frame) * FPI) / 16;
 
       if(RAND() & 1)
 	Temp = -Temp;

@@ -12,10 +12,10 @@ Write msgbuffer to a file command.
 Date to highscores.
 It should be possible to sort highscores according to date.
 Blood could flow around.
-Gods should have more than two effects.
+*Gods should have more than two effects.
 We should give more thought to the role of the gods.
-Partially converting the attribute bonuses to exp.
-Food poisoning state.
+//Partially converting the attribute bonuses to exp.
+//Food poisoning state.
 Armor pictures of humanoids.
 Maybe some keys other than Alt+Enter and Print Screen should also work during getkey?
 Double-sized draw of the tiles as a switch.
@@ -27,27 +27,27 @@ How can you change the window to the rigth size? (stickiness)
 Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
 Blindness.
-Uses for vomiting.
+//Uses for vomiting.
 //CNAME should be clarified.
-Hit rate of thrown items should be lowered.
-/You must be able to open door by throwing items.
+//Hit rate of thrown items should be lowered.
+//You must be able to open door by throwing items.
 One should be able to summon tame Bill's Wills from Windoze keys in WMode.
 Teleport disabling.
 Teleport should bounce back from valpurium.
 It should be possible to determine line height as a felist draw function argument. (comment: why?)
 Vomiting in a shop should have a special effect.
-Intelligent monsters should read scrolls and use wands.
+*Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Highscores should be crypted somehow.
 Wood and stone types. (wood is a _bit_ generic)
-Script should be crypted.
+Script should be crypted or precompiled.
 Golems should be able to eat things made of their material to increase size and stats.
 List of killed monsters and list of monsters killed by pets.
 Prepare bug-report function that would make bug-reporting easier.
-Weapon name should be affected by dip material.
-Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
+//Weapon name should be affected by dip material.
+Bill's wills should bloat with rising temperature according to Gay-Lussac's law.
 A program which would translate a pcx file into a script content map.
-Player's difficulty level should not be influenced by the current weapon/armor?
+(r) Player's difficulty level should not be influenced by the current weapon/armor?
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 //*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 *Script should have an initial blood level of square option.
@@ -71,22 +71,22 @@ As Heikki suggested, when the player jumps in the WMap and is strong enough, he 
 Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
 //Punishment of cathedral terrain destruction.
 /*Ivan should break doors.
-Monsters that change colors.
+//Monsters that change colors.
 Drugs.
 Karateka.
 Chance-value correlation to change material scrolls.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
 //*WMap terrain height should be shown in WMode.
-Special "enemy sighted" rections.
+Special "enemy sighted" reactions. (like what?)
 Vampires should be able to polymorph into a bat.
 (s) Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
 //*Weapon skills should affect attack AP costs as in ADOM.
 Throw remake using linear extrapolation.
-Throw flipping.
+*Throw flipping.
 Throw speed to conf.
-*Monsters that block light.
-Parasites.
+Monsters that block light.
+//Parasites.
 //*Savefile versions.
 //Monster data in corpses + resurrection.
 Pets that resurrect the player.
@@ -110,12 +110,12 @@ Option to change the size of font. (from sturmkoenig2k)
 //Practise dungeon? (from JM)
 Elemental damage. (from JM)
 *Zombies should lose weight when they drop lumps of flesh.
-Consummo should appreciate sacrificed scrolls and books more than other gods.
+Sophos should appreciate sacrificed scrolls and books more than other gods.
 Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
 Fix wear-time AV inconsistency. (very difficult)
 //*Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
 Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
-Elpuri's lair could be even more frightening.
+//Elpuri's lair could be even more frightening.
 Fluid should handle melded metals.
 *In-game manual.
 In-game credits.
@@ -124,7 +124,7 @@ When we add magic, low level characters should be able to accidentally miscast a
 Something mysterious should happen when one lays a pick-axe on a holy banana of Liukas Vipro.
 Intelligent polymorphed monsters should have unique replies?
 //*Fluid disappears too fast.
-*Mommos should not leave corpses but just slime.
+//*Mommos should not leave corpses but just slime.
 //***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
 /*Dipping an empty bottle in a fountain should fill it with water.
 //*The librarian should sell scrolls of charging.
@@ -390,7 +390,7 @@ The spirit appearing in fountains should have a picture.
 Teleport trap.
 Town portal scroll.
 Small shadows for items. (one pixel right and down from the items graphic)
-Using sickle against plants should yield a bonus.
+Using sickle or scythe against plants should yield a bonus.
 "Select the direction you wish to enter Attnam from".
 Petrus should offer a small meal for player when he first visits him.
 //Food in can's should spoil _much_ slower.
@@ -400,18 +400,15 @@ Priests, Petrus and angels should be able to resurrect dead pets.
 Wand of door creation should create doors to walls.
 Mushrooms in forest. Cause odd effects when eaten.
 (r... damn. I thought I was onto something) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
-When many same kind of items on ground the message should say "5 Xs here" not "...several items here"
-There should be many types of attack damage with physical object (eg blunt, sting, chop)
 Movement modes (walk, run, stealth)
 "No load" mode (if weight of stack < 1 kg)
-Flaming sword should burn player also if player doesn't have gauntlets.
+Flaming sword should burn the player if he doesn't have gauntlets. 
 Items inside shelves should take damage from explosions.
 When many same kind of items on ground the message should say "5 Xs here" not "...several items here".
 (d) There should be many types of attack damage with physical object. (eg blunt, sting, chop)
-Movement modes. (walk, run, stealth)
-"No load" mode. (if weight of stack < 1 kg)
 Lanterns inside glass chests should still emit light.
-Axes should also be used for going through doors (a la Shining)
+Axes should also be used for going through doors. (a la Shining)
 Golems' corpses should be somehow useful. (eg parchment golems should give out parchment scrolls)
 The smith should fix damaged metal limbs for a fee.
 Finding Attnam in the map can be difficult if the distance is long.  
+Make golem scroll.

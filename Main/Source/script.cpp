@@ -19,24 +19,6 @@
     return &name;\
 }
 
-template <class type> void datamember<type>::Load(inputfile& SaveFile, const valuemap& ValueMap)
-{
-  if(!Member)
-    Member = new type;
-
-  ReadData(*Member, SaveFile, ValueMap);
-}
-
-template void datamember<dungeonscript>::Load(inputfile&, const valuemap&); // this is insane
-
-template <class type> void protonamedmember<type>::Load(inputfile& SaveFile, const valuemap&)
-{
-  if(!Member)
-    Member = new ushort;
-
-  ReadData(*Member, SaveFile, protocontainer<type>::GetCodeNameMap());
-}
-
 bool script::LoadData(inputfile& SaveFile, const std::string& Word)
 {
   datamemberbase* Data = GetData(Word);
@@ -173,7 +155,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
       if(ContentType || Word == "0")
 	Word = SaveFile.ReadWord();
       else
-	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
     }
 
   if(Word == "(")
@@ -188,16 +170,11 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	if(!LoadData(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
       }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
-}
-
-template <class type> const std::string& contentscripttemplate<type>::GetClassId() const
-{
-  return protocontainer<type>::GetMainClassId();
+      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 }
 
 template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort SpecialFlags) const
@@ -242,15 +219,21 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
   return Instance;
 }
 
-template character* contentscripttemplate<character>::BasicInstantiate(ushort) const;
-template item* contentscripttemplate<item>::BasicInstantiate(ushort) const;
-template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(ushort) const;
-template olterrain* contentscripttemplate<olterrain>::BasicInstantiate(ushort) const;
+/* Called by an inline function in script.h... */
 
-template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& Word) const
+template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(ushort) const;
+
+template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& String) const
 {
-  return protocontainer<type>::SearchCodeName(Word);
+  return protocontainer<type>::SearchCodeName(String);
 }
+
+/* GCC 2.952 SUCKS!!! IT MUST BURN!!! */
+
+template ushort contentscripttemplate<character>::SearchCodeName(const std::string&) const;
+template ushort contentscripttemplate<item>::SearchCodeName(const std::string&) const;
+template ushort contentscripttemplate<glterrain>::SearchCodeName(const std::string&) const;
+template ushort contentscripttemplate<olterrain>::SearchCodeName(const std::string&) const;
 
 datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 {
@@ -503,6 +486,11 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   if(SaveFile.ReadWord() != "}")
     ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 }
+
+template charactercontentmap;
+template itemcontentmap;
+template glterraincontentmap;
+template olterraincontentmap;
 
 datamemberbase* roomscript::GetData(const std::string& Identifier)
 {

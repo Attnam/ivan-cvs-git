@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdarg>
+#include <cstring>
 
 #ifdef __DJGPP__
 #include <conio.h>

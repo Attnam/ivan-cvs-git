@@ -7,7 +7,13 @@ is also provided AS IS and is probably completely unreadable.
 
 -------------------------------------------------------------------------------------
 
-December 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+December 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Teleport control is now more user-friendly
+	* Halved the strength required to use two-handed weapons
+	* Gcc 2.9x now compiles the game correctly
+
+December 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Doubled nutrition level limits
 	* Increased NP values by 50%

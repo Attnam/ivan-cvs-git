@@ -167,7 +167,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
     case WM_CHAR:
       {
-	if(std::find(KeyBuffer.begin(), KeyBuffer.end(), wParam) == KeyBuffer.end())
+	if(std::find(KeyBuffer.begin(), KeyBuffer.end(), int(wParam)) == KeyBuffer.end())
 	  KeyBuffer.push_back(wParam);
 
 	return 0;

@@ -1253,7 +1253,7 @@ dog
 	SkinColor = rgb16(111, 74, 37);
 	NameSingular = "puppy";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 400;
+	BaseBiteStrength = 350;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
@@ -2104,9 +2104,9 @@ kobold
 
 	Config PATRIARCH;
 	{
-		AttributeBonus = 90;
+		AttributeBonus = 120;
 		Helmet = STEEL helmet;
-		BodyArmor = TROLL_HIDE bodyarmor(PLATE_MAIL);
+		BodyArmor = STEEL bodyarmor(CHAIN_MAIL);
 		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
 		Belt = TROLL_HIDE belt;
 		Cloak = TROLL_HIDE cloak;
@@ -2117,7 +2117,7 @@ kobold
 		PostFix = "patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 3500;
+		DangerModifier = 2500;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 70000;
@@ -2906,7 +2906,7 @@ genetrixvesana
 	Adjective = "mother carnivorous";
 	DefaultName = "genetrix vesana";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 700;
+	BaseBiteStrength = 600;
 	SkinColor = rgb16(111, 64, 37);
 	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
 	KnownCWeaponSkills == BITE;

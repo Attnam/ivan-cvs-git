@@ -1387,7 +1387,7 @@ float arm::GetWieldedDamage() const
   if(TwoHandWieldIsActive())
     {
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 1;
+      Requirement >>= 2;
     }
 
   if(HitStrength > Requirement)
@@ -4273,7 +4273,7 @@ short arm::GetWieldedHitStrength() const
   if(TwoHandWieldIsActive())
     {
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 1;
+      Requirement >>= 2;
     }
 
   return HitStrength - Requirement;
@@ -4349,7 +4349,7 @@ void arm::ShowWieldedAttackInfo() const
     {
       Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 1;
+      Requirement >>= 2;
 
       if(HitStrength <= Requirement)
 	{
@@ -4487,7 +4487,7 @@ void arm::ShowDefenceInfo() const
     {
       Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 1;
+      Requirement >>= 2;
 
       if(HitStrength <= Requirement)
 	{
@@ -5078,7 +5078,7 @@ bool arm::CheckIfWeaponTooHeavy(const std::string& WeaponDescription) const
   if(TwoHandWieldIsActive())
     {
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 1;
+      Requirement >>= 2;
 
       if(HitStrength - Requirement < 10)
 	{

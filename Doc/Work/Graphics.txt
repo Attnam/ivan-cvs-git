@@ -24,7 +24,7 @@ Broadsword + broken picture.
 //Battle axe + broken picture.
 Club + broken picture.
 //Scythe + broken picture.
-Bastard sword + broken picture.
+//Bastard sword + broken picture.
 Colossal morning star + broken picture.
 Great axe + broken picture.
 //Skull.

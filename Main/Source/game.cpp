@@ -1179,8 +1179,8 @@ void game::BusyAnimation(bitmap* Buffer)
       Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
       Rotation += 0.02;
 
-      if(Rotation > 2 * PI)
-	Rotation -= 2 * PI;
+      if(Rotation > 2 * FPI)
+	Rotation -= 2 * FPI;
 
       Elpuri.MaskedBlit(Buffer, 0, 0, Pos.X - 8, Pos.Y - 7, 16, 16);
       ushort x;
@@ -1230,7 +1230,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       else
 	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 
-      if(Key == ' ')
+      if(Key == ' ' || Key == '.')
 	{
 	  Return = CursorPos;
 	  break;
@@ -1494,21 +1494,21 @@ uchar game::CalculateRoughDirection(vector2d Vector)
 
   float Angle = femath::CalculateAngle(Vector);
 
-  if(Angle < PI / 8)
+  if(Angle < FPI / 8)
     return 4;
-  else if(Angle < 3 * PI / 8)
+  else if(Angle < 3 * FPI / 8)
     return 7;
-  else if(Angle < 5 * PI / 8)
+  else if(Angle < 5 * FPI / 8)
     return 6;
-  else if(Angle < 7 * PI / 8)
+  else if(Angle < 7 * FPI / 8)
     return 5;
-  else if(Angle < 9 * PI / 8)
+  else if(Angle < 9 * FPI / 8)
     return 3;
-  else if(Angle < 11 * PI / 8)
+  else if(Angle < 11 * FPI / 8)
     return 0;
-  else if(Angle < 13 * PI / 8)
+  else if(Angle < 13 * FPI / 8)
     return 1;
-  else if(Angle < 15 * PI / 8)
+  else if(Angle < 15 * FPI / 8)
     return 2;
   else
     return 4;

@@ -217,20 +217,20 @@ ushort femath::WeightedRand(const std::vector<long>& Possibility)
 float femath::CalculateAngle(vector2d Direction)
 {
   if(Direction.X < 0)
-    return atan(float(Direction.Y) / Direction.X) + PI;
+    return atan(float(Direction.Y) / Direction.X) + FPI;
   else if(Direction.X > 0)
     {
       if(Direction.Y < 0)
-	return atan(float(Direction.Y) / Direction.X) + 2 * PI;
+	return atan(float(Direction.Y) / Direction.X) + 2 * FPI;
       else
 	return atan(float(Direction.Y) / Direction.X);
     }
   else
     {
       if(Direction.Y < 0)
-	return 3 * PI / 2;
+	return 3 * FPI / 2;
       else if(Direction.Y > 0)
-	return PI / 2;
+	return FPI / 2;
       else
 	{
 	  ABORT("Illegal direction (0, 0) passed to femath::CalculateAngle()!");

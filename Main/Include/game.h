@@ -41,8 +41,8 @@ struct configid
   configid() { }
   configid(ushort Type, ushort Config) : Type(Type), Config(Config) { }
   bool operator<(const configid& CI) const { return CompareBits(*this, CI); }
-  ushort Type PACKED;
-  ushort Config PACKED;
+  ushort Type NO_ALIGNMENT;
+  ushort Config NO_ALIGNMENT;
 };
 
 #ifdef VC
@@ -295,3 +295,4 @@ class game
 };
 
 #endif
+

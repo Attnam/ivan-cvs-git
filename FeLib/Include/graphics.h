@@ -76,51 +76,51 @@ class graphics
   {
     void Retrieve();
     bool CheckSupport() { return Version == 0x0200; }
-    ulong Signature PACKED;
-    ushort Version PACKED;
-    ulong OEMString PACKED;
-    ulong Capabilities PACKED;
-    ulong ModeList PACKED;
-    ushort Memory PACKED;
-    uchar Shit[493] PACKED;
+    ulong Signature NO_ALIGNMENT;
+    ushort Version NO_ALIGNMENT;
+    ulong OEMString NO_ALIGNMENT;
+    ulong Capabilities NO_ALIGNMENT;
+    ulong ModeList NO_ALIGNMENT;
+    ushort Memory NO_ALIGNMENT;
+    uchar Shit[493] NO_ALIGNMENT;
   } VesaInfo;
   static struct modeinfo
   {
     void Retrieve(ushort);
     bool CheckSupport() { return Attribs1 & 1 != 0; }
-    ushort Attribs1 PACKED;
-    uchar AWindowAttribs PACKED;
-    uchar BWindowAttribs PACKED;
-    ushort Granularity PACKED;
-    ushort WindowSize PACKED;
-    ushort WindowASegment PACKED;
-    ushort WindowBSegment PACKED;
-    ulong WindowMoveFunction PACKED;
-    ushort BytesPerLine PACKED;
-    ushort Width PACKED;
-    ushort Height PACKED;
-    uchar CharWidth PACKED;
-    uchar CharHeight PACKED;
-    uchar Planes PACKED;
-    uchar BitsPerPixel PACKED;
-    uchar Banks PACKED;
-    uchar MemoryModel PACKED;
-    uchar BankSize PACKED;
-    uchar ImagePages PACKED;
-    uchar Reserved1 PACKED;
-    uchar RedBits PACKED;
-    uchar RedShift PACKED;
-    uchar GreenBits PACKED;
-    uchar GreenShift PACKED;
-    uchar BlueBits PACKED;
-    uchar BlueShift PACKED;
-    uchar ResBits PACKED;
-    uchar ResShift PACKED;
-    uchar Attribs2 PACKED;
-    ulong PhysicalLFBAddress PACKED;
-    ulong OffScreenMem PACKED;
-    ushort OffScreenMemSize PACKED;
-    uchar Reserved2[206] PACKED;
+    ushort Attribs1 NO_ALIGNMENT;
+    uchar AWindowAttribs NO_ALIGNMENT;
+    uchar BWindowAttribs NO_ALIGNMENT;
+    ushort Granularity NO_ALIGNMENT;
+    ushort WindowSize NO_ALIGNMENT;
+    ushort WindowASegment NO_ALIGNMENT;
+    ushort WindowBSegment NO_ALIGNMENT;
+    ulong WindowMoveFunction NO_ALIGNMENT;
+    ushort BytesPerLine NO_ALIGNMENT;
+    ushort Width NO_ALIGNMENT;
+    ushort Height NO_ALIGNMENT;
+    uchar CharWidth NO_ALIGNMENT;
+    uchar CharHeight NO_ALIGNMENT;
+    uchar Planes NO_ALIGNMENT;
+    uchar BitsPerPixel NO_ALIGNMENT;
+    uchar Banks NO_ALIGNMENT;
+    uchar MemoryModel NO_ALIGNMENT;
+    uchar BankSize NO_ALIGNMENT;
+    uchar ImagePages NO_ALIGNMENT;
+    uchar Reserved1 NO_ALIGNMENT;
+    uchar RedBits NO_ALIGNMENT;
+    uchar RedShift NO_ALIGNMENT;
+    uchar GreenBits NO_ALIGNMENT;
+    uchar GreenShift NO_ALIGNMENT;
+    uchar BlueBits NO_ALIGNMENT;
+    uchar BlueShift NO_ALIGNMENT;
+    uchar ResBits NO_ALIGNMENT;
+    uchar ResShift NO_ALIGNMENT;
+    uchar Attribs2 NO_ALIGNMENT;
+    ulong PhysicalLFBAddress NO_ALIGNMENT;
+    ulong OffScreenMem NO_ALIGNMENT;
+    ushort OffScreenMemSize NO_ALIGNMENT;
+    uchar Reserved2[206] NO_ALIGNMENT;
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
@@ -130,3 +130,4 @@ class graphics
 };
 
 #endif
+

@@ -77,7 +77,7 @@ character* protosystem::BalancedCreateMonster()
 		    if(c < 100 && game::GetPlayer()->GetMaxHP() < i->second.HPRequirementForGeneration)
 		      break;
 
-		    if(c < 100 && RAND() % 3)
+		    if(c < 100 && !i->second.IsUnique && RAND() % 3)
 		      {
 			Illegal.push_back(Chosen);
 			break;
@@ -99,6 +99,10 @@ character* protosystem::BalancedCreateMonster()
 	      }
 	}
     }
+
+  /* This line is never reached, but it prevents warnings given by some (stupid) compilers. */
+
+  return 0;
 }
 
 item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, bool Polymorph)

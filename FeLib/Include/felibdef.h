@@ -14,8 +14,8 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-#ifndef PI
-#define PI 3.1415926535897932384626433832795f
+#ifndef FPI
+#define FPI 3.1415926535897932384626433832795f
 #endif
 
 inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
@@ -70,9 +70,9 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define BITMAP_ERROR_VECTOR vector2d(-666, -666)
 
 #ifdef GCC
-#define PACKED __attribute__ ((packed))
+#define NO_ALIGNMENT __attribute__ ((packed))
 #else
-#define PACKED
+#define NO_ALIGNMENT
 #endif
 
 #define SELECTABLE 1
@@ -87,3 +87,4 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define NOTHING_SELECTED 0xFFFD
 
 #endif
+

@@ -1,5 +1,6 @@
-#include <queue>
+#include <algorithm>
 #include <cmath>
+#include <queue>
 
 #include "charde.h"
 #include "stack.h"
@@ -901,8 +902,8 @@ bool character::PickUp()
       DexterityAction(2);
       return true;
     }
-  else
-    return false;
+
+  return false;
 }
 
 bool character::Quit()
@@ -3118,10 +3119,16 @@ void character::TeleportRandomly()
     {
       while(true)
 	{
-	  vector2d PlayersInput = game::PositionQuestion("Where do you wish to teleport? [direction keys]", GetPos(), 0,0,false);
+	  vector2d PlayersInput = game::PositionQuestion("Where do you wish to teleport? [direction keys move cursor, space accepts]", GetPos(), 0, 0, false);
 
 	  if(GetNearLSquare(PlayersInput)->IsWalkable(this) || game::GoThroughWallsCheatIsActive())
 	    {
+	      if(GetNearLSquare(PlayersInput)->GetPos() == GetPos())
+		{
+		  ADD_MESSAGE("You disappear and reappear.");
+		  return;
+		}
+
 	      if(GetNearLSquare(PlayersInput)->GetCharacter())
 		{
 		  ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");

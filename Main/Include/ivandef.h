@@ -663,4 +663,11 @@
 #define HIT 1
 #define CATCHED 2
 
+#define ROOM_NORMAL 1
+#define ROOM_SHOP 2
+#define ROOM_TEMPLE 3
+#define ROOM_CATHEDRAL 4
+#define ROOM_LIBRARY 5
+#define ROOM_LANDING_SITE 6
+
 #endif

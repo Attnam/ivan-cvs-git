@@ -447,6 +447,6 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
     return PreferredPossible[RAND() % PreferredPossible.size()] - Pos;
   else if(!BadPossible.empty())
     return BadPossible[RAND() % BadPossible.size()] - Pos;
-  else
-    return BITMAP_ERROR_VECTOR;
+
+  return BITMAP_ERROR_VECTOR;
 }

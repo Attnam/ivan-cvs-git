@@ -31,18 +31,18 @@ struct graphicid
 {
   graphicid() { }
   bool operator<(const graphicid& GI) const { return CompareBits(*this, GI); }
-  vector2d BitmapPos PACKED;
-  ushort Color[4] PACKED;
-  ushort Frame PACKED;
-  uchar FileIndex PACKED;
-  uchar BaseAlpha PACKED;
-  uchar Alpha[4] PACKED;
-  uchar SpecialFlags PACKED;
-  vector2d SparklePos PACKED;
-  uchar SparkleTime PACKED;
-  ushort OutlineColor PACKED;
-  ulong FlySeed PACKED;
-  uchar FlyAmount PACKED;
+  vector2d BitmapPos NO_ALIGNMENT;
+  ushort Color[4] NO_ALIGNMENT;
+  ushort Frame NO_ALIGNMENT;
+  uchar FileIndex NO_ALIGNMENT;
+  uchar BaseAlpha NO_ALIGNMENT;
+  uchar Alpha[4] NO_ALIGNMENT;
+  uchar SpecialFlags NO_ALIGNMENT;
+  vector2d SparklePos NO_ALIGNMENT;
+  uchar SparkleTime NO_ALIGNMENT;
+  ushort OutlineColor NO_ALIGNMENT;
+  ulong FlySeed NO_ALIGNMENT;
+  uchar FlyAmount NO_ALIGNMENT;
 };
 
 #ifdef VC
@@ -107,3 +107,4 @@ class igraph
 };
 
 #endif
+

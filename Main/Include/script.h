@@ -17,12 +17,6 @@
  protected:\
   datamember< type > name;
 
-#define PROTO_NAMED_MEMBER(type, name)\
- public:\
-  ushort* Get##name(bool AbortOnError = true) const { return name.GetMember(Base, #name, AbortOnError); }\
- protected:\
-  protonamedmember< type > name;
-
 class inputfile;
 class glterrain;
 class olterrain;
@@ -49,21 +43,22 @@ class datamemberbase
   virtual void Load(inputfile&, const valuemap&) = 0;
 };
 
-template <class type> class datamembertemplate : public datamemberbase
+template <class type> class datamember : public datamemberbase
 {
  public:
-  virtual ~datamembertemplate() { delete Member; }
-  datamembertemplate() : Member(0) { }
-  datamembertemplate(const datamembertemplate& Data) : datamemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
-  datamembertemplate& operator=(const datamembertemplate&);
+  virtual ~datamember() { delete Member; }
+  datamember() : Member(0) { }
+  datamember(const datamember& Data) : datamemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  datamember& operator=(const datamember&);
   type* GetMember() const { return Member; }
   type* GetMember(const script*, const std::string&, bool) const;
   void SetMember(type* What) { Member = What; }
+  virtual void Load(inputfile&, const valuemap&);
  protected:
   type* Member;
 };
 
-template <class type> inline datamembertemplate<type>& datamembertemplate<type>::operator=(const datamembertemplate<type>& Data)
+template <class type> inline datamember<type>& datamember<type>::operator=(const datamember<type>& Data)
 {
   if(Member)
     {
@@ -84,13 +79,13 @@ template <class type> inline datamembertemplate<type>& datamembertemplate<type>:
   return *this;
 }
 
-template <class type> inline type* datamembertemplate<type>::GetMember(const script* Base, const std::string& Identifier, bool AbortOnError) const
+template <class type> inline type* datamember<type>::GetMember(const script* Base, const std::string& Identifier, bool AbortOnError) const
 {
   if(Member)
     return Member;
   else
     if(Base)
-      return static_cast<const datamembertemplate<type>*>(Base->GetConstData(Identifier))->GetMember(Base->GetBase(), Identifier, AbortOnError);
+      return static_cast<const datamember<type>*>(Base->GetConstData(Identifier))->GetMember(Base->GetBase(), Identifier, AbortOnError);
     else
     {
       if(AbortOnError)
@@ -100,17 +95,13 @@ template <class type> inline type* datamembertemplate<type>::GetMember(const scr
     }
 }
 
-template <class type> class datamember : public datamembertemplate<type>
+template <class type> void datamember<type>::Load(inputfile& SaveFile, const valuemap& ValueMap)
 {
- public:
-  virtual void Load(inputfile&, const valuemap&);
-};
+  if(!Member)
+    Member = new type;
 
-template <class type> class protonamedmember : public datamembertemplate<ushort>
-{
- public:
-  virtual void Load(inputfile&, const valuemap&);
-};
+  ReadData(*Member, SaveFile, ValueMap);
+}
 
 class script
 {
@@ -170,8 +161,8 @@ class basecontentscript : public script
   ushort GetContentType() const { return ContentType; }
   bool IsValid() const { return ContentType || Random; }
  protected:
-  virtual const std::string& GetClassId() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
+  virtual const char* GetClassId() const = 0;
   DATA_MEMBER(materialscript, MainMaterial);
   DATA_MEMBER(materialscript, SecondaryMaterial);
   DATA_MEMBER(materialscript, ContainedMaterial);
@@ -186,7 +177,6 @@ inline bool IsValidScript(const basecontentscript& S) { return S.IsValid(); }
 template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
-  virtual const std::string& GetClassId() const;
   type* BasicInstantiate(ushort) const;
   virtual ushort SearchCodeName(const std::string&) const;
 };
@@ -199,6 +189,7 @@ class contentscript<character> : public contentscripttemplate<character>
   character* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
+  virtual const char* GetClassId() const { return "character"; }
   DATA_MEMBER(ushort, Team);
   DATA_MEMBER(std::vector<contentscript<item> >, Inventory);
   DATA_MEMBER(bool, IsMaster);
@@ -211,6 +202,7 @@ class contentscript<item> : public contentscripttemplate<item>
   item* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
+  virtual const char* GetClassId() const { return "item"; }
   DATA_MEMBER(ushort, Team);
   DATA_MEMBER(bool, Active);
   DATA_MEMBER(uchar, SideStackIndex);
@@ -226,6 +218,8 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
  public:
   glterrain* Instantiate(ushort SpecialFlags = 0) const { return contentscripttemplate<glterrain>::BasicInstantiate(SpecialFlags); }
+ protected:
+  virtual const char* GetClassId() const { return "glterrain"; }
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
@@ -234,6 +228,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   olterrain* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
+  virtual const char* GetClassId() const { return "olterrain"; }
   DATA_MEMBER(uchar, VisualEffects);
   DATA_MEMBER(uchar, AttachedArea);
   DATA_MEMBER(uchar, AttachedEntry);
@@ -302,7 +297,7 @@ class roomscript : public script
   DATA_MEMBER(bool, GenerateTunnel);
   DATA_MEMBER(uchar, DivineMaster);
   DATA_MEMBER(bool, GenerateLanterns);
-  PROTO_NAMED_MEMBER(room, Type);
+  DATA_MEMBER(ushort, Type);
   DATA_MEMBER(bool, GenerateFountains);
   DATA_MEMBER(bool, AllowLockedDoors);
   DATA_MEMBER(bool, AllowBoobyTrappedDoors);
