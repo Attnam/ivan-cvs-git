@@ -1438,9 +1438,9 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
 
 /* Returns ERROR_VECTOR if no free square was found */
 
-vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
+vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos, bool AllowStartPos) const
 {
-  if(Char->CanMoveOn(GetLSquare(StartPos)) && Char->IsFreeForMe(GetLSquare(StartPos)))
+  if(AllowStartPos && Char->CanMoveOn(GetLSquare(StartPos)) && Char->IsFreeForMe(GetLSquare(StartPos)))
     return StartPos;
 
   ushort c;

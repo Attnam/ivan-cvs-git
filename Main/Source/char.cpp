@@ -6558,7 +6558,7 @@ item* character::SearchForItem(const sweaponskill* SWeaponSkill) const
 
 void character::PutNear(vector2d Pos)
 {
-  vector2d NewPos = game::GetCurrentLevel()->GetNearestFreeSquare(this, Pos);
+  vector2d NewPos = game::GetCurrentLevel()->GetNearestFreeSquare(this, Pos, false);
 
   if(NewPos == ERROR_VECTOR)
     NewPos = game::GetCurrentLevel()->GetRandomSquare(this);

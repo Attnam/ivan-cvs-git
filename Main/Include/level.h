@@ -118,7 +118,7 @@ class level : public area
   bool DrawExplosion(const explosion*) const;
   ushort TriggerExplosions(ushort);
   lsquare*** GetMap() const { return Map; }
-  vector2d GetNearestFreeSquare(const character*, vector2d) const;
+  vector2d GetNearestFreeSquare(const character*, vector2d, bool = true) const;
   vector2d FreeSquareSeeker(const character*, vector2d, vector2d, uchar) const;
   vector2d GetFreeAdjacentSquare(const character*, vector2d,bool) const;
   static void (level::*GetBeamEffectVisualizer(ushort))(const rect&, ushort) const;
