@@ -74,6 +74,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 128))
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(0,192)
+	virtual void ImpactDamage(ushort, bool, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -333,6 +334,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(144,112)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
+	virtual ushort GetEmitation() const RET(333)
 );
 
 class ITEM
@@ -744,6 +746,25 @@ public:
 	virtual long Score() const RET(250);
 	virtual vector2d GetBitmapPos() const RETV(0,176)
 	virtual bool CanBeWished() const RET(true)
+);
+
+class ITEM
+(
+	brokenlamp,
+	item,
+	InitMaterials(new glass(70)),
+	{
+		SetSize(15);
+	},
+public:
+	virtual ushort Possibility() const RET(3)
+	virtual std::string NameSingular() const RET("broken lamp")
+	virtual std::string NamePlural() const RET("broken lamps")
+	virtual item* BetterVersion() const { item* P = new lamp(new glass(50)); return P; }
+	virtual float OfferModifier() const RET(0)
+	virtual vector2d GetBitmapPos() const RETV(0,304)
+protected:
+	virtual ushort GetFormModifier() const RET(55)
 );
 
 #endif

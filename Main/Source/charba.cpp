@@ -1849,8 +1849,9 @@ bool character::Kick()
 			if(KickPos == game::GetMoveVector(c))
 				Direction = c;
 		}
-		game::GetCurrentLevel()->GetLevelSquare(GetPos() + KickPos)->Kick(GetStrength(), Direction);
-		return true;
+		
+		return game::GetCurrentLevel()->GetLevelSquare(GetPos() + KickPos)->Kick(GetStrength(), Direction,this);
+		
 	}
 
 	return false;
@@ -2241,7 +2242,7 @@ ulong character::GetBloodColor() const
 	return MAKE_RGB(75,0,0);
 }
 
-void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction)
+void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction, character*)
 {
 	if(rand() % 10 +  rand() % 3 * KickStrength / 2 > GetAgility())
 	{

@@ -30,6 +30,7 @@ public:
 	virtual ushort OfferValue() const				{ return 100; }
 	virtual uchar Alignment() const				{ return GOOD; }
 	virtual uchar GetItemColor() const			{ return WHITE; }
+	virtual ushort GetEmitation() const { return 320; }
 	virtual bool IsSolid() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "valpurium"; }

@@ -57,7 +57,7 @@ public:
 	virtual bool Engrave(std::string What) { Engraved = What; return true; }
 	virtual void SetEmitation(ushort What) { Emitation = What; }
 	virtual void UpdateMemorizedDescription();
-	virtual void Kick(ushort,uchar);
+	virtual bool Kick(ushort,uchar, character*);
 	virtual bool CanBeSeenFrom(vector2d) const;
 	virtual uchar GetDivineOwner() const { return DivineOwner; }
 	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }

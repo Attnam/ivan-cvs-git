@@ -516,11 +516,23 @@ void levelsquare::UpdateMemorizedDescription()
 		SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 }
 
-void levelsquare::Kick(ushort Strength, uchar KickWay)
+bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 {
+	if(GetCharacter() && GetCharacter()->GetRelations() != 0)
+	{
+	if(Kicker->GetIsPlayer())
+		if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+			return false;
+		else
+			GetCharacter()->SetRelations(HOSTILE);
+	}
+
+
+
 	GetStack()->Kick(Strength, RetrieveFlag(), KickWay);
 	if(GetCharacter())
-		GetCharacter()->BeKicked(Strength, RetrieveFlag(), KickWay);
+		GetCharacter()->BeKicked(Strength, RetrieveFlag(), KickWay, Kicker);
+	return true;
 }
 
 bool levelsquare::CanBeSeenFrom(vector2d FromPos) const
