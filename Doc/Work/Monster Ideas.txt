@@ -381,8 +381,8 @@ Smurfs
 
 Brainsucker
 
-	Jumps on ones head and sucks brains. Can be used as a helmet.
-	Can be launched from a special launcher.
+	Jumps on one's head and sucks brains. Can be used as a helmet.
+	Is shot from a special launcher.
 
 Splitting monsters
 
@@ -412,6 +412,40 @@ Babel fish
 	Babel fish."
 	(The Hitchhiker's Guide to the Galaxy by Douglas Adams)
 
-Mutant turtle
+Mutant turtle (suggested by Henri Kiviluoto)
 
 	Very good in martial arts.
+
+Poison dart frog
+
+	A frog whose skin contains deadly neuro-toxin. Used by the natives
+	of South America in production of poison arrows.
+
+Reef stonefish (Synanceia verrucosa)
+
+	A quite poisonous species that is camouflaged so it looks like a
+	rock, and its spines inject venom to anyone unfortunate to step
+	on one.
+
+Black mamba (Dendroaspis polylepis)
+
+	Very dangerous snake up to 4.5m long, which can outrun a human,
+	crawling at speed of 20 km/h, and kill him easily with a large
+	dose of powerful toxin which paralyzes and kills him rapidly.
+
+Octopus
+
+	Very challenging for the bodypart engine.
+
+Piranha
+
+	Expert at devouring swimmers alive.
+
+Programmer
+
+	Configuration should specify alignment (dark or open source), language
+	(VB, C, C++, Assembler, ...) and ability (lame, apprentice,
+	experienced, Guru, Knuth). Of course, certain ability levels are
+	restricted by language. There's also an IVAN developer, who can
+	alter reality in the entire Universe as he wishes and is therefore
+	beyond gods in strength (he could also be named "a Creator").

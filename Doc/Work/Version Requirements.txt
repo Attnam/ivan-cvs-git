@@ -7,5 +7,9 @@ special monsters
 special items
 special materials
 Monty Python jokes
-traps (every other version is ok for this)
 insults
+diseases
+
+every other version is ok for these:
+traps
+states other than diseases

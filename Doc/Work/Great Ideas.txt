@@ -115,3 +115,12 @@ Halfling village where a number of hobbits carry tomatoes (eg) from their
     vegetable fields to be transported away by levitating ostriches.
     Officially a colony of Attnam, but led ruthlessly by Mrs Fortuna
     Decos, the wife of Richel, who has an athlete lover in her closet.
+There's a two-headed moose in the game; therefore it should be possible to
+    eat radioactive materials and get another head for the player, too.
+    This would behave like any other bodypart, but would have a very
+    annoying personality, make stupid comments all the time, panic
+    easily, disagree with about every decision you make and occasionally
+    give irrational commands to your body, for instance he could eat
+    mutant bunnies so that both of you gain polymorphing state.
+A female missionary in New Attnam, who teaches children that learning
+    Attnamese and reading the holy book of Valpurus equals food.

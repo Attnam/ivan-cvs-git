@@ -2542,6 +2542,300 @@ Poleaxe           P0 C8 B8 | A4 D4 Blo4 | long, 2hand
 Mace              P0 C0 B6 | A4 D4 Blo5 |
 Dagger            P6 C2 B0 | A8 D2 Blo1 | short, 1hand
 
+Ivan on September 21 2004
+-------------------------
+
+Somehow Ivan find such inspiration of given task that boundaries of 
+adequate behaviour now require to bend little. Leader observe that huge 
+analysis written mostly only because siren be nude:
+
+***COMMENCE ANALYSIS
+
+Because Siren be not overwhelmed with clotheing, Ivan design set of skin 
+colours and more info that be full of use.
+New set also may be appleyd to human characters that all ready exist.
+
+In name of clarity, Ivan define siren parts now:
+LEG 16,2
+TORSO 19,2
+HAND 16,2
+HEAD 24,2 25,2 26,2 26,1
+
+Informaton about siren:
+
+Head may have hair pin. Let this be yellow, red, purple, pink, black
+for ease rgb colour for pink be provide: 255,173,173
+
+Hand have some jewel or band. Let this be yellow, purple, gold, black or 
+dark brown
+
+Foot have sandal. Let this be:
+If siren be negro or darkish: black, dark green (0,70,0), dark red (70,0,0)
+If siren be european: orangy (255,75,0) – peach (255,140,0) – porno blue 
+(215,150,215) – pale peach (255,180,70) – yellowy (255,233,65)
+If siren be asian: take same as european but remove pale peach and 
+yellowy and insert pale pink (255,180,140)
+
+Torso have special colour for both nipple and pubic hair. Ivan 
+assumption that pubic hair colour correlate with hair colour. But not 
+only that; correlation with skin colour also necessary. Hair colours 
+probably already exist within leader system, so Ivan no look up for rgb 
+value in here. However suggestions:
+
+Negro and asian: allow only black, blackish and dark blown color for 
+both hair and nipple
+
+Asian: too red nipple not allowed
+
+Europoean: Lighter red hair color must only occur with skin that be 
+noticably pale and then nipple must too be noticeably reddish. Nipple 
+colour not allowed dark brown or black, and very light nipple colours 
+allowed only when skin also very light.
+
+In general, nipple colour is suppose to meet following requirement set:
+be a little darker than skin, of different tone than skin, or both
+to be not too dark (that distract visually)
+if tone (not darkness) of colour change, then it change to slightly more 
+red or brown
+
+Also, regarding pubic hair colour:
+If hair colour blonde, then pubic hair good to be slightly darker than 
+scalp hair
+
+Oh, asian skin colour probably not yet define in IVAN. Ivan indtoruse 
+asian skin colour. This skin color exist within follow range:
+R 254
+G 247
+B 183 - 208
+Blue be random in given area. If this not possible, then suggest make 
+darker asian and lighter asian in which amount of blue be first at the 
+lowest and then at highest, respectively.
+In asian skin set only black, brown and dark brown hair be allowed.
+
+Ivan also introduce peach skin, which be part of european skin family. 
+This skin colour associate with dark orange hair in particcular, but 
+allow also other type of hair.
+r 255
+g 178
+b 96
+
+Hmm. Come to think of it, sirens be magical beings! That mean skin 
+colour may also be bluish or purple or grey or anything. Suggestions:
+Purple 222,250,255, hair red, magenta, blue, dark violet
+Green 180, 255, 150, hair blue, dark green, dark violet
+Magenta 255, 180, 255, hair blue, magenta, dark violet
+Cyan 200,255,255 hair blue, red, dark violet
+(NOTICE: Ivan not very sure what be difference between magenta, violet 
+and purple. Do not ask.)
+Same nipple and pubic hair laws are apply to magical skins.
+
+Perhaps magical colours be reserved to sirens and new skin colours 
+aplyed only to ordinary humans. Ivan not sure at the moment. Some 
+testing needed.
+
+Ivan find that analysis be perhaps of unessential comlexity, but it was 
+unable to be avoided after Ivan discover enthusiasm of opportinity of 
+nipple definition
+
+***END ANALYSIS
+
+Ivan overjoy that a total of months of glorious cccp porn not go for 
+waste! Lenin smile in mausoleum for omnipresence of cccp ideal! Even 
+when dweller of lost cccp dwells in depths of dirt, father Lenin emerge 
+from red lights of porn district!
+
+Ivan also improvise new character inspired both by nudity and by current 
+decadence state of Motherland: bum!
+Bum:
+LEG: 17,2
+TOSRO: 19,1
+HAND: 13,2
+HEAD: 11,2
+Bum is to have light grey scalp- and pubic hair and wander naked in 
+Attnam complaining about social security issues. If possible, other 
+citizens have AI that attempt to stay at least one square away from bum! 
+When Attnam later be improved, bum be able to beg and then, if get any 
+money, he buy vodka from Attnam inn. When inn established, he perhaps 
+also sell all items he able to find to be able to invest more to passion 
+for vodka.
+
+Ivan have furniture add to olterrain. These incluse chair, table, desk, 
+luxury bed, bed. Also include fireplace (open and shut), stove (open and 
+shut) and oven (open and shut and 2 x partially open). Ivan not sure if 
+now be any application for open and shut graphic but they there for 
+future reference. Fire and heat sources of course luminant. Also mat. 
+colours 3 and 4 intent to glow like fire. Note also that window has been 
+altered to look naturaller.
+
+Ivan suggest that in future one can select the directon from which he 
+enter any city. This make easier access to many shop and building in the 
+border. Ivan still drawing new infrastructure for attnam.
+
+Ivan September 21 2004
+----------------------
+
+Ivan skyrocket from low plain to cccp clouds which highly float above. 
+There spirits gather around Ivan furry hat and whisper of interior 
+decoration tips!
+Ivan is yet to test beard growth.
+
+Ivan further improve Attnamian life: Drawer (open/closed), bench, 
+workbench, well
+Thing that appear like puddle be natural fountain, for why some one 
+erect something that look like decorative bourgois fancy fountain in the 
+deep dungeon?
+Ivan suggest that in darker dungeon levels there be fancy magical 
+fountains in whish mat1 is black and mat2 is purple. Drinking from these 
+cause similar effect than mushroom gas exposure. Ivan also hope for acid 
+fountain in Enner Beast level!
+Ivan propose following: Table, Workbench and Desk funiture be drawn ON 
+any 16x16 character that is on same square. That way shop keeper or 
+smith can sit behind him desk and thus look professional.
+As for furniture:
+Well - does not block movement (one must to stand above well if want 
+drop something to well, say, a rotting corpse. or drink from well)
+Bookshelf, drawer, stove, oven, fireplace - will block movement
+Bench, chair, table, desk, workbench - will not block
+Ivan suggest also that when finding altar, no god symbol be draw on it 
+before player been on it to recognize associated god.
+
+Ivan also suggest that if accidentally injure ally or neutral, following 
+rules apply:
+If ally really dumb, say Kenny, he never attack master
+If ally smarter, then possible to ask for forgiveness. But if player 
+injure same ally again within, say, 50 turns, no forgiveness be given.
+If  neutral been injured, he may forgive, or ask for money to forgive. 
+If injure again within, say, 500 turns, no forgiveness.
+
+Ivan have beta tester discovere. He give following feedback:
+<snip: Finnish irc log between J_Kahvi and vpjarvi>
+However he not have save files any more for crash.
+
+Ivan on September 23 2004
+-------------------------
+
+Ivan finish suggestion of Attnam. Suggestion crude to say a least. Ivan 
+should have millimetre paper or small square paper use. Too late. But 
+lot of detail and new thing:
+
+New:
+Carpenter - construct items of wood
+Apprentices - make -1 items for 1/3 or 1/2 of cost
+Bakery - produce and sell bread. maintain stock of 50 bread
+Healer - heals stuff
+Bar - interesting people and beer in bar. lot of poor and tough and 
+adventurous people.
+Brewery - right next to the bar. contain hidden altar of Nefas where 
+bartender sacrifice gold and beer! Five paid mercenary soldier guard 
+brewery and shut up about altar.
+Tomb of the unknown soldier - Guarded by two guard with fake mithril 
+armour and wood sword. Guard line: "This is the Tomb of the Unknown 
+Soldier! His name was Lamusius! Oops."
+Apprentice priest - no fuction yet
+Royal prison for trophy prisoners - Exotic prisoner collection of 
+different race and species!
+Obedience station - To keep all prisoner happy
+Punisher - Ivan plan smiley face mask graphic for punisher
+Garden - Nothing special but lot of plants
+Training dummy - Can be mauled to keep up weapon skill
+Entrance points - When entering, prompt: "From which direction do you 
+want to enter (N,E,S,W)? South recommended."
+
+Beds not included for every resident because in IVAN people no sleep 
+unless they get bump in head.
+In later version Attnam be several square big in world map, and there be 
+suburb and homes and farm in these other square?
+Oh, Ivan has forget windows on everywhere but garden. Leader add them as 
+he wish.
+If leader wish for a city wall, then one should include. However outside 
+city wall must be enough space to use wand of fireballs and have 100 
+gazillion super pets as allies.
+It may be that city square size have to be increase a bit.
+Lot of new graphic require. Ivan do some time.
+
+Map NOT as attachment because of hugeness. See 
+http://www.tuukkavirtaperko.net/attnam.png
+
+Leader on September 23 2004
+---------------------------
+
+Ivan represent fine ideas.
+Leader share some of his plans, too, and comment Ivan's.
+Attnam grow so large that it be bother for Petrus to decide everything.
+After all, he must have enough time to use wives and dolphins, too.
+He read 1984 and name four cardinals to aid in rule:
+Cardinal of Truth, who responsible for propaganda.
+Cardinal of Plenty, who responsible for tax collecting and treasury.
+Cardinal of Peace, new title of Sir Galladon, who responsible for guards and
+leading army to preemptive peacekeeping operations.
+Cardinal of Love, who head of Inquisition.
+Entrance to Cathedral can indeed be more more impressive, with tiled way
+leading inside.
+Red mat can as well be wider.
+However Leader suggest Cathedral remain in frog shape.
+This tradition after all.
+Obedience station be constructed underground.
+Cardinal of Love, two Inquisitors and a few law students
+(this be their summer job) interrogate prisoners there.
+Happy face mask brilliant idea for them all.
+Trophy prisoners also kept safe on this floor.
+This because in Ivan plan it too easy for clever enemy to drop kamikaze
+dwarves from hot-air balloon so they explode wall and release prisoners.
+Jail residents moved to ground level only on special occasions, for instance
+to entertain foreign VIP visitors.
+Guards' quarters also underground.
+Above ground level there another, smaller floor where Cardinal of Love place
+four telepaths so intelligent they detect mind of every thought criminal in
+town with their amulets of ESP.
+They avoid brewery, of course, since Petrus like to occasionally enter it
+incognito and examine Nefas's mistress or two throughoutly.
+"One must know one's enemy as well as himself" he explain if player
+recognize him.
+Since in future characters can avoid being telepathically detected by
+wearing tin foil as helmet, giant floating eye placed on top floor as added
+security measure.
+It rotate all the time, its gaze penetrating all hidden corners of Attnam,
+making enemies of Church despair.
+Training dummies can be on back yard whose access be easier.
+There also very hard wall against which prisoners condemned to capital
+punishment be led.
+There they shot by execution squad armed with wands of fireballs.
+North of it be graveyard.
+This be church after all.
+There well kept graves of numerous world famous, powerful, just and
+righteous Attnamese heroes who Cardinal of Truth invent.
+There be also gravedigger named Ummah.
+He genius mathematician who dig graves and play saxophone as hobby.
+Tomb of unknown soldier there as well.
+
+Town south of Cathedral can be as Ivan planned.
+Leader question usefulness of carpenter, though.
+Of course it fun when he ask "How much wood would a woodchuck chuck if a
+woodchuck could chuck wood?" but wooden equipment not very powerful in IVAN.
+Perhaps Ivan could invent a couple of interesting items he would himself be
+ready to buy from carpenter.
+Cathedral will not use windows because this forbidden in holy book of
+Valpurus. Windows is Evil.
+Other buildings may have them though.
+Mammoth-proof city wall good idea to protect Church property.
+Citizens, for example.
+
+Leader also satisfied with graphics Ivan send.
+It'd be great if some day Party could convert all graphics to 32x32 pictures
+and increase resolution.
+Leader like to see more detailed siren.
+And IVAN would truly be great playground for Ivan artistic ability.
+Alas such task would mean much graphics work.
+Party could of course make small program which do rough doubling and then
+smooth result, but Ivan still would have to check all graphics.
+If Ivan has much free time at some point in the future and want to try doing
+at least some part of conversion, he announce this to Leader.
+
+Leader distribute new furniture to citizens ASAP.
+Ivan idea of NPCs potentially forgiving hostile actions good, but it most
+likely won't make to this version.
+And bug comrade Vilho find fixed in current beta binary.
+
 ----------------------------------------------------------------------------
 
 End of document.

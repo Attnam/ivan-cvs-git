@@ -42,7 +42,7 @@ List of all gods
 ----------------
 
 Valpurus 	god of divine order				order
-Sophos		god of wisdom and stability			order, life
+Sophos		god of wisdom, stability and handicraft		order, life
 Dulcis		goddess of love and art				life
 Seges		goddess of health and agriculture		life, man
 Loricatus	god of fire, machines and smithing		man
