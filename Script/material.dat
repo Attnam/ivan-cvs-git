@@ -661,31 +661,36 @@ organicsubstance /* substances that spoil but are not flesh */
 gas
 {
 	CanBeWished = false;
+	StrengthValue = 1;
+	Density = 1;
+	Flexibility = 75;
+	ConsumeType = CT_GAS;
 
 	Config AIR;
 	{
 		StrengthValue = 1;
 		Density = 1;
 		Color = rgb16(180, 180, 255);
-		ConsumeType = CT_GAS;
 		NameStem = "air";
 		Article = "an";
 		Alpha = 150;
-		Flexibility = 75;
 		AttachedGod = TERRA;
 	}
 
 	Config MAGICAL_AIR;
 	{
-		StrengthValue = 1;
-		Density = 1;
 		Color = rgb16(180, 180, 255);
-		ConsumeType = CT_GAS;
 		NameStem = "magical air";
 		Alpha = 150;
-		Flexibility = 75;
 		IsAlive = true;
 		AttachedGod = SOPHOS;
+	}
+	Config SMOKE;
+	{
+		Color = rgb16(40, 40, 40);
+		NameStem = "smoke";
+		Alpha = 200;
+		AttachedGod = LORICATUS;
 	}
 }
 

@@ -16,12 +16,19 @@
 
 #define FPI 3.1415926535897932384626433832795f
 
+template <class type> inline const type& Max(const type& X, const type& Y) { return X >= Y ? X : Y; }
+template <class type> inline const type& Max(const type& X, const type& Y, const type& Z) { return Max(Max(X, Y), Z); }
+template <class type> inline const type& Min(const type& X, const type& Y) { return X <= Y ? X : Y; }
+template <class type> inline const type& Min(const type& X, const type& Y, const type& Z) { return Min(Min(X, Y), Z); }
+template <class type> inline const type& Limit(const type& Value, const type& Minimum, const type& Maximum) { return Min(Max(Value, Minimum), Maximum); }
+
 inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
 inline ushort GetGreen16(ushort Color) { return Color >> 3 & 0xFC; }
 inline ushort GetBlue16(ushort Color) { return Color << 3 & 0xF8; }
 inline ushort MakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F); }
 inline ushort RightShift8AndMakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red & 0xF800) | (Green >> 5 & 0x7E0) | (Blue >> 11); }
 inline ushort MakeShadeColor(ushort Color) { return MakeRGB16(GetRed16(Color) / 3, GetGreen16(Color) / 3, GetBlue16(Color) / 3); }
+inline ushort EditRGB16(ushort Color, short Red, short Green, short Blue) { return MakeRGB16(Limit(GetRed16(Color) + Red, 0, 0xFF), Limit(GetGreen16(Color) + Green, 0, 0xFF), Limit(GetBlue16(Color) + Blue, 0, 0xFF)); }
 
 inline ulong GetRed24(ulong Color) { return Color >> 16 & 0xFF; }
 inline ulong GetGreen24(ulong Color) { return Color >> 8 & 0xFF; }

@@ -160,6 +160,7 @@ class material
   bool CanBeEatenByAI(const character*) const;
   virtual void SetSpoilCounter(ushort) { }
   virtual bool IsStupidToConsume();
+  void EditVolume(long What) { SetVolume(Volume + What); }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

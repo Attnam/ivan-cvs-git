@@ -37,6 +37,7 @@ const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_Pr
 #include "fluid.h"
 #include "database.h"
 #include "nonhuman.h"
+#include "smoke.h"
 
 #include "level.cpp"
 #include "lsquare.cpp"

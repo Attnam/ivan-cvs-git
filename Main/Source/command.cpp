@@ -386,12 +386,13 @@ bool commandsystem::Talk(character* Char)
 
   return false;
 }
-
+#include "materias.h"
 bool commandsystem::NOP(character* Char)
 {
   Char->EditExperience(DEXTERITY, -10);
   Char->EditExperience(AGILITY, -10);
   Char->EditAP(-Char->GetStateAPGain(1000));
+  Char->GetLSquareUnder()->AddSmoke(new gas(SMOKE, 1000));
   return true;
 }
 

@@ -119,6 +119,9 @@ void lsquare::Draw()
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
 	    Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+
+	  for(ushort c = 0; c < Smoke.size(); ++c)
+	    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 	}
       else
 	{
@@ -459,7 +462,7 @@ void lsquare::Save(outputfile& SaveFile) const
   for(ushort c = 0; c < 4; ++c)
     SideStack[c]->Save(SaveFile);
 
-  SaveFile << Emitter << Fluid << Emitation << DivineMaster << Engraved << RoomIndex << Luminance;
+  SaveFile << Emitter << Fluid << Emitation << DivineMaster << Engraved << RoomIndex << Luminance << Smoke;
 
   if(LastSeen)
     Memorized->Save(SaveFile);
@@ -478,7 +481,7 @@ void lsquare::Load(inputfile& SaveFile)
       SideStack[c]->SetMotherSquare(this);
     }
 
-  SaveFile >> Emitter >> Fluid >> Emitation >> DivineMaster >> Engraved >> RoomIndex >> Luminance;
+  SaveFile >> Emitter >> Fluid >> Emitation >> DivineMaster >> Engraved >> RoomIndex >> Luminance >> Smoke;
 
   if(LastSeen)
     {
@@ -1499,4 +1502,19 @@ void lsquare::SortAllItems(itemvector& AllItems, const character* Character, boo
       GetCharacter()->SortAllItems(AllItems, Character, Sorter);
     }
   GetStack()->SortAllItems(AllItems, Character, Sorter);
+}
+
+void lsquare::RemoveSmoke(smoke* ToBeRemoved)
+{
+  Smoke.erase(std::find(Smoke.begin(), Smoke.end(), ToBeRemoved));
+  if(Smoke.empty())
+    DecAnimatedEntities();
+}
+
+void lsquare::AddSmoke(gas* ToBeAdded)
+{
+  if(Smoke.empty())
+    IncAnimatedEntities();
+  Smoke.push_back(new smoke(ToBeAdded, this));
+  SendNewDrawRequest();
 }

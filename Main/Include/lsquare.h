@@ -20,6 +20,8 @@ class olterrain;
 class fluid;
 class material;
 class item;
+class smoke;
+class gas;
 
 typedef std::vector<item*> itemvector;
 
@@ -141,6 +143,8 @@ class lsquare : public square
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
   bool LowerEnchantment(character*, const std::string&, uchar);
+  void RemoveSmoke(smoke*);
+  void AddSmoke(gas*);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -157,6 +161,7 @@ class lsquare : public square
   bitmap* Memorized;
   bool MemorizedUpdateRequested;
   ulong LastExplosionID;
+  std::vector<smoke*> Smoke; 
 };
 
 inline bool lsquare::IsDark() const
