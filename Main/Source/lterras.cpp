@@ -254,8 +254,9 @@ bool throne::SitOn(character* Sitter)
       game::GetCurrentArea()->SendNewDrawRequest();
       game::DrawEverything();
       PLAYER->ShowAdventureInfo();
-      PLAYER->AddScoreEntry(CONST_S("became the new high priest of the Great Frog"), 5, false);
-      game::End();
+      festring Msg = CONST_S("became the new high priest of the Great Frog");
+      PLAYER->AddScoreEntry(Msg, 5, false);
+      game::End(Msg);
       return true;
     }
 

@@ -362,6 +362,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(DefaultCommandFlags);
   ADD_MEMBER(ConstantCommandFlags);
   ADD_MEMBER(WillCarryItems);
+  ADD_MEMBER(ForceVomitMessage);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

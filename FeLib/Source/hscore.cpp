@@ -26,19 +26,19 @@ bool highscore::Add(long NewScore, const festring& NewEntry, time_t NewTime, lon
 	Time.insert(Time.begin() + c, NewTime);
 	RandomID.insert(RandomID.begin() + c, NewRandomID);
 
-	if(Score.size() > 100)
+	if(Score.size() > MAX_HIGHSCORES)
 	  {
-	    Entry.resize(100, festring());
-	    Score.resize(100);
-	    Time.resize(100);
-	    RandomID.resize(100);
+	    Entry.resize(MAX_HIGHSCORES, festring());
+	    Score.resize(MAX_HIGHSCORES);
+	    Time.resize(MAX_HIGHSCORES);
+	    RandomID.resize(MAX_HIGHSCORES);
 	  }
 
 	LastAdd = c;
 	return true;
       }
 
-  if(Score.size() < 100)
+  if(Score.size() < MAX_HIGHSCORES)
     {
       LastAdd = Score.size();
       Entry.push_back(NewEntry);
@@ -49,7 +49,7 @@ bool highscore::Add(long NewScore, const festring& NewEntry, time_t NewTime, lon
     }
   else
     {
-      LastAdd = 100;
+      LastAdd = MAX_HIGHSCORES;
       return false;
     }
 }
@@ -141,3 +141,8 @@ int highscore::Find(long AScore, const festring& AEntry, time_t ATime, long ARan
   return 0;
 }
 
+
+bool highscore::LastAddFailed() const
+{
+  return LastAdd == MAX_HIGHSCORES;
+}

@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through coreset.cpp */
 
 entity::entity(const entity& Entity) : Emitation(Entity.Emitation), Flags(Entity.Flags)

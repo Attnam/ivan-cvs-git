@@ -18,6 +18,7 @@ int humanoid::GetCarryingStrength() const { return Max(GetAttribute(LEG_STRENGTH
 void humanoid::CalculateBodyParts() { BodyParts = HUMANOID_BODYPARTS; }
 void humanoid::CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
 bool humanoid::HasFeet() const { return GetLeftLeg() || GetRightLeg(); }
+bool humanoid::HasArm() const { return GetLeftArm() || GetRightArm(); }
 
 vector2d farmer::GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) << 4); }
 vector2d farmer::GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) << 4); }
@@ -510,8 +511,9 @@ void petrus::BeTalkedTo()
 	  game::GetCurrentArea()->SendNewDrawRequest();
 	  game::DrawEverything();
 	  PLAYER->ShowAdventureInfo();
-	  AddScoreEntry(CONST_S("retrieved the Shirt of the Golden Eagle and was raised to nobility"), 4, false);
-	  game::End();
+	  festring Msg = CONST_S("retrieved the Shirt of the Golden Eagle and was raised to nobility");
+	  AddScoreEntry(Msg, 4, false);
+	  game::End(Msg);
 	  return;
 	}
       else
@@ -540,8 +542,9 @@ void petrus::BeTalkedTo()
       game::GetCurrentArea()->SendNewDrawRequest();
       game::DrawEverything();
       PLAYER->ShowAdventureInfo();
-      AddScoreEntry(CONST_S("defeated Elpuri and continued to further adventures"), 2, false);
-      game::End();
+      festring Msg = CONST_S("defeated Elpuri and continued to further adventures");
+      AddScoreEntry(Msg, 2, false);
+      game::End(Msg);
     }
   else
     {
@@ -3081,6 +3084,11 @@ item* humanoid::GetPairEquipment(int I) const
 const festring& humanoid::GetStandVerb() const
 {
   static festring HasntFeet = CONST_S("crawling");
+  static festring Hovering = CONST_S("hovering");
+
+  if(StateIsActivated(LEVITATION))
+    return Hovering;
+
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
 
@@ -4534,4 +4542,21 @@ void golem::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> ItemVolume;
+}
+
+bool humanoid::CanVomit() const
+{ 
+  return HasHead() && character::CanVomit(); 
+}
+
+bool humanoid::CheckApply() const
+{
+  if(!character::CheckApply())
+    return false;
+  if(!HasArm())
+    {
+      ADD_MESSAGE("You need an arm to apply.");
+      return false;
+    }
+  return true;
 }

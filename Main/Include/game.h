@@ -230,7 +230,7 @@ class game
   static int KeyQuestion(const festring&, int, int, ...);
   static vector2d LookKeyHandler(vector2d, int);
   static vector2d NameKeyHandler(vector2d, int);
-  static void End(bool = true, bool = true);
+  static void End(festring, bool = true, bool = true);
   static int CalculateRoughDirection(vector2d);
   static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, color16, color16, color16, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }

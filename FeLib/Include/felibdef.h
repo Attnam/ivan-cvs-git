@@ -190,4 +190,6 @@ inline int GetMinColor24(color24 Color)
 
 #define TRANSPARENT_PALETTE_INDEX 191
 
+#define MAX_HIGHSCORES 100
+
 #endif

@@ -8,6 +8,19 @@ is also provided AS IS and is probably completely unreadable.
 ------------------------------------------------------------------------------------
 July 7 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
+	* Vomit messages work...
+
+July 7 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+	* "You look down. You see an active mine." in the dark. no more...
+	* Headless zombies can no longer vomit.
+	* ?,*,|,<,>,/,\,: are no longer acceptable for names (windows doesn't like them)
+	* ForcedVomit messages are different for mommos and dolphins
+	* 'If player tries to apply when he has no arms, the message says that there are no items to apply.' bug corrected.. 
+	* When you don't get to the highscore list your reason of death is shown
+	
+July 7 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
 	* Copyright notices added to sources, headers and script
 	
 Heikki Sairanen <firstname.lastname@tut.fi>

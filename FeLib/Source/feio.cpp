@@ -252,7 +252,7 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
 		
       /* if LastKey is less than 20 it is a control character not available in the font */
 
-      while(!(LastKey >= 0x20 || LastKey == KEY_BACK_SPACE || LastKey == KEY_ENTER || LastKey == KEY_ESC))
+      while(!(IsAcceptableForStringQuestion(LastKey)))
 	LastKey = GET_KEY(false);
 
       if(LastKey == KEY_ESC && AllowExit)
@@ -573,3 +573,14 @@ festring iosystem::ContinueMenu(color16 TopicColor, color16 ListColor, const fes
 #endif
 }
 
+bool iosystem::IsAcceptableForStringQuestion(char Key)
+{
+  if(Key == '<' || Key == '>' || Key == '?' || Key == '*' 
+     || Key == '/' || Key == '\\' || Key == ':')
+    return false;
+
+  if(Key < 0x20 && !(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC))
+    return false;
+
+  return true;
+}

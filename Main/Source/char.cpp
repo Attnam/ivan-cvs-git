@@ -1121,7 +1121,7 @@ bool character::TryMove(vector2d MoveVector, bool Important, bool Run)
 		  game::DrawEverything();
 		  ShowAdventureInfo();
 		  PLAYER->AddScoreEntry(CONST_S("killed Petrus and became the Avatar of Chaos"), 3, false);
-		  game::End();
+		  game::End(CONST_S("killed Petrus and became the Avatar of Chaos"));
 		  return true;
 		}
 
@@ -1374,7 +1374,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	}
 
       game::TextScreen(CONST_S("Unfortunately you died during your journey. The high priest is not happy."));
-      game::End();
+      game::End(Msg);
     }
 }
 
@@ -2798,9 +2798,10 @@ void character::TestWalkability()
 	    {
 	      Remove();
 	      SendToHell();
-	      game::AskForKeyPress(festring(SquareUnder->DeathMessage(this)) + ". [press any key to continue]");
-	      PLAYER->AddScoreEntry(SquareUnder->ScoreEntry(this));
-	      game::End();
+	      festring DeathMsg = festring(SquareUnder->DeathMessage(this));
+	      game::AskForKeyPress(DeathMsg + ". [press any key to continue]");
+	      PLAYER->AddScoreEntry(DeathMsg);
+	      game::End(DeathMsg);
 	    }
 	  else
 	    {
@@ -8355,6 +8356,22 @@ int character::GetAttributeAverage() const
   return GetSumOfAttributes() / 7;
 }
 
+const festring& character::GetStandVerb() const
+{
+  static festring Hovering = "hovering";
+  return StateIsActivated(LEVITATION) ? Hovering : DataBase->StandVerb;
+}
+
+bool character::CheckApply() const
+{
+  if(!CanApply())
+    {
+      ADD_MESSAGE("This monster type cannot apply.");
+      return false;
+    }
+  return true;
+}
+
 void character::EndLevitation()
 {
   if(!(GetMoveType() & FLY))
@@ -8365,3 +8382,4 @@ void character::EndLevitation()
       TestWalkability();
     }
 }
+

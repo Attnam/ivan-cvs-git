@@ -1,3 +1,12 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
+
 /* 
  * NOTICE!!!
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
@@ -105,6 +114,7 @@ character
 	DefaultCommandFlags = FOLLOW_PLAYER|DONT_CONSUME_ANYTHING_VALUABLE;
 	ConstantCommandFlags = 0;
 	WillCarryItems = false;
+	ForceVomitMessage = "You push your fingers down to your throat and vomit.";
 }
 
 humanoid
@@ -1274,6 +1284,7 @@ mommo
 	BiteCapturesBodyPart = false;
 	VomitMaterial = BROWN_SLIME;
 	IgnoreDanger = true;
+	ForceVomitMessage = "You spurt some brown slime from your body.";
 
 	Config CONICAL;
 	{
@@ -1739,6 +1750,7 @@ dolphin
 	HasFeet = false;
 	FleshMaterial = DOLPHIN_FLESH;
 	AttachedGod = SOPHOS;
+	ForceVomitMessage = "You push your fin down to your throat and vomit.";
 }
 
 slave
@@ -3500,6 +3512,7 @@ mushroom
 	PanicLevel = 0;
 	CanOpen = false;
 	CanMove = false;
+	StandVerb = "rooted";
 }
 
 magicmushroom
@@ -3531,6 +3544,7 @@ magicmushroom
 	CWeaponSkillHits == 20;
 	Frequency = 5000;
 	DangerModifier = 75;
+	StandVerb = "wobbling";
 }
 
 darkmage

@@ -1881,9 +1881,9 @@ bool mommo::Hit(character* Enemy, vector2d Pos, int, bool)
   Hostility(Enemy);
 
   if(IsPlayer())
-    ADD_MESSAGE("You vomit acidous slime at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("You spill acidous slime at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
   else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s vomits acidous slime at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s spills acidous slime at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
   Vomit(Pos, 500 + RAND() % 500, false);
   EditAP(-1000);

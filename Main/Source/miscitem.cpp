@@ -723,9 +723,19 @@ void mine::StepOnEffect(character* Stepper)
   if(Stepper->IsPlayer())
     {
       if(Stepper->CanHear())
-	ADD_MESSAGE("You hear a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+	{
+	  if(GetLSquareUnder()->IsDark())
+	    ADD_MESSAGE("You hear a faint thump. You try to look down, but it is too dark to see anything.");
+	  else
+	    ADD_MESSAGE("You hear a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+	}
       else
-	ADD_MESSAGE("You sense a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+	{
+	  if(GetLSquareUnder()->IsDark())
+	    ADD_MESSAGE("You sense a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+	  else
+	    ADD_MESSAGE("You sense a faint thump. You try to look down, but it is too dark to see anything.", CHAR_NAME(INDEFINITE));
+	}
     }
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));

@@ -157,6 +157,10 @@ class ABSTRACT_CHARACTER
   virtual void DuplicateEquipment(character*, ulong);
   bool IsImmuneToLeprosy() const;
   virtual int GetAttributeAverage() const;
+  virtual bool CanVomit() const;
+  virtual bool CheckApply() const;
+  virtual bool HasArm() const;
+  virtual bool CanForceVomit() const { return TorsoIsAlive() && HasArm(); }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;

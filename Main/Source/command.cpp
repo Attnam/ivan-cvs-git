@@ -428,8 +428,9 @@ bool commandsystem::Quit(character* Char)
   if(game::BoolQuestion(CONST_S("Your quest is not yet compeleted! Really quit? [y/N]")))
     {
       Char->ShowAdventureInfo();
-      Char->AddScoreEntry(CONST_S("cowardly quit the game"), 0.75);
-      game::End(!game::WizardModeIsActive() || game::BoolQuestion(CONST_S("Remove saves? [y/N]")));
+      festring Msg = CONST_S("cowardly quit the game");
+      Char->AddScoreEntry(Msg, 0.75);
+      game::End(Msg, !game::WizardModeIsActive() || game::BoolQuestion(CONST_S("Remove saves? [y/N]")));
       return true;
     }
   else
@@ -874,6 +875,10 @@ bool commandsystem::Apply(character* Char)
       ADD_MESSAGE("This monster type cannot apply.");
       return false;
     }
+
+  if(!Char->CheckApply())
+    return false;
+
   if(!Char->GetStack()->SortedItems(Char, &item::IsAppliable) && !Char->EquipsSomething(&item::IsAppliable))
     {
       ADD_MESSAGE("You have nothing to apply!");
@@ -886,14 +891,14 @@ bool commandsystem::Apply(character* Char)
 
 bool commandsystem::ForceVomit(character* Char)
 {
-  if(Char->CanVomit())
+  if(Char->CanForceVomit())
     {
       int Dir = game::DirectionQuestion(CONST_S("Where do you wish to vomit?  [press a direction key]"), false, true);
 
       if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
 	{
-	  ADD_MESSAGE("You push your fingers down to your throat and vomit.");
-	  Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500);
+	  ADD_MESSAGE(Char->GetForceVomitMessage().CStr());
+	  Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500, false);
 	  Char->EditAP(-1000);
 	  return true;
 	}

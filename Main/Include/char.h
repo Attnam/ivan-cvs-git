@@ -184,6 +184,7 @@ struct characterdatabase : public databasebase
   ulong DefaultCommandFlags;
   ulong ConstantCommandFlags;
   bool WillCarryItems;
+  festring ForceVomitMessage;
 };
 
 class characterprototype
@@ -405,7 +406,6 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, Sex);
   DATA_BASE_BOOL(CanBeGenerated);
   DATA_BASE_VALUE(int, CriticalModifier);
-  virtual DATA_BASE_VALUE(const festring&, StandVerb);
   DATA_BASE_BOOL(CanOpen);
   DATA_BASE_BOOL(CanBeDisplaced);
   DATA_BASE_VALUE(int, EnergyResistance);
@@ -905,7 +905,11 @@ class character : public entity, public id
   const char* GetVerbalBurdenState() const;
   color16 GetVerbalBurdenStateColor() const;
   virtual int GetAttributeAverage() const;
+  virtual const festring& GetStandVerb() const;
+  virtual bool CheckApply() const;
+  virtual bool CanForceVomit() const { return CanVomit(); }
   void EndLevitation();
+  DATA_BASE_VALUE(festring, ForceVomitMessage);
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

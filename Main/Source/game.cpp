@@ -1191,8 +1191,9 @@ bool game::HandleQuitMessage()
 	      DrawEverything();
 	      return false;
 	    default:
-	      GetPlayer()->AddScoreEntry(CONST_S("cowardly quit the game"), 0.75);
-	      End(true, false);
+	      festring Msg = CONST_S("cowardly quit the game");
+	      GetPlayer()->AddScoreEntry(Msg, 0.75);
+	      End(Msg, true, false);
 	      break;
 	    }
 	}
@@ -1593,7 +1594,7 @@ vector2d game::NameKeyHandler(vector2d CursorPos, int Key)
   return CursorPos;
 }
 
-void game::End(bool Permanently, bool AndGoToMenu)
+void game::End(festring DeathMessage, bool Permanently, bool AndGoToMenu)
 {
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
@@ -1606,7 +1607,10 @@ void game::End(bool Permanently, bool AndGoToMenu)
       highscore HScore;
 
       if(HScore.LastAddFailed())
-	iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list."));
+	{
+	  iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list.\n\n\n\n")
+			       + GetPlayerName() + CONST_S(" ") + DeathMessage + "\nRIP");
+	}
       else
 	HScore.Draw();
     }
