@@ -331,7 +331,7 @@ void materialdatabase::InitDefaults(const materialprototype* NewProtoType, int N
 {
   ProtoType = NewProtoType;
   DigProductMaterial = Config = NewConfig;
-  CommonFlags = IS_ABSTRACT; // dummy value for configcontainer
+  CommonFlags |= IS_ABSTRACT; // dummy value for configcontainer
   //IsAbstract = true; // dummy value for configcontainer
 }
 

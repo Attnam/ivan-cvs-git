@@ -81,10 +81,10 @@ class square
   character* Character;
   v2 Pos;
   col24 Luminance;
-  ulong Flags;
+  mutable ulong Flags;
   ushort StaticAnimatedEntities;
   ushort AnimatedEntities;
-  uchar LastSeen;
+  mutable uchar LastSeen;
 };
 
 #endif

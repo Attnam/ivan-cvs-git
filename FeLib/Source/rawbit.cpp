@@ -18,30 +18,7 @@
 #include "save.h"
 #include "femath.h"
 
-/*void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, packcol16* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }
-void rawbitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, packcol16* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Color); }
-void rawbitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, packcol16* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
-void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, packcol16* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Color); }
-void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, packcol16* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
-void rawbitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, packcol16* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
-void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, packcol16* Color) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }*/
 void rawbitmap::MaskedBlit(bitmap* Bitmap, packcol16* Color) const { MaskedBlit(Bitmap, ZERO_V2, ZERO_V2, Size, Color); }
-
-/*void rawbitmap::AlterGradient(v2 Pos, int Width, int Height, int MColor, int Amount, truth Clip) { AlterGradient(Pos.X, Pos.Y, Width, Height, MColor, Amount, Clip); }
-void rawbitmap::AlterGradient(int X, int Y, v2 AlterSize, int MColor, int Amount, truth Clip) { AlterGradient(X, Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
-void rawbitmap::AlterGradient(v2 Pos, v2 AlterSize, int MColor, int Amount, truth Clip) { AlterGradient(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
-
-void rawbitmap::SwapColors(v2 Pos, int Width, int Height, int Color1, int Color2) { SwapColors(Pos.X, Pos.Y, Width, Height, Color1, Color2); }
-void rawbitmap::SwapColors(int X, int Y, v2 AlterSize, int Color1, int Color2) { SwapColors(X, Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
-void rawbitmap::SwapColors(v2 Pos, v2 AlterSize, int Color1, int Color2) { SwapColors(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
-
-void rawbitmap::Roll(v2 Pos, int Width, int Height, int XMove, int YMove, paletteindex* TempBuf) { Roll(Pos.X, Pos.Y, Width, Height, XMove, YMove, TempBuf); }
-void rawbitmap::Roll(int X, int Y, v2 BlitSize, int XMove, int YMove, paletteindex* TempBuf) { Roll(X, Y, BlitSize.X, BlitSize.Y, XMove, YMove, TempBuf); }
-void rawbitmap::Roll(int X, int Y, int Width, int Height, v2 Move, paletteindex* TempBuf) { Roll(X, Y, Width, Height, Move.X, Move.Y, TempBuf); }
-void rawbitmap::Roll(v2 Pos, v2 BlitSize, int XMove, int YMove, paletteindex* TempBuf) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, XMove, YMove, TempBuf); }
-void rawbitmap::Roll(v2 Pos, int Width, int Height, v2 Move, paletteindex* TempBuf) { Roll(Pos.X, Pos.Y, Width, Height, Move.X, Move.Y, TempBuf); }
-void rawbitmap::Roll(int X, int Y, v2 BlitSize, v2 Move, paletteindex* TempBuf) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y, TempBuf); }
-void rawbitmap::Roll(v2 Pos, v2 BlitSize, v2 Move, paletteindex* TempBuf) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y, TempBuf); }*/
 
 rawbitmap::rawbitmap(const festring& FileName)
 {

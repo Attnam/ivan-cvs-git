@@ -155,6 +155,7 @@ struct itemdatabase : public databasebase
   int CoverPercentile;
   v2 TorsoArmorBitmapPos;
   v2 ArmArmorBitmapPos;
+  v2 AthleteArmArmorBitmapPos;
   v2 LegArmorBitmapPos;
   v2 HelmetBitmapPos;
   v2 CloakBitmapPos;
@@ -358,6 +359,7 @@ class item : public object
   DATA_BASE_VALUE(int, CoverPercentile);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, TorsoArmorBitmapPos, int);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, ArmArmorBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, AthleteArmArmorBitmapPos, int);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, LegArmorBitmapPos, int);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, HelmetBitmapPos, int);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, CloakBitmapPos, int);

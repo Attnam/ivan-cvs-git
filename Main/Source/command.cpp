@@ -506,22 +506,16 @@ truth commandsystem::Talk(character* Char)
 
 truth commandsystem::NOP(character* Char)
 {
-  /*igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
-    graphics::BlitDBToScreen();
-    GET_KEY();*/
-  //  ADD_MESSAGE("Danger: %d.", int(game::GetGameSituationDanger() * 1000));
-  //  return false;
-
-  /*{
-  //humanoid* H = static_cast<humanoid*>(Char);
-
-  for(int c = 0; c < Char->GetBodyParts(); ++c)
-  Char->GetBodyPart(c)->EditHP(-Char->GetBodyPart(c)->GetHP() / 2);
-  }*/
-
-  //game::GetScore();
-
-  //ADD_MESSAGE("%s", time::VerbalizeAsTimeSpent(game::GetTimeSpent()).CStr());
+  //((arm*)Char->GetBodyPart(RIGHT_ARM_INDEX))->EditExperience(ARM_STRENGTH, 500, 1 << 14);
+  /*Char->EditExperience(LEG_STRENGTH, 500, 1 << 14);
+  Char->EditExperience(DEXTERITY, 500, 1 << 14);
+  Char->EditExperience(AGILITY, 500, 1 << 14);
+  Char->EditExperience(ENDURANCE, 500, 1 << 14);
+  Char->EditExperience(PERCEPTION, 500, 1 << 14);
+  Char->EditExperience(INTELLIGENCE, 500, 1 << 14);
+  Char->EditExperience(WISDOM, 500, 1 << 14);
+  Char->EditExperience(CHARISMA, 500, 1 << 14);*/
+  //Char->EditAttribute(CHARISMA, 1);
 
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);

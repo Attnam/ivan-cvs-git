@@ -184,7 +184,7 @@ CHARACTER(humanoid, character)
   std::list<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
-  static int DrawOrder[];
+  static const int DrawOrder[];
 };
 
 CHARACTER(playerkind, humanoid)
@@ -200,9 +200,22 @@ CHARACTER(playerkind, humanoid)
   virtual void FinalProcessForBone();
   virtual void BeTalkedTo();
   virtual truth IsHuman() const { return true; }
+  virtual col16 GetHairColor() const { return HairColor; }
+  virtual col16 GetEyeColor() const { return EyeColor; }
+  virtual v2 GetHeadBitmapPos() const;
+  virtual v2 GetRightArmBitmapPos() const;
+  virtual v2 GetLeftArmBitmapPos() const;
+  virtual int GetNaturalSparkleFlags() const;
+  virtual truth IsPlayerKind() const { return true; }
+  virtual double GetNaturalExperience(int) const;
  protected:
   virtual bodypart* MakeBodyPart(int) const;
+  virtual void PostConstruct();
   ulong SoulID;
+  col16 HairColor;
+  col16 EyeColor;
+  int Talent;
+  int Weakness;
   truth IsBonePlayer;
   truth IsClone;
 };
@@ -226,7 +239,7 @@ CHARACTER(petrus, humanoid)
 
 CHARACTER(farmer, humanoid)
 {
- protected:
+ public:
   virtual v2 GetHeadBitmapPos() const;
   virtual v2 GetRightArmBitmapPos() const;
   virtual v2 GetLeftArmBitmapPos() const { return GetRightArmBitmapPos(); }
@@ -351,6 +364,10 @@ CHARACTER(slave, playerkind)
  public:
   virtual void BeTalkedTo();
   virtual void GetAICommand();
+  virtual col16 GetHairColor() const { return humanoid::GetHairColor(); }
+  virtual col16 GetEyeColor() const { return humanoid::GetEyeColor(); }
+ protected:
+  virtual void PostConstruct();
 };
 
 CHARACTER(petrusswife, humanoid)

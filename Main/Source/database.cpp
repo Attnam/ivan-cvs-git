@@ -463,6 +463,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(CoverPercentile);
   ADD_MEMBER(TorsoArmorBitmapPos);
   ADD_MEMBER(ArmArmorBitmapPos);
+  ADD_MEMBER(AthleteArmArmorBitmapPos);
   ADD_MEMBER(LegArmorBitmapPos);
   ADD_MEMBER(HelmetBitmapPos);
   ADD_MEMBER(CloakBitmapPos);
@@ -770,15 +771,6 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   if(!Instance->DataBase)
     ABORT("Undefined %s configuration #%d sought!", Proto->GetClassID(), Config);
 }
-
-/*template<> void databasecreator<character>::InstallDataBase(character* Instance, int Config)
-  {
-  const prototype* Proto = Instance->FindProtoType();
-  FindDataBase(Instance->DataBase, Proto, Config);
-
-  if(!Instance->DataBase)
-  ABORT("Undefined %s configuration #%d sought!", Proto->GetClassID(), Config);
-  }*/
 
 #define INST_INSTALL_DATABASE(type)\
 template void databasecreator<type>::InstallDataBase(type*, int)

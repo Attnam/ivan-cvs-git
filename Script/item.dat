@@ -902,6 +902,7 @@ bodyarmor /* armor-> */
 	WieldedBitmapPos = 160, 144;
 	TorsoArmorBitmapPos = 32, 416;
 	ArmArmorBitmapPos = 80, 416;
+	AthleteArmArmorBitmapPos = 80, 448;
 	LegArmorBitmapPos = 16, 416;
 	TeleportPriority = 200;
 
@@ -918,6 +919,7 @@ bodyarmor /* armor-> */
 		InElasticityPenaltyModifier = 10;
 		TorsoArmorBitmapPos = 32, 432;
 		ArmArmorBitmapPos = 64, 432;
+		AthleteArmArmorBitmapPos = 64, 464;
 		LegArmorBitmapPos = 0, 432;
 		EnchantmentPlusChance = 10;
 	}

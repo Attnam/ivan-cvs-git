@@ -253,7 +253,7 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
   }
 }
 
-void lsquare::Draw(blitdata& BlitData)
+void lsquare::Draw(blitdata& BlitData) const
 {
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
   {
@@ -654,7 +654,10 @@ void lsquare::AddCharacter(character* Guy)
   Character = Guy;
   SignalEmitationIncrease(Guy->GetEmitation());
   Flags |= STRONG_NEW_DRAW_REQUEST;
-  IncAnimatedEntities();
+
+  if(Guy->IsAnimated())
+    IncAnimatedEntities();
+
   SignalPossibleTransparencyChange();
 
   if(Guy->IsPlayer()
@@ -671,8 +674,11 @@ void lsquare::RemoveCharacter()
 {
   if(Character)
   {
-    DecAnimatedEntities();
     character* Backup = Character;
+
+    if(Backup->IsAnimated())
+      DecAnimatedEntities();
+
     Character = 0;
     SignalEmitationDecrease(Backup->GetEmitation());
     Flags |= STRONG_NEW_DRAW_REQUEST;
@@ -1228,7 +1234,7 @@ void lsquare::SignalSeen(ulong Tick)
     Character->CheckIfSeen();
 }
 
-void lsquare::DrawMemorized(blitdata& BlitData)
+void lsquare::DrawMemorized(blitdata& BlitData) const
 {
   LastSeen = 0;
   Flags &= ~STRONG_NEW_DRAW_REQUEST;
@@ -1249,24 +1255,19 @@ void lsquare::DrawMemorized(blitdata& BlitData)
   }
 }
 
-void lsquare::DrawMemorizedCharacter(blitdata& BlitData)
+void lsquare::DrawMemorizedCharacter(blitdata& BlitData) const
 {
-  const character* C = Character;
+  BlitData.Luminance = ivanconfig::GetContrastLuminance();
 
-  if(C && C->CanBeSeenByPlayer())
-  {
-    BlitData.Luminance = ivanconfig::GetContrastLuminance();
+  if(FowMemorized)
+    FowMemorized->LuminanceBlit(BlitData);
+  else
+    DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
 
-    if(FowMemorized)
-      FowMemorized->LuminanceBlit(BlitData);
-    else
-      DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
-
-    BlitData.CustomData |= C->GetSquareIndex(Pos);
-    C->Draw(BlitData);
-    BlitData.CustomData &= ~SQUARE_INDEX_MASK;
-    Flags |= STRONG_NEW_DRAW_REQUEST;
-  }
+  BlitData.CustomData |= Character->GetSquareIndex(Pos);
+  Character->Draw(BlitData);
+  BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+  Flags |= STRONG_NEW_DRAW_REQUEST;
 }
 
 truth lsquare::IsDangerousForAIToStepOn(const character* Who) const

@@ -338,90 +338,8 @@ void bitmap::ClearToColor(col16 Color)
   }
 }
 
-/*void bitmap::NormalBlit(bitmap* Bitmap,
-			v2 Source,
-			int DestX, int DestY,
-			int Width, int Height,
-			int Flags) const
-{ NormalBlit(Bitmap, Source.X, Source.Y, DestX,
-	     DestY, Width, Height, Flags); }
-void bitmap::NormalBlit(bitmap* Bitmap,
-			int SourceX, int SourceY,
-			v2 Dest,
-			int Width, int Height,
-			int Flags) const
-{ NormalBlit(Bitmap, SourceX, SourceY, Dest.X,
-	     Dest.Y, Width, Height, Flags); }
-void bitmap::NormalBlit(bitmap* Bitmap,
-			int SourceX, int SourceY,
-			int DestX, int DestY,
-			v2 BlitSize,
-			int Flags) const
-{ NormalBlit(Bitmap, SourceX, SourceY, DestX,
-	     DestY, BlitSize.X, BlitSize.Y, Flags); }
-void bitmap::NormalBlit(bitmap* Bitmap,
-			v2 Source,
-			v2 Dest,
-			int Width, int Height,
-			int Flags) const
-{ NormalBlit(Bitmap, Source.X, Source.Y, Dest.X,
-	     Dest.Y, Width, Height, Flags); }
-void bitmap::NormalBlit(bitmap* Bitmap,
-			v2 Source,
-			int DestX, int DestY,
-			v2 BlitSize,
-		        int Flags) const
-{ NormalBlit(Bitmap, Source.X, Source.Y, DestX,
-	     DestY, BlitSize.X, BlitSize.Y, Flags); }
-void bitmap::NormalBlit(bitmap* Bitmap,
-			int SourceX, int SourceY,
-			v2 Dest,
-			v2 BlitSize,
-			int Flags) const
-{ NormalBlit(Bitmap, SourceX, SourceY, Dest.X,
-	     Dest.Y, BlitSize.X, BlitSize.Y, Flags); }*/
-/*void bitmap::NormalBlit(bitmap* Bitmap,
-			v2 Source,
-			v2 Dest,
-			v2 BlitSize,
-			int Flags) const
-{ NormalBlit(Bitmap, Source.X, Source.Y, Dest.X,
-	     Dest.Y, BlitSize.X, BlitSize.Y, Flags); }*/
-/*void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
-{ NormalBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, Flags); }
-
-void bitmap::NormalBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, int Flags) const
-{
-  NormalBlit(Bitmap, v2(SourceX, SourceY), v2(DestX, DestY), v2(Width, Height), Flags);
-}*/
-
 void bitmap::NormalBlit(const blitdata& BlitData) const
-/*{
-  NormalBlit(BlitData.Bitmap, BlitData.SX, BlitData.SY, BlitData.DX, BlitData.DY, BlitData.BX, BlitData.BY, BlitData.Flags);
-}
-
-void bitmap::NormalBlit(bitmap* Bitmap, v2 Src, v2 Dest,
-			v2 Border, int Flags) const*/
 {
-  /*if(Src == zv2)
-    ++Src.X;
-
-  if(Src == v2(0,0))
-    ++Src.X;
-
-  if(Src.X == 0 && Src.Y == 0)
-    ++Src.X;
-
-  if(Src.Is0())
-    ++Src.X;
-
-  v2 k[3];
-  k[0] = zv2;
-  k[1] = v2(0,0);
-  k[2].X = 0; k[2].Y = 0;
-
-  Dest = k[RAND_N(3)];*/
-
   blitdata B = BlitData;
 
   if(!FastFlag)
@@ -582,21 +500,7 @@ void bitmap::NormalBlit(bitmap* Bitmap, v2 Src, v2 Dest,
   }
 }
 
-/*void bitmap::LuminanceBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, col24 Luminance) const { LuminanceBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, col24 Luminance) const { LuminanceBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, col24 Luminance) const { LuminanceBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, col24 Luminance) const { LuminanceBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, col24 Luminance) const { LuminanceBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, col24 Luminance) const { LuminanceBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, col24 Luminance) const  { LuminanceBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance); }
-void bitmap::LuminanceBlit(bitmap* Bitmap, col24 Luminance) const { LuminanceBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, Luminance); }
-*/
 void bitmap::LuminanceBlit(const blitdata& BlitData) const
-/*{
-  LuminanceBlit(B.Bitmap, B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, B.Luminance);
-}
-
-void bitmap::LuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, col24 Luminance) const*/
 {
   blitdata B = BlitData;
 
@@ -639,21 +543,7 @@ void bitmap::LuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, 
   }
 }
 
-/*void bitmap::NormalMaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, int Flags, col16 MaskColor) const  { NormalMaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, int Flags, col16 MaskColor) const { NormalMaskedBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, Flags, MaskColor); }
-*/
 void bitmap::NormalMaskedBlit(const blitdata& BlitData) const
-/*{
-  NormalMaskedBlit(BlitData.Bitmap, BlitData.SX, BlitData.SY, BlitData.DX, BlitData.DY, BlitData.BX, BlitData.BY, BlitData.Flags, BlitData.MaskColor);
-}
-
-void bitmap::NormalMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, int Flags, col16 MaskColor) const*/
 {
   blitdata B = BlitData;
 
@@ -828,21 +718,7 @@ void bitmap::NormalMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int Dest
   }
 }
 
-/*void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, col24 Luminance, col16 MaskColor) const  { LuminanceMaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, col24 Luminance, col16 MaskColor) const { LuminanceMaskedBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, Luminance, MaskColor); }*/
-
 void bitmap::LuminanceMaskedBlit(const blitdata& BlitData) const
-/*{
-  LuminanceMaskedBlit(B.Bitmap, B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, B.Luminance, B.MaskColor);
-}
-
-void bitmap::LuminanceMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, col24 Luminance, col16 MaskColor) const*/
 {
   blitdata B = BlitData;
 
@@ -927,16 +803,6 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, alpha Alpha, col16 MaskColor) const
   }
 }
 
-/*void bitmap::AlphaMaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, col16 MaskColor) const  { AlphaMaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, MaskColor); }
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, col16 MaskColor) const { AlphaMaskedBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, MaskColor); }
-
-void bitmap::AlphaMaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, col16 MaskColor) const*/
 void bitmap::AlphaMaskedBlit(const blitdata& BlitData) const
 {
   blitdata B = BlitData;
@@ -1322,16 +1188,6 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   graphics::BlitDBToScreen();
 }
 
-/*void bitmap::StretchBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, int Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, int Stretch) const { StretchBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, int Stretch) const { StretchBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, int Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, int Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, int Stretch) const { StretchBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, int Stretch) const  { StretchBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Stretch); }
-void bitmap::StretchBlit(bitmap* Bitmap, int Stretch) const { StretchBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, Stretch); }
-
-void bitmap::StretchBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, int Stretch) const*/
 void bitmap::StretchBlit(const blitdata& BlitData) const
 {
   blitdata B = BlitData;
@@ -1430,21 +1286,6 @@ void bitmap::DrawRectangle(int Left, int Top, int Right, int Bottom, col16 Color
   DrawVerticalLine(Left, Top, Bottom, Color, Wide);
 }
 
-/*void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, int Width, int Height, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, int Width, int Height, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, v2 BlitSize, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, v2 Source, v2 Dest, int Width, int Height, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, v2 Source, int DestX, int DestY, v2 BlitSize, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, v2 Dest, v2 BlitSize, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, v2 Source, v2 Dest, v2 BlitSize, col24 Luminance, col16 MaskColor) const  { AlphaLuminanceBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, col24 Luminance, col16 MaskColor) const { AlphaLuminanceBlit(Bitmap, 0, 0, 0, 0, Size.X, Size.Y, Luminance, MaskColor); }
-
-void bitmap::AlphaLuminanceBlit(const blitdata& BlitData) const
-{
-  AlphaLuminanceBlit(BlitData.Bitmap, BlitData.SX, BlitData.SY, BlitData.DX, BlitData.DY, BlitData.BX, BlitData.BY, BlitData.Luminance, BlitData.MaskColor);
-}
-
-void bitmap::AlphaLuminanceBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, col24 Luminance, col16 MaskColor) const*/
 void bitmap::AlphaLuminanceBlit(const blitdata& BlitData) const
 {
   if(BlitData.Luminance == NORMAL_LUMINANCE)

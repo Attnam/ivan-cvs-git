@@ -418,7 +418,7 @@ class character : public entity, public id
   truth CanUseEquipment(int) const;
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(int) { }
-  double GetNaturalExperience(int Identifier) const { return DataBase->NaturalExperience[Identifier]; }
+  virtual double GetNaturalExperience(int) const;
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
   DATA_BASE_VALUE(int, DefaultEndurance);
@@ -518,7 +518,7 @@ class character : public entity, public id
   DATA_BASE_TRUTH(CanBeConfused);
   DATA_BASE_TRUTH(CanApply);
   DATA_BASE_VALUE(v2, WieldedPosition);
-  DATA_BASE_VALUE(int, NaturalSparkleFlags);
+  virtual DATA_BASE_VALUE(int, NaturalSparkleFlags);
   DATA_BASE_TRUTH(IgnoreDanger);
   DATA_BASE_TRUTH(BiteCapturesBodyPart);
   DATA_BASE_TRUTH(IsPlant);
@@ -995,6 +995,8 @@ class character : public entity, public id
   virtual truth CanChokeOnWeb(web*) const { return CanChoke(); }
   virtual truth BrainsHurt() const { return false; }
   truth IsSwimming() const;
+  truth IsAnimated() const;
+  virtual truth IsPlayerKind() const { return false; }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

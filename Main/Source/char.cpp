@@ -299,6 +299,7 @@ truth character::IsTemporary() const { return GetTorso()->GetLifeExpectancy(); }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_V2), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), RegenerationCounter(Char.RegenerationCounter), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags), WarnFlags(0), ScienceTalks(Char.ScienceTalks), TrapData(0)
 {
+  Flags &= ~C_PLAYER;
   Flags |= C_INITIALIZING|C_IN_NO_MSG_MODE;
   Stack = new stack(0, this, HIDDEN);
 
@@ -3609,20 +3610,20 @@ v2 character::GetBodyPartBitmapPos(int I, truth) const
 
 void character::UpdateBodyPartPicture(int I, truth Severed)
 {
-  bodypart* BodyPart = GetBodyPart(I);
+  bodypart* BP = GetBodyPart(I);
 
-  if(BodyPart)
+  if(BP)
   {
-    BodyPart->SetBitmapPos(GetBodyPartBitmapPos(I, Severed));
-    BodyPart->GetMainMaterial()->SetSkinColor(GetBodyPartColorA(I, Severed));
-    BodyPart->GetMainMaterial()->SetSkinColorIsSparkling(GetBodyPartSparkleFlags(I) & SPARKLING_A);
-    BodyPart->SetMaterialColorB(GetBodyPartColorB(I, Severed));
-    BodyPart->SetMaterialColorC(GetBodyPartColorC(I, Severed));
-    BodyPart->SetMaterialColorD(GetBodyPartColorD(I, Severed));
-    BodyPart->SetSparkleFlags(GetBodyPartSparkleFlags(I));
-    BodyPart->SetSpecialFlags(GetSpecialBodyPartFlags(I));
-    BodyPart->SetWobbleData(GetBodyPartWobbleData(I));
-    BodyPart->UpdatePictures();
+    BP->SetBitmapPos(GetBodyPartBitmapPos(I, Severed));
+    BP->GetMainMaterial()->SetSkinColor(GetBodyPartColorA(I, Severed));
+    BP->GetMainMaterial()->SetSkinColorIsSparkling(GetBodyPartSparkleFlags(I) & SPARKLING_A);
+    BP->SetMaterialColorB(GetBodyPartColorB(I, Severed));
+    BP->SetMaterialColorC(GetBodyPartColorC(I, Severed));
+    BP->SetMaterialColorD(GetBodyPartColorD(I, Severed));
+    BP->SetSparkleFlags(GetBodyPartSparkleFlags(I));
+    BP->SetSpecialFlags(GetSpecialBodyPartFlags(I));
+    BP->SetWobbleData(GetBodyPartWobbleData(I));
+    BP->UpdatePictures();
   }
 }
 
@@ -5268,8 +5269,10 @@ truth character::EditAttribute(int Identifier, int Value)
 	CalculateBurdenState();
       else if(Identifier == ENDURANCE)
 	CalculateBodyPartMaxHPs();
-      else if(Identifier == PERCEPTION && IsPlayer())
+      else if(IsPlayer() && Identifier == PERCEPTION)
 	game::SendLOSUpdateRequest();
+      else if(IsPlayerKind() && (Identifier == INTELLIGENCE || Identifier == WISDOM || Identifier == CHARISMA))
+	UpdatePictures();
 
       CalculateBattleInfo();
     }
@@ -6551,6 +6554,9 @@ truth character::EditAllAttributes(int Amount)
     UpdateESPLOS();
   }
 
+  if(IsPlayerKind())
+    UpdatePictures();
+
   return MayEditMore;
 }
 
@@ -7351,6 +7357,9 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       UpdateESPLOS();
     }
 
+    if(IsPlayerKind())
+      UpdatePictures();
+
     break;
    case WISDOM:
     if(IsPlayer())
@@ -7360,6 +7369,9 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       else
 	PlayerMsg = "You feel like having done something unwise.";
     }
+
+    if(IsPlayerKind())
+      UpdatePictures();
 
     break;
    case CHARISMA:
@@ -7383,6 +7395,9 @@ void character::EditExperience(int Identifier, double Value, double Speed)
 	else
 	  NPCMsg = "%s looks less attractive.";
     }
+
+    if(IsPlayerKind())
+      UpdatePictures();
 
     break;
    case MANA:
@@ -9079,4 +9094,14 @@ int character::GetBodyPartSparkleFlags(int) const
   return ((GetNaturalSparkleFlags() & SKIN_COLOR ? SPARKLING_A : 0)
 	  | (GetNaturalSparkleFlags() & TORSO_MAIN_COLOR ? SPARKLING_B : 0)
 	  | (GetNaturalSparkleFlags() & TORSO_SPECIAL_COLOR ? SPARKLING_D : 0));
+}
+
+truth character::IsAnimated() const
+{
+  return CombineBodyPartPredicates<1>(this, &bodypart::IsAnimated);
+}
+
+double character::GetNaturalExperience(int Identifier) const
+{
+  return DataBase->NaturalExperience[Identifier];
 }

@@ -286,6 +286,9 @@ inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY,
   mapmath<quadricontroller<controller> >::DoArea();
 }
 
+/* Chance for n < Max to be returned is (1-CC)*CC^n,
+   for n == Max chance is CC^n. */
+
 inline int femath::LoopRoll(int ContinueChance, int Max)
 {
   int R;

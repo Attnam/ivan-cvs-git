@@ -303,9 +303,9 @@ playerkind
 	DefaultCharisma = 10;
 	DefaultMana = 10;
 	DefaultMoney = 45;
-	HeadBitmapPos = 96, 416;
+	/*HeadBitmapPos = 96, 416;*/
 	TorsoBitmapPos = 32, 416;
-	ArmBitmapPos = 64, 416;
+	/*ArmBitmapPos = 64, 416;*/
 	LegBitmapPos = 0, 416;
 	TotalVolume = 80000;
 	TotalSize = 175;
@@ -313,6 +313,8 @@ playerkind
 	NameSingular = "human";
 	AttachedGod = SEGES;
 	DisplacePriority = 2;
+		/*NaturalSparkleFlags = SKIN_COLOR;
+	HairColor = rgb16(40, 40, 40);*/
 	/* Replies overridden */
 	/*Inventory = { 6, scrollofteleportation { Times = 30; }, potion { SecondaryMaterial = BROWN_SLIME; }, potion { SecondaryMaterial = DARK_FROG_BLOOD; }, potion { SecondaryMaterial = ACIDOUS_BLOOD; }, potion { SecondaryMaterial = VOMIT; }, potion { SecondaryMaterial = SULPHURIC_ACID; } }*/
 	/*Inventory == belt(BELT_OF_LEVITATION);*/

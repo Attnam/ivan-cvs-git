@@ -136,6 +136,8 @@ ITEM(bodypart, item)
   void UpdateArmorPicture(graphicdata&, item*, int, v2 (item::*)(int) const, truth = false) const;
   void DrawEquipment(const graphicdata&, blitdata&) const;
   void UpdateFlags();
+  truth MasterIsAnimated() const;
+  void SignalAnimationStateChange(truth);
   festring OwnerDescription;
   character* Master;
   long CarriedWeight;
@@ -308,6 +310,7 @@ ITEM(arm, bodypart)
   double GetStrengthExperience() const { return StrengthExperience; }
   double GetDexterityExperience() const { return DexterityExperience; }
   virtual void SignalPossibleUsabilityChange();
+  virtual truth IsAnimated() const;
  protected:
   virtual sweaponskill** GetCurrentSWeaponSkill() const { return 0; }
   void UpdateArmArmorPictures(graphicdata&, graphicdata&, int) const;
@@ -542,6 +545,7 @@ ITEM(playerkindhead, head)
   virtual truth UpdateArmorPictures();
   virtual void DrawArmor(blitdata&) const;
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata HelmetGraphicData;
 };
@@ -557,6 +561,7 @@ ITEM(playerkindtorso, humanoidtorso)
   virtual void DrawArmor(blitdata&) const;
   virtual void SignalVolumeAndWeightChange();
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata TorsoArmorGraphicData;
   graphicdata CloakGraphicData;
@@ -573,6 +578,7 @@ ITEM(playerkindrightarm, rightarm)
   virtual truth UpdateArmorPictures();
   virtual void DrawArmor(blitdata&) const;
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata ArmArmorGraphicData;
   graphicdata GauntletGraphicData;
@@ -588,6 +594,7 @@ ITEM(playerkindleftarm, leftarm)
   virtual truth UpdateArmorPictures();
   virtual void DrawArmor(blitdata&) const;
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata ArmArmorGraphicData;
   graphicdata GauntletGraphicData;
@@ -603,6 +610,7 @@ ITEM(playerkindgroin, groin)
   virtual truth UpdateArmorPictures();
   virtual void DrawArmor(blitdata&) const;
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata GroinArmorGraphicData;
 };
@@ -617,6 +625,7 @@ ITEM(playerkindrightleg, rightleg)
   virtual truth UpdateArmorPictures();
   virtual void DrawArmor(blitdata&) const;
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata LegArmorGraphicData;
   graphicdata BootGraphicData;
@@ -632,6 +641,7 @@ ITEM(playerkindleftleg, leftleg)
   virtual truth UpdateArmorPictures();
   virtual void DrawArmor(blitdata&) const;
   virtual truth ShowFluids() const { return true; }
+  virtual truth IsAnimated() const { return true; }
  protected:
   graphicdata LegArmorGraphicData;
   graphicdata BootGraphicData;

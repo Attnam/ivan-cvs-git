@@ -36,7 +36,7 @@ void stack::Draw(const character* Viewer, blitdata& BlitData, int RequiredSquare
        && (i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheatMode()))
     {
       BlitData.CustomData |= i->GetSquareIndex(StackPos);
-      i->Draw(BlitData);//Bitmap, Pos, Luminance, , AllowAnimate, true);
+      i->Draw(BlitData);
       BlitData.CustomData &= ~SQUARE_INDEX_MASK;
       ++VisibleItems;
     }
@@ -49,12 +49,10 @@ void stack::Draw(const character* Viewer, blitdata& BlitData, int RequiredSquare
     {
       col24 L = BlitData.Luminance;
       BlitData.Luminance = ivanconfig::GetContrastLuminance();
+      BlitData.Src.Y = 16;
 
       if(PlusSymbol)
-      {
-	BlitData.Src.Y = 16;
 	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
-      }
 
       if(Dangerous)
       {

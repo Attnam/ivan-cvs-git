@@ -124,7 +124,7 @@ class lsquare : public square
   void UpdateMemorizedDescription(truth = false);
   truth BeKicked(character*, item*, bodypart*, double, double, int, int, truth, truth);
   int GetDivineMaster() const;
-  void Draw(blitdata&);
+  void Draw(blitdata&) const;
   void UpdateMemorized();
   truth CanBeDug() const;
   virtual gterrain* GetGTerrain() const { return GLTerrain; }
@@ -155,8 +155,8 @@ class lsquare : public square
   void SignalSeen(ulong);
   void CalculateLuminance();
   void DrawStaticContents(blitdata&) const;
-  void DrawMemorized(blitdata&);
-  void DrawMemorizedCharacter(blitdata&);
+  void DrawMemorized(blitdata&) const;
+  void DrawMemorizedCharacter(blitdata&) const;
   void SendMemorizedUpdateRequest();
   lsquare* GetNeighbourLSquare(int) const;
   lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }

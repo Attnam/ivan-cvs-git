@@ -974,6 +974,10 @@ truth arm::EditAttribute(int Identifier, int Value)
        && Master->RawEditAttribute(StrengthExperience, Value))
     {
       Master->CalculateBattleInfo();
+
+      if(Master->IsPlayerKind())
+	UpdatePictures();
+
       return true;
     }
   }
@@ -1011,6 +1015,9 @@ void arm::EditExperience(int Identifier, double Value, double Speed)
 	  ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
 
 	Master->CalculateBattleInfo();
+
+	if(Master->IsPlayerKind())
+	  UpdatePictures();
       }
     }
   }
@@ -2214,6 +2221,7 @@ void arm::UpdateWieldedPicture()
 {
   if(!Master || !Master->PictureUpdatesAreForbidden())
   {
+    truth WasAnimated = MasterIsAnimated();
     item* Wielded = GetWielded();
 
     if(Wielded && Master)
@@ -2231,6 +2239,9 @@ void arm::UpdateWieldedPicture()
     }
     else
       WieldedGraphicData.Retire();
+
+    if(!WasAnimated != !MasterIsAnimated())
+      SignalAnimationStateChange(WasAnimated);
   }
 }
 
@@ -2654,7 +2665,7 @@ void arm::UpdateArmArmorPictures(graphicdata& ArmArmorGraphicData, graphicdata& 
     UpdateArmorPicture(ArmArmorGraphicData,
 		       Master ? GetExternalBodyArmor() : 0,
 		       SpecialFlags,
-		       &item::GetArmArmorBitmapPos,
+		       GetAttribute(ARM_STRENGTH, false) >= 20 ? &item::GetAthleteArmArmorBitmapPos : &item::GetArmArmorBitmapPos,
 		       true);
     UpdateArmorPicture(GauntletGraphicData,
 		       GetGauntlet(),
@@ -2872,10 +2883,20 @@ void playerkindleftleg::Load(inputfile& SaveFile)
   SaveFile >> LegArmorGraphicData >> BootGraphicData;
 }
 
+truth bodypart::MasterIsAnimated() const
+{
+  return Master && !Master->IsInitializing() && Master->IsAnimated();
+}
+
 void bodypart::UpdatePictures()
 {
+  truth WasAnimated = MasterIsAnimated();
+
   item::UpdatePictures();
   UpdateArmorPictures();
+
+  if(!WasAnimated != !MasterIsAnimated())
+    SignalAnimationStateChange(WasAnimated);
 }
 
 void playerkindtorso::SignalVolumeAndWeightChange()
@@ -3259,5 +3280,34 @@ void bodypart::SetIsInfectedByLeprosy(truth What)
 void bodypart::SetSparkleFlags(int What)
 {
   const int S = SPARKLING_B|SPARKLING_C|SPARKLING_D;
-  Flags = Flags & ~(S << BODYPART_SPARKLE_SHIFT) | (What << BODYPART_SPARKLE_SHIFT);
+  Flags = Flags & ~(S << BODYPART_SPARKLE_SHIFT) | ((What & S) << BODYPART_SPARKLE_SHIFT);
+}
+
+truth arm::IsAnimated() const
+{
+  return WieldedGraphicData.AnimationFrames > 1;
+}
+
+void bodypart::SignalAnimationStateChange(truth WasAnimated)
+{
+  if(WasAnimated)
+  {
+    for(int c = 0; c < GetSquaresUnder(); ++c)
+    {
+      square* Square = GetSquareUnder(c);
+
+      if(Square)
+	Square->DecAnimatedEntities();
+    }
+  }
+  else
+  {
+    for(int c = 0; c < GetSquaresUnder(); ++c)
+    {
+      square* Square = GetSquareUnder(c);
+
+      if(Square)
+	Square->IncAnimatedEntities();
+    }
+  }
 }

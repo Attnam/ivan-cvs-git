@@ -12,7 +12,7 @@
 
 /* Compiled through charsset.cpp */
 
-int humanoid::DrawOrder[] = { TORSO_INDEX, HEAD_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX };
+const int humanoid::DrawOrder[] = { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
 
 truth humanoid::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX || I == GROIN_INDEX; }
 truth humanoid::BodyPartCanBeSevered(int I) const { return I != TORSO_INDEX && I != GROIN_INDEX; }
@@ -3575,13 +3575,13 @@ void encourager::FinalProcessForBone()
 void playerkind::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << SoulID << IsBonePlayer << IsClone;
+  SaveFile << SoulID << HairColor << EyeColor << Talent << Weakness << IsBonePlayer << IsClone;
 }
 
 void playerkind::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-  SaveFile >> SoulID >> IsBonePlayer >> IsClone;
+  SaveFile >> SoulID >> HairColor >> EyeColor >> Talent >> Weakness >> IsBonePlayer >> IsClone;
 }
 
 void playerkind::SetSoulID(ulong What)
@@ -3635,7 +3635,7 @@ void playerkind::FinalProcessForBone()
   }
 }
 
-playerkind::playerkind(const playerkind& Char) : mybase(Char), SoulID(Char.SoulID), IsBonePlayer(Char.IsBonePlayer), IsClone(true)
+playerkind::playerkind(const playerkind& Char) : mybase(Char), SoulID(Char.SoulID), HairColor(Char.HairColor), EyeColor(Char.EyeColor), Talent(Char.Talent), Weakness(Char.Weakness), IsBonePlayer(Char.IsBonePlayer), IsClone(true)
 {
 }
 
@@ -4868,4 +4868,86 @@ truth humanoid::BrainsHurt() const
 {
   head* Head = GetHead();
   return !Head || Head->IsBadlyHurt();
+}
+
+void playerkind::PostConstruct()
+{
+  int R = 0, G = 0, B = 0;
+  
+  switch(RAND_N(4))
+  {
+   case 0: R = 180; G = 180; B = 40; break;
+   case 1: R = 130; G = 30; B = 0; break;
+   case 2: R = 30; G = 30; B = 15; break;
+   case 3: R = 50; G = 30; B = 5; break;
+  }
+
+  HairColor = MakeRGB16(R + RAND_N(41), G + RAND_N(41), B + RAND_N(41));
+
+  switch(RAND_N(4))
+  {
+   case 0: R = 25; G = 0; B = 70; break;
+   case 1: R = 5; G = 0; B = 50; break;
+   case 2: R = 10; G = 10; B = 10; break;
+   case 3: R = 60; G = 20; B = 0; break;
+  }
+
+  EyeColor = MakeRGB16(R + RAND_N(41), G + RAND_N(41), B + RAND_N(41));
+  Talent = RAND_N(TALENTS);
+  Weakness = RAND_N(TALENTS);
+}
+
+v2 playerkind::GetHeadBitmapPos() const
+{
+  int Sum = GetAttribute(INTELLIGENCE, false) + GetAttribute(WISDOM, false);
+
+  if(Sum >= 60)
+    return v2(96, 480);
+  else if(Sum >= 40)
+    return v2(96, 464);
+  else
+    return v2(96, 416);
+}
+
+v2 playerkind::GetRightArmBitmapPos() const
+{
+  if(GetRightArm()->GetAttribute(ARM_STRENGTH, false) >= 20)
+    return v2(64, 448);
+  else
+    return v2(64, 416);
+}
+
+v2 playerkind::GetLeftArmBitmapPos() const
+{
+  if(GetLeftArm()->GetAttribute(ARM_STRENGTH, false) >= 20)
+    return v2(64, 448);
+  else
+    return v2(64, 416);
+}
+
+int playerkind::GetNaturalSparkleFlags() const
+{
+  return GetAttribute(CHARISMA) >= 30 ? SKIN_COLOR : 0;
+}
+
+void slave::PostConstruct()
+{
+  Talent = TALENT_STRONG;
+  Weakness = TALENT_CLEVER;
+}
+
+const int TalentOfAttribute[ATTRIBUTES] = { TALENT_HEALTHY, TALENT_FAST_N_ACCURATE, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_STRONG, TALENT_STRONG, TALENT_FAST_N_ACCURATE, TALENT_FAST_N_ACCURATE };
+const double TalentBonusOfAttribute[ATTRIBUTES] = { 1.1, 1.25, 1.5, 1.5, 1.5, 1.5, 1.25, 1.25, 1.25, 1.25 };
+
+double playerkind::GetNaturalExperience(int Identifier) const
+{
+  double NE = DataBase->NaturalExperience[Identifier];
+
+  if(Talent == TalentOfAttribute[Identifier])
+    NE *= TalentBonusOfAttribute[Identifier];
+
+  if(Weakness == TalentOfAttribute[Identifier])
+    NE /= TalentBonusOfAttribute[Identifier];
+
+  return NE;
 }

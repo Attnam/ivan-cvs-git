@@ -33,21 +33,6 @@ class rawbitmap
   rawbitmap(v2);
   ~rawbitmap();
   void Save(const festring&);
-
-  /*void MaskedBlit(bitmap*, int, int, int, int,
-		  int, int, packcol16*) const;
-  void MaskedBlit(bitmap*, v2, int, int,
-		  int, int, packcol16*) const;
-  void MaskedBlit(bitmap*, int, int, v2,
-		  int, int, packcol16*) const;
-  void MaskedBlit(bitmap*, int, int, int, int,
-		  v2, packcol16*) const;
-  void MaskedBlit(bitmap*, v2, v2,
-		  int, int, packcol16*) const;
-  void MaskedBlit(bitmap*, v2, int, int,
-		  v2, packcol16*) const;
-  void MaskedBlit(bitmap*, int, int, v2,
-		  v2, packcol16*) const;*/
   void MaskedBlit(bitmap*, v2, v2,
 		  v2, packcol16*) const;
   void MaskedBlit(bitmap*, packcol16*) const;
@@ -62,27 +47,10 @@ class rawbitmap
 		   const packcol16*, alpha = 255,
 		   const packalpha* = 0,
 		   const uchar* = 0, truth = true) const;
-  /*int GetXSize() const { return XSize; }
-  int GetYSize() const { return YSize; }*/
   v2 GetSize() const { return Size; }
 
-  /*void AlterGradient(int, int, int, int, int, int, truth);
-  void AlterGradient(v2, int, int, int, int, truth);
-  void AlterGradient(int, int, v2, int, int, truth);*/
   void AlterGradient(v2, v2, int, int, truth);
-
-  /*void SwapColors(int, int, int, int, int, int);
-  void SwapColors(v2, int, int, int, int);
-  void SwapColors(int, int, v2, int, int);*/
   void SwapColors(v2, v2, int, int);
-
-  /*void Roll(int, int, int, int, int, int, paletteindex*);
-  void Roll(v2, int, int, int, int, paletteindex*);
-  void Roll(int, int, v2, int, int, paletteindex*);
-  void Roll(int, int, int, int, v2, paletteindex*);
-  void Roll(v2, v2, int, int, paletteindex*);
-  void Roll(v2, int, int, v2, paletteindex*);
-  void Roll(int, int, v2, v2, paletteindex*);*/
   void Roll(v2, v2, v2, paletteindex*);
 
   void CreateFontCache(packcol16);
@@ -95,11 +63,8 @@ class rawbitmap
   v2 RandomizeSparklePos(const v2*, v2*, v2,
 			       v2, int, int) const;
   void CopyPaletteFrom(rawbitmap*);
-  /*void PutPixel(int X, int Y, paletteindex Color)
-  { PaletteBuffer[Y][X] = Color; }*/
   void PutPixel(v2 Pos, paletteindex Color)
   { PaletteBuffer[Pos.Y][Pos.X] = Color; }
-  //paletteindex GetPixel(int X, int Y) const { return PaletteBuffer[Y][X]; }
   paletteindex GetPixel(v2 Pos) const
   { return PaletteBuffer[Pos.Y][Pos.X]; }
   void Clear();
