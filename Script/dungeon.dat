@@ -112,7 +112,7 @@ Dungeon 0;
 				OverTerrain=stairsup;
 			}
 
-			Square, Pos 1,1;
+			Square, Pos 3,1;
 			{
 				Item=lamp;
 			}

@@ -1,4 +1,4 @@
-Iter Vehemens ad Necem combat danger levels
+Iter Vehemens ad Necem combat danger levels.
 
 Random monsters are usually 1-3 levels less dangerous than the player.
 Bosses are usually as dangerous as the whole player team when they are met.

@@ -444,6 +444,7 @@ public:
 	virtual void BeTalkedTo(character*);
 	virtual bool HasInfraVision() const { return true; }
 	virtual std::string StandVerb() const { return "floating"; }
+	virtual ushort Frequency() const { return 100; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(48,0)
 	virtual std::string NameSingular() const RET("pure mass of Bill's will")

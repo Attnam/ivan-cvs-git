@@ -270,6 +270,7 @@ public:
 	virtual bool ChangeRandomStat(short);
 	virtual void CheckGearExistence();
 	virtual uchar RandomizeReply(uchar, bool*);
+	virtual ushort Frequency() const { return 10000; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
