@@ -775,25 +775,24 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 		ChangeOverLevelTerrain(new empty);
 		SignalEmitationDecrease(Emit);
 		ForceEmitterEmitation();
-
 		game::SendLOSUpdateRequest();
 	}
+
 	for(uchar c = 0; c < 4; ++c)
-	{
 		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
-			GetSideStack(c)->MoveItem(x, GetStack());
-	}
+			GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
 
 	return Result ? true : false;
 }
 
 char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) const
 {
-	if(GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1)
+	if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
 	{
 		ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
-		return 2;
+		return 0;
 	}
+
 	return GetOverLevelTerrain()->CanBeDigged();
 }
 
@@ -908,7 +907,7 @@ void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
 bool levelsquare::CanBeSeen() const
 {
-	if((GetLuminance() >= LIGHT_BORDER && GetLastSeen() == game::GetLOSTurns()) || game::GetSeeWholeMapCheat())
+	if(GetLuminance() >= LIGHT_BORDER && GetLastSeen() == game::GetLOSTurns())
 		return true;
 	else
 		return false;

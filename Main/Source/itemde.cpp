@@ -81,7 +81,22 @@ bool potion::Consume(character* Eater, float Amount)
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	switch(LevelSquarePosition)
+	{
+	case CENTER:
+	case DOWN:
+		Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+		break;
+	case LEFT:
+		Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, uchar(ROTATE_90));
+		break;
+	case UP:
+		Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, uchar(FLIP));
+		break;
+	case RIGHT:
+		Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, uchar(ROTATE_90 | MIRROR));
+		break;
+	}
 }
 
 bool scroll::CanBeRead(character* Reader) const
@@ -585,4 +600,32 @@ ulong torsoarmor::Price() const
 	float ArmorModifier = 100.0f / GetArmorValue();
 
 	return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
+}
+
+void lamp::SignalSquarePositionChange(bool NewPosOnWall)
+{
+	if(OnWall == NewPosOnWall)
+		return;
+
+	OnWall = NewPosOnWall;
+	UpdatePicture();
+}
+
+void lamp::Save(outputfile& SaveFile) const
+{
+	item::Save(SaveFile);
+
+	SaveFile << OnWall;
+}
+
+void lamp::Load(inputfile& SaveFile)
+{
+	item::Load(SaveFile);
+
+	SaveFile >> OnWall;
+}
+
+vector2d lamp::GetBitmapPos() const
+{
+	return vector2d(0, OnWall ? 192 : 256);
 }

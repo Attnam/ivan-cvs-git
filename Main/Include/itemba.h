@@ -79,6 +79,7 @@ public:
 	virtual void GetStepOnEffect(character*) {}
 	virtual ulong Price() const { return 0; }
 	virtual bool IsTheAvatar() const RET(false)
+	virtual void SignalSquarePositionChange(bool) {}
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

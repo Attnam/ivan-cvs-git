@@ -1,0 +1,20 @@
+Code work:
+
+-fixing all bugs except the Great Surface Destruction Bug
+-fixing all buggy graphics
+-making Venius burn only hostile creatures
+-making rest stop when the player is hungry
+-making weapon experience and money affecting score, NP not
+-making monsters think what they eat
+-making kicking increase the unarmed weapon skill
+-adding Banana and Pick-axe logo to menu
+-adding pray effects for Silva
+-reimplementating higher victory types
+-adding relation effect limits to cannibalism and navastating
+-making Mellis fill also intact empty bottles and empty cans
+-adding "Name too short!" message
+
+Graphics needed:
+
+-grass
+-new Avatar

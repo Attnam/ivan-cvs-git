@@ -58,6 +58,7 @@ class ITEM
 	InitMaterials(new glass),
 	{
 		SetSize(30);
+		SetOnWall(false);
 	},
 public:
 	virtual ushort Possibility() const RET(50)
@@ -66,13 +67,18 @@ public:
 	virtual std::string NameSingular() const RET("lamp")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 160))
 	virtual float OfferModifier() const RET(1)
-	virtual vector2d GetBitmapPos() const RETV(0,192)
+	virtual vector2d GetBitmapPos() const;
 	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 	virtual ulong Price() const { return 50; }
+	virtual void SignalSquarePositionChange(bool);
+	virtual void SetOnWall(bool What) { OnWall = What; }
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
 protected:
 	virtual ushort GetFormModifier() const RET(30)
+	bool OnWall;
 );
 
 class ITEM

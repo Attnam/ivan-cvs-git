@@ -65,3 +65,4 @@ NP shouldn't affect score.
 Money should weight something.
 AI should not practise cannibalism.
 !!!Silva must have pray effects.
+You should be able to read in dark when in WMode.

@@ -410,10 +410,18 @@ bool level::MakeRoom(roomscript* RoomScript)
 		FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
 		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && x != XPos && x != XPos + Width - 1)
-			Map[x][YPos]->GetSideStack(2)->FastAddItem(new lamp);
+		{
+			lamp* Lamp = new lamp;
+			Lamp->SignalSquarePositionChange(true);
+			Map[x][YPos]->GetSideStack(2)->FastAddItem(Lamp);
+		}
 
 		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && x != XPos && x != XPos + Width - 1)
-			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(new lamp);
+		{
+			lamp* Lamp = new lamp;
+			Lamp->SignalSquarePositionChange(true);
+			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(Lamp);
+		}
 
 		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
 		{
@@ -434,10 +442,18 @@ bool level::MakeRoom(roomscript* RoomScript)
 		FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
 		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && y != YPos && y != YPos + Height - 1)
-			Map[XPos][y]->GetSideStack(1)->FastAddItem(new lamp);
+		{
+			lamp* Lamp = new lamp;
+			Lamp->SignalSquarePositionChange(true);
+			Map[XPos][y]->GetSideStack(1)->FastAddItem(Lamp);
+		}
 
 		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && y != YPos && y != YPos + Height - 1)
-			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(new lamp);
+		{
+			lamp* Lamp = new lamp;
+			Lamp->SignalSquarePositionChange(true);
+			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(Lamp);
+		}
 
 		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
 		{
