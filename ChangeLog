@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Spiders cannot lock doors anymore
+	
 February 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Removed the silly console window from the MinGW port
