@@ -671,6 +671,9 @@ bool commandsystem::Kick(character* Char)
 
   lsquare* Square = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
 
+  if(!Square->CheckKick(Char))
+    return false;
+
   if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
     if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
       return false;

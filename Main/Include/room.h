@@ -60,8 +60,9 @@ class room
   virtual bool AllowSpoil(const item*) const { return true; }
   virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual short GetGodRelationAdjustment() const { return -50; }
-  virtual bool AllowKick(const character*) const { return true; }
+  virtual bool AllowKick(const character*, const lsquare*) const { return true; }
   bool MasterIsActive() const;
+  bool CheckKickSquare(const character*, const lsquare*) const;
  protected:
   virtual void VirtualConstructor(bool) { }
   vector2d Pos;

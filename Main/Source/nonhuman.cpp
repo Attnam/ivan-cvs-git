@@ -258,7 +258,7 @@ bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
     {
       room* Room = Enemy->GetLSquareUnder()->GetRoom();
 
-      if(Room && !Room->AllowKick(this))
+      if(Room && !Room->AllowKick(this, Enemy->GetLSquareUnder()))
 	AttackStyle &= ~USE_LEGS;
     }
 

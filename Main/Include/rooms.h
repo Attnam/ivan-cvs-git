@@ -27,7 +27,7 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil(const item*) const;
-  virtual bool AllowKick(const character*) const;
+  virtual bool AllowKick(const character*,const lsquare*) const;
 );
 
 class ROOM
@@ -59,6 +59,7 @@ class ROOM
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil(const item*) const { return false; }
   virtual short GetGodRelationAdjustment() const { return -150; }
+  virtual bool AllowKick(const character*,const lsquare*) const;
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;
@@ -76,6 +77,7 @@ class ROOM
   virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
+  virtual bool AllowKick(const character*, const lsquare*) const;
 );
 
 class ROOM
@@ -89,6 +91,7 @@ class ROOM
   virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
+  virtual bool AllowKick(const character*, const lsquare*) const;
 );
 
 #endif

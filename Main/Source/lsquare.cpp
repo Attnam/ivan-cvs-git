@@ -1415,6 +1415,13 @@ bool (lsquare::*lsquare::GetBeamEffect(ushort Index))(character*, const std::str
   return BeamEffect[Index];
 }
 
+bool lsquare::CheckKick(const character* Kicker) const
+{
+  if(RoomIndex && !GetLevel()->GetRoom(RoomIndex)->CheckKickSquare(Kicker, this))
+    return false;
+  return true;
+}
+
 void lsquare::GetHitByExplosion(const explosion& Explosion)
 {
   if(Explosion.ID == LastExplosionID)
@@ -1441,4 +1448,5 @@ void lsquare::GetHitByExplosion(const explosion& Explosion)
   Terrain = GetOLTerrain(); // might have changed
   Terrain->ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
 }
+
 

@@ -1893,7 +1893,7 @@ bool horn::Apply(character* Blower)
 
 	    if(Audience)
 	      {
-		if(Config == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->GetTeam()->GetID() == Audience->GetTeam()->GetID() && Audience->GetPanicLevel() <= RAND() % 100)
+		if(Config == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->GetTeam()->GetID() == Audience->GetTeam()->GetID())
 		  {
 		    if(Audience->IsPlayer())
 		      ADD_MESSAGE("You calm down.");
@@ -2047,7 +2047,7 @@ void banana::SignalSpoil(material* Material)
 
 bool bone::DogWillCatchAndConsume() const
 {
-  return GetConsumeMaterial()->GetConfig() == BONE;
+  return GetConsumeMaterial()->GetConfig() == BONE && GetConsumeMaterial()->GetSpoilLevel() == 0;
 }
 
 bool stone::ShowMaterial() const

@@ -170,7 +170,7 @@ void temple::Enter(character* Pilgrim)
 
 void shop::KickSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
+  if(!AllowKick(Infidel, Square))
     {
       ADD_MESSAGE("\"You infidel!\"");
       Infidel->Hostility(GetMaster());
@@ -255,10 +255,7 @@ bool cathedral::DropItem(character* Visitor, item* Item, ushort)
 
 void cathedral::KickSquare(character* Kicker, lsquare* Square)
 {
-  if(game::GetTeam(ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) == HOSTILE)
-    return;
-
-  if(Kicker->IsPlayer() && Square->GetStack()->GetItems())
+  if(!AllowKick(Kicker, Square))
     {
       ADD_MESSAGE("You have harmed the property of the Cathedral!");
       Kicker->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
@@ -517,7 +514,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 
 void library::KickSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
+  if(!AllowKick(Infidel, Square))
     {
       ADD_MESSAGE("\"You book vandal!\"");
       Infidel->Hostility(GetMaster());
@@ -567,10 +564,7 @@ bool landingsite::DropItem(character* Dropper, item* Item, ushort)
 
 void landingsite::KickSquare(character* Kicker, lsquare* Square)
 {
-  if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) == HOSTILE)
-    return;
-
-  if(Kicker->IsPlayer())
+  if(AllowKick(Kicker, Square))
     {
       for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
 	if(i->IsBanana())
@@ -621,8 +615,22 @@ bool shop::AllowSpoil(const item* Item) const
   return !Master || !Master->IsEnabled() || !Item->GetPrice();
 }
 
-bool shop::AllowKick(const character* Char) const // gum solution
+bool shop::AllowKick(const character* Char, const lsquare* LSquare) const // gum solution
 {
-  return !MasterIsActive() || GetMaster()->GetRelation(Char) == HOSTILE;
+  return !LSquare->GetStack()->GetItems() || !MasterIsActive() || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE || !LSquare->CanBeSeenBy(GetMaster());
 }
 
+bool cathedral::AllowKick(const character* Char, const lsquare* LSquare) const
+{
+  return game::GetTeam(ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE || !LSquare->GetStack()->GetItems();
+}
+
+bool library::AllowKick(const character* Char, const lsquare* LSquare) const
+{
+  return !LSquare->GetStack()->GetItems() || MasterIsActive() || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE || LSquare->CanBeSeenBy(GetMaster());
+}
+
+bool landingsite::AllowKick(const character* Char, const lsquare* LSquare) const
+{
+ return !Char->IsPlayer() || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE);
+}

@@ -56,3 +56,15 @@ bool room::MasterIsActive() const
   character* Master = GetMaster();
   return Master && Master->IsEnabled();
 }
+
+bool room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) const
+{
+  if(!AllowKick(Kicker, LSquare))
+    {
+      ADD_MESSAGE("That would be vandalism.");
+
+      if(!game::BoolQuestion("Do you still want to do this? [y/N]"))
+	return false;
+    }
+  return true;
+}

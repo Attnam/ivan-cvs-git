@@ -424,4 +424,6 @@ Footprints.
 Polymorph question should default to the monster that the player last polymorphed to.
 Carnivorous plant seeds.
 Town hit by "zombie-plague"
+When player is killed by something when he is fainting the death message should say "killed by a X while helpless" 
 Panicking should be more probable when friends around the character have panicked.
+

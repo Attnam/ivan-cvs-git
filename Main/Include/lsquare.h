@@ -128,6 +128,7 @@ class lsquare : public square
   uchar GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   uchar GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
+  bool CheckKick(const character*) const;
   void GetHitByExplosion(const explosion&);
  protected:
   glterrain* GLTerrain;

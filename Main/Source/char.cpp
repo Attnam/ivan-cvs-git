@@ -459,13 +459,14 @@ void character::GetAICommand()
 {
   SeekLeader();
 
+
+  if(FollowLeader())
+    return;
+
   if(CheckForEnemies(true, true))
     return;
 
   if(CheckForUsefulItemsOnGround())
-    return;
-
-  if(FollowLeader())
     return;
 
   if(CheckForDoors())
@@ -5319,6 +5320,10 @@ bool character::ConsumeItem(item* Item)
   if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
     return false;
 
+  if(GetRoom() && !GetRoom()->ConsumeItem(this,Item, 1))
+    return false;
+
+     
   if(IsPlayer())
     ADD_MESSAGE("You begin %s %s.", Item->GetConsumeVerb().c_str(), Item->CHAR_NAME(DEFINITE));
   else if(CanBeSeenByPlayer())
