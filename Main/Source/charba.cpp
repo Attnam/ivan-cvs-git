@@ -98,6 +98,9 @@ bool character::Hit(character* Enemy)
 
 	GetTeam()->Hostility(Enemy->GetTeam());
 
+	if(GetTeam() == Enemy->GetTeam())
+		Enemy->SetTeam(game::GetTeam(1));
+
 	short Success = rand() % 26 - rand() % 26;
 
 	switch(Enemy->TakeHit(GetSpeed(), Success, GetAttackStrength(), this)) //there's no breaks and there shouldn't be any

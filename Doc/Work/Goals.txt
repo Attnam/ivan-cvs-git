@@ -20,7 +20,7 @@ Pimeydelle vaikutuksia.
 ////Space should = esc in the inventory.
 ////Help should be organised.
 ////*Do you really want to pray to somebody.
-Pick-axejen s‰‰teleminen (kesto, expat, valot).
+////Pick-axejen s‰‰teleminen (kesto, expat, valot).
 ////*Mellis abuse.
 ////%*Alpha blend.
 ////Rest until fully healed.

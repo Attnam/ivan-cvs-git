@@ -61,3 +61,4 @@ List of killed monsters and list of monsters killed by pets.
 Prepare bug-report functions that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
+Checking exp balance.
