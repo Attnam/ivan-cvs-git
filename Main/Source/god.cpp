@@ -189,7 +189,7 @@ void dulcis::PrayBadEffect()
 {
 	ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 9 + 1);
-	game::GetPlayer()->CheckDeath(std::string("became insane by felistening ") + Name() + " too much");
+	game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
 }
 
 void inasnum::PrayGoodEffect()
