@@ -24,6 +24,7 @@
 #include "list.h"
 #include "proto.h"
 
+class area;
 class material;
 class level;
 class character;
@@ -33,8 +34,11 @@ class item;
 class god;
 class item;
 class command;
-class groundterrain;
-class overterrain;
+class groundlevelterrain;
+class overlevelterrain;
+class groundworldmapterrain;
+class overworldmapterrain;
+class worldmap;
 
 /* Presentation of the game class */
 
@@ -47,7 +51,8 @@ public:
 	static int Menu(std::string sMS); // hihi :-) (MENU)
 	static int* GetMoveCommandKey(void)	{return MoveCommandKey;}
 	static const vector* CMoveVector(void)	{return MoveVector;}
-	static level* GetCurrentLevel(void)		{return Level[Current];}
+	static area* GetCurrentArea(void)	{ return !InWilderness ? (area*)Level[Current] : (area*)WorldMap; }
+	static level* GetCurrentLevel(void)	{ return Level[Current]; }
 	static bool FlagHandler(ushort, ushort, ushort, ushort);
 	static bool DoLine(int, int, int, int, bool (*Proc)(ushort, ushort, ushort, ushort));
 	static class globalmessagingsystem
@@ -97,8 +102,10 @@ public:
 	static bool Load(std::string = game::SaveName());
 	static material* CreateRandomSolidMaterial(ulong);
 	static material* CreateMaterial(ushort, ulong);
-	static groundterrain* LoadGroundTerrain(std::ifstream*);
-	static overterrain* LoadOverTerrain(std::ifstream*);
+	static groundlevelterrain* LoadGroundLevelTerrain(std::ifstream*);
+	static overlevelterrain* LoadOverLevelTerrain(std::ifstream*);
+	static groundworldmapterrain* LoadGroundWorldMapTerrain(std::ifstream*);
+	static overworldmapterrain* LoadOverWorldMapTerrain(std::ifstream*);
 	static material* LoadMaterial(std::ifstream*);
 	static item* LoadItem(std::ifstream*);
 	static character* LoadCharacter(std::ifstream*);
@@ -153,25 +160,34 @@ public:
 	static const material* const GetMaterialPrototype(ushort Index) { return MaterialPrototype[Index]; }
 	static const character* const GetCharacterPrototype(ushort Index) { return CharacterPrototype[Index]; }
 	static const item* const GetItemPrototype(ushort Index) { return ItemPrototype[Index]; }
-	static const groundterrain* const GetGroundTerrainPrototype(ushort Index) { return GroundTerrainPrototype[Index]; }
-	static const overterrain* const GetOverTerrainPrototype(ushort Index) { return OverTerrainPrototype[Index]; }
-	static ushort AddProtoType(material* Material);
-	static ushort AddProtoType(character* Character);
-	static ushort AddProtoType(item* Item);
-	static ushort AddProtoType(groundterrain* GroundTerrain);
-	static ushort AddProtoType(overterrain* OverTerrain);
+	static const groundlevelterrain* const GetGroundLevelTerrainPrototype(ushort Index) { return GroundLevelTerrainPrototype[Index]; }
+	static const overlevelterrain* const GetOverLevelTerrainPrototype(ushort Index) { return OverLevelTerrainPrototype[Index]; }
+	static const groundworldmapterrain* const GetGroundWorldMapTerrainPrototype(ushort Index) { return GroundWorldMapTerrainPrototype[Index]; }
+	static const overworldmapterrain* const GetOverWorldMapTerrainPrototype(ushort Index) { return OverWorldMapTerrainPrototype[Index]; }
+	static ushort AddProtoType(material*);
+	static ushort AddProtoType(character*);
+	static ushort AddProtoType(item*);
+	static ushort AddProtoType(groundlevelterrain*);
+	static ushort AddProtoType(overlevelterrain*);
+	static ushort AddProtoType(groundworldmapterrain*);
+	static ushort AddProtoType(overworldmapterrain*);
 	static void SaveLevel(std::string = SaveName(), ushort = CCurrent(), bool = true);
 	static void LoadLevel(std::string = SaveName(), ushort = CCurrent());
 	static void RemoveSaves(void);
 	static item* game::CreateItem(std::string);
+	static bool GetInWilderness(void) { return InWilderness; }
+	static void SetInWilderness(bool What) { InWilderness = What; }
+	static worldmap* GetWorldMap(void) { return WorldMap; }
 private:
 	static dynarray<character*> Hell;
 	static std::string Alignment[];
 	static prototypecontainer<material> MaterialPrototype;
 	static prototypecontainer<character> CharacterPrototype;
 	static prototypecontainer<item> ItemPrototype;
-	static prototypecontainer<groundterrain> GroundTerrainPrototype;
-	static prototypecontainer<overterrain> OverTerrainPrototype;
+	static prototypecontainer<groundlevelterrain> GroundLevelTerrainPrototype;
+	static prototypecontainer<overlevelterrain> OverLevelTerrainPrototype;
+	static prototypecontainer<groundworldmapterrain> GroundWorldMapTerrainPrototype;
+	static prototypecontainer<overworldmapterrain> OverWorldMapTerrainPrototype;
 	static god* God[];
 	static unsigned int CountChars(char cSF,std::string sSH); // (MENU)
 	static level** Level;
@@ -195,6 +211,11 @@ private:
 	static float SoftGamma;
 	static std::string AutoSaveFileName;
 	static command* Command[];
+	static bool InWilderness;
+	static worldmap* WorldMap;
 };
 
 #endif
+
+
+

@@ -13,23 +13,30 @@
 #include "lsquare.h"
 #include "stack.h"
 #include "strover.h"
-#include "terrain.h"
+#include "lterrain.h"
 #include "whandler.h"
 #include "independ.h"
 #include "level.h"
 #include "bitmap.h"
 #include "item.h"
 
-levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), MotherLevel(MotherLevel), Emitation(0), DivineOwner(0), Fluided(false)
+levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), MotherLevel(MotherLevel), GroundLevelTerrain(0), OverLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false)
 {
 	Stack = new stack(this);
+	GetStack()->SetSquareUnder(this);
 
-	for(ushort c = 0; c < 4; c++)		//Is there a better way to do this? Only Stroustrup knows...
+	for(ushort c = 0; c < 4; c++)	//Is there a better way to do this? Only Stroustrup knows...
+	{
 		SideStack[c] = new stack(this);
+		SideStack[c]->SetSquareUnder(this);
+	}
 }
 
 levelsquare::~levelsquare(void)
 {
+	delete GroundLevelTerrain;
+	delete OverLevelTerrain;
+
 	delete Stack;
 
 	for(ushort c = 0; c < 4; c++)
@@ -84,13 +91,13 @@ ushort levelsquare::CalculateEmitation(void) const
 
 void levelsquare::DrawToTileBuffer(void) const
 {
-	GroundTerrain->DrawToTileBuffer();
+	GroundLevelTerrain->DrawToTileBuffer();
 
 	if(Fluided)
 	{
 		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, ushort(256 - TimeFromSpill));
 	}
-	OverTerrain->DrawToTileBuffer();
+	OverLevelTerrain->DrawToTileBuffer();
 	GetStack()->PositionedDrawToTileBuffer();
 
 	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
@@ -196,7 +203,7 @@ uchar levelsquare::CalculateBitMask(vector Dir) const
 {
 	uchar BitMask = 0;
 
-	#define IW(X, Y) game::GetCurrentLevel()->GetLevelSquare(Pos + vector(X, Y))->GetOverTerrain()->GetIsWalkable()
+	#define IW(X, Y) game::GetCurrentLevel()->GetLevelSquare(Pos + vector(X, Y))->GetOverLevelTerrain()->GetIsWalkable()
 
 	if(Dir.X < Pos.X)
 	{
@@ -282,13 +289,13 @@ void levelsquare::AlterLuminance(vector Dir, ushort AiL)
 
 bool levelsquare::Open(character* Opener)
 {
-	return GetOverTerrain()->Open(Opener);
+	return GetOverLevelTerrain()->Open(Opener);
 }
 
 bool levelsquare::Close(character* Closer)
 {
 	if(!GetStack()->GetItems() && !Character)
-		return GetOverTerrain()->Close(Closer);
+		return GetOverLevelTerrain()->Close(Closer);
 	else
 	{
 		ADD_MESSAGE("There's something in the way...");
@@ -300,6 +307,9 @@ bool levelsquare::Close(character* Closer)
 void levelsquare::Save(std::ofstream* SaveFile) const
 {
 	square::Save(SaveFile);
+
+	GroundLevelTerrain->Save(SaveFile);
+	OverLevelTerrain->Save(SaveFile);
 
 	GetStack()->Save(SaveFile);
 
@@ -324,21 +334,27 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 		GetMotherLevel()->GetFluidBuffer()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile->write((char*)&Emitation, sizeof(Emitation));
-
-	SaveFile->write((char*)&Flag, sizeof(Flag));
 	SaveFile->write((char*)&DivineOwner, sizeof(DivineOwner));
 	*SaveFile += Engraved;
 	*SaveFile += RememberedItems;
 }
 
-levelsquare::levelsquare(level* MotherLevel, std::ifstream* SaveFile, vector Pos) : square(MotherLevel, SaveFile, Pos), MotherLevel(MotherLevel)
+void levelsquare::Load(std::ifstream* SaveFile)
 {
-	Stack = new stack(SaveFile);
-	GetStack()->SetSquareUnder(this);
+	//Stack = new stack(SaveFile);
+
+	square::Load(SaveFile);
+
+	GroundLevelTerrain = game::LoadGroundLevelTerrain(SaveFile);
+	GroundLevelTerrain->SetLevelSquareUnder(this);
+	OverLevelTerrain = game::LoadOverLevelTerrain(SaveFile);
+	OverLevelTerrain->SetLevelSquareUnder(this);
+
+	Stack->Load(SaveFile);
 
 	{
 	for(ushort c = 0; c < 4; c++)
-		SideStack[c] = new stack(SaveFile);
+		SideStack[c]->Load(SaveFile);
 	}
 
 	ushort EmitterLength;
@@ -361,7 +377,6 @@ levelsquare::levelsquare(level* MotherLevel, std::ifstream* SaveFile, vector Pos
 		GetMotherLevel()->GetFluidBuffer()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile->read((char*)&Emitation, sizeof(Emitation));
-	SaveFile->read((char*)&Flag, sizeof(Flag));
 	SaveFile->read((char*)&DivineOwner, sizeof(DivineOwner));
 	*SaveFile -= Engraved;
 	*SaveFile -= RememberedItems;
@@ -411,7 +426,7 @@ ushort levelsquare::GetLuminance(void) const
 {
 	ushort Luminance = 0;
 
-	if(GetOverTerrain()->GetIsWalkable())
+	if(GetOverLevelTerrain()->GetIsWalkable())
 	{
 		for(ushort c = 0; c < Emitter.Length(); c++)
 			if(Emitter.Access(c).DilatedEmitation > Luminance)
@@ -521,20 +536,20 @@ void levelsquare::SetRememberedItems(std::string What)
 	RememberedItems = What; 
 }
 
-bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with terrains etc
+bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
 {
 	char Result = CanBeDigged(DiggerCharacter, DiggerItem);
 	if(Result != 2)
 	{
-		GetOverTerrain()->ShowDigMessage(DiggerCharacter, DiggerItem);
+		GetOverLevelTerrain()->ShowDigMessage(DiggerCharacter, DiggerItem);
 	}
 	else 
 		Result = false;
 
 	if(Result == 1)
 	{
-		delete OverTerrain;
-		SetOverTerrain(new empty);
+		delete OverLevelTerrain;
+		SetOverLevelTerrain(new empty);
 		ForceEmitterEmitation();
 		game::GetCurrentLevel()->UpdateLOS();
 	}
@@ -554,7 +569,7 @@ char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) cons
 		ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
 		return 2;
 	}
-	return GetOverTerrain()->CanBeDigged();
+	return GetOverLevelTerrain()->CanBeDigged();
 }
 
 void levelsquare::HandleFluids(void)
@@ -565,4 +580,14 @@ void levelsquare::HandleFluids(void)
 		TimeFromSpill++;
 	if(Fluided)
 		UpdateMemorizedAndDraw();
+}
+
+void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelterrain* NewOver)
+{
+	delete GroundLevelTerrain;
+	SetGroundLevelTerrain(NewGround);
+	GetGroundLevelTerrain()->SetLevelSquareUnder(this);
+	delete OverLevelTerrain;
+	SetOverLevelTerrain(NewOver);
+	GetOverLevelTerrain()->SetLevelSquareUnder(this);
 }

@@ -136,6 +136,10 @@ SOURCE=.\Main\Source\lsquare.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\lterrain.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\main.cpp
 # End Source File
 # Begin Source File
@@ -156,11 +160,15 @@ SOURCE=.\Main\Source\stack.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\terrain.cpp
+SOURCE=.\Main\Source\worldmap.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\wsquare.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\wterrain.cpp
 # End Source File
 # End Group
 # Begin Group "Include"
@@ -208,6 +216,10 @@ SOURCE=.\Main\Include\lsquare.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\lterrain.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\material.h
 # End Source File
 # Begin Source File
@@ -228,11 +240,15 @@ SOURCE=.\Main\Include\stack.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\terrain.h
+SOURCE=.\Main\Include\worldmap.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Include\wsquare.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\wterrain.h
 # End Source File
 # End Group
 # End Target

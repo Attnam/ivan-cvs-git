@@ -11,9 +11,9 @@ class game;
 class bitmap;
 class character;
 class stack;
-class terrain;
-class groundterrain;
-class overterrain;
+class levelterrain;
+class groundlevelterrain;
+class overlevelterrain;
 class vector;
 class material;
 class square;
@@ -26,7 +26,7 @@ class levelsquare : public square
 public:
 	friend class level;
 	levelsquare(level*, vector);
-	levelsquare(level*, std::ifstream*, vector);
+	//levelsquare(level*, std::ifstream*, vector);
 	~levelsquare(void);
 	virtual void FastAddCharacter(character* Guy);
 	virtual void AddCharacter(character* Guy);
@@ -34,9 +34,6 @@ public:
 	virtual void RemoveCharacter(void);
 	virtual stack* GetStack(void) const		{return Stack;}
 	virtual void AlterLuminance(vector, ushort);
-	virtual void EmptyFlag(void)			{Flag = false;}
-	virtual void SetFlag(void)			{Flag = true;}
-	virtual bool RetrieveFlag(void) const		{return Flag;}
 	virtual void Emitate(void);
 	virtual void ReEmitate(void);
 	virtual stack* GetSideStack(uchar Index) const	{return SideStack[Index];}
@@ -44,6 +41,7 @@ public:
 	virtual bool Open(character*);
 	virtual bool Close(character*);
 	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
 	virtual void SpillFluid(uchar, ulong, ushort = 3, ushort = 32);
 	virtual ushort GetLuminance(void) const;
 	virtual void SignalEmitationIncrease(ushort);
@@ -71,8 +69,15 @@ public:
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
 	virtual void HandleFluids(void);
+	virtual void SetGroundLevelTerrain(groundlevelterrain* What) { GroundLevelTerrain = What; }
+	virtual void SetOverLevelTerrain(overlevelterrain* What) { OverLevelTerrain = What; }
+	virtual groundlevelterrain* GetGroundLevelTerrain(void) const	{return GroundLevelTerrain;}
+	virtual overlevelterrain* GetOverLevelTerrain(void) const		{return OverLevelTerrain;}
+	virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
 private:
 	level* MotherLevel;
+	groundlevelterrain* GroundLevelTerrain;
+	overlevelterrain* OverLevelTerrain;
 	ushort CalculateEmitation(void) const;
 	struct emitter
 	{
@@ -85,7 +90,6 @@ private:
 	};
 	dynarray<emitter> Emitter;
 	stack* Stack, * SideStack[4];
-	bool Flag;
 	ushort Emitation;
 	std::string Engraved, RememberedItems;
 	uchar DivineOwner;
@@ -94,3 +98,5 @@ private:
 };
 
 #endif
+
+

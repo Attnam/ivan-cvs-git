@@ -10,7 +10,7 @@
 
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
-char* igraph::GraphicFileName[] = {"Graphics/Terrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/FOW.pcx", "Graphics/Human.pcx", "Graphics/FontR.pcx", "Graphics/FontB.pcx", "Graphics/FontW.pcx", "Graphics/Symbol.pcx"};
+char* igraph::GraphicFileName[] = {"Graphics/LTerrain.pcx", "Graphics/WTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/FOW.pcx", "Graphics/Human.pcx", "Graphics/FontR.pcx", "Graphics/FontB.pcx", "Graphics/FontW.pcx", "Graphics/Symbol.pcx"};
 
 void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 {
@@ -46,3 +46,5 @@ void igraph::BlitTileBuffer(vector Pos, ushort Luminance)
 	else
 		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
+
+

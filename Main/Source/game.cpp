@@ -5,8 +5,10 @@
 prototypecontainer<material> game::MaterialPrototype;
 prototypecontainer<character> game::CharacterPrototype;
 prototypecontainer<item> game::ItemPrototype;
-prototypecontainer<groundterrain> game::GroundTerrainPrototype;
-prototypecontainer<overterrain> game::OverTerrainPrototype;
+prototypecontainer<groundlevelterrain> game::GroundLevelTerrainPrototype;
+prototypecontainer<overlevelterrain> game::OverLevelTerrainPrototype;
+prototypecontainer<groundworldmapterrain> game::GroundWorldMapTerrainPrototype;
+prototypecontainer<overworldmapterrain> game::OverWorldMapTerrainPrototype;
 
 #include <cstdarg>
 #include <cstdio>
@@ -30,11 +32,16 @@ prototypecontainer<overterrain> game::OverTerrainPrototype;
 #include "command.h"
 #include "lsquare.h"
 #include "stack.h"
-#include "terrain.h"
+#include "lterrain.h"
+#include "wterrain.h"
+#include "worldmap.h"
+#include "wsquare.h"
 
 level** game::Level;
 ushort game::Levels = 10, game::Current;
 long game::BaseScore;
+bool game::InWilderness = false;
+worldmap* game::WorldMap;
 
 bool game::Flag;
 
@@ -45,43 +52,43 @@ std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+",
 god* game::God[] = {0, new valpuri, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
 
 command* game::Command[] = {	0,
-				new command(&character::Consume, "consume", 'e'),
-				new command(&character::ShowInventory, "show inventory", 'i'),
-				new command(&character::PickUp, "pick up", ','),
-				new command(&character::Quit, "quit", 'q'),
-				new command(&character::Drop, "drop", 'd'),
-				new command(&character::Wield, "wield", 'w'),
-				new command(&character::GoUp, "go up", '<'),
-				new command(&character::GoDown, "go down", '>'),
-				new command(&character::Open, "open", 'o'),
-				new command(&character::Close, "close", 'c'),
-				new command(&character::WearArmor, "wear armor", 'W'),
-				new command(&character::Talk, "talk", 'C'),
-				new command(&character::NOP, "wait", '.'),
-				new command(&character::Save, "save", 's'),
-				new command(&character::Read, "read", 'r'),
-				new command(&character::Dip, "dip", 'D'),
-				new command(&character::WizardMode, "wizard mode", 'X'),
-				new command(&character::RaiseStats, "raise stats", 'R'),
-				new command(&character::LowerStats, "lower stats", 'T'),
-				new command(&character::SeeWholeMap, "see whole map", 'Y'),
-				new command(&character::IncreaseGamma, "increase hardware gamma", 'g'),
-				new command(&character::DecreaseGamma, "decrease hardware gamma", 'G'),
-				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", 'U'),
-				new command(&character::ShowKeyLayout, "show key layout", '?'),
-				new command(&character::Look, "look", 'l'),
-				new command(&character::WhatToEngrave, "engrave", 'E'),
-				new command(&character::Pray, "pray", 'p'),
-				new command(&character::Kick, "kick", 'k'),
-				new command(&character::ScreenShot, "take screenshot", 'S'),
-				new command(&character::Offer, "offer", 'O'),
-				new command(&character::IncreaseSoftGamma, "increase software gamma", 'f'),
-				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'F'),
-				new command(&character::DrawMessageHistory, "show message history", 'M'),
-				new command(&character::Throw, "throw", 't'),
-				new command(&character::Apply, "apply", 'a'),
-				new command(&character::GainAllItems, "give all items cheat", 'A'),
-				new command(&character::ForceVomit, "vomit", 'v'),
+				new command(&character::Consume, "consume", 'e', true),
+				new command(&character::ShowInventory, "show inventory", 'i', true),
+				new command(&character::PickUp, "pick up", ',', false),
+				new command(&character::Quit, "quit", 'q', true),
+				new command(&character::Drop, "drop", 'd', false),
+				new command(&character::Wield, "wield", 'w', true),
+				new command(&character::GoUp, "go up", '<', false),
+				new command(&character::GoDown, "go down", '>', true),
+				new command(&character::Open, "open", 'o', false),
+				new command(&character::Close, "close", 'c', false),
+				new command(&character::WearArmor, "wear armor", 'W', true),
+				new command(&character::Talk, "talk", 'C', false),
+				new command(&character::NOP, "wait", '.', true),
+				new command(&character::Save, "save", 's', true),
+				new command(&character::Read, "read", 'r', false),
+				new command(&character::Dip, "dip", 'D', true),
+				new command(&character::WizardMode, "wizard mode", 'X', true),
+				new command(&character::RaiseStats, "raise stats", 'R', true),
+				new command(&character::LowerStats, "lower stats", 'T', true),
+				new command(&character::SeeWholeMap, "see whole map", 'Y', true),
+				new command(&character::IncreaseGamma, "increase hardware gamma", 'g', true),
+				new command(&character::DecreaseGamma, "decrease hardware gamma", 'G', true),
+				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", 'U', true),
+				new command(&character::ShowKeyLayout, "show key layout", '?', true),
+				new command(&character::Look, "look", 'l', true),
+				new command(&character::WhatToEngrave, "engrave", 'E', false),
+				new command(&character::Pray, "pray", 'p', false),
+				new command(&character::Kick, "kick", 'k', false),
+				new command(&character::ScreenShot, "take screenshot", 'S', true),
+				new command(&character::Offer, "offer", 'O', false),
+				new command(&character::IncreaseSoftGamma, "increase software gamma", 'f', true),
+				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'F', true),
+				new command(&character::DrawMessageHistory, "show message history", 'M', true),
+				new command(&character::Throw, "throw", 't', false),
+				new command(&character::Apply, "apply", 'a', false),
+				new command(&character::GainAllItems, "give all items cheat", 'A', true),
+				new command(&character::ForceVomit, "vomit", 'v', false),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x14D, 0x148, 0x150, 0x14B, 0x147, 0x149, 0x151, 0x14F};
@@ -125,6 +132,7 @@ void game::Init(std::string Name)
 	WizardMode = false;
 	SeeWholeMapCheat = false;
 	GoThroughWallsCheat = false;
+	InWilderness = false;
 	srand(time(0));
 	game::CalculateGodNumber();
 
@@ -155,6 +163,9 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
+		WorldMap = new worldmap(36, 36);
+		WorldMap->Generate();
+
 		Level = new level*[Levels];
 
 		{
@@ -169,10 +180,17 @@ void game::Init(std::string Name)
 			PerttuPos = vector(5 + rand() % (Level[0]->GetXSize() - 10), 5 + rand() % (Level[0]->GetYSize() - 10));
 		}
 
-		Level[0]->GetLevelSquare(PerttuPos)->ChangeTerrain(new parquet, new stairsup);
+		Level[0]->GetLevelSquare(PerttuPos)->ChangeLevelTerrain(new parquet, new stairsup);
+		Level[0]->SetUpStairs(PerttuPos);
 
 		Level[0]->GetLevelSquare(PerttuPos)->FastAddCharacter(new perttu);
-		Level[0]->PutPlayerAround(PerttuPos);
+		//Level[0]->PutPlayerAround(PerttuPos);
+
+		InWilderness = true;
+
+		game::GetPlayer()->GetStack()->FastAddItem(new banana);
+		WorldMap->GetSquare(vector(18, 18))->AddCharacter(game::GetPlayer());
+		game::GetPlayer()->SetSquareUnder(WorldMap->GetSquare(vector(18, 18)));
 
 		vector Pos = vector(6 + rand() % (Level[8]->GetXSize() - 12), 6 + rand() % (Level[8]->GetYSize() - 12));
 
@@ -183,15 +201,17 @@ void game::Init(std::string Name)
 
 		Level[9]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false, 16);
 
-		Level[8]->GetLevelSquare(Pos)->ChangeTerrain(new parquet, new stairsdown(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector(-2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector( 2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[9]->GetLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new stairsup(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos)->ChangeLevelTerrain(new parquet, new stairsdown(new pepsi(1)));
+		Level[8]->SetDownStairs(Pos);
+		Level[8]->GetLevelSquare(Pos + vector(0, -2))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector(0,  2))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector(-2, 0))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector( 2, 0))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
+		Level[9]->GetLevelSquare(Pos + vector(0,  2))->ChangeLevelTerrain(new parquet, new stairsup(new pepsi(1)));
+		Level[9]->SetUpStairs(Pos + vector(0,  2));
 		altar* Altar = new altar(new pepsi(1));
 		Altar->SetOwnerGod(16);
-		Level[9]->GetLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, Altar); //GGG
+		Level[9]->GetLevelSquare(Pos + vector(0, -2))->ChangeLevelTerrain(new parquet, Altar); //GGG
 
 		DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, Level[9]->GetXSize() - 1, Level[9]->GetYSize() - 1, Level[9]->GetLevelSquare(vector(DoX, DoY))->FastAddCharacter(new swatcommando);)
 		Level[9]->GetLevelSquare(Pos + vector(0, -2))->FastAddCharacter(new oree);
@@ -230,7 +250,7 @@ void game::Init(std::string Name)
 		UpDateCameraX();
 		UpDateCameraY();
 
-		game::GetCurrentLevel()->UpdateLOS();
+		game::GetCurrentArea()->UpdateLOS();
 
 		{
 		for(ushort c = 1; GetGod(c); c++)
@@ -265,7 +285,10 @@ void game::Run(void)
 		if(!GetRunning())
 			break;
 
-		Level[Current]->HandleCharacters();
+		if(!InWilderness)
+			Level[Current]->HandleCharacters();
+		else
+			game::GetPlayer()->SetHasActed(false);
 
 		BurnHellsContents();
 	}
@@ -472,13 +495,20 @@ void game::Quit(void)
 
 bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX = CX, CurrentY = CY
 {                                                   // OrigoX = OX, OrigoY = OY
-	Level[Current]->GetLevelSquare(vector(CX, CY))->SetFlag();
-	Level[Current]->GetLevelSquare(vector(CX, CY))->UpdateItemMemory();
+	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
+		return false;
+
+	//Level[Current]->GetLevelSquare(vector(CX, CY))->SetFlag();
+	GetCurrentArea()->GetSquare(vector(CX, CY))->SetFlag();
+	//GGG Level[Current]->GetLevelSquare(vector(CX, CY))->UpdateItemMemory();
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
+		if(!InWilderness)
+			return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		else
+			return true;
 }
 
 bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, ushort, ushort))
@@ -802,7 +832,7 @@ void game::DrawEverything(bool EmptyMsg)
 void game::DrawEverythingNoBlit(bool EmptyMsg)
 {
 	graphics::ClearDBToColor(0);
-	game::GetCurrentLevel()->Draw();
+	game::GetCurrentArea()->Draw();
 	game::Panel.Draw();
 	DRAW_MESSAGES();
 	if(EmptyMsg) EMPTY_MESSAGES();
@@ -866,6 +896,7 @@ bool game::Save(std::string SaveName)
 	SaveFile->write((char*)&BaseScore, sizeof(BaseScore));
 	SaveFile->write((char*)&Turns, sizeof(Turns));
 	SaveFile->write((char*)&SoftGamma, sizeof(SoftGamma));
+	SaveFile->write((char*)&InWilderness, sizeof(InWilderness));
 
 	time_t Time = time(0);
 	srand(Time);
@@ -909,6 +940,7 @@ bool game::Load(std::string SaveName)
 	SaveFile->read((char*)&BaseScore, sizeof(BaseScore));
 	SaveFile->read((char*)&Turns, sizeof(Turns));
 	SaveFile->read((char*)&SoftGamma, sizeof(SoftGamma));
+	SaveFile->read((char*)&InWilderness, sizeof(InWilderness));
 
 	time_t Time;
 	SaveFile->read((char*)&Time, sizeof(Time));
@@ -1018,7 +1050,7 @@ character* game::LoadCharacter(std::ifstream* SaveFile)
 		return 0;
 }
 
-groundterrain* game::LoadGroundTerrain(std::ifstream* SaveFile)
+groundlevelterrain* game::LoadGroundLevelTerrain(std::ifstream* SaveFile)
 {
 	ushort Type;
 
@@ -1026,15 +1058,15 @@ groundterrain* game::LoadGroundTerrain(std::ifstream* SaveFile)
 
 	if(Type)
 	{
-		groundterrain* GroundTerrain = GroundTerrainPrototype[Type]->Clone(false, false);
-		GroundTerrain->Load(SaveFile);
-		return GroundTerrain;
+		groundlevelterrain* GroundLevelTerrain = GroundLevelTerrainPrototype[Type]->Clone(false, false);
+		GroundLevelTerrain->Load(SaveFile);
+		return GroundLevelTerrain;
 	}
 	else
 		return 0;
 }
 
-overterrain* game::LoadOverTerrain(std::ifstream* SaveFile)
+overlevelterrain* game::LoadOverLevelTerrain(std::ifstream* SaveFile)
 {
 	ushort Type;
 
@@ -1042,9 +1074,41 @@ overterrain* game::LoadOverTerrain(std::ifstream* SaveFile)
 
 	if(Type)
 	{
-		overterrain* OverTerrain = OverTerrainPrototype[Type]->Clone(false, false);
-		OverTerrain->Load(SaveFile);
-		return OverTerrain;
+		overlevelterrain* OverLevelTerrain = OverLevelTerrainPrototype[Type]->Clone(false, false);
+		OverLevelTerrain->Load(SaveFile);
+		return OverLevelTerrain;
+	}
+	else
+		return 0;
+}
+
+groundworldmapterrain* game::LoadGroundWorldMapTerrain(std::ifstream* SaveFile)
+{
+	ushort Type;
+
+	SaveFile->read((char*)&Type, sizeof(Type));
+
+	if(Type)
+	{
+		groundworldmapterrain* GroundWorldMapTerrain = GroundWorldMapTerrainPrototype[Type]->Clone(false);
+		GroundWorldMapTerrain->Load(SaveFile);
+		return GroundWorldMapTerrain;
+	}
+	else
+		return 0;
+}
+
+overworldmapterrain* game::LoadOverWorldMapTerrain(std::ifstream* SaveFile)
+{
+	ushort Type;
+
+	SaveFile->read((char*)&Type, sizeof(Type));
+
+	if(Type)
+	{
+		overworldmapterrain* OverWorldMapTerrain = OverWorldMapTerrainPrototype[Type]->Clone(false);
+		OverWorldMapTerrain->Load(SaveFile);
+		return OverWorldMapTerrain;
 	}
 	else
 		return 0;
@@ -1066,7 +1130,7 @@ bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
@@ -1076,7 +1140,7 @@ bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -1238,7 +1302,7 @@ bool game::EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)  // CurrentX =
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 long game::GodScore(void)
@@ -1452,8 +1516,10 @@ void game::SetPlayer(character* NP)
 		Player->SetIsPlayer(true);
 }
 
-ushort game::AddProtoType(material* What)	{ return MaterialPrototype.Add(What); }
-ushort game::AddProtoType(character* What)	{ return CharacterPrototype.Add(What); }
-ushort game::AddProtoType(item* What)		{ return ItemPrototype.Add(What); }
-ushort game::AddProtoType(overterrain* What)	{ return OverTerrainPrototype.Add(What); }
-ushort game::AddProtoType(groundterrain* What)	{ return GroundTerrainPrototype.Add(What); }
+ushort game::AddProtoType(material* What)		{ return MaterialPrototype.Add(What); }
+ushort game::AddProtoType(character* What)		{ return CharacterPrototype.Add(What); }
+ushort game::AddProtoType(item* What)			{ return ItemPrototype.Add(What); }
+ushort game::AddProtoType(overlevelterrain* What)	{ return OverLevelTerrainPrototype.Add(What); }
+ushort game::AddProtoType(groundlevelterrain* What)	{ return GroundLevelTerrainPrototype.Add(What); }
+ushort game::AddProtoType(overworldmapterrain* What)	{ return OverWorldMapTerrainPrototype.Add(What); }
+ushort game::AddProtoType(groundworldmapterrain* What)	{ return GroundWorldMapTerrainPrototype.Add(What); }

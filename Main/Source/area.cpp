@@ -1,8 +1,10 @@
 #include "area.h"
+#include "level.h"
 #include "allocate.h"
 #include "lsquare.h"
 #include "bitmap.h"
-#include "terrain.h"
+#include "lterrain.h"
+#include "char.h"
 
 area::area(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize)
 {
@@ -61,15 +63,20 @@ void area::AddCharacter(vector Pos, character* Guy)
 	Map[Pos.X][Pos.Y]->AddCharacter(Guy);
 }
 
-vector area::RandomSquare(bool Walkablility) const
+void area::UpdateLOS(void)
 {
-	vector Pos(rand() % XSize, rand() % YSize);
+	EmptyFlags();
 
-	while(Map[Pos.X][Pos.Y]->GetOverTerrain()->GetIsWalkable() != Walkablility)
-	{
-		Pos.X = rand() % XSize;
-		Pos.Y = rand() % YSize;
-	}
+	DO_BIG_RECTANGLE(0, 0, GetXSize() - 1, GetYSize() - 1,
+			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,		0,		game::FlagHandler);
+			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,		GetYSize() - 1,	game::FlagHandler);},
+			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0,			YPointer,	game::FlagHandler);
+			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetXSize() - 1,	YPointer,	game::FlagHandler);})
+}
 
-	return Pos;
+void area::EmptyFlags(void)
+{
+	for(ushort x = 0; x < XSize; x++)
+		for(ushort y = 0; y < YSize; y++)
+			Map[x][y]->EmptyFlag();
 }

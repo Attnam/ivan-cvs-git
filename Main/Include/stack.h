@@ -26,8 +26,9 @@ class stack
 {
 public:
 	stack(square* = 0);
-	stack(std::ifstream*);
+	//stack(std::ifstream*);
 	~stack(void);
+	void Load(std::ifstream*);
 	void PositionedDrawToTileBuffer(uchar = CENTER) const;
 	ushort AddItem(item*);
 	ushort FastAddItem(item*);

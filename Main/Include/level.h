@@ -167,10 +167,10 @@ public:
 	level(std::ifstream*, ushort);
 	~level(void);
 	virtual void Generate(void);
+	virtual vector RandomSquare(bool) const;
 	virtual void Draw(void) const;
 	virtual void FastAddCharacter(vector, character*);
 	virtual void HandleCharacters(void);
-	virtual void EmptyFlags(void);
 	virtual levelsquare* GetLevelSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual void PutPlayer(bool);
 	virtual void PutPlayerAround(vector Pos);
@@ -180,7 +180,6 @@ public:
 	virtual void ExpandStillPossibleRoute(vector, vector, bool);
 	virtual void Save(std::ofstream*) const;
 	virtual void Luxify(void);
-	virtual void UpdateLOS(void);
 	virtual ushort GetPopulation(void) const { return Population; }
 	virtual ushort CIdealPopulation(void) const { return 25; }
 	virtual void GenerateNewMonsters(ushort);
@@ -191,10 +190,15 @@ public:
 	virtual vector CreateDownStairs(void);
 	virtual bool MakeRoom(vector, vector, bool = true, uchar = 0);
 	virtual bitmap* GetFluidBuffer(void) const { return FluidBuffer; }
+	virtual vector GetUpStairs(void) { return UpStairs; }
+	virtual vector GetDownStairs(void) { return DownStairs; }
+	virtual void SetUpStairs(vector What) { UpStairs = What; }
+	virtual void SetDownStairs(vector What) { DownStairs = What; }
 protected:
 	levelsquare*** Map;
 	bitmap* FluidBuffer;
 	dynarray<vector, uchar> KeyPoint, Door;
+	vector UpStairs, DownStairs;
 	ushort LevelIndex;
 	ushort Population;
 };

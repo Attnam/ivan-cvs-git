@@ -13,7 +13,7 @@
 #include "list.h"
 #include "igraph.h"
 #include "stack.h"
-#include "terrain.h"
+#include "lterrain.h"
 #include "femath.h"
 #include "hscore.h"
 #include "strover.h"
@@ -21,6 +21,9 @@
 #include "item.h"
 #include "lsquare.h"
 #include "level.h"
+#include "worldmap.h"
+#include "wsquare.h"
+#include "wterrain.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment) : Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
 {
@@ -307,7 +310,7 @@ void character::Act(void)
 
 bool character::GoUp(void)
 {
-	if(GetSquareUnder()->GetOverTerrain()->GoUp(this))
+	if(GetLevelSquareUnder()->GetOverLevelTerrain()->GoUp(this))
 	{
 		SetStrengthExperience(GetStrengthExperience() + 25);
 		SetNP(GetNP() - 2);
@@ -319,14 +322,27 @@ bool character::GoUp(void)
 
 bool character::GoDown(void)
 {
-	if(GetSquareUnder()->GetOverTerrain()->GoDown(this))
+	if(!game::GetInWilderness())
 	{
-		SetAgilityExperience(GetAgilityExperience() + 25);
-		SetNP(GetNP() - 1);
-		return true;
+		if(GetLevelSquareUnder()->GetOverLevelTerrain()->GoDown(this))
+		{
+			SetAgilityExperience(GetAgilityExperience() + 25);
+			SetNP(GetNP() - 1);
+			return true;
+		}
+		else
+			return false;
 	}
-	else
-		return false;
+	else	//gum solution
+	{
+		game::SetInWilderness(false);
+		game::GetCurrentArea()->RemoveCharacter(GetPos());
+		game::SetCurrent(0);
+		game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
+		game::GetCurrentLevel()->Luxify();
+		game::GetCurrentLevel()->UpdateLOS();
+		return true;	
+	}
 }
 
 bool character::Open(void)
@@ -424,7 +440,7 @@ bool humanoid::Drop(void)
 
 bool character::Consume(void)
 {
-	if(GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [Y/N]"))
+	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [Y/N]"))
 	{
 		ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents("What do you wish to consume?", this);
 		if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
@@ -561,29 +577,33 @@ void character::Move(vector MoveTo, bool TeleportMove)
 {
 	if(GetBurdenState() || TeleportMove)
 	{
-	game::GetCurrentLevel()->RemoveCharacter(GetPos());
+		game::GetCurrentArea()->RemoveCharacter(GetPos());
 
-	game::GetCurrentLevel()->AddCharacter(MoveTo, this);
+		game::GetCurrentArea()->AddCharacter(MoveTo, this);
 
-	if(GetIsPlayer())
-	{
-		if(GetPos().X < game::CCamera().X + 2 || GetPos().X > game::CCamera().X + 48)
-			game::UpDateCameraX();
+		if(GetIsPlayer())
+		{
+			if(GetPos().X < game::CCamera().X + 2 || GetPos().X > game::CCamera().X + 48)
+				game::UpDateCameraX();
 
-		if(GetPos().Y < game::CCamera().Y + 2 || GetPos().Y > game::CCamera().Y + 27)
-			game::UpDateCameraY();
+			if(GetPos().Y < game::CCamera().Y + 2 || GetPos().Y > game::CCamera().Y + 27)
+				game::UpDateCameraY();
 
-		game::GetCurrentLevel()->UpdateLOS();
-		if(game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "") ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
-	}
-	SetNP(GetNP() - 1);
-	SetAgilityExperience(GetAgilityExperience() + 10);
-	if(GetIsPlayer() && GetLevelSquareUnder()->GetStack()->GetItems() > 0)
-	{
-		if (GetLevelSquareUnder()->GetStack()->GetItems() > 1)
-		ADD_MESSAGE("Several items are lying here.");
-		else	ADD_MESSAGE("%s is lying here.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
-	}
+			game::GetCurrentArea()->UpdateLOS();
+
+			if(!game::GetInWilderness() && game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "")
+				ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
+		}
+
+		SetNP(GetNP() - 1);
+		SetAgilityExperience(GetAgilityExperience() + 10);
+
+		if(!game::GetInWilderness() && GetIsPlayer() && GetLevelSquareUnder()->GetStack()->GetItems() > 0)
+		{
+			if (GetLevelSquareUnder()->GetStack()->GetItems() > 1)
+			ADD_MESSAGE("Several items are lying here.");
+			else	ADD_MESSAGE("%s is lying here.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
+		}
 	}
 }
 
@@ -798,35 +818,44 @@ void character::Charge(character* Target)
 
 bool character::TryMove(vector MoveTo)
 {
-	if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter())
-			if(GetIsPlayer() || (!GetRelations() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter()->GetRelations() > 0) || (GetRelations() > 0 && !game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter()->GetRelations()))
-				return Hit(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter());
+	if(!game::GetInWilderness())
+		if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
+			if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter())
+				if(GetIsPlayer() || (!GetRelations() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter()->GetRelations() > 0) || (GetRelations() > 0 && !game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter()->GetRelations()))
+					return Hit(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter());
+				else
+					return false;
 			else
-				return false;
-		else
-			if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverTerrain()->GetIsWalkable() || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
-			{
-				Move(MoveTo);
-
-				return true;
-			}
-			else if(GetIsPlayer() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverTerrain()->CanBeOpened())
-			{
-				if(game::BoolQuestion("Do you want to open this door? [Y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+				if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->GetIsWalkable() || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
 				{
-					OpenPos(MoveTo);
+					Move(MoveTo);
 					return true;
 				}
 				else
-					return false;
+					if(GetIsPlayer() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->CanBeOpened())
+						if(game::BoolQuestion("Do you want to open this door? [Y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+						{
+							OpenPos(MoveTo);
+							return true;
+						}
+						else
+							return false;
+					else
+						return false;
+		else
+			return false;
+	else
+		if(MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
+			if(true || (game::GetGoThroughWallsCheat() && GetIsPlayer())) //GGG
+			{
+				Move(MoveTo);
+				return true;
 			}
 			else
 				return false;
-	}
-	else
-		return false;
+		else
+			return false;
+	
 }
 
 bool character::ShowInventory(void)
@@ -1433,7 +1462,8 @@ void character::Load(std::ifstream* SaveFile)
 {
 	object::Load(SaveFile);
 
-	Stack = new stack(SaveFile);
+	Stack = new stack;
+	Stack->Load(SaveFile);
 
 	ushort Index;
 
@@ -1699,9 +1729,9 @@ bool character::Look(void)
 
 			bool Anything = false;
 
-			if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverTerrain()->Name(INDEFINITE) != "an air atmosphere")
+			if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverLevelTerrain()->Name(INDEFINITE) != "an air atmosphere")
 			{
-				Msg += game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverTerrain()->Name(INDEFINITE);
+				Msg += game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverLevelTerrain()->Name(INDEFINITE);
 	
 				Anything = true;
 			}
@@ -1724,13 +1754,13 @@ bool character::Look(void)
 				if(Anything)
 					Msg += std::string(" and ");
 
-				Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems()) + " on " + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundTerrain()->Name(INDEFINITE);
+				Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems()) + " on " + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE);
 			}
 			else
 				if(Anything)
-					Msg += std::string(" on ") + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundTerrain()->Name(INDEFINITE);
+					Msg += std::string(" on ") + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE);
 				else
-					Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundTerrain()->Name(INDEFINITE));
+					Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE));
 
 			ADD_MESSAGE("%s.", Msg.c_str());
 		}
@@ -2227,7 +2257,7 @@ bool character::ScreenShot(void)
 
 bool character::Offer(void)
 {
-	if(GetLevelSquareUnder()->GetOverTerrain()->CanBeOffered())
+	if(GetLevelSquareUnder()->GetOverLevelTerrain()->CanBeOffered())
 	{
 		ushort Index = GetStack()->DrawContents("What do you want to offer?");
 		if(Index < GetStack()->GetItems())
@@ -2243,7 +2273,7 @@ bool character::Offer(void)
 				return false;
 			}
 
-			if(game::GetGod(GetLevelSquareUnder()->GetOverTerrain()->GetOwnerGod())->ReceiveOffer(GetStack()->GetItem(Index)))
+			if(game::GetGod(GetLevelSquareUnder()->GetOverLevelTerrain()->GetOwnerGod())->ReceiveOffer(GetStack()->GetItem(Index)))
 			{
 				item* Temp = GetStack()->GetItem(Index);
 				GetStack()->RemoveItem(Index);
@@ -2496,11 +2526,16 @@ void character::GetPlayerCommand(void)
 		for(uchar c = 1; game::GetCommand(c); c++)
 			if(Key == game::GetCommand(c)->GetKey())
 			{
-				HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
+				if(game::GetInWilderness() && !game::GetCommand(c)->GetCanBeUsedInWilderness())
+					ADD_MESSAGE("This function cannot be used while in wilderness.");
+				else
+					HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
+
 				ValidKeyPressed = true;
 			}
 
-		if (!ValidKeyPressed) ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
+		if (!ValidKeyPressed)
+			ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
 	}
 }
 
@@ -2627,3 +2662,6 @@ bool character::ForceVomit(void)
 	SetAP(GetAP() - 100);
 	return true;
 }
+
+
+

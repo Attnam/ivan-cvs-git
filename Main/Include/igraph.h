@@ -1,17 +1,18 @@
 #ifndef __IGRAPH_H__
 #define __IGRAPH_H__
 
-#define GRAPHIC_TYPES	9
+#define GRAPHIC_TYPES	10
 
-#define GTERRAIN	0
-#define GITEM		1
-#define GCHARACTER	2
-#define GFOWGRAPHIC	3
-#define GHUMAN		4
-#define GFONTR		5
-#define GFONTB		6
-#define GFONTW		7
-#define GSYMBOL		8
+#define GLTERRAIN	0
+#define GWTERRAIN	1
+#define GITEM		2
+#define GCHARACTER	3
+#define GFOWGRAPHIC	4
+#define GHUMAN		5
+#define GFONTR		6
+#define GFONTB		7
+#define GFONTW		8
+#define GSYMBOL		9
 
 #define FONTR		igraph::GetFontRGraphic()
 #define FONTB		igraph::GetFontBGraphic()
@@ -29,7 +30,8 @@ class igraph
 public:
 	static void Init(HINSTANCE, HWND*);
 	static void DeInit(void);
-	static bitmap* GetTerrainGraphic(void)	{return Graphic[GTERRAIN];}
+	static bitmap* GetLevelTerrainGraphic(void)	{return Graphic[GLTERRAIN];}
+	static bitmap* GetWorldMapTerrainGraphic(void)	{return Graphic[GWTERRAIN];}
 	static bitmap* GetItemGraphic(void)	{return Graphic[GITEM];}
 	static bitmap* GetCharacterGraphic(void)	{return Graphic[GCHARACTER];}
 	static bitmap* GetFOWGraphic(void)	{return Graphic[GFOWGRAPHIC];}
@@ -47,3 +49,5 @@ private:
 };
 
 #endif
+
+

@@ -18,7 +18,6 @@ public:
 	~area(void);
 	virtual void Generate(void) = 0;
 	virtual void Draw(void) const = 0;
-	virtual vector RandomSquare(bool) const;
 	virtual void AddCharacter(vector, character*);
 	virtual void RemoveCharacter(vector);
 	virtual void Save(std::ofstream*) const;
@@ -28,6 +27,8 @@ public:
 	virtual ushort GetXSize(void) const {return XSize;}
 	virtual ushort GetYSize(void) const {return YSize;}
 	virtual bitmap* GetMemorized(void) const { return Memorized; }
+	virtual void UpdateLOS(void);
+	virtual void EmptyFlags(void);
 protected:
 	square*** Map;
 	bitmap* Memorized;

@@ -42,7 +42,7 @@ ushort stack::AddItem(item* ToBeAdded)
 
 	SetItem(GetItems(), ToBeAdded);
 
-	if(ToBeAdded->GetEmitation() > GetEmitation())
+	if(!game::GetInWilderness() && ToBeAdded->GetEmitation() > GetEmitation())
 	{
 		SetItems(GetItems() + 1);
 
@@ -51,8 +51,9 @@ ushort stack::AddItem(item* ToBeAdded)
 	else
 		SetItems(GetItems() + 1);
 
-	if(GetLevelSquareUnder()->CanBeSeen())
-		GetLevelSquareUnder()->UpdateItemMemory();
+	//GGG
+	//if(GetLevelSquareUnder()->CanBeSeen())
+	//	GetLevelSquareUnder()->UpdateItemMemory();
 
 	return GetItems() - 1;
 }
@@ -241,7 +242,7 @@ void stack::Save(std::ofstream* SaveFile) const
 		Item[c]->Save(SaveFile);
 }
 
-stack::stack(std::ifstream* SaveFile)
+void stack::Load(std::ifstream* SaveFile)
 {
 	SaveFile->read((char*)&Items, sizeof(Items));
 

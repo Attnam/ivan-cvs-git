@@ -10,17 +10,18 @@ class area;
 class material;
 class bitmap;
 class character;
-class terrain;
-class groundterrain;
-class overterrain;
+class levelterrain;
+class groundlevelterrain;
+class overlevelterrain;
 
 class square
 {
 public:
 	square(area*, vector);
-	square(area*, std::ifstream*, vector);
+	//square(area*, std::ifstream*, vector);
 	~square(void);
 	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
 	virtual void DrawCheat(void) const;
 	virtual void DrawMemorized(void) const;
 	virtual void UpdateMemorizedAndDraw(void) = 0;
@@ -30,22 +31,21 @@ public:
 	virtual void RemoveCharacter(void);
 	virtual character* CCharacter(void) const		{return Character;}
 	virtual bool GetKnown(void) const				{return Known;}
-	virtual void ChangeTerrain(groundterrain*, overterrain*);
 	virtual vector GetPos(void) const			{return Pos;}
 	virtual void SetKnown(bool What) { Known = What; }
-	virtual void SetGroundTerrain(groundterrain* What) { GroundTerrain = What; }
-	virtual void SetOverTerrain(overterrain* What) { OverTerrain = What; }
-	virtual groundterrain* GetGroundTerrain(void) const	{return GroundTerrain;}
-	virtual overterrain* GetOverTerrain(void) const		{return OverTerrain;}
 	virtual ushort GetPopulation(void) const { if(Character) return 1; else return 0; }
 	virtual area* GetMotherArea(void) const { return MotherArea; }
+	virtual void EmptyFlag(void)			{Flag = false;}
+	virtual void SetFlag(void)			{Flag = true;}
+	virtual bool RetrieveFlag(void) const		{return Flag;}
 protected:
 	area* MotherArea;
-	groundterrain* GroundTerrain;
-	overterrain* OverTerrain;
 	character* Rider, * Character, * Flyer;
 	vector Pos;
-	bool Known;
+	bool Known, Flag;
 };
 
 #endif
+
+
+

@@ -12,7 +12,7 @@
 #include "stack.h"
 #include "level.h"
 #include "lsquare.h"
-#include "terrain.h"
+#include "lterrain.h"
 
 item::item(bool CreateMaterials, bool SetStats)
 {
@@ -78,7 +78,7 @@ bool banana::Consume(character* Eater, float Amount)
 			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
 	}
 	CMaterial(1)->EatEffect(Eater, Amount);
-	game::GetCurrentLevel()->GetLevelSquare(Eater->GetPos())->GetStack()->AddItem(new bananapeals);
+	Eater->GetStack()->AddItem(new bananapeals);
 	return (Amount > 99);
 }
 
@@ -132,7 +132,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 	for(;;) // Bug bug bug!
 	{
 		TryToCreate = (Reader->GetPos() + game::CMoveVector()[rand() % DIRECTION_COMMAND_KEYS]);
-		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverTerrain()->GetIsWalkable())
+		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable())
 			break;
 	}
 
@@ -283,7 +283,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	float Speed = float(Force) / GetWeight() * 1500;
 	for(;;)
 	{
-		if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::CMoveVector()[Direction])->GetOverTerrain()->GetIsWalkable())
+		if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::CMoveVector()[Direction])->GetOverLevelTerrain()->GetIsWalkable())
 		{
 			Breaks = true;
 			break;
@@ -412,3 +412,6 @@ bool pickaxe::Apply(character* User)
 	}	
 	return false;
 }
+
+
+
