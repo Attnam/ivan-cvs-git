@@ -485,6 +485,7 @@ playerkind
 	/*Inventory == Random { MinPrice = 200; Category = POTION; Times = 10; }*/
 	/*Inventory = { 2, ring(RING_OF_TELEPORT_CONTROL), wand(WAND_OF_TELEPORTATION) { Times = 5; } }*/
 	/*Inventory = { 2, IRON BANANA_FLESH meleeweapon(HALBERD), IRON BANANA_FLESH meleeweapon(TWO_HANDED_SWORD); }*/
+	Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = 3; }
 }
 
 petrus
