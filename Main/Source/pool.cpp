@@ -4,11 +4,9 @@ entitylist pool::Pool;
 entitylist::iterator pool::CurrentEntity = pool::Pool.end();
 entitylist pool::Hell;
 
-/*
- * Calls the Be() function of each self-changeable entity during each tick,
+/* Calls the Be() function of each self-changeable entity during each tick,
  * thus allowing acting characters, spoiling food etc.
- * Also handles removal of entities marked as dead by calling SendToHell().
- */
+ * Also handles removal of entities marked as dead by calling SendToHell(). */
 
 void pool::Be()
 {

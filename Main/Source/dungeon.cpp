@@ -111,11 +111,7 @@ void dungeon::SaveLevel(const festring& SaveName, ushort Number, bool DeleteAfte
 level* dungeon::LoadLevel(const festring& SaveName, ushort Number)
 {
   inputfile SaveFile(SaveName + '.' + Index + Number);
-  SaveFile >> Level[Number];
-  Level[Number]->SetDungeon(this);
-  Level[Number]->SetIndex(Number);
-  Level[Number]->SetLevelScript(GetLevelScript(Number));
-  return Level[Number];
+  return LoadLevel(SaveFile, Number);
 }
 
 void dungeon::Save(outputfile& SaveFile) const
@@ -178,4 +174,13 @@ inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
     }
 
   return SaveFile;
+}
+
+level* dungeon::LoadLevel(inputfile& SaveFile, ushort Number)
+{
+  SaveFile >> Level[Number];
+  Level[Number]->SetDungeon(this);
+  Level[Number]->SetIndex(Number);
+  Level[Number]->SetLevelScript(GetLevelScript(Number));
+  return Level[Number];
 }

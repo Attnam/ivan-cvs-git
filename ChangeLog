@@ -6,15 +6,46 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bonefiles are now working
+	* Mellis now changes 10 items instead of 5
+	* Replaced many Id-ending terms with *ID
+	* Corrected yet another many bugs in the bear trap code
+	* Panicked monsters no longer start eating or equipping things
+	* Resurrected creatures now always become members of the raiser's team
+	* Added Possess WMode command ('{') which allows one to control monsters
+	* Cloned items now share accustomizations of their mothers
+	* Accustomizations are now dependent on weight
+	* Corrected the Dreadful Crash of Forgetful Amateur Weapon Swingers
+	* The danger system is now a little more sane when throwing unique monsters
+	  at the player
+	* Stethoscope info now shows states and a verbal description of danger
+	* Corrected a minor problem in the block messages of invisible enemies
+	* Shop and elite guards and the master guard are now more powerful, because
+	  killing them was too easy a way to get excellent equipment
+	* Adjusted certain unique monsters' equipment
+	* Resting with the 'h'eal command is now twice as fast, to balance the fact
+	  that it yields no exp bonuses, like for instance 'g'o
+	* If the player can't heal more, rest asks how many turns to wait
+	* Corrected a small bug in ghosts' and bill's wills' hit messages
+	* The enner beast is now tougher on long range, like in good old times
+	* Lanterns' weight decreased from 2500 to 1500 grams
+	* Shields are now better
+	* Inline functions inside critical blit loops of bitmap.cpp have been
+	  converted to ugly macros which are enormously faster if optimizations
+	  are disabled
+
 April 25 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Hyper new great (even greater than great actually) feature: NOW COMPILES!
-	
+
 April 25 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
-	* Fixing not alive bodyparts with scroll of repair is now possible.
+	* Fixing not alive bodyparts with scroll of repair is now possible
 	* Only monsters that can read can read engraved messages
-	
+
 April 23 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	
 	* Now compiles in Linux. (some problems with festring)

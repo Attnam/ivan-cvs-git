@@ -85,15 +85,15 @@ class bitmap
 
   void SimpleAlphaBlit(bitmap*, uchar, ushort = TRANSPARENT_COLOR) const;
 
-  void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, ushort, ushort, vector2d, ushort, ushort, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, vector2d, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, vector2d, ushort, ushort, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, ushort, ushort, vector2d, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, ushort, ushort, vector2d, vector2d, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, vector2d, vector2d, uchar = 0, ushort = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, uchar = 0, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, ushort, ushort, vector2d, ushort, ushort, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, vector2d, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, vector2d, vector2d, ushort, ushort, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, vector2d, ushort, ushort, vector2d, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, ushort, ushort, vector2d, vector2d, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, vector2d, vector2d, vector2d, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap*, ushort = TRANSPARENT_COLOR) const;
 
   void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
   void AlphaBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;

@@ -423,7 +423,6 @@ inputfile& operator>>(inputfile& SaveFile, festring& String)
   char* RealBuffer, StackBuffer[1024];
   uchar Length;
   SaveFile >> Length;
-
   RealBuffer = Length < 1024 ? StackBuffer : new char[Length + 1];
 
   if(Length)

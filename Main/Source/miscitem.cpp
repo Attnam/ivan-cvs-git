@@ -300,16 +300,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
 item* brokenbottle::BetterVersion() const
 {
-  material* Stuff;
-
-  if(RAND() % 5)
-    Stuff = MAKE_MATERIAL(BANANA_FLESH);
-  else
-    Stuff = MAKE_MATERIAL(OMMEL_URINE);
-
-  potion* P = new potion(0, NO_MATERIALS);
-  P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
-  return P;
+  return new potion;
 }
 
 void brokenbottle::StepOnEffect(character* Stepper)
@@ -381,18 +372,7 @@ void lantern::Load(inputfile& SaveFile)
 item* potion::BetterVersion() const
 {
   if(!GetContainedMaterial())
-    {
-      /*      material* Stuff;
-
-      if(RAND() % 5)
-	Stuff = MAKE_MATERIAL(BANANA_FLESH);
-      else
-	Stuff = MAKE_MATERIAL(OMMEL_URINE);
-
-      potion* P = new potion(0, NO_MATERIALS); 
-      P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);*/
-      return new potion;
-    }
+    return new potion;
   else
     return 0;
 }
@@ -1153,7 +1133,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0, 2 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
-      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(DEFINITE), 0);
+      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
       return false;
     }
 
@@ -1376,26 +1356,28 @@ bool beartrap::Apply(character* User)
 
       return false;
     }
+
   if(User->GetAttribute(DEXTERITY) < RAND() % 15)
     {
+      ushort StepperBodyPart = User->GetRandomApplyBodyPart();
+
       if(User->IsPlayer())
-	ADD_MESSAGE("Somehow you manage to trap your arm in %s.", CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("Somehow you manage to trap your %s in %s.", User->GetBodyPartName(StepperBodyPart).CStr(), CHAR_NAME(DEFINITE));
       else if(User->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s somehow traps %sself in %s.", User->CHAR_NAME(DEFINITE), User->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
-      ushort StepperBodyPart = User->GetRandomApplyBodyPart();
-
       User->SetStuckTo(this);
       User->SetStuckToBodyPart(StepperBodyPart);
-
-      SetIsActive(false);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
+      RemoveFromSlot();
+      User->GetStackUnder()->AddItem(this);
 
       if(User->IsPlayer())
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
-      User->ReceiveBodyPartDamage(0, 1 + RAND() % 2, PHYSICAL_DAMAGE, User->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      User->ReceiveBodyPartDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, User->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      User->CheckDeath(CONST_S("died failing to set ") + GetName(INDEFINITE), 0);
     }
   else
     {
@@ -1412,6 +1394,7 @@ bool beartrap::Apply(character* User)
 	  User->GetStackUnder()->AddItem(this);
 	}
     }
+
   return true;
 }
 
@@ -1551,8 +1534,7 @@ void potion::Break(character* Breaker)
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
-  Remains->SetID(BackupID);
-  Remains->SetBackupID(ID);
+  Remains->SetID(ID);
   DonateSlotTo(Remains);
   SendToHell();
 
@@ -1822,7 +1804,6 @@ void itemcontainer::GenerateLeftOvers(character*)
 
 bool scrollofrepair::Read(character* Reader)
 {
-
   if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
     {
       ADD_MESSAGE("You have nothing to repair.");
@@ -1886,14 +1867,13 @@ void scrollofrepair::FinishReading(character* Reader)
 
 item* brokenbottle::Fix()
 {
-  /*  potion* Potion = new potion(0, NO_MATERIALS);
+  potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
-  Potion->SetID(BackupID);
-  Potion->SetBackupID(ID);
+  Potion->SetID(ID);
   DonateSlotTo(Potion);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
-  SendToHell(); */
-  return new potion;
+  SendToHell();
+  return Potion;
 }
 
 bool encryptedscroll::Read(character*)
@@ -2201,6 +2181,7 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
     {
       if(Damage > 125 || !(RAND() % (250 / Damage)))
 	{
+	  SetIsActive(false);
 	  Break(Damager);	  
 	  return true;
 	}
@@ -2358,4 +2339,60 @@ bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
     }
 
   return false;
+}
+
+void itemcontainer::PreProcessForBone()
+{
+  item::PreProcessForBone();
+  Contained->PreProcessForBone();
+}
+
+void itemcontainer::PostProcessForBone()
+{
+  item::PostProcessForBone();
+  Contained->PostProcessForBone();
+}
+
+void itemcontainer::FinalProcessForBone()
+{
+  item::FinalProcessForBone();
+  Contained->FinalProcessForBone();
+}
+
+void mine::FinalProcessForBone()
+{
+  materialcontainer::FinalProcessForBone();
+
+  if(Team == PLAYER_TEAM)
+    Team = MONSTER_TEAM;
+
+  std::set<ushort>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
+
+  if(i != DiscoveredByTeam.end())
+    DiscoveredByTeam.erase(i);
+}
+
+void beartrap::FinalProcessForBone()
+{
+  item::FinalProcessForBone();
+
+  if(Team == PLAYER_TEAM)
+    Team = MONSTER_TEAM;
+
+  std::set<ushort>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
+
+  if(i != DiscoveredByTeam.end())
+    DiscoveredByTeam.erase(i);
+}
+
+void magicalwhistle::FinalProcessForBone()
+{
+  whistle::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+void horn::FinalProcessForBone()
+{
+  item::FinalProcessForBone();
+  LastUsed = 0;
 }

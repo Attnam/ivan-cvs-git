@@ -91,6 +91,9 @@ class level : public area
   static void (level::*GetBeamEffectVisualizer(ushort))(const rect&, ushort) const;
   void ParticleVisualizer(const rect&, ushort) const;
   void LightningVisualizer(const rect&, ushort) const;
+  bool PreProcessForBone();
+  bool PostProcessForBone();
+  void FinalProcessForBone();
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
@@ -112,3 +115,4 @@ outputfile& operator<<(outputfile&, const level*);
 inputfile& operator>>(inputfile&, level*&);
 
 #endif
+

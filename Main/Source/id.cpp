@@ -90,7 +90,7 @@ void id::AddPostFix(festring& String) const
 
 void id::AddLockPostFix(festring& String, uchar LockType) const
 {
-  /* doesn't yet support other locktype articles than "a" */
+  /* Doesn't yet support other locktype articles than "a" */
 
   String << " with a " << game::GetLockDescription(LockType) << " lock";
 }

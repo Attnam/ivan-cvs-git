@@ -275,7 +275,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
       if(ContentType || Word == "0")
 	SaveFile.ReadWord(Word);
       else
-	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassId(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
     }
 
   if(Word == "(")
@@ -290,11 +290,11 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	if(!ReadMember(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassId(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
       }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassId(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 scriptmemberbase* basecontentscript::GetData(const char* String)
@@ -380,10 +380,10 @@ template ushort contentscripttemplate<item>::SearchCodeName(const festring&) con
 template ushort contentscripttemplate<glterrain>::SearchCodeName(const festring&) const;
 template ushort contentscripttemplate<olterrain>::SearchCodeName(const festring&) const;
 
-const char* contentscript<character>::GetClassId() const { return "character"; }
-const char* contentscript<item>::GetClassId() const { return "item"; }
-const char* contentscript<glterrain>::GetClassId() const { return "glterrain"; }
-const char* contentscript<olterrain>::GetClassId() const { return "olterrain"; }
+const char* contentscript<character>::GetClassID() const { return "character"; }
+const char* contentscript<item>::GetClassID() const { return "item"; }
+const char* contentscript<glterrain>::GetClassID() const { return "glterrain"; }
+const char* contentscript<olterrain>::GetClassID() const { return "olterrain"; }
 
 void contentscript<character>::InitDataMap()
 {
@@ -579,10 +579,10 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   typedef typename maptype::iterator mapiterator;
 
   if(ContentMap)
-    ABORT("Illegal %s content map redefinition on line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+    ABORT("Illegal %s content map redefinition on line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+    ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   SymbolMap.insert(std::pair<char, contenttype>('.', contenttype()));
   static festring Word1, Word2;
@@ -592,7 +592,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
       if(Word1 == "Types")
 	{
 	  if(SaveFile.ReadWord() != "{")
-	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
 	  for(SaveFile.ReadWord(Word2); Word2 != "}"; Word2 = SaveFile.ReadWord())
 	    {
@@ -601,21 +601,21 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	      if(Return.second)
 		ReadData(Return.first->second, SaveFile);
 	      else
-		ABORT("Symbol %c defined again in %s content map script line %d!", Word2[0], protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+		ABORT("Symbol %c defined again in %s content map script line %d!", Word2[0], protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 	    }
 
 	  continue;
 	}
 
       if(!ReadMember(SaveFile, Word1))
-	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.CStr(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
     }
 
   vector2d Size = *GetSize();
   Alloc2D(ContentMap, Size.X, Size.Y);
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   for(ushort y = 0; y < Size.Y; ++y)
     for(ushort x = 0; x < Size.X; ++x)
@@ -626,11 +626,11 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	if(i != SymbolMap.end())
 	  ContentMap[x][y] = std::pair<char, contenttype*>(Char, &i->second);
 	else
-	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
       }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 }
 
 template <class type, class contenttype> void contentmap<type, contenttype>::Save(outputfile& SaveFile) const
@@ -743,6 +743,7 @@ void levelscript::InitDataMap()
   INIT_MEMBER(MonsterGenerationIntervalDelta);
   INIT_MEMBER(AutoReveal);
   INIT_MEMBER(ShortDescription);
+  INIT_MEMBER(CanGenerateBone);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)
@@ -1084,3 +1085,4 @@ void scriptsystem::Initialize()
   teamscript::InitDataMap();
   gamescript::InitDataMap();
 }
+

@@ -52,7 +52,7 @@ bool ennerbeast::Hit(character*, bool)
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort ScreamStrength = ushort(100 / (HypotSquare(GetPos().X - x, GetPos().Y - y) + 1));
+	ushort ScreamStrength = ushort(100 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(ScreamStrength)
 	  {
@@ -119,18 +119,18 @@ void humanoid::Load(inputfile& SaveFile)
   SaveFile >> SWeaponSkill;
 
   if(GetRightWielded())
-    for(ushort c = 0; c < SWeaponSkill.size(); ++c)
-      if(SWeaponSkill[c]->GetID() == GetRightWielded()->GetID())
+    for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+      if((*i)->IsSkillOf(GetRightWielded()))
 	{
-	  SetCurrentRightSWeaponSkill(SWeaponSkill[c]);
+	  SetCurrentRightSWeaponSkill(*i);
 	  break;
 	}
 
   if(GetLeftWielded())
-    for(ushort c = 0; c < SWeaponSkill.size(); ++c)
-      if(SWeaponSkill[c]->GetID() == GetLeftWielded()->GetID())
+    for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+      if((*i)->IsSkillOf(GetLeftWielded()))
 	{
-	  SetCurrentLeftSWeaponSkill(SWeaponSkill[c]);
+	  SetCurrentLeftSWeaponSkill(*i);
 	  break;
 	}
 }
@@ -196,7 +196,7 @@ bool petrus::HealFully(character* ToBeHealed)
 
 	for(std::list<ulong>::const_iterator i = ToBeHealed->GetOriginalBodyPartID(c).begin(); i != ToBeHealed->GetOriginalBodyPartID(c).end(); ++i)
 	  {
-	    BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItemWithID(*i));
+	    BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItem(*i));
 
 	    if(BodyPart)
 	      break;
@@ -585,7 +585,7 @@ void priest::BeTalkedTo()
 
 	for(std::list<ulong>::const_iterator i = PLAYER->GetOriginalBodyPartID(c).begin(); i != PLAYER->GetOriginalBodyPartID(c).end(); ++i)
 	  {
-	    bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItemWithID(*i));
+	    bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItem(*i));
 
 	    if(OldBodyPart)
 	      {
@@ -1462,7 +1462,7 @@ ushort humanoid::GlobalResistance(ushort Type) const
   return Resistance;
 }
 
-void humanoid::CompleteRiseFromTheDead()
+bool humanoid::CompleteRiseFromTheDead()
 {
   ushort c;
 
@@ -1491,7 +1491,7 @@ void humanoid::CompleteRiseFromTheDead()
     {
       if(BodyPartIsVital(c) && !GetBodyPart(c))
 	if(!HandleNoBodyPart(c))
-	  return;
+	  return false;
 
       if(GetBodyPart(c))
 	{
@@ -1499,6 +1499,8 @@ void humanoid::CompleteRiseFromTheDead()
 	  GetBodyPart(c)->SetHP(1);
 	}
     }
+
+  return true;
 }
 
 bool humanoid::HandleNoBodyPart(ushort Index)
@@ -1649,6 +1651,9 @@ void human::VirtualConstructor(bool Load)
 
   if(!Load)
     {
+      SoulID = 0;
+      IsBonePlayer = false;
+      IsClone = false;
       EditAttribute(ARM_STRENGTH, (RAND() & 1) - (RAND() & 1));
       EditAttribute(DEXTERITY, (RAND() & 1) - (RAND() & 1));
       EditAttribute(LEG_STRENGTH, (RAND() & 1) - (RAND() & 1));
@@ -1956,37 +1961,9 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
   character::SignalEquipmentAdd(EquipmentIndex);
 
   if(EquipmentIndex == RIGHT_WIELDED_INDEX)
-    {
-      for(ushort c = 0; c < SWeaponSkill.size(); ++c)
-	if(SWeaponSkill[c]->GetID() == GetRightWielded()->GetID())
-	  {
-	    SetCurrentRightSWeaponSkill(SWeaponSkill[c]);
-	    break;
-	  }
-
-      if(!GetCurrentRightSWeaponSkill())
-	{
-	  SetCurrentRightSWeaponSkill(new sweaponskill);
-	  GetCurrentRightSWeaponSkill()->SetID(GetRightWielded()->GetID());
-	  SWeaponSkill.push_back(GetCurrentRightSWeaponSkill());
-	}
-    }
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, GetRightWielded());
   else if(EquipmentIndex == LEFT_WIELDED_INDEX)
-    {
-      for(ushort c = 0; c < SWeaponSkill.size(); ++c)
-	if(SWeaponSkill[c]->GetID() == GetLeftWielded()->GetID())
-	  {
-	    SetCurrentLeftSWeaponSkill(SWeaponSkill[c]);
-	    break;
-	  }
-
-      if(!GetCurrentLeftSWeaponSkill())
-	{
-	  SetCurrentLeftSWeaponSkill(new sweaponskill);
-	  GetCurrentLeftSWeaponSkill()->SetID(GetLeftWielded()->GetID());
-	  SWeaponSkill.push_back(GetCurrentLeftSWeaponSkill());
-	}
-    }
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, GetLeftWielded());
 
   if(!Initializing)
     CalculateBattleInfo();
@@ -1997,15 +1974,9 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
   character::SignalEquipmentRemoval(EquipmentIndex);
 
   if(EquipmentIndex == RIGHT_WIELDED_INDEX)
-    {
-      CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
-      SetCurrentRightSWeaponSkill(0);
-    }
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
   else if(EquipmentIndex == LEFT_WIELDED_INDEX)
-    {
-      CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
-      SetCurrentLeftSWeaponSkill(0);
-    }
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, 0);
 
   if(!Initializing)
     CalculateBattleInfo();
@@ -2013,11 +1984,11 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
 
 void humanoid::SWeaponSkillTick()
 {
-  for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end();)
+  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end();)
     {
       if((*i)->Tick() && IsPlayer())
 	{
-	  item* Item = SearchForItemWithID((*i)->GetID());
+	  item* Item = SearchForItem(*i);
 
 	  if(Item)
 	    (*i)->AddLevelDownMessage(Item->CHAR_NAME(UNARTICLED));
@@ -2025,7 +1996,7 @@ void humanoid::SWeaponSkillTick()
 
       if(!(*i)->GetHits() && *i != GetCurrentRightSWeaponSkill() && *i != GetCurrentLeftSWeaponSkill())
 	{
-	  std::vector<sweaponskill*>::iterator Dirt = i++;
+	  std::list<sweaponskill*>::iterator Dirt = i++;
 	  SWeaponSkill.erase(Dirt);
 	}
       else
@@ -2388,38 +2359,22 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValu
 
 item* humanoid::SevereBodyPart(ushort BodyPartIndex)
 {
-  if(BodyPartIndex == RIGHT_ARM_INDEX && GetCurrentRightSWeaponSkill())
-    {
-      CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
-      SetCurrentRightSWeaponSkill(0);
-    }
-  else if(BodyPartIndex == LEFT_ARM_INDEX && GetCurrentLeftSWeaponSkill())
-    {
-      CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
-      SetCurrentLeftSWeaponSkill(0);
-    }
+  if(BodyPartIndex == RIGHT_ARM_INDEX)
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
+  else if(BodyPartIndex == LEFT_ARM_INDEX)
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, 0);
 
   return character::SevereBodyPart(BodyPartIndex);
-}
-
-void humanoid::CheckIfSWeaponSkillRemovalNeeded(sweaponskill* Skill)
-{
-  if(!Skill->GetHits())
-    for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-      if(*i == Skill)
-	{
-	  delete *i;
-	  SWeaponSkill.erase(i);
-	  break;
-	}
 }
 
 humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRightSWeaponSkill(0), CurrentLeftSWeaponSkill(0)
 {
   SWeaponSkill.resize(Humanoid.SWeaponSkill.size());
+  std::list<sweaponskill*>::iterator i1 = SWeaponSkill.begin();
+  std::list<sweaponskill*>::const_iterator i2 = Humanoid.SWeaponSkill.begin();
 
-  for(ushort c = 0; c < SWeaponSkill.size(); ++c)
-    SWeaponSkill[c] = new sweaponskill(*Humanoid.SWeaponSkill[c]);
+  for(; i1 != SWeaponSkill.end(); ++i1, ++i2)
+    *i1 = new sweaponskill(**i2);
 }
 
 const festring& humanoid::GetDeathMessage() const
@@ -2430,9 +2385,9 @@ const festring& humanoid::GetDeathMessage() const
 
 uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
 {
-  for(ushort c = 0; c < GetSWeaponSkills(); ++c)
-    if(GetSWeaponSkill(c)->GetID() == Item->GetID())
-      return GetSWeaponSkill(c)->GetLevel();
+  for(std::list<sweaponskill*>::const_iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+    if((*i)->IsSkillOf(Item))
+      return (*i)->GetLevel();
 
   return 0;
 }
@@ -3410,11 +3365,17 @@ ushort humanoid::GetRandomApplyBodyPart() const
       else
 	return LEFT_ARM_INDEX;
     }
+
   if(!GetRightArm() && GetLeftArm())
     return LEFT_ARM_INDEX;
+
   if(!GetLeftArm() && GetRightArm())
     return RIGHT_ARM_INDEX;
-  return TORSO_INDEX; // Shouldn't never come to this at least when really applying
+
+  if(GetHead())
+    return HEAD_INDEX;
+
+  return TORSO_INDEX;
 }
 
 void golem::BeTalkedTo()
@@ -3425,6 +3386,7 @@ void golem::BeTalkedTo()
     Engrave(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
   else
     Engrave(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().size())]);
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s engraves something.", CHAR_NAME(DEFINITE));
 }
@@ -3539,3 +3501,238 @@ void humanoid::AddDefenceInfo(felist&) const { }
 void humanoid::DetachBodyPart() { }
 
 #endif
+
+bool ennerbeast::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE || GetLevel()->GetIndex() != ENNER_BEAST_LEVEL;
+}
+
+bool communist::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != IVAN_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE|| GetLevel()->GetIndex() != IVAN_LEVEL;
+}
+
+void humanoid::FinalProcessForBone()
+{
+  character::FinalProcessForBone();
+
+  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end();)
+    {
+      boneidmap::iterator BI = game::GetBoneItemIDMap().find((*i)->GetID());
+
+      if(BI == game::GetBoneItemIDMap().end())
+	{
+	  std::list<sweaponskill*>::iterator Dirt = i++;
+	  SWeaponSkill.erase(Dirt);
+	}
+      else
+	{
+	  (*i)->SetID(BI->second);
+	  ++i;
+	}
+    }
+}
+
+void petrus::FinalProcessForBone()
+{
+  humanoid::FinalProcessForBone();
+  LastHealed = 0;
+}
+
+void angel::FinalProcessForBone()
+{
+  humanoid::FinalProcessForBone();
+  LastHealed = 0;
+}
+
+void encourager::FinalProcessForBone()
+{
+  humanoid::FinalProcessForBone();
+  LastHit = 0;
+}
+
+void human::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << SoulID << IsBonePlayer << IsClone;
+}
+
+void human::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> SoulID >> IsBonePlayer >> IsClone;
+}
+
+void human::SetSoulID(ulong What)
+{
+  SoulID = What;
+
+  if(GetPolymorphBackup())
+    GetPolymorphBackup()->SetSoulID(What);
+}
+
+bool human::SuckSoul(character* Soul)
+{
+  if(Soul->GetID() == SoulID)
+    {
+      SoulID = 0;
+      return true;
+    }
+
+  return false;
+}
+
+bool human::CompleteRiseFromTheDead()
+{
+  if(humanoid::CompleteRiseFromTheDead())
+    {
+      if(IsEnabled() && SoulID)
+	{
+	  ADD_MESSAGE("The soulless body of %s wobbles for a moment.", CHAR_NAME(DEFINITE));
+	  Die();
+	  return false;
+	}
+
+      return true;
+    }
+  else
+    return false;
+}
+
+void human::FinalProcessForBone()
+{
+  humanoid::FinalProcessForBone();
+  IsBonePlayer = true;
+
+  if(SoulID)
+    {
+      boneidmap::iterator BI = game::GetBoneCharacterIDMap().find(SoulID);
+
+      if(BI != game::GetBoneItemIDMap().end())
+	SoulID = BI->second;
+    }
+}
+
+human::human(const human& Human) : humanoid(Human), SoulID(Human.SoulID), IsBonePlayer(Human.IsBonePlayer), IsClone(true)
+{
+}
+
+void human::BeTalkedTo()
+{
+  if(IsClone && IsBonePlayer)
+    {
+      if(GetRelation(PLAYER) == HOSTILE)
+	{
+	  ADD_MESSAGE("Oh no, you too! Why does everyone bully me!", CHAR_DESCRIPTION(DEFINITE));
+	  return;
+	}
+
+      static ulong Said;
+
+      switch(RandomizeReply(Said, 4))
+	{
+	case 0:
+	  ADD_MESSAGE("\"I'd like to write a memoir, but alas I doubt anyone would believe it.\"");
+	  break;
+	case 1:
+	  ADD_MESSAGE("\"Then that damned clone appeared, took all my equipment and claimed I was his slave...\"");
+	  break;
+	case 2:
+	  ADD_MESSAGE("\"The level was a catastrophe for the party, but luckily you saved the day.\"");
+	  break;
+	case 3:
+	  ADD_MESSAGE("\"Oh, how I hate bananas. I Hate Them! I HATE THEM SO MUCH!!!\"");
+	  break;
+	}
+    }
+  else if(IsClone)
+    {
+      if(GetRelation(PLAYER) == HOSTILE)
+	{
+	  ADD_MESSAGE("%s seems extremely irritated. \"Vanish, you foul mirror image!\"", CHAR_DESCRIPTION(DEFINITE));
+	  return;
+	}
+
+      static ulong Said;
+
+      switch(RandomizeReply(Said, 4))
+	{
+	case 0:
+	  ADD_MESSAGE("\"Hey, those clothes are mine! Give them back!\"");
+	  break;
+	case 1:
+	  ADD_MESSAGE("\"What, you summoned me? What a coincidence, I remember summoning you, too.\"");
+	  break;
+	case 2:
+	  ADD_MESSAGE("\"I'm leading this party, not you, Mr. copy guy!\"");
+	  break;
+	case 3:
+	  ADD_MESSAGE("\"Oh, how I hate bananas. I Hate Them! I HATE THEM SO MUCH!!!\"");
+	  break;
+	}
+    }
+  else
+    {
+      if(GetRelation(PLAYER) == HOSTILE)
+	{
+	  ADD_MESSAGE("Let's finish what my ghost failed to do!", CHAR_DESCRIPTION(DEFINITE));
+	  return;
+	}
+
+      static ulong Said;
+
+      switch(RandomizeReply(Said, 4))
+	{
+	case 0:
+	  ADD_MESSAGE("\"What was it like? Death, you mean? Well, just like New Attnam. Very hot and whips everywhere.\"");
+	  break;
+	case 1:
+	  ADD_MESSAGE("\"Stop it already! I *don't* want to know how my corpse smelled!\"");
+	  break;
+	case 2:
+	  ADD_MESSAGE("\"I'm sorry about that ghost thing. That YASD was just a bit too much to handle, so I lost myself.\"");
+	  break;
+	case 3:
+	  ADD_MESSAGE("\"Oh, how I hate bananas. I Hate Them! I HATE THEM SO MUCH!!!\"");
+	  break;
+	}
+    }
+}
+
+void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, const item* Wielded)
+{
+  if(Wielded)
+    {
+      if(!Skill || !Skill->IsSkillOf(Wielded))
+	{
+	  if(Skill)
+	    EnsureCurrentSWeaponSkillIsCorrect(Skill, 0);
+
+	  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+	    if((*i)->IsSkillOf(Wielded))
+	      {
+		Skill = *i;
+		break;
+	      }
+
+	  if(!Skill)
+	    {
+	      Skill = new sweaponskill(Wielded);
+	      SWeaponSkill.push_back(Skill);
+	    }
+	}
+    }
+  else if(Skill)
+    {
+      if(!Skill->GetHits() && (CurrentRightSWeaponSkill != Skill || CurrentLeftSWeaponSkill != Skill))
+	for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+	  if(*i == Skill)
+	    {
+	      delete *i;
+	      SWeaponSkill.erase(i);
+	      break;
+	    }
+
+      Skill = 0;
+    }
+}

@@ -80,6 +80,7 @@ item
 	AttachedGod = NONE;
 	/* Obligatory: AttachedGod */
 	WieldedBitmapPos = 176, 0;
+	IsQuestItem = false;
 }
 
 materialcontainer
@@ -92,7 +93,7 @@ lantern
 	DefaultSize = 30;
 	Possibility = 100;
 	Category = TOOL;
-	DefaultMainVolume = 1000;
+	DefaultMainVolume = 600;
 	StrengthModifier = 50;
 	FormModifier = 20;
 	Price = 50;
@@ -656,6 +657,7 @@ justifier /* meleeweapon-> */
 	GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
 	AttachedGod = VALPURUS;
 	WieldedBitmapPos = 160, 16;
+	IsQuestItem = true;
 }
 
 neercseulb /* meleeweapon-> */
@@ -687,6 +689,7 @@ neercseulb /* meleeweapon-> */
 	DefaultEnchantment = 6;
 	AttachedGod = MORTIFER;
 	WieldedBitmapPos = 160, 192;
+	IsQuestItem = true;
 }
 
 pickaxe /* meleeweapon-> */
@@ -834,6 +837,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	InElasticityPenaltyModifier = 30;
 	CanBeEnchanted = false;
 	AttachedGod = VALPURUS;
+	IsQuestItem = true;
 } 
 
 potion /* materialcontainer-> */
@@ -969,6 +973,7 @@ leftnutofpetrus /* nut-> */
 	CanBeCloned = false;
 	FormModifier = 15;
 	AttachedGod = VALPURUS;
+	IsQuestItem = true;
 }
 
 bone
@@ -1248,6 +1253,7 @@ avatarofvalpurus
 	CanBeCloned = false;
 	AttachedGod = VALPURUS;
 	WieldedBitmapPos = 160, 128;
+	IsQuestItem = true;
 }
 
 kiwi
@@ -1286,7 +1292,7 @@ pineapple
 palmbranch
 {
 	DefaultSize = 80;
-	Possibility = 10;
+	Possibility = 0;
 	Category = MISC;
 	DefaultMainVolume = 4000;
 	StrengthModifier = 50;
@@ -1482,14 +1488,14 @@ shield /* armor-> */
 	DefaultSize = 60;
 	Possibility = 250;
 	Category = SHIELD;
-	DefaultMainVolume = 500;
+	DefaultMainVolume = 350;
 	StrengthModifier = 150;
 	BitmapPos = 32, 336;
 	FormModifier = 15;
 	NameSingular = "shield";
 	MainMaterialConfig = { 7, WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-	MaterialConfigChances = { 7, 2000, 1500, 1000, 500, 100, 25, 25; }
-	Roundness = 80;
+	MaterialConfigChances = { 7, 1500, 1000, 750, 500, 100, 25, 25; }
+	Roundness = 95;
 	WeaponCategory = SHIELDS;
 	CanBeBroken = true;
 	WieldedBitmapPos = 128, 32;
@@ -1923,6 +1929,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	CanBeCloned = false;
 	AttachedGod = SCABIES;
 	WieldedBitmapPos = 160, 144;
+	IsQuestItem = true;
 }
 
 corpse
@@ -2244,6 +2251,7 @@ helmet
 		CanBeWished = false;
 		ArticleMode = DEFINITE_ARTICLE;
 		GearStates = GAS_IMMUNITY;
+		IsQuestItem = true;
 	}
 }
 
@@ -2470,6 +2478,7 @@ gorovitshammer
 	Price = 250;
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 176, 16;
+	IsQuestItem = true;
 }
 
 gorovitssickle
@@ -2494,6 +2503,7 @@ gorovitssickle
 	Price = 250;
 	AttachedGod = SEGES;
 	WieldedBitmapPos = 176, 32;
+	IsQuestItem = true;
 }
 
 scrollofrepair /* scroll-> */
@@ -2515,6 +2525,7 @@ encryptedscroll /* scroll-> */
 	IsPolymorphable = false;
 	CanBeCloned = false;
 	AttachedGod = MELLIS;
+	IsQuestItem = true;
 }
 
 horn

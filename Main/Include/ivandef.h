@@ -1,8 +1,7 @@
 #ifndef __IVANDEF_H__
 #define __IVANDEF_H__
 
-/*
- * Global defines for the project IVAN.
+/* Global defines for the project IVAN.
  * This file is created to decrease the need of including headers in other headers just for the sake of some silly macros,
  * because it decreases compilation efficiency and may even cause cross-including
  *
@@ -11,8 +10,7 @@
  * 2. all inline functions used in multiple .cpp or .h files and independent enough (do not require other headers)
  * 3. class construction macros used in multiple .h files
  *
- * DO NOT INCLUDE ANY FILES IN THIS HEADER.
- */
+ * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
 
 #define IVAN_VERSION "0.411"
 
@@ -351,6 +349,7 @@
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
 #define FINAL_BATTLE_TEAM 3
+#define IVAN_TEAM 6
 #define NEW_ATTNAM_TEAM 7
 #define COLONIST_TEAM 8
 
@@ -375,6 +374,9 @@
 #define MONDEDR 5
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
+#define VESANA_LEVEL 2
+#define ENNER_BEAST_LEVEL 4
+#define IVAN_LEVEL 5
 #define DARK_LEVEL 6
 #define OREE_LAIR 9
 

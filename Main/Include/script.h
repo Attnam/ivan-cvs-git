@@ -176,7 +176,7 @@ class basecontentscript : public script
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual scriptmemberbase* GetData(const char*);
   virtual ushort SearchCodeName(const festring&) const = 0;
-  virtual const char* GetClassId() const = 0;
+  virtual const char* GetClassID() const = 0;
   static datamap DataMap;
   SCRIPT_MEMBER(materialscript, MainMaterial);
   SCRIPT_MEMBER(materialscript, SecondaryMaterial);
@@ -206,7 +206,7 @@ class contentscript<character> : public contentscripttemplate<character>
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual const char* GetClassId() const;
+  virtual const char* GetClassID() const;
   static datamap DataMap;
   SCRIPT_MEMBER(ushort, Team);
   SCRIPT_MEMBER(std::list<contentscript<item> >, Inventory);
@@ -222,7 +222,7 @@ class contentscript<item> : public contentscripttemplate<item>
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual const char* GetClassId() const;
+  virtual const char* GetClassID() const;
   static datamap DataMap;
   SCRIPT_MEMBER(ushort, Team);
   SCRIPT_BOOL(IsActive);
@@ -246,7 +246,7 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  virtual const char* GetClassId() const;
+  virtual const char* GetClassID() const;
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
@@ -258,7 +258,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  virtual const char* GetClassId() const;
+  virtual const char* GetClassID() const;
   SCRIPT_MEMBER(uchar, VisualEffects);
   SCRIPT_MEMBER(uchar, AttachedArea);
   SCRIPT_MEMBER(uchar, AttachedEntry);
@@ -382,6 +382,7 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalDelta);
   SCRIPT_BOOL_WITH_BASE(AutoReveal);
   SCRIPT_MEMBER_WITH_BASE(festring, ShortDescription);
+  SCRIPT_BOOL_WITH_BASE(CanGenerateBone);
 };
 
 class dungeonscript : public script
@@ -453,3 +454,4 @@ class scriptsystem
 };
 
 #endif
+

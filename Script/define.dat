@@ -574,6 +574,7 @@
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
 #define FINAL_BATTLE_TEAM 3
+#define IVAN_TEAM 6
 #define NEW_ATTNAM_TEAM 7
 #define COLONIST_TEAM 8
 
@@ -591,6 +592,9 @@
 #define MONDEDR 5
 #define UNDER_WATER_TUNNEL_EXIT 128
 
+#define VESANA_LEVEL 2
+#define ENNER_BEAST_LEVEL 4
+#define IVAN_LEVEL 5
 #define DARK_LEVEL 6
 #define OREE_LAIR 9
 

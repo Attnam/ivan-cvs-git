@@ -11,10 +11,10 @@ bool nonhumanoid::IsAlive() const { return GetTorso()->IsAlive(); }
 
 bool elpuri::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
-const char* billswill::FirstPersonBiteHitVerb() const { return "emit psi waves at"; }
-const char* billswill::FirstPersonCriticalBiteHitVerb() const { return "emit powerful psi waves at"; }
-const char* billswill::ThirdPersonBiteHitVerb() const { return "emits psi waves at"; }
-const char* billswill::ThirdPersonCriticalBiteHitVerb() const { return "emits powerful psi waves at"; }
+const char* billswill::FirstPersonBiteVerb() const { return "emit psi waves at"; }
+const char* billswill::FirstPersonCriticalBiteVerb() const { return "emit powerful psi waves at"; }
+const char* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"; }
+const char* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
 
 bodypart* mommo::MakeBodyPart(ushort) const { return new mommotorso(0, NO_MATERIALS); }
 const char* mommo::FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
@@ -31,10 +31,11 @@ void floatingeye::SetWayPoints(const std::vector<vector2d>& What) { WayPoints = 
 
 bodypart* eddy::MakeBodyPart(ushort) const { return new eddytorso(0, NO_MATERIALS); }
 
-const char* ghost::FirstPersonBiteHitVerb() const { return "touch"; }
-const char* ghost::FirstPersonCriticalBiteHitVerb() const { return "awfully touch"; }
-const char* ghost::ThirdPersonBiteHitVerb() const { return "touches"; }
-const char* ghost::ThirdPersonCriticalBiteHitVerb() const { return "awfully touches"; }
+const char* ghost::FirstPersonBiteVerb() const { return "touch"; }
+const char* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch"; }
+const char* ghost::ThirdPersonBiteVerb() const { return "touches"; }
+const char* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
+bool ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
 const char* magpie::FirstPersonBiteVerb() const { return "peck"; }
 const char* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
@@ -1181,41 +1182,47 @@ ushort unicorn::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHi
   return Return;
 }
 
-bool elpuri::CanBeRaisedFromTheDead(corpse* Corpse) const
+bool elpuri::CompleteRiseFromTheDead()
 {
-  for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
-    if(i->IsHeadOfElpuri())
-      return true;
+  character::CompleteRiseFromTheDead();
 
-  return false;
-}
-
-void elpuri::CompleteRiseFromTheDead()
-{
   for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->IsHeadOfElpuri())
       {
-	item* Temp = *i;
-	Temp->RemoveFromSlot();
-	Temp->SendToHell();
+	i->SendToHell();
+	i->RemoveFromSlot();
+	return true;
       }
+
+  if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("The headless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s dies.", CHAR_NAME(DEFINITE));
+    }
+
+  character::CreateCorpse(GetLSquareUnder());
+  GetSquareUnder()->RemoveCharacter();
+  return false;
+}
+
+bool nonhumanoid::EditAllAttributes(short Amount)
+{
+  Strength += Amount << 1;
+  Agility += Amount << 1;
+
+  if(!IsPlayer())
+    {
+      if(Strength > 200)
+	Strength = 200;
+
+      if(Agility > 200)
+	Agility = 200;
+    }
+
+  return character::EditAllAttributes(Amount) || Strength < 200 || Agility < 200;
 }
 
 #ifdef WIZARD
-
-void nonhumanoid::RaiseStats()
-{
-  Strength += 20;
-  Agility += 20;
-  character::RaiseStats();
-}
-
-void nonhumanoid::LowerStats()
-{
-  Strength -= 20;
-  Agility -= 20;
-  character::LowerStats();
-}
 
 void nonhumanoid::AddAttributeInfo(festring& Entry) const
 {
@@ -1269,9 +1276,81 @@ void nonhumanoid::AddAttackInfo(felist& List) const
 
 #else
 
-void nonhumanoid::RaiseStats() { }
-void nonhumanoid::LowerStats() { }
 void nonhumanoid::AddAttributeInfo(festring&) const { }
 void nonhumanoid::AddAttackInfo(felist&) const { }
 
 #endif
+
+bool elpuri::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE || GetLevel()->GetIndex() != DARK_LEVEL;
+}
+
+bool genetrixvesana::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL || GetLevel()->GetIndex() != VESANA_LEVEL;
+}
+
+void ghost::AddName(festring& String, uchar Case) const
+{
+  if(OwnerSoul.IsEmpty() || Case & PLURAL)
+    character::AddName(String, Case);
+  else
+    {
+      character::AddName(String, (Case|ARTICLE_BIT)&~INDEFINE_BIT);
+      String << " of " << OwnerSoul;
+    }
+}
+
+void ghost::Save(outputfile& SaveFile) const
+{
+  nonhumanoid::Save(SaveFile);
+  SaveFile << OwnerSoul << Active;
+}
+
+void ghost::Load(inputfile& SaveFile)
+{
+  nonhumanoid::Load(SaveFile);
+  SaveFile >> OwnerSoul >> Active;
+}
+
+bool ghost::RaiseTheDead(character* Summoner)
+{
+  itemvector ItemVector;
+  GetStackUnder()->FillItemVector(ItemVector);
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->SuckSoul(this, Summoner))
+      return true;
+
+  if(IsPlayer())
+    ADD_MESSAGE("You shudder.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s shudders.", CHAR_NAME(DEFINITE));
+
+  return false;
+}
+
+void ghost::VirtualConstructor(bool)
+{
+  Active = true;
+}
+
+ushort ghost::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
+{
+  Active = true;
+  return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg);
+}
+
+void ghost::GetAICommand()
+{
+  if(Active)
+    character::GetAICommand();
+  else
+    {
+      if(CheckForEnemies(false, false, false))
+	return;
+
+      EditAP(-1000);  
+    }
+}

@@ -50,14 +50,14 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d
 void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
 void bitmap::MaskedBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
 
-void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Flags, ushort MaskColor) const  { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
-void bitmap::AlphaBlit(bitmap* Bitmap, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ushort MaskColor) const  { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort MaskColor) const { AlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, MaskColor); }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
@@ -102,6 +102,58 @@ void bitmap::AlphaPriorityBlit(bitmap* Bitmap, vector2d Source, ushort DestX, us
 void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
 void bitmap::AlphaPriorityBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const  { AlphaPriorityBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
 void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
+
+/* Blitting must be as fast as possible, even if no optimizations are used;
+ * therefore we can't use inline functions inside loops, since they may be left
+ * unexpanded. These macros will do the job efficiently, even if they are rather ugly */
+
+#define LOAD_SRC() ushort SrcCol = *SrcPtr;
+#define LOAD_DEST() ushort DestCol = *DestPtr;
+#define LOAD_ALPHA() ushort Alpha = *AlphaPtr, AntiAlpha = 256 - Alpha;
+
+#define STORE_COLOR() *DestPtr = (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F);
+#define SHIFT_AND_STORE_COLOR() *DestPtr = (Red & 0xF800) | (Green >> 5 & 0x7E0) | (Blue >> 11);
+
+#define LUMINATE_RED()\
+ushort Red = (SrcCol >> 8 & 0xF8) + RedLuminance;\
+\
+if(short(Red) >= 0)\
+{\
+  if(Red > 255)\
+    Red = 255;\
+}\
+else\
+  Red = 0;
+
+#define LUMINATE_GREEN()\
+ushort Green = (SrcCol >> 3 & 0xFC) + GreenLuminance;\
+\
+if(short(Green) >= 0)\
+{\
+  if(Green > 255)\
+    Green = 255;\
+}\
+else\
+  Green = 0;
+
+#define LUMINATE_BLUE()\
+ushort Blue = (SrcCol << 3 & 0xF8) + BlueLuminance;\
+\
+if(short(Blue) >= 0)\
+{\
+  if(Blue > 255)\
+    Blue = 255;\
+}\
+else\
+  Blue = 0;
+
+#define APPLY_ALPHA_RED() Red = Red * Alpha + (DestCol >> 8 & 0xF8) * AntiAlpha;
+#define APPLY_ALPHA_GREEN() Green = Green * Alpha + (DestCol >> 3 & 0xFC) * AntiAlpha;
+#define APPLY_ALPHA_BLUE() Blue = Blue * Alpha + (DestCol << 3 & 0xF8) * AntiAlpha;
+
+#define LOAD_AND_APPLY_ALPHA_RED() ushort Red = (SrcCol >> 8 & 0xF8) * Alpha + (DestCol >> 8 & 0xF8) * AntiAlpha;
+#define LOAD_AND_APPLY_ALPHA_GREEN() ushort Green = (SrcCol >> 3 & 0xFC) * Alpha + (DestCol >> 3 & 0xFC) * AntiAlpha;
+#define LOAD_AND_APPLY_ALPHA_BLUE() ushort Blue = (SrcCol << 3 & 0xF8) * Alpha + (DestCol << 3 & 0xF8) * AntiAlpha;
 
 bitmap::bitmap(const festring& FileName) : AlphaMap(0), PriorityMap(0)
 {
@@ -259,7 +311,7 @@ void bitmap::Save(const festring& FileName) const
 
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
-  if(X > XSize || Y > YSize)
+  if(X >= XSize || Y >= YSize)
     return;
 
   if(X + Width > XSize)
@@ -268,9 +320,19 @@ void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
   if(Y + Height > YSize)
     Height = YSize - Y;
 
-  for(ushort y = 0; y < Height; ++y)
-    for(ushort* Ptr = &Image[Y + y][X], x = 0; x < Width; ++x, ++Ptr)
-      *Ptr = Color;
+  ushort ColorByte = Color & 0xFF;
+
+  if(ColorByte == Color >> 8)
+    {
+      Width <<= 1;
+
+      for(ushort y = 0; y < Height; ++y)
+	memset(&Image[Y + y][X], ColorByte, Width);
+    }
+  else
+    for(ushort y = 0; y < Height; ++y)
+      for(ushort* Ptr = &Image[Y + y][X], x = 0; x < Width; ++x, ++Ptr)
+	*Ptr = Color;
 }
 
 void bitmap::ClearToColor(ushort Color)
@@ -470,9 +532,13 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
       ushort* DestPtr = &DestImage[DestY + y][DestX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
-	*DestPtr = MakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF),
-			     Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF),
-			     Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF));
+	{
+	  LOAD_SRC()
+	  LUMINATE_RED()
+	  LUMINATE_GREEN()
+	  LUMINATE_BLUE()
+	  STORE_COLOR()
+	}
     }
 }
 
@@ -661,10 +727,17 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
       ushort* DestPtr = &DestImage[DestY + y][DestX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
-	if(*SrcPtr != MaskColor)
-	  *DestPtr = MakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF),
-			       Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF),
-			       Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF));
+	{
+	  LOAD_SRC()
+
+	  if(SrcCol != MaskColor)
+	    {
+	      LUMINATE_RED()
+	      LUMINATE_GREEN()
+	      LUMINATE_BLUE()
+	      STORE_COLOR()
+	    }
+	}
     }
 }
 
@@ -682,25 +755,30 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, uchar Alpha, ushort MaskColor) cons
   ulong Size = XSizeTimesYSize;
   const ushort* SrcPtr = Image[0];
   ushort* DestPtr = Bitmap->Image[0];
-  ushort NegAlpha = 256 - Alpha;
+  ushort AntiAlpha = 256 - Alpha;
 
   for(ulong c = 0; c < Size; ++c, ++SrcPtr, ++DestPtr)
-    if(*SrcPtr != MaskColor)
-      *DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * Alpha + GetRed16(*DestPtr) * NegAlpha,
-					 GetGreen16(*SrcPtr) * Alpha + GetGreen16(*DestPtr) * NegAlpha,
-					 GetBlue16(*SrcPtr) * Alpha + GetBlue16(*DestPtr) * NegAlpha);
+    {
+      LOAD_SRC()
+
+      if(SrcCol != MaskColor)
+	{
+	  LOAD_DEST()
+	  LOAD_AND_APPLY_ALPHA_RED()
+	  LOAD_AND_APPLY_ALPHA_GREEN()
+	  LOAD_AND_APPLY_ALPHA_BLUE()
+	  SHIFT_AND_STORE_COLOR()
+	}
+    }
 }
 
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort MaskColor) const
 {
   if(!AlphaMap)
     {
-      MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
+      MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
       return;
     }
-
-  if(Flags & ROTATE && Width != Height)
-    ABORT("AlphaBlit error: FeLib supports only square rotating!");
 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap alpha blit attempt detected!");
@@ -708,175 +786,30 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  Flags &= 0x7;
   ushort** SrcImage = Image;
   ushort** DestImage = Bitmap->Image;
   uchar** SrcAlphaMap = AlphaMap;
 
-  switch(Flags)
+  for(ushort y = 0; y < Height; ++y)
     {
-    case NONE:
-      {
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY + y][DestX];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
+      const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      ushort* DestPtr = &DestImage[DestY + y][DestX];
+      const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
+      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
+	{
+	  LOAD_SRC()
 
-	break;
-      }
-
-    case MIRROR:
-      {
-	DestX += Width - 1;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY + y][DestX];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
-
-    case FLIP:
-      {
-	DestY += Height - 1;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY - y][DestX];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
-
-    case (MIRROR | FLIP):
-      {
-	DestX += Width - 1;
-	DestY += Height - 1;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY - y][DestX];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
-
-    case ROTATE:
-      {
-	DestX += Width - 1;
-	ulong TrueDestXMove = Bitmap->XSize;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX - y];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
-
-    case (MIRROR | ROTATE):
-      {
-	ulong TrueDestXMove = Bitmap->XSize;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX + y];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
-
-    case (FLIP | ROTATE):
-      {
-	DestX += Width - 1;
-	DestY += Height - 1;
-	ulong TrueDestXMove = Bitmap->XSize;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX - y];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
-
-    case (MIRROR | FLIP | ROTATE):
-      {
-	DestY += Height - 1;
-	ulong TrueDestXMove = Bitmap->XSize;
-
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX + y];
-	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++AlphaPtr)
-	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
-	  }
-
-	break;
-      }
+	  if(SrcCol != MaskColor)
+	    {
+	      LOAD_DEST()
+	      LOAD_ALPHA()
+	      LOAD_AND_APPLY_ALPHA_RED()
+	      LOAD_AND_APPLY_ALPHA_GREEN()
+	      LOAD_AND_APPLY_ALPHA_BLUE()
+	      SHIFT_AND_STORE_COLOR()
+	    }
+	}
     }
 }
 
@@ -1371,7 +1304,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 {
   if(Luminance == NORMAL_LUMINANCE)
     {
-      AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
+      AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, MaskColor);
       return;
     }
 
@@ -1402,10 +1335,22 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
       const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
-	if(*SrcPtr != MaskColor)
-	  *DestPtr = RightShift8AndMakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-					     Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-					     Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
+	{
+	  LOAD_SRC()
+
+	  if(SrcCol != MaskColor)
+	    {
+	      LOAD_DEST()
+	      LOAD_ALPHA()
+	      LUMINATE_RED()
+	      APPLY_ALPHA_RED()
+	      LUMINATE_GREEN()
+	      APPLY_ALPHA_GREEN()
+	      LUMINATE_BLUE()
+	      APPLY_ALPHA_BLUE()
+	      SHIFT_AND_STORE_COLOR() 
+	    }
+	}
     }
 }
 
@@ -1470,20 +1415,20 @@ void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 
 void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
 {
-  if(!Frame)
-    return;
-
-  ushort Size = (Frame - 1) * (16 - Frame) / 10;
-  PowerPutPixel(SparklePos.X, SparklePos.Y, WHITE, 255, 10);
-
-  for(ushort c = 1; c < Size; ++c)
+  if(Frame)
     {
-      uchar Lightness = 191 + ((Size - c) << 6) / Size;
-      ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
-      PowerPutPixel(SparklePos.X + c, SparklePos.Y, RGB, 255, 10);
-      PowerPutPixel(SparklePos.X - c, SparklePos.Y, RGB, 255, 10);
-      PowerPutPixel(SparklePos.X, SparklePos.Y + c, RGB, 255, 10);
-      PowerPutPixel(SparklePos.X, SparklePos.Y - c, RGB, 255, 10);
+      ushort Size = (Frame - 1) * (16 - Frame) / 10;
+      PowerPutPixel(SparklePos.X, SparklePos.Y, WHITE, 255, 10);
+
+      for(ushort c = 1; c < Size; ++c)
+	{
+	  uchar Lightness = 191 + ((Size - c) << 6) / Size;
+	  ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
+	  PowerPutPixel(SparklePos.X + c, SparklePos.Y, RGB, 255, 10);
+	  PowerPutPixel(SparklePos.X - c, SparklePos.Y, RGB, 255, 10);
+	  PowerPutPixel(SparklePos.X, SparklePos.Y + c, RGB, 255, 10);
+	  PowerPutPixel(SparklePos.X, SparklePos.Y - c, RGB, 255, 10);
+	}
     }
 }
 
@@ -1504,7 +1449,7 @@ void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
       vector2d Where;
       Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = short(StartPos.Y + sin(2*(Constant + Temp)) * 3);
-      PowerPutPixel(Where.X, Where.Y, MakeRGB16(0, 0, 0), 255, 5);
+      PowerPutPixel(Where.X, Where.Y, 0, 255, 5);
     }
 
   femath::LoadSeed();
@@ -1838,14 +1783,19 @@ void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, 
       uchar* DestPriorityPtr = &DestPriorityMap[DestY + y][DestX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++SrcPriorityPtr, ++DestPriorityPtr)
-	if(*SrcPtr != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
-	  {
-	    *DestPtr = MakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF),
-				 Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF),
-				 Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF));
+	{
+	  LOAD_SRC()
 
-	    *DestPriorityPtr = *SrcPriorityPtr;
-	  }
+	  if(SrcCol != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
+	    {
+	      LUMINATE_RED()
+	      LUMINATE_GREEN()
+	      LUMINATE_BLUE()
+	      STORE_COLOR()
+
+	      *DestPriorityPtr = *SrcPriorityPtr;
+	    }
+	}
     }
 }
 
@@ -1888,14 +1838,24 @@ void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, u
       uchar* DestPriorityPtr = &DestPriorityMap[DestY + y][DestX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr, ++SrcPriorityPtr, ++DestPriorityPtr)
-	if(*SrcPtr != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
-	  {
-	    *DestPtr = RightShift8AndMakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
-					       Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
-					       Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
+	{
+	  LOAD_SRC()
 
-	    *DestPriorityPtr = *SrcPriorityPtr;
-	  }
+	  if(SrcCol != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
+	    {
+	      LOAD_DEST()
+	      LOAD_ALPHA()
+	      LUMINATE_RED()
+	      APPLY_ALPHA_RED()
+	      LUMINATE_GREEN()
+	      APPLY_ALPHA_GREEN()
+	      LUMINATE_BLUE()
+	      APPLY_ALPHA_BLUE()
+	      SHIFT_AND_STORE_COLOR() 
+
+	      *DestPriorityPtr = *SrcPriorityPtr;
+	    }
+	}
     }
 }
 

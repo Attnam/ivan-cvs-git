@@ -52,7 +52,7 @@ command* commandsystem::Command[] =
   new command(&Pray, "pray", 'p', false),
   new command(&Quit, "quit", 'Q', true),
   new command(&Read, "read", 'r', false),
-  new command(&RestUntilHealed, "rest/heal", 'h', true),
+  new command(&Rest, "rest/heal", 'h', true),
   new command(&Save, "save game", 'S', true),
   new command(&ScrollMessagesDown, "scroll messages down", '+', true),
   new command(&ScrollMessagesUp, "scroll messages up", '-', true),
@@ -85,11 +85,12 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '7', true, true),
   new command(&GainAllItems, "gain all items", '8', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '9', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '9', true, false),
   new command(&DetachBodyPart, "detach a limb", '0', true, true),
   new command(&ReloadDatafiles, "reload datafiles", 'R', true, true),
   new command(&SummonMonster, "summon monster", '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', false, true),
+  new command(&Possess, "possess creature", '{', false, true),
 
 #endif
 
@@ -884,18 +885,40 @@ bool commandsystem::Zap(character* Char)
     return false;
 }
 
-bool commandsystem::RestUntilHealed(character* Char)
+bool commandsystem::Rest(character* Char)
 {
+  bool Error = false;
+
   if(Char->GetHP() == Char->GetMaxHP())
     {
       ADD_MESSAGE("You HP is already at its maximum.");
-      return false;
+      Error = true;
     }
-
-  if(!Char->CanHeal())
+  else if(!Char->CanHeal())
     {
       ADD_MESSAGE("You cannot heal.");
-      return false;
+      Error = true;
+    }
+
+  if(Error)
+    {
+      long TurnsToRest = game::NumberQuestion(CONST_S("How much time to wait?"), vector2d(16, 6), WHITE);
+
+      if(TurnsToRest > 0)
+	{
+	  oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
+
+	  if(Terrain)
+	    Terrain->ShowRestMessage(Char);
+
+	  rest* Rest = new rest(Char);
+	  Rest->SetTurnToStop(game::GetTicks() / 10 + TurnsToRest);
+	  Rest->SetGoalHP(0);
+	  Char->SetAction(Rest);
+	  return true;
+	}
+      else
+	return false;
     }
 
   long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"), vector2d(16, 6), Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0, WHITE, LIGHT_GRAY, DARK_GRAY);
@@ -912,6 +935,7 @@ bool commandsystem::RestUntilHealed(character* Char)
     Terrain->ShowRestMessage(Char);
 
   rest* Rest = new rest(Char);
+  Rest->SetTurnToStop(0);
   Rest->SetGoalHP(HPToRest);
   Char->SetAction(Rest);
   return true;
@@ -964,7 +988,7 @@ bool commandsystem::Go(character* Char)
 	++OKDirectionsCounter;
     }
 
-  Go->SetWalkingInOpen(OKDirectionsCounter > 2);
+  Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
   Char->SetAction(Go);
   Go->Handle();
   return Char->GetAction() != 0;
@@ -1175,13 +1199,13 @@ bool commandsystem::WizardMode(character* Char)
 
 bool commandsystem::RaiseStats(character* Char)
 {
-  Char->RaiseStats();
+  Char->EditAllAttributes(10);
   return false;
 }
 
 bool commandsystem::LowerStats(character* Char)
 {
-  Char->LowerStats();
+  Char->EditAllAttributes(-10);
   return false;
 }
 
@@ -1462,6 +1486,26 @@ bool commandsystem::LevelTeleport(character*)
     }
 
   return game::TryTravel(game::GetCurrentDungeonIndex(), Level - 1, RANDOM, true);
+}
+
+bool commandsystem::Possess(character* Char)
+{
+  uchar Dir = game::DirectionQuestion(CONST_S("Choose creature to possess. [press a direction key]"), false);
+
+  if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+    return false;
+
+  character* ToPossess = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
+
+  if(ToPossess)
+    {
+      Char->SetIsPlayer(false);
+      game::SetPlayer(ToPossess);
+    }
+  else
+    ADD_MESSAGE("There's no one to possess, %s!", game::Insult());
+
+  return true; // The old player's turn must end
 }
 
 #endif

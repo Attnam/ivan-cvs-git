@@ -858,7 +858,7 @@ void boulder::Break()
 
 void sign::AddPostFix(festring& String) const
 {
-  String << " with text \"" << Text << "\"";
+  String << " with text \"" << Text << '\"';
 }
 
 void sign::StepOn(character* Stepper)

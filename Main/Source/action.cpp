@@ -1,6 +1,6 @@
 /* Compiled through actset.cpp */
 
-actionprototype::actionprototype(action* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<action>::Add(this); }
+actionprototype::actionprototype(action* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
 
 action::action(donothing) : Actor(0), DNDMode(false) { }
 action::~action() { }
@@ -33,3 +33,4 @@ void action::LoadActionSlot(inputfile& SaveFile, actionslot& ActionSlot)
   SaveFile >> ActionSlot;
   ActionSlot.SetAction(this);
 }
+

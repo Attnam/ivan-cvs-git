@@ -9,6 +9,7 @@
 
 class outputfile;
 class inputfile;
+class item;
 
 class weaponskill
 {
@@ -63,6 +64,8 @@ inline inputfile& operator>>(inputfile& SaveFile, cweaponskill* WeaponSkill)
 class sweaponskill : public weaponskill
 {
  public:
+  sweaponskill() { }
+  sweaponskill(const item*);
   virtual ushort GetLevelMap(ushort) const;
   virtual ulong GetUnuseTickMap(ushort) const;
   virtual ushort GetUnusePenaltyMap(ushort) const;
@@ -71,10 +74,13 @@ class sweaponskill : public weaponskill
   void AddLevelDownMessage(const char*) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual bool IsSkillOf(const item*) const;
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
  private:
   ulong ID;
+  ulong Weight;
+  ushort Config;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, const sweaponskill* WeaponSkill)

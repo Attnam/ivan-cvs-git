@@ -1,14 +1,12 @@
 /* Compiled through charset.cpp */
 
-/*
- * These statedata structs contain functions and values used for handling states. Remember to update them.
+/* These statedata structs contain functions and values used for handling states. Remember to update them.
  * All normal states must have PrintBeginMessage and PrintEndMessage functions and a Description string.
  * BeginHandler, EndHandler, Handler (called each tick) and IsAllowed are optional, enter zero if the state
  * doesn't need one. If the SECRET flag is set, Description is not shown in the panel without magical means.
  * You can also set some source (SRC_*) and duration (DUR_*) flags, which control whether the state can be
  * randomly activated in certain situations. These flags can be found in ivandef.h. RANDOMIZABLE sets all
- * source & duration flags at once.
- */
+ * source & duration flags at once. */
 
 struct statedata
 {
@@ -188,13 +186,11 @@ statedata StateData[STATES] =
   }
 };
 
-characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
+characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<character>::Add(this); }
 const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
-/*
- * Plain database without preceding colons would mean
- * characterdatabase and cause a syntax error. Sorry for bad naming.
- */
+/* Plain database without preceding colons would mean
+ * characterdatabase and cause a syntax error. Sorry for bad naming. */
 
 void character::InstallDataBase() { databasecreator<character>::InstallDataBase(this); }
 std::list<character*>::iterator character::GetTeamIterator() { return TeamIterator; }
@@ -252,6 +248,7 @@ bool character::BodyPartColorBIsSparkling(ushort, bool) const { return TorsoMain
 bool character::BodyPartColorCIsSparkling(ushort, bool) const { return 0; } // reserved for future use
 bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpecialColorIsSparkling(); }
 ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
+bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
@@ -926,7 +923,8 @@ void character::CreateCorpse(lsquare* Square)
 
 void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
 {
-  // Note: This function MUST NOT delete any objects in any case! 
+  /* Note: This function musn't delete any objects, since one of these may be
+     the one currently processed by pool::Be()! */
 
   if(!IsEnabled())
     return;
@@ -968,9 +966,14 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
     }
 
   InNoMsgMode = true;
+  character* Ghost = 0;
 
   if(IsPlayer())
-    game::RemoveSaves();
+    {
+      game::RemoveSaves();
+      Ghost = game::CreateGhost();
+      Ghost->Disable();
+    }
 
   GetSquareUnder()->RemoveCharacter();
 
@@ -1051,6 +1054,9 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
   if(IsPlayer())
     {
       AddScoreEntry(Msg);
+      GetLSquareUnder()->AddCharacter(Ghost);
+      Ghost->Enable();
+      game::CreateBone();
       game::TextScreen(CONST_S("Unfortunately you died during your journey. The high priest is not happy."));
       game::End();
     }
@@ -1079,8 +1085,13 @@ void character::AddBlockMessage(const character* Enemy, const item* Blocker, con
 
   if(IsPlayer())
     Msg << "You manage" << BlockVerb << " with your " << Blocker->GetName(UNARTICLED) << '!';
-  else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg << GetDescription(DEFINITE) << " manages" << BlockVerb << " with " << GetPossessivePronoun() << ' ' << Blocker->GetName(UNARTICLED) << '!';
+  else if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+    {
+      if(CanBeSeenByPlayer())
+	Msg << GetName(DEFINITE) << " manages" << BlockVerb << " with " << GetPossessivePronoun() << ' ' << Blocker->GetName(UNARTICLED) << '!';
+      else
+	Msg << "Something manages" << BlockVerb << " with something!";
+    }
   else
     return;
 
@@ -1821,7 +1832,7 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
     }
 }
 
-/* return true if still in balance */
+/* Return true if still in balance */
 
 bool character::CheckBalance(float KickDamage)
 {
@@ -2045,6 +2056,9 @@ bool character::CheckForDoors()
 
 bool character::CheckForUsefulItemsOnGround()
 {
+  if(StateIsActivated(PANIC))
+    return false;
+
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
 
@@ -2192,23 +2206,43 @@ void character::ShowNewPosInfo() const
       std::vector<itemvector> PileVector;
       GetStackUnder()->Pile(PileVector, this);
 
-      if(PileVector.size() == 1)
-	ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).CStr(), PileVector[0].size() == 1 ? "is" : "are");
-      else
+      if(PileVector.size())
 	{
-	  ushort Items = 0;
+	  bool Feel = !GetLSquareUnder()->IsTransparent() || GetLSquareUnder()->IsDark();
 
-	  for(ushort c = 0; c < PileVector.size(); ++c)
-	    if((Items += PileVector[c].size()) > 3)
-	      break;
+	  if(PileVector.size() == 1)
+	    {
+	      if(Feel)
+		ADD_MESSAGE("You feel %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).CStr(), PileVector[0].size() == 1 ? "is" : "are");
+	      else
+		ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).CStr(), PileVector[0].size() == 1 ? "is" : "are");
+	    }
+	  else
+	    {
+	      ushort Items = 0;
 
-	  if(Items > 3)
-	    ADD_MESSAGE("Several items are lying here.");
-	  else if(Items)
-	    ADD_MESSAGE("A few items are lying here.");
+	      for(ushort c = 0; c < PileVector.size(); ++c)
+		if((Items += PileVector[c].size()) > 3)
+		  break;
+
+	      if(Items > 3)
+		{
+		  if(Feel)
+		    ADD_MESSAGE("You feel several items lying here.");
+		  else
+		    ADD_MESSAGE("Several items are lying here.");
+		}
+	      else if(Items)
+		{
+		  if(Feel)
+		    ADD_MESSAGE("You feel a few items lying here.");
+		  else
+		    ADD_MESSAGE("A few items are lying here.");
+		}
+	    }
 	}
 		
-      if(GetNearLSquare(GetPos())->GetEngraved().GetSize())
+      if(!GetNearLSquare(GetPos())->GetEngraved().IsEmpty())
 	{
 	  if(CanRead())
 	    ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().CStr());
@@ -2288,7 +2322,7 @@ void character::GoOn(go* Go)
 	++OKDirectionsCounter;
     }
 
-  if(!Go->GetWalkingInOpen())
+  if(!Go->IsWalkingInOpen())
     {
       if(OKDirectionsCounter > 2)
 	{
@@ -2298,7 +2332,7 @@ void character::GoOn(go* Go)
     }
   else
     if(OKDirectionsCounter <= 2)
-      Go->SetWalkingInOpen(false);
+      Go->SetIsWalkingInOpen(false);
 
   square* BeginSquare = GetSquareUnder();
 
@@ -2309,7 +2343,6 @@ void character::GoOn(go* Go)
     }
 
   graphics::BlitDBToScreen();
-  //game::DrawEverything();
 }
 
 void character::SetTeam(team* What)
@@ -2514,7 +2547,7 @@ void character::TeleportRandomly()
 		{
 		  ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
 		  break;
-		  /* break this loop and teleport randomly */
+		  /* Break this loop and teleport randomly */
 		}
 
 	      Move(PlayersInput, true);
@@ -2881,17 +2914,17 @@ void character::Regenerate()
 
   RegenerationBonus *= (50 + GetAttribute(ENDURANCE));
 
-  if(Action && Action->GetRestRegenerationBonus())
-    RegenerationBonus *= GetSquareUnder()->GetRestModifier();
+  if(Action && Action->IsRest())
+    RegenerationBonus *= GetSquareUnder()->GetRestModifier() << 1;
 
   RegenerationCounter += RegenerationBonus;
 
-  while(RegenerationCounter > 1000000)
+  while(RegenerationCounter > 1250000)
     {
       if(!HealHitPoint())
 	break;
 
-      RegenerationCounter -= 1000000;
+      RegenerationCounter -= 1250000;
       EditExperience(ENDURANCE, Max(4000 / MaxHP, 1));
     }
 }
@@ -2913,7 +2946,7 @@ void character::PrintInfo() const
     }
 }
 
-void character::CompleteRiseFromTheDead()
+bool character::CompleteRiseFromTheDead()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
@@ -2921,6 +2954,8 @@ void character::CompleteRiseFromTheDead()
 	GetBodyPart(c)->ResetSpoiling();
 	GetBodyPart(c)->SetHP(1);
       }
+
+  return true;
 }
 
 bool character::RaiseTheDead(character*)
@@ -4092,10 +4127,8 @@ void character::StartReading(item* Item, ulong Time)
     ADD_MESSAGE("%s starts reading %s.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));
 }
 
-/*
- * Call when one makes something with his/her/its hands.
- * Difficulty of 5 takes about one turn, so it's the most common to use.
- */
+/* Call when one makes something with his/her/its hands.
+ * Difficulty of 5 takes about one turn, so it's the most common to use. */
 
 void character::DexterityAction(ushort Difficulty)
 {
@@ -4182,7 +4215,7 @@ bodypart* character::FindRandomOwnBodyPart(bool AllowNonLiving) const
     if(!GetBodyPart(c))
       for(std::list<ulong>::iterator i = OriginalBodyPartID[c].begin(); i != OriginalBodyPartID[c].end(); ++i)
 	{
-	  bodypart* Found = static_cast<bodypart*>(SearchForItemWithID(*i));
+	  bodypart* Found = static_cast<bodypart*>(SearchForItem(*i));
 
 	  if(Found && (AllowNonLiving || Found->IsAlive()))
 	    LostAndFound.push_back(Found);
@@ -4350,9 +4383,9 @@ void character::PrintEndTeleportControlMessage() const
     ADD_MESSAGE("You feel your control slipping.");
 }
 
-void character::DisplayStethoscopeInfo(character*) const
+void character::DisplayStethoscopeInfo(character* Viewer) const
 {
-  felist Info(CONST_S("Information about ") + GetName(DEFINITE));
+  felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
   Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
@@ -4360,6 +4393,16 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+
+  if(GetAction())
+    Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);
+
+  for(ushort c = 0; c < STATES; ++c)
+    if(!(StateData[c].Flags & SECRET) && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
+      Info.AddEntry(StateData[c].Description, LIGHT_GRAY);
+
+  ushort Danger = ushort(GetRelativeDanger(Viewer) * 100);
+  Info.AddEntry(CONST_S("Danger: ") + GetDangerDescription(Danger), GetDangerDescriptionColor(Danger));
   game::SetStandardListAttributes(Info);
   Info.Draw();
 }
@@ -4372,10 +4415,8 @@ bool character::CanUseStethoscope(bool PrintReason) const
   return false;
 }
 
-/* 
- * Effect used by atleast Sophos. 
- * NOTICE: Doesn't check for death! 
- */
+/* Effect used by at least Sophos. 
+ * NOTICE: Doesn't check for death! */
 
 void character::TeleportSomePartsAway(ushort NumberToTeleport)
 {
@@ -4625,9 +4666,7 @@ bool character::GainRandomIntrinsic(ushort Flags)
   return true;
 }
 
-/*
- * Returns 0 if state not found
- */
+/* Returns 0 if state not found */
 
 ulong character::GetRandomState(ushort Flags) const
 {
@@ -4722,7 +4761,7 @@ festring character::GetBodyPartName(ushort Index, bool Articled) const
     }
 }
 
-item* character::SearchForItemWithID(ulong ID) const
+item* character::SearchForItem(ulong ID) const
 {
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if(GetEquipment(c) && GetEquipment(c)->GetID() == ID)
@@ -5114,8 +5153,7 @@ void character::ReceiveAntidote(long Amount)
 
 void character::AddAntidoteConsumeEndMessage() const
 {
-  if(StateIsActivated(POISONED)) /* true only if the poison didn't cure the poison completely */
-				 /* Comment: Whaaat? */
+  if(StateIsActivated(POISONED)) // true only if the antidote didn't cure the poison completely
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your body processes the poison in your veins with rapid speed.");
@@ -5687,7 +5725,7 @@ void characterdatabase::InitDefaults(ushort Config)
   /* TERRIBLE gum solution! */
 
   if(Config & DEVOUT)
-    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()).CapitalizeCopy();
+    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassID()).CapitalizeCopy();
 }
 
 void character::PrintBeginGasImmunityMessage() const
@@ -5741,41 +5779,42 @@ void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
     }
 }
 
+bool character::EditAllAttributes(short Amount)
+{
+  ushort c;
+  bool MayRaiseMore = false;
+
+  for(c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      if(GetBodyPart(c)->EditAllAttributes(Amount))
+	MayRaiseMore = true;
+
+  for(c = 0; c < BASE_ATTRIBUTES; ++c)
+    {
+      BaseAttribute[c] += Amount;
+
+      if(BaseAttribute[c] >= 100)
+	{
+	  if(!IsPlayer())
+	    BaseAttribute[c] = 100;
+	}
+      else
+	MayRaiseMore = true;
+    }
+
+  CalculateAll();
+  RestoreHP();
+
+  if(IsPlayer())
+    {
+      game::SendLOSUpdateRequest();
+      UpdateESPLOS();
+    }
+
+  return MayRaiseMore;
+}
+
 #ifdef WIZARD
-
-void character::RaiseStats()
-{
-  ushort c = 0;
-
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->RaiseStats();
-
-  for(c = 0; c < BASE_ATTRIBUTES; ++c)
-    BaseAttribute[c] += 10;
-
-  CalculateAll();
-  RestoreHP();
-  game::SendLOSUpdateRequest();
-  UpdateESPLOS();
-}
-
-void character::LowerStats()
-{
-  ushort c = 0;
-
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->LowerStats();
-
-  for(c = 0; c < BASE_ATTRIBUTES; ++c)
-    BaseAttribute[c] -= 10;
-
-  CalculateAll();
-  RestoreHP();
-  game::SendLOSUpdateRequest();
-  UpdateESPLOS();
-}
 
 void character::AddAttributeInfo(festring& Entry) const
 {
@@ -5840,13 +5879,195 @@ void character::AddHolyBananaConsumeEndMessage() const
     ADD_MESSAGE("For a moment %s is surrounded by a swirling fire aura.", CHAR_NAME(DEFINITE));
 }
 
+bool character::PreProcessForBone()
+{
+  if(GetTeam()->GetID() == PLAYER_TEAM && IsEnabled())
+    {
+      Die();
+      return true;
+    }
+
+  if(GetAction())
+    GetAction()->Terminate(false);
+
+  if(TemporaryStateIsActivated(POLYMORPHED))
+    EndPolymorph();
+
+  if(MustBeRemovedFromBone())
+    return false;
+  else if(IsUnique())
+    game::SetQuestMonsterFound(true);
+
+  RestoreLivingHP();
+  ResetStates();
+  GetStack()->PreProcessForBone();
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      GetEquipment(c)->PreProcessForBone();
+
+  game::RemoveCharacterID(ID);
+  ID = -ID;
+  game::AddCharacterID(this, ID);
+  return true;
+}
+
+bool character::PostProcessForBone(float& DangerSum, ushort& Enemies)
+{
+  if(PostProcessForBone())
+    {
+      if(GetRelation(PLAYER) == HOSTILE)
+	{
+	  float Danger = GetRelativeDanger(PLAYER, true);
+
+	  if(Danger > 99.0f)
+	    game::SetTooGreatDangerFound(true);
+	  else if(!IsUnique() && !IgnoreDanger())
+	    {
+	      DangerSum += Danger;
+	      ++Enemies;
+	    }
+	}
+
+      return true;
+    }
+  else
+    return false;
+}
+
+bool character::PostProcessForBone()
+{
+  ulong NewID = game::CreateNewCharacterID(this);
+  game::GetBoneCharacterIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
+  game::RemoveCharacterID(ID);
+  ID = NewID;
+
+  if(IsUnique() && CanBeGenerated())
+    {
+      configid ConfigID(GetType(), GetConfig());
+      const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+
+      if(DangerID.HasBeenGenerated)
+	return false;
+      else
+	game::SignalGeneration(ConfigID);
+    }
+
+  GetStack()->PostProcessForBone();
+  ushort c;
+
+  for(c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      GetEquipment(c)->PostProcessForBone();
+
+  for(c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->PostProcessForBone();
+
+  return true;
+}
+
+void character::FinalProcessForBone()
+{
+  Player = false;
+  GetStack()->FinalProcessForBone();
+  ushort c;
+
+  for(c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      GetEquipment(c)->FinalProcessForBone();
+
+  for(c = 0; c < BodyParts; ++c)
+    {
+      for(std::list<ulong>::iterator i = OriginalBodyPartID[c].begin(); i != OriginalBodyPartID[c].end();)
+	{
+	  boneidmap::iterator BI = game::GetBoneItemIDMap().find(*i);
+
+	  if(BI == game::GetBoneItemIDMap().end())
+	    {
+	      std::list<ulong>::iterator Dirt = i++;
+	      OriginalBodyPartID[c].erase(Dirt);
+	    }
+	  else
+	    {
+	      *i = BI->second;
+	      ++i;
+	    }
+	}
+    }
+}
+
 bool character::HasRepairableBodyParts() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      {
-	if(!GetBodyPart(c)->IsRepairable())
-	  return true;
-      }
+    if(GetBodyPart(c) && GetBodyPart(c)->IsRepairable())
+      return true;
+
   return false;
+}
+
+void character::SetSoulID(ulong What)
+{
+  if(GetPolymorphBackup())
+    GetPolymorphBackup()->SetSoulID(What);
+}
+
+bool character::SearchForItem(const item* Item) const
+{
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c) == Item)
+      return true;
+
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(*i == Item)
+      return true;
+
+  return false;
+}
+
+item* character::SearchForItem(const sweaponskill* SWeaponSkill) const
+{
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && SWeaponSkill->IsSkillOf(GetEquipment(c)))
+      return GetEquipment(c);
+
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(SWeaponSkill->IsSkillOf(*i))
+      return *i;
+
+  return 0;
+}
+
+const char* character::GetDangerDescription(ushort Danger)
+{
+  if(Danger < 5)
+    return "harmless";
+  else if(Danger < 10)
+    return "mostly harmless";
+  else if(Danger < 25)
+    return "bad for health";
+  else if(Danger < 75)
+    return "dangerous but still weaker than you";
+  else if(Danger < 150)
+    return "equal opponent";
+  else if(Danger < 250)
+    return "tougher than you";
+  else if(Danger < 1000)
+    return "very dangerous";
+  else if(Danger < 9900)
+    return "impossible";
+  else
+    return "RUN!!!";
+}
+
+ushort character::GetDangerDescriptionColor(ushort Danger)
+{
+  if(Danger < 10)
+    return LIGHT_GRAY;
+  else if(Danger < 75)
+    return MakeRGB16(180, 120, 120);
+  else if(Danger < 150)
+    return MakeRGB16(180, 0, 0);
+  else
+    return MakeRGB16(140, 0, 0);
 }

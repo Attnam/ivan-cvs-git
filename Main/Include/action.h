@@ -19,12 +19,12 @@ class actionprototype
   actionprototype(action* (*)(bool), const char*);
   action* Clone() const { return Cloner(false); }
   action* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   action* (*Cloner)(bool);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class action
@@ -43,7 +43,7 @@ class action
   virtual bool AllowDisplace() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool GetRestRegenerationBonus() const { return false; }
+  virtual bool IsRest() const { return false; }
   virtual void DropUsedItems() { }
   virtual void DeleteUsedItems() { }
   virtual const prototype* GetProtoType() const = 0;
@@ -89,3 +89,4 @@ name : public base\
 }; ACTION_PROTOTYPE(name, base);
 
 #endif
+

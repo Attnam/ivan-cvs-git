@@ -175,7 +175,7 @@ class characterprototype
   ushort GetIndex() const { return Index; }
   const characterprototype* GetBase() const { return Base; }
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   void CreateSpecialConfigurations();
   const characterdatabase& ChooseBaseForConfig(ushort);
  private:
@@ -183,7 +183,7 @@ class characterprototype
   characterprototype* Base;
   std::map<ushort, characterdatabase> Config;
   character* (*Cloner)(ushort, ushort);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class character : public entity, public id
@@ -316,7 +316,7 @@ class character : public entity, public id
   festring GetPossessivePronoun(bool = true) const;
   festring GetObjectPronoun(bool = true) const;
   virtual bool BodyPartCanBeSevered(ushort) const;
-  void AddName(festring&, uchar) const;
+  virtual void AddName(festring&, uchar) const;
   void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
@@ -359,8 +359,8 @@ class character : public entity, public id
   void AddBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(ushort);
-  virtual void CompleteRiseFromTheDead();
-  bool RaiseTheDead(character*);
+  virtual bool CompleteRiseFromTheDead();
+  virtual bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(ushort, ushort = 0);
   bool CanUseEquipment(ushort) const;
   virtual const prototype* GetProtoType() const;
@@ -417,7 +417,7 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(ushort, ArmSpecialColor);
   virtual DATA_BASE_VALUE(ushort, LegMainColor);
   virtual DATA_BASE_VALUE(ushort, LegSpecialColor);
-  DATA_BASE_BOOL(IsNameable);
+  virtual DATA_BASE_BOOL(IsNameable);
   virtual DATA_BASE_VALUE(ulong, BaseEmitation); // devirtualize ASAP
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
@@ -480,6 +480,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(ArmSpecialColorIsSparkling);
   DATA_BASE_BOOL(LegMainColorIsSparkling);
   DATA_BASE_BOOL(LegSpecialColorIsSparkling);
+  DATA_BASE_BOOL(IgnoreDanger);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -580,6 +581,7 @@ class character : public entity, public id
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
+  dungeon* GetDungeon() const { return static_cast<level*>(GetSquareUnder()->GetArea())->GetDungeon(); }
   level* GetLevel() const { return static_cast<level*>(GetSquareUnder()->GetArea()); }
   area* GetArea() const { return GetSquareUnder()->GetArea(); }
   square* GetNeighbourSquare(ushort Index) const { return GetSquareUnder()->GetNeighbourSquare(Index); }
@@ -633,7 +635,9 @@ class character : public entity, public id
   virtual float GetTimeToKill(const character*, bool) const = 0;
   virtual void AddSpecialEquipmentInfo(festring&, ushort) const { }
   virtual festring GetBodyPartName(ushort, bool = false) const;
-  item* SearchForItemWithID(ulong) const;
+  item* SearchForItem(ulong) const;
+  bool SearchForItem(const item*) const;
+  item* SearchForItem(const sweaponskill*) const;
   bool ContentsCanBeSeenBy(const character*) const;
   festring GetBeVerb() const;
   virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
@@ -741,8 +745,6 @@ class character : public entity, public id
   virtual bool IsBananaGrower() const { return false; }
   virtual ushort GetRandomApplyBodyPart() const;
 #ifdef WIZARD
-  virtual void RaiseStats();
-  virtual void LowerStats();
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const = 0;
   virtual void AddDefenceInfo(felist&) const;
@@ -750,8 +752,17 @@ class character : public entity, public id
 #endif
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
-  virtual bool CanBeRaisedFromTheDead(corpse*) const { return true; }
-  virtual bool HasRepairableBodyParts() const;
+  bool PreProcessForBone();
+  bool PostProcessForBone(float&, ushort&);
+  bool PostProcessForBone();
+  bool HasRepairableBodyParts() const;
+  virtual void FinalProcessForBone();
+  virtual bool EditAllAttributes(short);
+  virtual void SetSoulID(ulong);
+  virtual bool SuckSoul(character*) { return false; }
+  virtual bool MustBeRemovedFromBone() const;
+  static const char* GetDangerDescription(ushort);
+  static ushort GetDangerDescriptionColor(ushort);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
@@ -888,3 +899,4 @@ name : public base\
 }; ABSTRACT_CHARACTER_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
+

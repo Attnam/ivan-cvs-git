@@ -16,9 +16,9 @@ character* protosystem::BalancedCreateMonster()
 	    if(!i->second.IsAbstract && i->second.CanBeGenerated)
 	      {
 		configid ConfigID(Type, i->first);
-		const dangerid& DangerId = game::GetDangerMap().find(ConfigID)->second;
+		const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
 
-		if(i->second.IsUnique && DangerId.HasBeenGenerated)
+		if(i->second.IsUnique && DangerID.HasBeenGenerated)
 		  continue;
 
 		if(c >= 100)
@@ -29,7 +29,12 @@ character* protosystem::BalancedCreateMonster()
 
 		if(!i->second.IgnoreDanger)
 		  {
-		    float DangerModifier = i->second.DangerModifier == 100 ? DangerId.EquippedDanger : DangerId.EquippedDanger * 100 / i->second.DangerModifier;
+		    float Danger = DangerID.EquippedDanger;
+
+		    if(Danger > 99.0f || Danger < 0.01f)
+		      continue;
+
+		    float DangerModifier = i->second.DangerModifier == 100 ? Danger : Danger * 100 / i->second.DangerModifier;
 
 		    if(DangerModifier < MinDifficulty || DangerModifier > MaxDifficulty)
 		      continue;
@@ -149,8 +154,8 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 
 		if((MinDanger > 0 || MaxDanger < 10000) && c < 25)
 		  {
-		    const dangerid& DangerId = game::GetDangerMap().find(ConfigID)->second;
-		    float RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerId.NakedDanger : DangerId.EquippedDanger;
+		    const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+		    float RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
 		    ushort Danger = ushort(i->second.DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / i->second.DangerModifier);
 
 		    if(Danger < MinDanger || Danger > MaxDanger)
@@ -214,7 +219,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
   festring Identifier;
   Identifier << ' ' << What << ' ';
   bool Illegal = false, Conflict = false;
-  std::pair<const prototype*, ushort> Id(0, 0);
+  std::pair<const prototype*, ushort> ID(0, 0);
   std::pair<ushort, ushort> Best(0, 0);
 
   for(ushort c = 1; c < protocontainer<type>::GetProtoAmount(); ++c)
@@ -237,8 +242,8 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 	    else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
 	      if(i->second.CanBeWished || game::WizardModeIsActive())
 		{
-		  Id.first = Proto;
-		  Id.second = i->first;
+		  ID.first = Proto;
+		  ID.second = i->first;
 		  Best = Correct;
 		  Conflict = false;
 		}
@@ -263,25 +268,25 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 	}
     }
 
-  return Id;
+  return ID;
 }
 
 character* protosystem::CreateMonster(const festring& What, ushort SpecialFlags, bool Output)
 {
-  std::pair<const character::prototype*, ushort> Id = SearchForProto<character>(What, Output);
+  std::pair<const character::prototype*, ushort> ID = SearchForProto<character>(What, Output);
 
-  if(Id.first)
-    return Id.first->Clone(Id.second, SpecialFlags);
+  if(ID.first)
+    return ID.first->Clone(ID.second, SpecialFlags);
   else
     return 0;
 }
 
 item* protosystem::CreateItem(const festring& What, bool Output)
 {
-  std::pair<const item::prototype*, ushort> Id = SearchForProto<item>(What, Output);
+  std::pair<const item::prototype*, ushort> ID = SearchForProto<item>(What, Output);
 
-  if(Id.first)
-    return Id.first->Clone(Id.second);
+  if(ID.first)
+    return ID.first->Clone(ID.second);
   else
     return 0;
 }
@@ -351,3 +356,17 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
 }
 
 #endif
+
+void protosystem::CreateEveryNormalEnemy(std::vector<character*>& EnemyVector)
+{
+  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c);
+      const character::databasemap& Config = Proto->GetConfig();
+
+      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(!i->second.IsAbstract && !i->second.IsUnique && i->second.CanBeGenerated)
+	  EnemyVector.push_back(Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
+    }
+}
+

@@ -427,7 +427,7 @@ void silva::PrayGoodEffect()
 	      }
 	}
 
-      // Impact damage to items in the level
+      // Damage to items in the level
 
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
@@ -637,7 +637,7 @@ void mellis::PrayGoodEffect()
 
   item* NewVersion;
 
-  for(ushort c = 0; !OKItems.empty() && c < 5; ++c)
+  for(ushort c = 0; !OKItems.empty() && c < 10; ++c)
     {
       item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
       NewVersion = ToBeDeleted->BetterVersion();

@@ -16,7 +16,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
       ushort Index = protocontainer<type>::SearchCodeName(Word);
 
       if(!Index)
-	ABORT("Odd term %s encountered in %s datafile line %d!", Word.CStr(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	ABORT("Odd term %s encountered in %s datafile line %d!", Word.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
       prototype* Proto = protocontainer<type>::ProtoData[Index];
       Proto->Config.insert(std::pair<ushort, database>(0, Proto->Base ? database(Proto->Base->Config.begin()->second) : database()));
@@ -24,7 +24,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
       DataBase.InitDefaults(0);
 
       if(SaveFile.ReadWord() != "{")
-	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	{
@@ -35,18 +35,18 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 	      TempDataBase.InitDefaults(ConfigNumber);
 
 	      if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 		if(!AnalyzeData(SaveFile, Word, TempDataBase))
-		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.CStr(), Proto->GetClassId(), ConfigNumber, SaveFile.TellLine());
+		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.CStr(), Proto->GetClassID(), ConfigNumber, SaveFile.TellLine());
 
 	      Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, TempDataBase));
 	      continue;
 	    }
 
 	  if(!AnalyzeData(SaveFile, Word, DataBase))
-	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.CStr(), Proto->GetClassId(), SaveFile.TellLine());
+	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.CStr(), Proto->GetClassID(), SaveFile.TellLine());
 	}
 
       if(DataBase.CreateDivineConfigurations)
@@ -345,6 +345,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(BreakEffectRange);
   ADD_MEMBER(WieldedBitmapPos);
+  ADD_MEMBER(IsQuestItem);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -555,3 +556,4 @@ void databasesystem::CreateDataBaseMemberMaps()
   databasecreator<olterrain>::CreateDataBaseMemberMap();
   databasecreator<material>::CreateDataBaseMemberMap();
 }
+

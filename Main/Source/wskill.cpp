@@ -2,6 +2,7 @@
 #include "message.h"
 #include "ivandef.h"
 #include "save.h"
+#include "item.h"
 
 ushort CWeaponSkillLevelMap[] = { 0, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 65535 };
 ulong CWeaponSkillUnuseTickMap[] = { 500000, 250000, 200000, 150000, 50000, 30000, 25000, 20000, 15000, 12500, 10000 };
@@ -9,7 +10,7 @@ ushort CWeaponSkillUnusePenaltyMap[] = { 10, 15, 25, 50, 75, 100, 200, 600, 1000
 const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES] = { "unarmed combat", "kicking", "biting", "uncategorized", "small swords", "large swords", "blunt weapons", "axes", "polearms", "whips", "shields" };
 
 ushort SWeaponSkillLevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 65535 };
-ulong SWeaponSkillUnuseTickMap[] = { 100000, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
+ulong SWeaponSkillUnuseTickMap[] = { 100, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
 ushort SWeaponSkillUnusePenaltyMap[] = { 5, 5, 5, 15, 25, 50, 150, 250, 500, 1000, 1500 };
 
 ushort cweaponskill::GetLevelMap(ushort Index) const { return CWeaponSkillLevelMap[Index]; }
@@ -17,9 +18,11 @@ ulong cweaponskill::GetUnuseTickMap(ushort Index) const { return CWeaponSkillUnu
 ushort cweaponskill::GetUnusePenaltyMap(ushort Index) const { return CWeaponSkillUnusePenaltyMap[Index]; }
 const char* cweaponskill::GetName() const { return CWeaponSkillName[Index]; }
 
+sweaponskill::sweaponskill(const item* Item) : ID(Item->GetID()), Weight(Item->GetWeight()), Config(Item->GetConfig()) { }
 ushort sweaponskill::GetLevelMap(ushort Index) const { return SWeaponSkillLevelMap[Index]; }
 ulong sweaponskill::GetUnuseTickMap(ushort Index) const { return SWeaponSkillUnuseTickMap[Index]; }
 ushort sweaponskill::GetUnusePenaltyMap(ushort Index) const { return SWeaponSkillUnusePenaltyMap[Index]; }
+bool sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
@@ -122,13 +125,13 @@ void sweaponskill::AddLevelDownMessage(const char* WeaponName) const
 void sweaponskill::Save(outputfile& SaveFile) const
 {
   weaponskill::Save(SaveFile);
-  SaveFile << ID;
+  SaveFile << ID << Weight << Config;
 }
 
 void sweaponskill::Load(inputfile& SaveFile)
 {
   weaponskill::Load(SaveFile);
-  SaveFile >> ID;
+  SaveFile >> ID >> Weight >> Config;
 }
 
 bool weaponskill::Tick()

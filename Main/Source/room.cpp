@@ -1,6 +1,6 @@
 /* Compiled through roomset.cpp */
 
-roomprototype::roomprototype(room* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<room>::Add(this); }
+roomprototype::roomprototype(room* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
 
 room::room(donothing) : MasterID(0) { }
 room::~room() { }
@@ -68,3 +68,4 @@ bool room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) cons
     }
   return true;
 }
+

@@ -7,20 +7,22 @@ void team::Remove(std::list<character*>::iterator Iterator) { Member.erase(Itera
 
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {
-  this->Relation[AnotherTeam->GetID()] = AnotherTeam->Relation[GetID()] = Relation;
+  this->Relation[AnotherTeam->ID] = AnotherTeam->Relation[ID] = Relation;
 }
 
 uchar team::GetRelation(const team* AnotherTeam) const
 {
-  if(AnotherTeam == this)
-    return FRIEND;
+  if(AnotherTeam != this)
+    {
+      std::map<ulong, uchar>::const_iterator Iterator = Relation.find(AnotherTeam->ID);
 
-  std::map<ulong, uchar>::const_iterator Iterator = Relation.find(AnotherTeam->GetID());
+      if(Iterator != Relation.end())
+	return Iterator->second;
+      else
+	ABORT("Team %d dismissed!", AnotherTeam->ID);
+    }
 
-  if(Iterator == Relation.end())
-    ABORT("Team %d dismissed!", AnotherTeam->GetID());
-
-  return Iterator->second;
+  return FRIEND;
 }
 
 void team::Hostility(team* Enemy)
@@ -29,14 +31,14 @@ void team::Hostility(team* Enemy)
     {
       /* This is a gum solution. The behaviour should come from the script. */
 
-      if(GetID() == COLONIST_TEAM && Enemy->GetID() == NEW_ATTNAM_TEAM)
+      if(ID == COLONIST_TEAM && Enemy->ID == NEW_ATTNAM_TEAM)
 	return;
 
       game::Hostility(this, Enemy);
 
       if(this == PLAYER->GetTeam())
 	{
-	  if(Enemy->GetID() == ATTNAM_TEAM)
+	  if(Enemy->ID == ATTNAM_TEAM)
 	    {
 	      /* This is a gum solution. The message should come from the script. */
 

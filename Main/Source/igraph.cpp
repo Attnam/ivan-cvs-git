@@ -76,8 +76,9 @@ bitmap* igraph::AddUser(const graphicid& GI)
 
   if(Iterator != TileMap.end())
     {
-      ++Iterator->second.Users;
-      return Iterator->second.Bitmap;
+      tile& Tile = Iterator->second;
+      ++Tile.Users;
+      return Tile.Bitmap;
     }
   else
     {
@@ -126,12 +127,9 @@ bitmap* igraph::AddUser(const graphicid& GI)
 
 	  Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
 	  Bitmap->Fill(8, 0, 8, 10, TRANSPARENT_COLOR);
-	  //Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(8, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(9, 10, TRANSPARENT_COLOR);
-	  //Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
-	  //Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
 
       if(GI.OutlineColor != TRANSPARENT_COLOR)
@@ -186,9 +184,14 @@ void igraph::RemoveUser(const graphicid& GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
-  if(Iterator != TileMap.end() && !--Iterator->second.Users)
+  /*if(Iterator == TileMap.end())
+    int esko = 2;*/
+
+  tile& Tile = Iterator->second;
+
+  if(!--Tile.Users)
     {
-      delete Iterator->second.Bitmap;
+      delete Tile.Bitmap;
       TileMap.erase(Iterator);
     }
 }

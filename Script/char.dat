@@ -159,15 +159,7 @@ human
 	NameSingular = "human";
 	AttachedGod = SEGES;
 	PanicLevel = 50;
-	HostileReplies == "@Dd seems extremely irritated. \"Vanish, you foul mirror image!\"";
-	FriendlyReplies =
-	{
-		4,
-		"\"Hey, those clothes are mine! Give them back!\"",
-		"\"What, you summoned me? What a coincidence, I remember summoning you, too.\"",
-		"\"I'm leading this party, not you, Mr. copy guy!\"",
-		"\"Oh, how I hate bananas. I Hate Them! I HATE THEM SO MUCH!!!\"";
-	}
+	/* Replies overridden */
 }
 
 petrus
@@ -352,6 +344,7 @@ guard
 
 	Config SHOP;
 	{
+		AttributeBonus = 20;
 		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
@@ -375,13 +368,14 @@ guard
 
 	Config ELITE;
 	{
-		AttributeBonus = 20;
+		AttributeBonus = 40;
 		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 2; }
 		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
 		RightWielded = MITHRIL MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
 		LeftWielded = MITHRIL shield { Enchantment = 2; }
 		RightGauntlet = MITHRIL gauntlet { Enchantment = 2; }
 		RightBoot = MITHRIL boot { Enchantment = 2; }
+		RightRing = ring(RING_OF_INFRA_VISION);
 		AdjectiveArticle = "an";
 		Adjective = "elite";
 		CWeaponSkillHits = { 2, 500, 500; }
@@ -404,7 +398,7 @@ guard
 
 	Config MASTER;
 	{
-		AttributeBonus = 40;
+		AttributeBonus = 60;
 		TotalVolume = 120000;
 		Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
 		Amulet = amulet(AMULET_OF_ESP);
@@ -507,16 +501,6 @@ shopkeeper
 			"\"The monsters don't attack me, because of our mutually profitable contract.\"";
 		}
 	}
-
-	/*Config MONDEDR;
-	{
-		DefaultName = "???";
-		FriendlyReplies =
-		{
-			1,
-			"???";
-		}
-	}*/
 }
 
 priest
@@ -663,7 +647,7 @@ darkknight
 		BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 		RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
 		LeftWielded = IRON shield { Enchantment = 1; }
-		RightGauntlet = IRON gauntlet { Enchantment = 1; }
+		RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
 		RightBoot = IRON boot { Enchantment = 1; }
 		Adjective = "veteran";
 		CWeaponSkillHits = { 2, 500, 500; }
@@ -680,7 +664,7 @@ darkknight
 		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
 		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
-		RightGauntlet = STEEL gauntlet { Enchantment = 2; }
+		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
 		RightBoot = STEEL boot { Enchantment = 2; }
 		AdjectiveArticle = "an";
 		Adjective = "elite";
@@ -699,10 +683,10 @@ darkknight
 		TotalVolume = 100000;
 		Helmet = RUBY helmet(FULL_HELMET) { Enchantment = 3; }
 		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-		Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
+		Cloak = DRAGON_HIDE cloak { Enchantment = 3; }
 		Belt = SAPPHIRE belt { Enchantment = 3; }
 		RightWielded = SAPPHIRE RUBY meleeweapon(TWO_HANDED_SCIMITAR) { ContainedMaterial = POISON_LIQUID { Volume = 1000; } Enchantment = 4; }
-		RightGauntlet = RUBY gauntlet { Enchantment = 3; }
+		RightGauntlet = SPIDER_SILK gauntlet { Enchantment = 3; }
 		RightBoot = RUBY boot { Enchantment = 3; }
 		Adjective = "grand master";
 		KnownCWeaponSkills == LARGE_SWORDS;
@@ -763,6 +747,7 @@ ennerbeast
 	FleshMaterial = ENNER_BEAST_FLESH;
 	DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
 	Inventory == horn(FEAR);
+	IsUnique = true; /* currently */
 	HostileReplies == "Aighee!";
 	FriendlyReplies =
 	{
@@ -1013,7 +998,7 @@ skeleton
 		BodyArmor = ILLITHIUM bodyarmor(BROKEN|CHAIN_MAIL);
 		RightWielded = RUBY RUBY flamingsword { Enchantment = 0; }
 		LeftWielded = ARCANITE shield;
-		RightGauntlet = SPIDER_SILK gauntlet;
+		RightGauntlet = ANGEL_HAIR gauntlet;
 		RightRing = ring(RING_OF_INFRA_VISION);
 		RightBoot = MITHRIL boot;
 		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
@@ -1116,11 +1101,11 @@ goblin
 		AttributeBonus = 100;
 		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-		Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+		Cloak = OMMEL_HAIR cloak { Enchantment = 1; }
 		RightWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
 		LeftWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
 		RightRing = ring(RING_OF_TELEPORTATION);
-		RightGauntlet = DRAGON_HIDE gauntlet { Enchantment = 1; }
+		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 1; }
 		RightBoot = STEEL boot { Enchantment = 1; }
 		TotalVolume = 50000;
 		CWeaponSkillHits == 200;
@@ -1251,7 +1236,7 @@ golem
 		DefaultName = "experiment ZQ-29";
 		DangerModifier = 1500;
 		IsUnique = true;
-		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
+		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL); }
 		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
 		IsNameable = false;
 		CanBeCloned = false;
@@ -2215,9 +2200,9 @@ kobold
 		Helmet = METEORIC_STEEL helmet;
 		BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL);
 		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
-		Belt = TROLL_HIDE belt;
-		Cloak = TROLL_HIDE cloak;
-		RightGauntlet = TROLL_HIDE gauntlet;
+		Belt = OMMEL_HAIR belt;
+		Cloak = NYMPH_HAIR cloak;
+		RightGauntlet = NYMPH_HAIR gauntlet;
 		RightBoot = TROLL_HIDE boot;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
@@ -2818,7 +2803,7 @@ orc
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 100;
 		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 2; }
-		Cloak = PHOENIX_FEATHER cloak { Enchantment = 2; }
+		Cloak = ANGEL_HAIR cloak { Enchantment = 2; }
 		BodyArmor = DRAGON_HIDE bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 2; }
 		RightWielded = RUBY meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }
 		LeftWielded = 0;
@@ -3209,7 +3194,7 @@ chameleon
 	CWeaponSkillHits == 20;
 	FleshMaterial = CHAMELEON_FLESH;
 	IgnoreDanger = true;
-	HPRequirementForGeneration = 80;
+	HPRequirementForGeneration = 40;
 	Frequency = 1000;
 	IsExtraCoward = true;
 	AttachedGod = SCABIES;
@@ -3237,7 +3222,7 @@ floatingeye
 	CanBeGenerated = true;
 	FleshMaterial = FLOATING_EYE_FLESH;
 	IgnoreDanger = true;
-	HPRequirementForGeneration = 0;
+	HPRequirementForGeneration = 40;
 	Frequency = 2500;
 	TorsoBitmapPos = 32, 0;
 	SkinColor = rgb16(180,180,180);
@@ -3496,7 +3481,7 @@ darkmage
 ghost
 {
 	DefaultArmStrength = 5;
-	DefaultAgility = 20;
+	DefaultAgility = 8;
 	DefaultEndurance = 8;
 	DefaultPerception = 24;
 	DefaultIntelligence = 15;
@@ -3520,7 +3505,7 @@ ghost
 	PanicLevel = 0;
 	HasFeet = false;
 	FleshMaterial = GHOST;
-	DeathMessage = "@Dd returns to hell.";
+	DeathMessage = "@Dd is sucked into hell.";
 	SpillsBlood = false;
 	UsesNutrition = false;
 	CanWalkThroughWalls = true;

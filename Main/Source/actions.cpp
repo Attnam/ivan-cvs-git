@@ -108,7 +108,7 @@ void consume::Terminate(bool Finished)
       else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
 
-      if(HasEaten())
+      if(Eaten)
 	Consuming->AddConsumeEndMessage(GetActor());
 
       Consuming->GenerateLeftOvers(GetActor());
@@ -120,10 +120,10 @@ void consume::Terminate(bool Finished)
       else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
 
-      if(HasEaten())
+      if(Eaten)
 	Consuming->AddConsumeEndMessage(GetActor());
 
-      if(GetWasOnGround())
+      if(WasOnGround)
 	Consuming->MoveTo(GetActor()->GetStackUnder());
       else
 	Consuming->MoveTo(GetActor()->GetStack());
@@ -139,11 +139,6 @@ void consume::Terminate(bool Finished)
   action::Terminate(Finished);
 }
 
-item* consume::GetConsuming() const
-{
-  return *Consuming;
-}
-
 void consume::SetConsuming(item* Food)
 {
   if(!Food)
@@ -156,18 +151,19 @@ void consume::SetConsuming(item* Food)
 void rest::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << GoalHP;
+  SaveFile << GoalHP << TurnToStop;
 }
 
 void rest::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> GoalHP;
+  SaveFile >> GoalHP >> TurnToStop;
 }
 
 void rest::Handle()
 {
-  if(GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP() || !GetActor()->CanHeal())
+  if((GoalHP && (GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP() || !GetActor()->CanHeal()))
+  || (TurnToStop && game::GetTicks() / 10 >= TurnToStop))
     Terminate(true);
   else
     {
@@ -253,16 +249,16 @@ void dig::Handle()
       if(MoveDigger && Actor->GetMainWielded())
 	Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
-      if(GetRightBackup())
+      if(*RightBackup)
 	{
-	  item* RB = GetRightBackup();
+	  item* RB = *RightBackup;
 	  RB->RemoveFromSlot();
 	  Actor->SetRightWielded(RB);
 	}
 
-      if(GetLeftBackup())
+      if(*LeftBackup)
 	{
-	  item* LB = GetLeftBackup();
+	  item* LB = *LeftBackup;
 	  LB->RemoveFromSlot();
 	  Actor->SetLeftWielded(LB);
 	}
@@ -283,18 +279,13 @@ void dig::Terminate(bool Finished)
 	ADD_MESSAGE("%s stops digging.", GetActor()->CHAR_NAME(DEFINITE));
     }
 
-  if(GetRightBackup())
-    GetRightBackup()->MoveTo(GetActor()->GetStack());
+  if(*RightBackup)
+    RightBackup->MoveTo(GetActor()->GetStack());
 
-  if(GetLeftBackup())
-    GetLeftBackup()->MoveTo(GetActor()->GetStack());
+  if(*LeftBackup)
+    LeftBackup->MoveTo(GetActor()->GetStack());
 
   action::Terminate(Finished);
-}
-
-item* dig::GetRightBackup() const
-{
-  return *RightBackup;
 }
 
 void dig::SetRightBackup(item* Item)
@@ -304,11 +295,6 @@ void dig::SetRightBackup(item* Item)
       Item->RemoveFromSlot();
       Item->PlaceToSlot(&RightBackup);
     }
-}
-
-item* dig::GetLeftBackup() const
-{
-  return *LeftBackup;
 }
 
 void dig::SetLeftBackup(item* Item)
@@ -340,41 +326,41 @@ void go::Handle()
 
 void consume::DropUsedItems()
 {
-  if(GetConsuming())
+  if(*Consuming)
     if(!game::IsInWilderness())
-      GetConsuming()->MoveTo(GetActor()->GetStackUnder());
+      Consuming->MoveTo(GetActor()->GetStackUnder());
     else
-      GetConsuming()->MoveTo(GetActor()->GetStack());
+      Consuming->MoveTo(GetActor()->GetStack());
 }
 
 void consume::DeleteUsedItems()
 {
-  if(GetConsuming())
-    GetConsuming()->SendToHell();
+  if(*Consuming)
+    Consuming->SendToHell();
 }
 
 void dig::DropUsedItems()
 {
-  if(GetRightBackup())
+  if(*RightBackup)
     if(!game::IsInWilderness())
-      GetRightBackup()->MoveTo(GetActor()->GetStackUnder());
+      RightBackup->MoveTo(GetActor()->GetStackUnder());
     else
-      GetRightBackup()->MoveTo(GetActor()->GetStack());
+      RightBackup->MoveTo(GetActor()->GetStack());
 
-  if(GetLeftBackup())
+  if(*LeftBackup)
     if(!game::IsInWilderness())
-      GetLeftBackup()->MoveTo(GetActor()->GetStackUnder());
+      LeftBackup->MoveTo(GetActor()->GetStackUnder());
     else
-      GetLeftBackup()->MoveTo(GetActor()->GetStack());
+      LeftBackup->MoveTo(GetActor()->GetStack());
 }
 
 void dig::DeleteUsedItems()
 {
-  if(GetRightBackup())
-    GetRightBackup()->SendToHell();
+  if(*RightBackup)
+    RightBackup->SendToHell();
 
-  if(GetLeftBackup())
-    GetLeftBackup()->SendToHell();
+  if(*LeftBackup)
+    LeftBackup->SendToHell();
 }
 
 void consume::VirtualConstructor(bool)
@@ -438,10 +424,10 @@ void read::Terminate(bool Finished)
       if(!Actor->IsEnabled())
 	return;
 
-      if(GetLiterature())
+      if(*Literature)
 	Literature->MoveTo(GetActor()->GetStack());
     }
-  else if(GetLiterature())
+  else if(*Literature)
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop reading %s.", Literature->CHAR_NAME(DEFINITE));
@@ -478,22 +464,17 @@ void read::Load(inputfile& SaveFile)
 
 void read::DropUsedItems()
 {
-  if(GetLiterature())
+  if(*Literature)
     if(!game::IsInWilderness())
-      GetLiterature()->MoveTo(GetActor()->GetStackUnder());
+      Literature->MoveTo(GetActor()->GetStackUnder());
     else
-      GetLiterature()->MoveTo(GetActor()->GetStack());
+      Literature->MoveTo(GetActor()->GetStack());
 }
 
 void read::DeleteUsedItems()
 {
-  if(GetLiterature())
-    GetLiterature()->SendToHell();
-}
-
-item* read::GetLiterature() const
-{
-  return *Literature;
+  if(*Literature)
+    Literature->SendToHell();
 }
 
 void read::SetLiterature(item* What)

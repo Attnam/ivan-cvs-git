@@ -17,7 +17,7 @@ class wterrain
   vector2d GetPos() const { return WSquareUnder->GetPos(); }
   wsquare* GetWSquareUnder() const { return WSquareUnder; }
   void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
-  worldmap* GetWorldMap() const { return GetWSquareUnder()->GetWorldMap(); }
+  worldmap* GetWorldMap() const { return WSquareUnder->GetWorldMap(); }
   void AddName(festring&, uchar) const;
   festring GetName(uchar) const;
   bool IsAnimated() const { return AnimationFrames > 1; }
@@ -37,12 +37,12 @@ class gwterrainprototype
   gwterrainprototype(gwterrain* (*)(bool), const char*);
   gwterrain* Clone() const { return Cloner(false); }
   gwterrain* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   gwterrain* (*Cloner)(bool);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class gwterrain : public wterrain, public gterrain
@@ -67,12 +67,12 @@ class owterrainprototype
   owterrainprototype(owterrain* (*)(bool), const char*);
   owterrain* Clone() const { return Cloner(false); }
   owterrain* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   owterrain* (*Cloner)(bool);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class owterrain : public wterrain, public oterrain
@@ -133,3 +133,4 @@ WTERRAIN(\
 );
 
 #endif
+

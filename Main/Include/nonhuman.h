@@ -58,8 +58,7 @@ class ABSTRACT_CHARACTER
   void SetStrength(ushort What) { Strength = What; }
   void SetAgility(ushort What) { Agility = What; }
   virtual void AddSpecialStethoscopeInfo(felist&) const;
-  virtual void RaiseStats();
-  virtual void LowerStats();
+  virtual bool EditAllAttributes(short);
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const;
  protected:
@@ -97,8 +96,8 @@ class CHARACTER
   virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool SpecialEnemySightedReaction(character*);
   virtual bool Faint(ushort, bool = false) { return false; }
-  virtual bool CanBeRaisedFromTheDead(corpse*) const; 
-  virtual void CompleteRiseFromTheDead();
+  virtual bool MustBeRemovedFromBone() const;
+  virtual bool CompleteRiseFromTheDead();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
@@ -111,10 +110,10 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
-  virtual const char* FirstPersonBiteHitVerb() const;
-  virtual const char* FirstPersonCriticalBiteHitVerb() const;
-  virtual const char* ThirdPersonBiteHitVerb() const;
-  virtual const char* ThirdPersonCriticalBiteHitVerb() const;
+  virtual const char* FirstPersonBiteVerb() const;
+  virtual const char* FirstPersonCriticalBiteVerb() const;
+  virtual const char* ThirdPersonBiteVerb() const;
+  virtual const char* ThirdPersonCriticalBiteVerb() const;
   virtual bool AttackIsBlockable(uchar) const { return false; }
 );
 
@@ -264,6 +263,7 @@ class CHARACTER
   virtual ushort GetTorsoSpecialColor() const;
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
+  virtual bool MustBeRemovedFromBone() const;
 );
 
 class CHARACTER
@@ -349,11 +349,25 @@ class CHARACTER
 (
   ghost,
   nonhumanoid,
+ public:
+  virtual void AddName(festring&, uchar) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  void SetOwnerSoul(const festring& What) { OwnerSoul = What; }
+  virtual bool IsNameable() const { return OwnerSoul.IsEmpty(); }
+  virtual bool RaiseTheDead(character*);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual bool SpecialEnemySightedReaction(character*);
+  void SetIsActive(bool What) { Active = What; }
  protected:
-  virtual const char* FirstPersonBiteHitVerb() const;
-  virtual const char* FirstPersonCriticalBiteHitVerb() const;
-  virtual const char* ThirdPersonBiteHitVerb() const;
-  virtual const char* ThirdPersonCriticalBiteHitVerb() const;
+  virtual void VirtualConstructor(bool);
+  virtual const char* FirstPersonBiteVerb() const;
+  virtual const char* FirstPersonCriticalBiteVerb() const;
+  virtual const char* ThirdPersonBiteVerb() const;
+  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual void GetAICommand();
+  festring OwnerSoul;
+  bool Active;
 );
 
 class CHARACTER
@@ -387,3 +401,4 @@ class CHARACTER
 );
 
 #endif
+

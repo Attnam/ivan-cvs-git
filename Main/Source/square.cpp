@@ -22,14 +22,12 @@ void square::AddCharacter(character* Guy)
   Character = Guy;
   Guy->SetSquareUnder(this);
   NewDrawRequested = true;
-
-  //if(Guy->IsAnimated())
-    IncAnimatedEntities();
+  IncAnimatedEntities();
 }
 
 void square::RemoveCharacter()
 {
-  if(Character)// && Character->IsAnimated())
+  if(Character)
     DecAnimatedEntities();
 
   SetCharacter(0);
@@ -120,9 +118,3 @@ bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), IgnoreDarkness);
 }
-
-bool square::EngravingsCanBeReadByPlayer()
-{
-  return EngravingsCanBeReadByCharacter(game::GetPlayer());
-}
-

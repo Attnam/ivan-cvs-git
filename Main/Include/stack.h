@@ -101,6 +101,9 @@ class stack
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;
   void Search(const character*, ushort);
   bool IsDangerous(const character*) const;
+  void PreProcessForBone();
+  void PostProcessForBone();
+  void FinalProcessForBone();
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);
@@ -118,3 +121,4 @@ class stack
 };
 
 #endif
+

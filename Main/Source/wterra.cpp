@@ -1,7 +1,7 @@
 /* Compiled through wmapset.cpp */
 
-gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<gwterrain>::Add(this); }
-owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<owterrain>::Add(this); }
+gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<gwterrain>::Add(this); }
+owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<owterrain>::Add(this); }
 
 void wterrain::AddName(festring& String, uchar Case) const
 {
@@ -81,19 +81,23 @@ bool DrawOrderer(const std::pair<vector2d, uchar>& Pair1, const std::pair<vector
 void gwterrain::CalculateNeighbourBitmapPoses()
 {
   ushort Index = 0;
+  vector2d Pos = GetPos();
+  worldmap* WorldMap = GetWorldMap();
+  ushort Priority = GetPriority();
 
   for(ushort d = 0; d < 8; ++d)
     {
-      wsquare* NeighbourSquare = GetWorldMap()->GetNeighbourWSquare(GetPos(), d);
+      wsquare* NeighbourSquare = WorldMap->GetNeighbourWSquare(Pos, d);
 
       if(NeighbourSquare)
 	{
 	  gwterrain* DoNeighbour = NeighbourSquare->GetGWTerrain();
+	  ushort NeighbourPriority = DoNeighbour->GetPriority();
 
-	  if(DoNeighbour->GetPriority() > GetPriority())
+	  if(NeighbourPriority > Priority)
 	    {
 	      Neighbour[Index].first = DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(d) << 4);
-	      Neighbour[Index].second = DoNeighbour->GetPriority();
+	      Neighbour[Index].second = NeighbourPriority;
 	      ++Index;
 	    }
 	}
@@ -124,3 +128,4 @@ uchar owterrain::GetAttachedEntry() const
 {
   return STAIRS_UP;
 }
+

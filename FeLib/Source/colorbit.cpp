@@ -110,6 +110,8 @@ void colorizablebitmap::Save(const festring& FileName)
 
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
 {
+  /* Expand! */
+
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->GetXSize(), Bitmap->GetYSize()))
     return;
 
@@ -147,6 +149,8 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 
 bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
 {
+  /* Expand! */
+
   bitmap* Bitmap = new bitmap(XSize, YSize);
   uchar* Buffer = PaletteBuffer;
   ulong DestBuffer = ulong(Bitmap->GetImage()[0]);
@@ -201,6 +205,8 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
 
 bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
 {
+  /* Expand! */
+
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   uchar* Buffer = reinterpret_cast<uchar*>(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
   ulong DestBuffer = ulong(Bitmap->GetImage()[0]);

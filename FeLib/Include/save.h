@@ -62,11 +62,9 @@ class inputfile
   const valuemap* ValueMap;
 };
 
-/*
- * Reads a binary form variable of type type and returns it.
+/* Reads a binary form variable of type type and returns it.
  * An inputfile template member function would be far more elegant,
- * but VC doesn't seem to understand it.
- */
+ * but VC doesn't seem to understand it. */
 
 template <class type> inline type ReadType(inputfile& SaveFile)
 {

@@ -18,12 +18,12 @@ class roomprototype
   roomprototype(room* (*)(bool), const char*);
   room* Clone() const { return Cloner(false); }
   room* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   room* (*Cloner)(bool);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class room
@@ -98,3 +98,4 @@ name : public base\
 }; ROOM_PROTOTYPE(name, base);
 
 #endif
+

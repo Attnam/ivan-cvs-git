@@ -101,7 +101,7 @@ class object : public entity, public id
   void RandomizeVisualEffects();
   virtual bool HasSpecialAnimation() const { return false; }
   material* MainMaterial;
-  std::vector<graphicid> GraphicId;
+  std::vector<graphicid> GraphicID;
   std::vector<bitmap*> Picture;
   ushort Config;
   uchar VisualEffects;
@@ -109,3 +109,4 @@ class object : public entity, public id
 };
 
 #endif
+

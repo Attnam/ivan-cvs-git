@@ -1,7 +1,7 @@
 /* Compiled through levelset.cpp */
 
-glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<glterrain>::Add(this); }
-olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<olterrain>::Add(this); }
+glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, ushort), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
+olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, ushort), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
 const glterraindatabase& glterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 const olterraindatabase& olterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
@@ -243,5 +243,6 @@ void olterraindatabase::InitDefaults(ushort Config)
   /* TERRIBLE gum solution! */
 
   if(Config & DEVOUT)
-    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()).CapitalizeCopy();
+    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassID()).CapitalizeCopy();
 }
+

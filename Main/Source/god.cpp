@@ -1,6 +1,6 @@
 /* Compiled through godset.cpp */
 
-godprototype::godprototype(god* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<god>::Add(this); }
+godprototype::godprototype(god* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
 
 god::god() : Relation(0), Timer(0), Known(false) { }
 uchar god::GetBasicAlignment() const { return NEUTRAL; }
@@ -261,3 +261,4 @@ void god::ApplyDivineTick()
   if(Timer)
     --Timer;
 }
+

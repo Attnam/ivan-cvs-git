@@ -151,14 +151,17 @@ class lsquare : public square
   virtual bool SquareIsWalkable(const character* Char = 0) const { return IsWalkable(Char); }
   void SignalSmokeAlphaChange(short);
   void ShowSmokeMessage() const;
-  virtual void DisplaySmokeInfo(festring&) const;
+  void DisplaySmokeInfo(festring&) const;
   bool IsDipDestination() const;
   void ReceiveEarthQuakeDamage();
   bool IsDangerous(character*) const;
   bool CanBeFeltByPlayer() const;
-  virtual bool EngravingsCanBeReadByCharacter(const character*);
-  virtual void DisplayEngravedInfo(festring&) const;
-  virtual bool HasEngravings() const { return !Engraved.IsEmpty(); }
+  void PreProcessForBone();
+  void PostProcessForBone(float&, ushort&);
+  void DisplayEngravedInfo(festring&) const;
+  bool EngravingsCanBeReadByPlayer();
+  bool HasEngravings() const { return !Engraved.IsEmpty(); }
+  void FinalProcessForBone();
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -184,3 +187,4 @@ inline bool lsquare::IsDark() const
 }
 
 #endif
+

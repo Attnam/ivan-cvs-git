@@ -93,7 +93,7 @@ class glterrainprototype
   glterrainprototype(glterrainprototype*, glterrain* (*)(ushort, ushort), const char*);
   glterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   glterrain* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
   const std::map<ushort, glterraindatabase>& GetConfig() const { return Config; }
   const glterrainprototype* GetBase() const { return Base; }
@@ -104,7 +104,7 @@ class glterrainprototype
   glterrainprototype* Base;
   std::map<ushort, glterraindatabase> Config;
   glterrain* (*Cloner)(ushort, ushort);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class glterrain : public lterrain, public gterrain
@@ -195,7 +195,7 @@ class olterrainprototype
   olterrainprototype(olterrainprototype*, olterrain* (*)(ushort, ushort), const char*);
   olterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   olterrain* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
   const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
   const olterrainprototype* GetBase() const { return Base; }
@@ -206,7 +206,7 @@ class olterrainprototype
   olterrainprototype* Base;
   std::map<ushort, olterraindatabase> Config;
   olterrain* (*Cloner)(ushort, ushort);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class olterrain : public lterrain, public oterrain
@@ -327,3 +327,4 @@ LTERRAIN(\
 );
 
 #endif
+

@@ -31,7 +31,7 @@ template <class type> class protocontainer
   static const prototype* GetProto(ushort Index) { return ProtoData[Index]; }
   static ushort GetProtoAmount() { return ProtoAmount; }
   static ushort SearchCodeName(const festring&);
-  static const char* GetMainClassId() { return ProtoData[1]->GetClassId(); }
+  static const char* GetMainClassID() { return ProtoData[1]->GetClassID(); }
  private:
   static prototype** ProtoData;
   static valuemap CodeNameMap;
@@ -45,7 +45,7 @@ template <class type> inline ushort protocontainer<type>::Add(prototype* Proto)
 
   ushort Index = ProtoAmount++;
   ProtoData[Index] = Proto;
-  CodeNameMap.insert(std::pair<festring, long>(Proto->GetClassId(), Index));
+  CodeNameMap.insert(std::pair<festring, long>(Proto->GetClassID(), Index));
   return Index;
 }
 
@@ -64,6 +64,7 @@ class protosystem
   static character* CreateMonster(const festring&, ushort = 0, bool = true);
   static item* CreateItem(const festring&, bool = true);
   static material* CreateMaterial(const festring&, ulong = 0, bool = true);
+  static void CreateEveryNormalEnemy(std::vector<character*>&);
 #ifdef WIZARD
   static void CreateEveryCharacter(std::vector<character*>&);
   static void CreateEveryItem(itemvector&);
@@ -90,3 +91,4 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
 }
 
 #endif
+

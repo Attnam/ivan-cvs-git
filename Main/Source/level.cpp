@@ -725,7 +725,6 @@ void level::ParticleTrail(vector2d StartPos, vector2d EndPos)
 {
   if(StartPos.X != EndPos.X && StartPos.Y != EndPos.Y)
     ABORT("666th rule of thermodynamics - Particles don't move the way you want them to move.");
-  // NEEDS SOME WORK!
 }
 
 bool level::IsOnGround() const
@@ -1520,4 +1519,47 @@ void level::LightningVisualizer(const rect& Rect, ushort BeamColor) const
 
   graphics::BlitDBToScreen();
   while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+}
+
+bool level::PreProcessForBone()
+{
+  if(!*LevelScript->CanGenerateBone())
+    return false;
+
+  /* Gum solution */
+
+  game::SetQuestMonsterFound(false);
+
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      Map[x][y]->PreProcessForBone();
+
+  uchar DungeonIndex = GetDungeon()->GetIndex();
+
+  return   game::QuestMonsterFound()
+      || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
+      &&  (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != IVAN_LEVEL && Index != DARK_LEVEL)));
+}
+
+bool level::PostProcessForBone()
+{
+  game::SetTooGreatDangerFound(false);
+  float DangerSum = 0;
+  ushort Enemies = 0;
+
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      Map[x][y]->PostProcessForBone(DangerSum, Enemies);
+
+  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > float(Difficulty) / 100))
+    return false;
+
+  return true;
+}
+
+void level::FinalProcessForBone()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      Map[x][y]->FinalProcessForBone();
 }

@@ -87,8 +87,7 @@ class ABSTRACT_ITEM
   bool CannotBeSevered(ushort);
   virtual bool IsDipDestination(const character*) const;
   virtual material* CreateDipMaterial();
-  virtual void RaiseStats() { }
-  virtual void LowerStats() { }
+  virtual bool EditAllAttributes(short) { return false; }
   virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   void SetIsSparklingB(bool What) { IsSparklingB = What; }
   void SetIsSparklingC(bool What) { IsSparklingC = What; }
@@ -247,7 +246,6 @@ class ABSTRACT_ITEM
   ushort GetDexterity() const { return Dexterity; }
   ushort GetStrength() const { return Strength; }
   virtual arm* GetPairArm() const = 0;
-  virtual sweaponskill* GetCurrentSWeaponSkill() const = 0;
   long GetWieldedAPCost() const;
   long GetUnarmedAPCost() const;
   virtual item* GetEquipment(ushort) const;
@@ -277,8 +275,7 @@ class ABSTRACT_ITEM
   void ApplyDexterityPenalty(item*);
   virtual bool DamageArmor(character*, ushort, ushort);
   bool CheckIfWeaponTooHeavy(const char*) const;
-  virtual void RaiseStats();
-  virtual void LowerStats();
+  virtual bool EditAllAttributes(short);
   void AddAttackInfo(felist&) const;
   void AddDefenceInfo(felist&) const;
   void UpdateWieldedPicture();
@@ -287,6 +284,7 @@ class ABSTRACT_ITEM
   virtual void UpdatePictures();
   virtual ushort GetAnimationFrames() const;
  protected:
+  virtual sweaponskill*& GetCurrentSWeaponSkill() const = 0;
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
   gearslot GauntletSlot;
@@ -301,7 +299,7 @@ class ABSTRACT_ITEM
   long APCost;
   short StrengthBonus;
   short DexterityBonus;
-  std::vector<graphicid> WieldedGraphicId;
+  std::vector<graphicid> WieldedGraphicID;
   std::vector<bitmap*> WieldedPicture;
 );
 
@@ -313,10 +311,10 @@ class ITEM
   rightarm(const rightarm&);
   virtual uchar GetBodyPartIndex() const;
   virtual arm* GetPairArm() const;
-  virtual sweaponskill* GetCurrentSWeaponSkill() const;
   virtual bool IsRightArm() const { return true; }
   virtual ushort GetSpecialFlags() const;
  protected:
+  virtual sweaponskill*& GetCurrentSWeaponSkill() const;
   virtual void VirtualConstructor(bool);
 );
 
@@ -328,10 +326,10 @@ class ITEM
   leftarm(const leftarm&);
   virtual uchar GetBodyPartIndex() const;
   virtual arm* GetPairArm() const;
-  virtual sweaponskill* GetCurrentSWeaponSkill() const;
   virtual bool IsRightArm() const { return false; }
   virtual ushort GetSpecialFlags() const;
  protected:
+  virtual sweaponskill*& GetCurrentSWeaponSkill() const;
   virtual void VirtualConstructor(bool);
 );
 
@@ -388,8 +386,7 @@ class ABSTRACT_ITEM
   void ApplyAgilityPenalty(item*);
   virtual void SignalVolumeAndWeightChange();
   virtual bool DamageArmor(character*, ushort, ushort);
-  virtual void RaiseStats();
-  virtual void LowerStats();
+  virtual bool EditAllAttributes(short);
   void AddAttackInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
@@ -470,6 +467,10 @@ class ITEM
   virtual uchar GetAttachedGod() const;
   virtual bool IsDipDestination(const character*) const;
   virtual material* CreateDipMaterial();
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
+  virtual void FinalProcessForBone();
+  virtual bool SuckSoul(character*, character* = 0);
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials() { }
@@ -506,3 +507,4 @@ class ITEM
 );
 
 #endif
+

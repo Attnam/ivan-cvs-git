@@ -17,8 +17,8 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  virtual ushort GetCounter() const { return Counter; }
-  virtual void SetCounter(ushort What) { Counter = What; }
+  //ushort GetCounter() const { return Counter; }
+  void SetCounter(ushort What) { Counter = What; }
   virtual bool IsVoluntary() const { return false; }
   virtual void Terminate(bool);
   virtual bool AllowFaint() const { return false; }
@@ -37,12 +37,12 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  virtual item* GetConsuming() const;
-  virtual void SetConsuming(item*);
-  virtual bool GetWasOnGround() const { return WasOnGround; }
-  virtual void SetWasOnGround(bool What) { WasOnGround = What; }
-  virtual bool HasEaten() const { return Eaten; }
-  virtual void SetHasEaten(bool What) { Eaten = What; }
+  //item* GetConsuming() const;
+  void SetConsuming(item*);
+  //bool GetWasOnGround() const { return WasOnGround; }
+  void SetWasOnGround(bool What) { WasOnGround = What; }
+  //bool HasEaten() const { return Eaten; }
+  void SetHasEaten(bool What) { Eaten = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
   virtual void DropUsedItems();
@@ -69,13 +69,14 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  virtual short GetGoalHP() const { return GoalHP; }
-  virtual void SetGoalHP(short What) { GoalHP = What; }
+  void SetGoalHP(short What) { GoalHP = What; }
   virtual void Terminate(bool);
-  virtual bool GetRestRegenerationBonus() const { return true; }
+  virtual bool IsRest() const { return true; }
   virtual const char* GetDescription() const;
+  void SetTurnToStop(ulong What) { TurnToStop = What; }
  protected:
   short GoalHP;
+  ulong TurnToStop;
 );
 
 class ACTION
@@ -86,13 +87,13 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  virtual vector2d GetSquareDug() const { return SquareDug; }
-  virtual void SetSquareDug(vector2d What) { SquareDug = What; }
+  //vector2d GetSquareDug() const { return SquareDug; }
+  void SetSquareDug(vector2d What) { SquareDug = What; }
   virtual void Terminate(bool);
-  virtual item* GetRightBackup() const;
-  virtual void SetRightBackup(item*);
-  virtual item* GetLeftBackup() const;
-  virtual void SetLeftBackup(item*);
+  //item* GetRightBackup() const;
+  void SetRightBackup(item*);
+  //item* GetLeftBackup() const;
+  void SetLeftBackup(item*);
   virtual bool AllowDisplace() const { return false; }
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
@@ -102,7 +103,7 @@ class ACTION
   virtual ulong GetEmitation() const;
   virtual long GetScore() const;
   virtual bool ShowEnvironment() const { return false; }
-  virtual void SetMoveDigger(bool What) { MoveDigger = What; }
+  void SetMoveDigger(bool What) { MoveDigger = What; }
  protected:
   virtual void VirtualConstructor(bool);
   actionslot RightBackup;
@@ -119,10 +120,10 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  virtual uchar GetDirection() const { return Direction; }
-  virtual void SetDirection(uchar What) { Direction = What; }
-  virtual bool GetWalkingInOpen() const { return WalkingInOpen; }
-  virtual void SetWalkingInOpen(bool What) { WalkingInOpen = What; }
+  uchar GetDirection() const { return Direction; }
+  void SetDirection(uchar What) { Direction = What; }
+  bool IsWalkingInOpen() const { return WalkingInOpen; }
+  void SetIsWalkingInOpen(bool What) { WalkingInOpen = What; }
   virtual bool AllowDisplace() const { return false; }
   virtual const char* GetDescription() const;
   virtual bool ShowEnvironment() const { return false; }
@@ -140,13 +141,13 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  virtual item* GetLiterature() const;
-  virtual void SetLiterature(item*);
+  //item* GetLiterature() const;
+  void SetLiterature(item*);
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual const char* GetDescription() const;
-  virtual ushort GetCounter() const { return Counter; }
-  virtual void SetCounter(ushort What) { Counter = What; }
+  //ushort GetCounter() const { return Counter; }
+  void SetCounter(ushort What) { Counter = What; }
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
   virtual ulong GetEmitation() const;

@@ -86,6 +86,7 @@ inputfile& operator>>(inputfile&, dangerid&);
 typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
 typedef std::map<configid, ushort> massacremap;
+typedef std::map<ulong, ulong> boneidmap;
 
 class game
 {
@@ -123,7 +124,7 @@ class game
   static bool NoxifyHandler(long, long);
   static void UpdateCameraXWithPos(ushort);
   static void UpdateCameraYWithPos(ushort);
-  static uchar GetCurrentLevelIndex() { return CurrentLevelIndex; }
+  static ushort GetCurrentLevelIndex() { return CurrentLevelIndex; }
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = false);
   static god* GetGod(ushort Index) { return God[Index]; }
@@ -154,7 +155,7 @@ class game
   static ushort GetLevels();
   static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeonIndex]; }
   static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
-  static uchar GetCurrentDungeonIndex() { return CurrentDungeonIndex; }
+  static ushort GetCurrentDungeonIndex() { return CurrentDungeonIndex; }
   static void InitDungeons();
   static bool OnScreen(vector2d);
   static void DoEvilDeed(ushort);
@@ -240,6 +241,7 @@ class game
   static festring GetHomeDir();
   static festring GetSaveDir();
   static festring GetGameDir();
+  static festring GetBoneDir();
   static bool ExplosionHandler(long, long);
   static ulong CreateNewExplosionID() { return NextExplosionID++; }
   static void SetCurrentExplosion(const explosion* What) { CurrentExplosion = What; }
@@ -268,11 +270,22 @@ class game
   static bool GoThroughWallsCheatIsActive() { return false; }
 #endif
   static bool WizardModeIsReallyActive() { return WizardMode; }
+  static void CreateBone();
+  static bool QuestMonsterFound() { return QuestMonsterFoundBool; }
+  static void SetQuestMonsterFound(bool What) { QuestMonsterFoundBool = What; }
+  static bool PrepareRandomBone(ushort);
+  static boneidmap& GetBoneItemIDMap() { return BoneItemIDMap; }
+  static boneidmap& GetBoneCharacterIDMap() { return BoneCharacterIDMap; }
+  static float CalculateAverageDanger(const std::vector<character*>&, character*);
+  static float CalculateAverageDangerOfAllNormalEnemies();
+  static character* CreateGhost();
+  static bool TooGreatDangerFound() { return TooGreatDangerFoundBool; }
+  static void SetTooGreatDangerFound(bool What) { TooGreatDangerFoundBool = What; }
  private:
   static const char* const Alignment[];
   static god** God;
-  static uchar CurrentLevelIndex;
-  static uchar CurrentDungeonIndex;
+  static ushort CurrentLevelIndex;
+  static ushort CurrentDungeonIndex;
   static const int MoveCommandKey[];
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
@@ -310,7 +323,7 @@ class game
   static vector2d CurrentEmitterPos;
   static bool Generating;
   static dangermap DangerMap;
-  static configid NextDangerId;
+  static configid NextDangerID;
   static float AveragePlayerArmStrength;
   static float AveragePlayerLegStrength;
   static float AveragePlayerDexterity;
@@ -337,6 +350,10 @@ class game
   static bool WizardMode;
   static uchar SeeWholeMapCheatMode;
   static bool GoThroughWallsCheat;
+  static bool QuestMonsterFoundBool;
+  static boneidmap BoneItemIDMap;
+  static boneidmap BoneCharacterIDMap;
+  static bool TooGreatDangerFoundBool;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)
@@ -350,3 +367,4 @@ inline bool game::IsDark(ulong Light)
 }
 
 #endif
+

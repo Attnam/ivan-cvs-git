@@ -1,8 +1,7 @@
 #ifndef __FELIBDEF_H__
 #define __FELIBDEF_H__
 
-/*
- * Global defines for the project FeLib.
+/* Global defines for the project FeLib.
  * This file is created to decrease the need of including headers in other headers just for the sake of some silly macros,
  * because it decreases compilation efficiency and may even cause cross-including
  *
@@ -11,8 +10,7 @@
  * 2. all inline functions used in multiple .cpp or .h files and independent enough (do not require other headers)
  * 3. class construction macros used in multiple .h files
  *
- * DO NOT INCLUDE ANY FILES IN THIS HEADER.
- */
+ * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
 
 #define FPI 3.1415926535897932384626433832795f
 
@@ -26,7 +24,6 @@ inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
 inline ushort GetGreen16(ushort Color) { return Color >> 3 & 0xFC; }
 inline ushort GetBlue16(ushort Color) { return Color << 3 & 0xF8; }
 inline ushort MakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F); }
-inline ushort RightShift8AndMakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red & 0xF800) | (Green >> 5 & 0x7E0) | (Blue >> 11); }
 inline ushort MakeShadeColor(ushort Color) { return MakeRGB16(GetRed16(Color) / 3, GetGreen16(Color) / 3, GetBlue16(Color) / 3); }
 inline ushort EditRGB16(ushort Color, short Red, short Green, short Blue) { return MakeRGB16(Limit(GetRed16(Color) + Red, 0, 0xFF), Limit(GetGreen16(Color) + Green, 0, 0xFF), Limit(GetBlue16(Color) + Blue, 0, 0xFF)); }
 

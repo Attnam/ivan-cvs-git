@@ -450,8 +450,11 @@ ushort stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, us
 
 bool stack::RaiseTheDead(character* Summoner)
 {
-  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->RaiseTheDead(Summoner))
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->RaiseTheDead(Summoner))
       return true;
 
   return false;
@@ -586,7 +589,7 @@ bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
   return false;
 }
 
-/* returns true if something was cloned. Max is the cap of items to be cloned */
+/* Returns true if something was cloned. Max is the cap of items to be cloned */
 
 bool stack::Clone(ushort Max)
 {
@@ -838,4 +841,30 @@ bool stack::IsDangerous(const character* Viewer) const
       return true;
 
   return false;
+}
+
+void stack::PreProcessForBone()
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    ItemVector[c]->PreProcessForBone();
+}
+
+void stack::PostProcessForBone()
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    ItemVector[c]->PostProcessForBone();
+}
+
+void stack::FinalProcessForBone()
+{
+  /* Items can't be removed during the final processing stage */
+
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->FinalProcessForBone();
 }

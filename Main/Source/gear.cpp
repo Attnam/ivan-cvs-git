@@ -504,7 +504,7 @@ void shield::AddInventoryEntry(const character* Viewer, festring& Entry, ushort,
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, "  << GetBaseToHitValueDescription();
+      Entry << " [" << GetWeight() << "g, "  << GetBaseBlockValueDescription();
 
       if(!IsBroken())
 	Entry << ", " << GetStrengthValueDescription();

@@ -12,6 +12,8 @@ class ABSTRACT_CHARACTER
   humanoid,
   character,
  public:
+  friend class rightarm;
+  friend class leftarm;
   humanoid(const humanoid&);
   virtual bool CanWield() const;
   virtual bool Hit(character*, bool = false);
@@ -73,7 +75,7 @@ class ABSTRACT_CHARACTER
   virtual void SetEquipment(ushort, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
   virtual ushort GlobalResistance(ushort) const;
-  virtual void CompleteRiseFromTheDead();
+  virtual bool CompleteRiseFromTheDead();
   virtual bool HandleNoBodyPart(ushort);
   virtual void Kick(lsquare*, bool = false);
   virtual float GetTimeToKill(const character*, bool) const;
@@ -94,9 +96,6 @@ class ABSTRACT_CHARACTER
   void SetCurrentRightSWeaponSkill(sweaponskill* What) { CurrentRightSWeaponSkill = What; }
   sweaponskill* GetCurrentLeftSWeaponSkill() const { return CurrentLeftSWeaponSkill; }
   void SetCurrentLeftSWeaponSkill(sweaponskill* What) { CurrentLeftSWeaponSkill = What; }
-  sweaponskill* GetSWeaponSkill(ushort Index) const { return SWeaponSkill[Index]; }
-  void SetSWeaponSkill(ushort Index, sweaponskill* What) { SWeaponSkill[Index] = What; }
-  ushort GetSWeaponSkills() const { return SWeaponSkill.size(); }
   virtual void SWeaponSkillTick();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -116,7 +115,6 @@ class ABSTRACT_CHARACTER
   virtual void CreateInitialEquipment(ushort);
   virtual festring GetBodyPartName(ushort, bool = false) const;
   virtual void CreateBlockPossibilityVector(blockvector&, float) const;
-  void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
   virtual item* SevereBodyPart(ushort);
   virtual uchar GetSWeaponSkillLevel(const item*) const;
   virtual bool IsAlive() const;
@@ -135,6 +133,8 @@ class ABSTRACT_CHARACTER
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
   virtual ushort GetRandomApplyBodyPart() const;
+  virtual void FinalProcessForBone();
+  void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -148,7 +148,7 @@ class ABSTRACT_CHARACTER
   virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual const festring& GetDeathMessage() const;
-  std::vector<sweaponskill*> SWeaponSkill;
+  std::list<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
 );
@@ -158,10 +158,18 @@ class CHARACTER
   human,
   humanoid,
  public:
+  human(const human&);
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   virtual void SignalBodyPartVolumeAndWeightChange();
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
   virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
+  virtual void SetSoulID(ulong);
+  virtual bool SuckSoul(character*);
+  virtual bool CompleteRiseFromTheDead();
+  virtual void FinalProcessForBone();
+  virtual void BeTalkedTo();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -171,6 +179,9 @@ class CHARACTER
   virtual bool BodyPartColorAIsSparkling(ushort, bool = false) const;
   virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
   virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
+  ulong SoulID;
+  bool IsBonePlayer;
+  bool IsClone;
 );
 
 class CHARACTER
@@ -183,6 +194,7 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void BeTalkedTo();
   bool HealFully(character*);
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse(lsquare*);
@@ -259,6 +271,7 @@ class CHARACTER
   humanoid,
  public:
   virtual bool Hit(character*, bool = false);
+  virtual bool MustBeRemovedFromBone() const;
  protected:
   virtual void GetAICommand();
   virtual bool AttackIsBlockable(uchar) const { return false; }
@@ -304,6 +317,7 @@ class CHARACTER
   virtual bool MoveRandomly();
   virtual void BeTalkedTo();
   virtual bool BoundToUse(const item*, ushort) const;
+  virtual bool MustBeRemovedFromBone() const;
  protected:
   virtual bool ShowClassDescription() const;
 );
@@ -437,6 +451,7 @@ class CHARACTER
   virtual ulong GetBaseEmitation() const;
   virtual bool CanCreateBodyPart(ushort) const;
   virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
+  virtual void FinalProcessForBone();
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;
@@ -538,6 +553,7 @@ class CHARACTER
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();

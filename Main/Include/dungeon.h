@@ -34,6 +34,8 @@ class dungeon
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
   festring GetLevelDescription(ushort);
   festring GetShortLevelDescription(ushort);
+  level* LoadLevel(inputfile&, ushort);
+  void SetGenerated(ushort Index, bool What) { Generated[Index] = What; }
  private:
   void Initialize();
   const dungeonscript* DungeonScript;

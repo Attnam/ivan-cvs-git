@@ -46,7 +46,8 @@ template <class type> inline void databasecreator<type>::InstallDataBase(type* I
   if(i != Config.end())
     Instance->DataBase = &i->second;
   else
-    ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassId(), Instance->Config);
+    ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassID(), Instance->Config);
 }
 
 #endif
+

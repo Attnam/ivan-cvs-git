@@ -403,14 +403,12 @@ void festring::Insert(sizetype Pos, const char* CStr, sizetype N)
       else if(Pos == OldSize)
 	Append(CStr, N);
       else
-	;//abort
+	ABORT("Illegal festring insertion detected!");
     }
 }
 
-/*
- * Creates map of char representations of numbers 0-999 used by festring::Append(long).
- * Due to automatization, you don't need to explicitly call it.
- */
+/* Creates map of char representations of numbers 0-999 used by festring::Append(long).
+ * Due to automatization, you don't need to explicitly call it. */
 
 void festring::InstallIntegerMap()
 {
@@ -438,10 +436,8 @@ void festring::InstallIntegerMap()
   atexit(DeInstallIntegerMap);
 }
 
-/*
- * Deletes the integer map used by festring::Append(long).
- * Due to automatization, you don't need to explicitly call it.
- */
+/* Deletes the integer map used by festring::Append(long).
+ * Due to automatization, you don't need to explicitly call it. */
 
 void festring::DeInstallIntegerMap()
 {
@@ -449,10 +445,8 @@ void festring::DeInstallIntegerMap()
   IntegerMap = 0;
 }
 
-/*
- * Displays numbers in the range [-2147483647, 2147483647].
- * Much faster than sprintf and (nonstandard) itoa.
- */
+/* Displays numbers in the range [-2147483647, 2147483647].
+ * Much faster than sprintf and (nonstandard) itoa. */
 
 festring& festring::Append(long Integer)
 {
@@ -525,10 +519,8 @@ festring& festring::Append(long Integer)
   return Append(BufferPtr, EndPtr - BufferPtr);
 }
 
-/*
- * The Result string receives up to Length characters from source,
- * but words are left uncut if possible.
- */
+/* The Result string receives up to Length characters from source,
+ * but words are left uncut if possible. */
 
 void festring::SplitString(festring& Source, festring& Result, sizetype Length)
 {
@@ -553,12 +545,10 @@ void festring::SplitString(festring& Source, festring& Result, sizetype Length)
     }
 }
 
-/*
- * Divides Source into lines of size up to Length without cutting words
+/* Divides Source into lines of size up to Length without cutting words
  * and stores them one by one to StringVector. You can also specify a Marginal,
  * in which case a number of spaces is inserted in the beginning of each line
- * except the first. It returns the number of created lines.
- */
+ * except the first. It returns the number of created lines. */
 
 ushort festring::SplitString(const festring& Source, std::vector<festring>& StringVector, sizetype Length, sizetype Marginal)
 {
@@ -593,11 +583,9 @@ ushort festring::SplitString(const festring& Source, std::vector<festring>& Stri
 
 char Capitalize(char Char) { return Char > 0x60 && Char < 0x7B ? Char ^ 0x20 : Char; }
 
-/*
- * Returns the position of the first occurance of What in Where
+/* Returns the position of the first occurance of What in Where
  * starting at Begin or after it, ignoring the case of letters.
- * If the search fails, festring::NPos is returned instead.
- */
+ * If the search fails, festring::NPos is returned instead. */
 
 festring::sizetype festring::IgnoreCaseFind(const festring& Where, const festring& What, sizetype Begin)
 {

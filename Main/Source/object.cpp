@@ -24,8 +24,8 @@ object::object(const object& Object) : entity(Object), id(Object), Config(Object
 
 object::~object()
 {
-  for(ushort c = 0; c < GraphicId.size(); ++c)
-    igraph::RemoveUser(GraphicId[c]);
+  for(ushort c = 0; c < GraphicID.size(); ++c)
+    igraph::RemoveUser(GraphicID[c]);
 
   delete MainMaterial;
 }
@@ -43,19 +43,19 @@ void object::CopyMaterial(material* const& Source, material*& Dest)
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << GraphicId << Config << VisualEffects;
+  SaveFile << GraphicID << Config << VisualEffects;
   SaveFile << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  SaveFile >> GraphicId >> Config >> VisualEffects;
+  SaveFile >> GraphicID >> Config >> VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
-  AnimationFrames = GraphicId.size();
+  AnimationFrames = GraphicID.size();
   Picture.resize(AnimationFrames);
 
   for(ushort c = 0; c < AnimationFrames; ++c)
-    Picture[c] = igraph::AddUser(GraphicId[c]);
+    Picture[c] = igraph::AddUser(GraphicID[c]);
 }
 
 void object::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
@@ -154,10 +154,10 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  AnimationFrames = UpdatePictures(GraphicId, Picture, vector2d(0, 0), (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  AnimationFrames = UpdatePictures(GraphicID, Picture, vector2d(0, 0), (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-ushort object::UpdatePictures(std::vector<graphicid>& GraphicId, std::vector<bitmap*>& Picture, vector2d Position, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
+ushort object::UpdatePictures(std::vector<graphicid>& GraphicID, std::vector<bitmap*>& Picture, vector2d Position, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
 {
   ushort AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
@@ -280,15 +280,15 @@ ushort object::UpdatePictures(std::vector<graphicid>& GraphicId, std::vector<bit
 
   ushort c;
 
-  for(c = 0; c < GraphicId.size(); ++c)
-    igraph::RemoveUser(GraphicId[c]);
+  for(c = 0; c < GraphicID.size(); ++c)
+    igraph::RemoveUser(GraphicID[c]);
 
-  GraphicId.resize(AnimationFrames);
+  GraphicID.resize(AnimationFrames);
   Picture.resize(AnimationFrames);
 
   for(c = 0; c < AnimationFrames; ++c)
     {
-      graphicid& GI = GraphicId[c];
+      graphicid& GI = GraphicID[c];
       GI.Color[0] = GetMaterialColorA(c);
       GI.Color[1] = GetMaterialColorB(c);
       GI.Color[2] = GetMaterialColorC(c);
@@ -510,3 +510,4 @@ bool object::IsSparkling(ushort ColorIndex) const
 {
   return !ColorIndex && MainMaterial->IsSparkling();
 }
+

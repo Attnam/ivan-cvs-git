@@ -49,11 +49,6 @@ class square
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
   virtual bool SquareIsWalkable(const character* = 0) const = 0;
-  virtual void DisplaySmokeInfo(festring&) const { }
-  virtual void DisplayEngravedInfo(festring&) const { }
-  virtual bool EngravingsCanBeReadByPlayer();
-  virtual bool EngravingsCanBeReadByCharacter(const character*) { return false; }
-  virtual bool HasEngravings() const { return false; }
  protected:
   festring MemorizedDescription;
   area* AreaUnder;

@@ -21,7 +21,7 @@ uchar normaltorso::GetGraphicsContainerIndex() const { return GR_CHARACTER; }
 ushort arm::GetMinDamage() const { return ushort(Damage * 0.75f); }
 ushort arm::GetMaxDamage() const { return ushort(Damage * 1.25f + 1); }
 float arm::GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
-ushort arm::GetAnimationFrames() const { return Max<ushort>(bodypart::GetAnimationFrames(), WieldedGraphicId.size()); }
+ushort arm::GetAnimationFrames() const { return Max<ushort>(bodypart::GetAnimationFrames(), WieldedGraphicID.size()); }
 
 uchar rightarm::GetBodyPartIndex() const { return RIGHT_ARM_INDEX; }
 ushort rightarm::GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_ARM; }
@@ -198,7 +198,7 @@ void arm::Save(outputfile& SaveFile) const
   SaveFile << BaseUnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
   SaveFile << WieldedSlot << GauntletSlot << RingSlot;
-  SaveFile << WieldedGraphicId;
+  SaveFile << WieldedGraphicID;
 }
 
 void arm::Load(inputfile& SaveFile)
@@ -207,12 +207,12 @@ void arm::Load(inputfile& SaveFile)
   SaveFile >> BaseUnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
-  SaveFile >> WieldedGraphicId;
-  ushort AnimationFrames = WieldedGraphicId.size();
+  SaveFile >> WieldedGraphicID;
+  ushort AnimationFrames = WieldedGraphicID.size();
   WieldedPicture.resize(AnimationFrames);
 
   for(ushort c = 0; c < AnimationFrames; ++c)
-    WieldedPicture[c] = igraph::AddUser(WieldedGraphicId[c]);
+    WieldedPicture[c] = igraph::AddUser(WieldedGraphicID[c]);
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -648,8 +648,8 @@ humanoidtorso::~humanoidtorso()
 
 arm::~arm()
 {
-  for(ushort c = 0; c < WieldedGraphicId.size(); ++c)
-    igraph::RemoveUser(WieldedGraphicId[c]);
+  for(ushort c = 0; c < WieldedGraphicID.size(); ++c)
+    igraph::RemoveUser(WieldedGraphicID[c]);
 
   delete GetWielded();
   delete GetGauntlet();
@@ -729,20 +729,21 @@ bool bodypart::IsSparkling(ushort Index) const
 
 bool corpse::RaiseTheDead(character* Summoner)
 {
-  if(!GetDeceased()->CanBeRaisedFromTheDead(this))
-    return false;
-
-  if(Summoner->IsPlayer())
+  if(Summoner && Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
   GetLSquareUnder()->AddCharacter(GetDeceased());
   RemoveFromSlot();
   GetDeceased()->Enable();
   GetDeceased()->SetMotherEntity(0);
-  GetDeceased()->CompleteRiseFromTheDead();
+  bool Success = GetDeceased()->CompleteRiseFromTheDead();
+
+  if(Success && Summoner)
+    GetDeceased()->ChangeTeam(Summoner->GetTeam());
+
   Deceased = 0;
   SendToHell();
-  return true;
+  return Success;
 }
 
 void bodypart::VirtualConstructor(bool Load)
@@ -1134,14 +1135,14 @@ arm* leftarm::GetPairArm() const
     return 0;
 }
 
-sweaponskill* rightarm::GetCurrentSWeaponSkill() const
+sweaponskill*& rightarm::GetCurrentSWeaponSkill() const
 {
-  return GetHumanoidMaster()->GetCurrentRightSWeaponSkill();
+  return GetHumanoidMaster()->CurrentRightSWeaponSkill;
 }
 
-sweaponskill* leftarm::GetCurrentSWeaponSkill() const
+sweaponskill*& leftarm::GetCurrentSWeaponSkill() const
 {
-  return GetHumanoidMaster()->GetCurrentLeftSWeaponSkill();
+  return GetHumanoidMaster()->CurrentLeftSWeaponSkill;
 }
 
 uchar bodypart::GetMaxAlpha() const
@@ -1294,6 +1295,7 @@ void arm::SignalVolumeAndWeightChange()
 
   if(Master && !Master->IsInitializing())
     {
+      GetHumanoidMaster()->EnsureCurrentSWeaponSkillIsCorrect(GetCurrentSWeaponSkill(), GetWielded());
       CalculateAttributeBonuses();
       CalculateAttackInfo();
       UpdateWieldedPicture();
@@ -1311,7 +1313,6 @@ void leg::SignalVolumeAndWeightChange()
       CalculateAttackInfo();
     }
 }
-
 
 void humanoidtorso::SignalVolumeAndWeightChange()
 {
@@ -1601,7 +1602,6 @@ bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
 
   return true;
 }
-
 
 void bodypart::Be()
 {
@@ -2133,31 +2133,41 @@ material* corpse::CreateDipMaterial()
   return 0;
 }
 
+bool arm::EditAllAttributes(short Amount)
+{
+  Strength += Amount;
+  Dexterity += Amount;
+
+  if(!Master->IsPlayer())
+    {
+      if(Strength > 100)
+	Strength = 100;
+
+      if(Dexterity > 100)
+	Dexterity = 100;
+    }
+
+  return Strength < 100 || Dexterity < 100;
+}
+
+bool leg::EditAllAttributes(short Amount)
+{
+  Strength += Amount;
+  Agility += Amount;
+
+  if(!Master->IsPlayer())
+    {
+      if(Strength > 100)
+	Strength = 100;
+
+      if(Agility > 100)
+	Agility = 100;
+    }
+
+  return Strength < 100 || Agility < 100;
+}
+
 #ifdef WIZARD
-
-void arm::RaiseStats()
-{
-  Strength += 10;
-  Dexterity += 10;
-}
-
-void arm::LowerStats()
-{
-  Strength -= 10;
-  Dexterity -= 10;
-}
-
-void leg::RaiseStats()
-{
-  Strength += 10;
-  Agility += 10;
-}
-
-void leg::LowerStats()
-{
-  Strength -= 10;
-  Agility -= 10;
-}
 
 void arm::AddAttackInfo(felist& List) const
 {
@@ -2201,10 +2211,6 @@ void arm::AddDefenceInfo(felist& List) const
 
 #else
 
-void arm::RaiseStats() { }
-void arm::LowerStats() { }
-void leg::RaiseStats() { }
-void leg::LowerStats() { }
 void arm::AddAttackInfo(felist&) const { }
 void arm::AddDefenceInfo(felist&) const { }
 
@@ -2217,15 +2223,15 @@ void arm::UpdateWieldedPicture()
   if(Wielded && Master)
     {
       ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
-      Wielded->UpdatePictures(WieldedGraphicId, WieldedPicture, Master->GetWieldedPosition(), SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
+      Wielded->UpdatePictures(WieldedGraphicID, WieldedPicture, Master->GetWieldedPosition(), SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
     }
   else
     {
-      for(ushort c = 0; c < WieldedGraphicId.size(); ++c)
-        igraph::RemoveUser(WieldedGraphicId[c]);
+      for(ushort c = 0; c < WieldedGraphicID.size(); ++c)
+        igraph::RemoveUser(WieldedGraphicID[c]);
 
       WieldedPicture.resize(0);
-      WieldedGraphicId.resize(0);
+      WieldedGraphicID.resize(0);
     }
 }
 
@@ -2263,7 +2269,60 @@ void leg::AddAttackInfo(felist& List) const
   List.AddEntry(Entry, LIGHT_GRAY);
 }
 
+void corpse::PreProcessForBone()
+{
+  item::PreProcessForBone();
+
+  if(!Deceased->PreProcessForBone())
+    {
+      RemoveFromSlot();
+      SendToHell();
+    }
+}
+
+void corpse::PostProcessForBone()
+{
+  item::PostProcessForBone();
+
+  if(!Deceased->PostProcessForBone())
+    {
+      RemoveFromSlot();
+      SendToHell();
+    }
+}
+
+void corpse::FinalProcessForBone()
+{
+  item::FinalProcessForBone();
+  Deceased->FinalProcessForBone();
+}
+
 bool bodypart::IsRepairable() const
 {
   return !IsAlive() && GetHP() < GetMaxHP();
+}
+
+bool corpse::SuckSoul(character* Soul, character* Summoner)
+{
+  lsquare* Square = GetLSquareUnder();
+
+  if(Deceased->SuckSoul(Soul))
+    {
+      Square->RemoveCharacter();
+      character* Deceased = GetDeceased();
+
+      if(RaiseTheDead(Summoner))
+	{
+	  Soul->SendToHell();
+	  return true;
+	}
+      else
+	{
+	  Deceased->SetSoulID(Soul->GetID());
+	  Square->AddCharacter(Soul);
+	  return false;
+	}
+    }
+  else
+    return false;
 }

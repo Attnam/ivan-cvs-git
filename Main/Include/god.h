@@ -20,12 +20,12 @@ class godprototype
   godprototype(god* (*)(bool), const char*);
   god* Clone() const { return Cloner(false); }
   god* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   god* (*Cloner)(bool);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class god
@@ -86,3 +86,4 @@ name : public base\
 }; GOD_PROTOTYPE(name);
 
 #endif
+

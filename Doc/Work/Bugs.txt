@@ -30,12 +30,12 @@ Highscores don't always fit to the screen.
 It is possible to chat with fainted creatures.
 Wielded items can't be eaten.
 AI monsters don't mind about smokes.
-Panicking monsters can eat.
+//Panicking monsters can eat.
 //Pet ghosts don't gain any strength exp.
 Throwing a potion of water at a wall in a shop makes the guards hostile.
 Ghosts can be poisoned.
 If the player can attack with arms but is a more powerful kicker, the danger system still only checks the arm attack.
-"You hit something! Something manages to block the attack with its steel sword +1!"
+//"You hit something! Something manages to block the attack with its steel sword +1!"
 It is not possible to zap a wielded item.
 The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
 The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)

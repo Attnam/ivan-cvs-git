@@ -420,6 +420,7 @@ class ITEM
   virtual bool CheckPickUpEffect(character*);
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
+  virtual void FinalProcessForBone();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
@@ -479,6 +480,7 @@ class ITEM
   virtual void BlowEffect(character*);
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   ulong LastUsed;
@@ -518,6 +520,9 @@ class ITEM
   virtual bool IsDestroyable() const;
   virtual short GetOfferValue(uchar) const;
   virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
+  virtual void FinalProcessForBone();
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
   virtual void AddPostFix(festring&) const;
@@ -552,6 +557,7 @@ class ITEM
   virtual bool IsDangerous() const { return IsActive(); }
   virtual bool IsStuck() const;
   virtual void Fly(character*, uchar, ushort);
+  virtual void FinalProcessForBone();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
@@ -623,6 +629,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; }
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   ulong LastUsed;

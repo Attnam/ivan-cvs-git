@@ -1,6 +1,6 @@
 /* Compiled through materset.cpp */
 
-materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<material>::Add(this); }
+materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
 const materialdatabase& materialprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
 void material::InstallDataBase() { databasecreator<material>::InstallDataBase(this); }
@@ -212,3 +212,4 @@ bool material::BreatheEffect(character* Enemy)
 {
   return Effect(Enemy, Max<ulong>(GetVolume() / 10, 50));
 }
+

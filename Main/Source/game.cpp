@@ -40,14 +40,14 @@
 
 class quitrequest { };
 
-uchar game::CurrentLevelIndex;
+ushort game::CurrentLevelIndex;
 long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
 dungeon** game::Dungeon;
-uchar game::CurrentDungeonIndex;
+ushort game::CurrentDungeonIndex;
 ulong game::NextCharacterID = 1;
 ulong game::NextItemID = 1;
 ulong game::NextExplosionID = 1;
@@ -75,6 +75,9 @@ massacremap game::MiscMassacreMap;
 ulong game::PlayerMassacreAmount = 0;
 ulong game::PetMassacreAmount = 0;
 ulong game::MiscMassacreAmount = 0;
+boneidmap game::BoneItemIDMap;
+boneidmap game::BoneCharacterIDMap;
+bool game::TooGreatDangerFoundBool;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -100,7 +103,7 @@ ulong game::Ticks;
 gamescript* game::GameScript = 0;
 valuemap game::GlobalValueMap;
 dangermap game::DangerMap;
-configid game::NextDangerId;
+configid game::NextDangerID;
 characteridmap game::CharacterIDMap;
 const explosion* game::CurrentExplosion;
 bool game::PlayerHurtByExplosion;
@@ -112,6 +115,7 @@ festring game::DefaultPolymorphTo;
 bool game::WizardMode;
 uchar game::SeeWholeMapCheatMode;
 bool game::GoThroughWallsCheat;
+bool game::QuestMonsterFoundBool;
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
@@ -158,6 +162,14 @@ bool game::Init(const festring& Name)
 
 #ifdef LINUX
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
+#endif
+
+#ifdef WIN32
+  _mkdir("Bones");
+#endif
+
+#ifdef __DJGPP__
+  mkdir("Bones", S_IWUSR);
 #endif
 
   switch(Load(SaveName(PlayerName)))
@@ -237,6 +249,7 @@ bool game::Init(const festring& Name)
 	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
 	DefaultPolymorphTo.Empty();
 	Player->GetStack()->AddItem(new encryptedscroll);
+	Player->GetStack()->AddItem(new stethoscope);
 	BaseScore = Player->GetScore();
 
 	character* Doggie = new dog;
@@ -516,7 +529,7 @@ bool game::Save(const festring& SaveName)
 
   SaveFile << PLAYER->GetPos();
   msgsystem::Save(SaveFile);
-  SaveFile << DangerMap << NextDangerId << DefaultPolymorphTo;
+  SaveFile << DangerMap << NextDangerID << DefaultPolymorphTo;
   return true;
 }
 
@@ -581,7 +594,7 @@ uchar game::Load(const festring& SaveName)
   SaveFile >> Pos;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
   msgsystem::Load(SaveFile);
-  SaveFile >> DangerMap >> NextDangerId >> DefaultPolymorphTo;
+  SaveFile >> DangerMap >> NextDangerID >> DefaultPolymorphTo;
   return LOADED;
 }
 
@@ -728,25 +741,13 @@ float game::GetMinDifficulty()
     {
       uchar Dice = RAND() % 25;
 
-      if(Dice == 0)
-	{
-	  Base /= 6;
-	  continue;
-	}
-
-      if(Dice == 24)
-	{
-	  Base *= 6;
-	  continue;
-	}
-
       if(Dice < 5)
 	{
 	  Base /= 3;
 	  continue;
 	}
 
-      if(Dice > 19)
+      if(Dice >= 20)
 	{
 	  Base *= 3;
 	  continue;
@@ -797,11 +798,9 @@ void game::RemoveSaves(bool RealSavesAlso)
   for(ushort i = 1; i < Dungeons; ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
       {
-	/*
-	 * This looks very odd. And it is very odd.
+	/* This looks very odd. And it is very odd.
 	 * Indeed, gcc is very odd to not compile this correctly with -O3
-	 * if it is written in a less odd way.
-	 */
+	 * if it is written in a less odd way. */
 
 	File = SaveName() + '.' + i;
 	File << c;
@@ -1150,11 +1149,9 @@ int game::AskForKeyPress(const festring& Topic)
   return Key;
 }
 
-/* 
- * Handler is called when the key has been identified as a movement key 
+/* Handler is called when the key has been identified as a movement key 
  * KeyHandler is called when the key has NOT been identified as a movement key
- * Both can be deactivated by passing 0 as parameter
- */  
+ * Both can be deactivated by passing 0 as parameter */  
 
 vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
 {
@@ -1248,9 +1245,17 @@ void game::LookHandler(vector2d CursorPos)
 
       Msg << Square->GetMemorizedDescription() << '.';
 
-      if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
-	Square->DisplaySmokeInfo(Msg);
+      if(!IsInWilderness() && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
+	{
+	  lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
+	  LSquare->DisplaySmokeInfo(Msg);
 
+	  if(LSquare->HasEngravings() && LSquare->IsTransparent())
+	    if(LSquare->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
+	      LSquare->DisplayEngravedInfo(Msg);
+	    else
+	      Msg << " Something has been engraved here.";
+	}
     }
   else
     Msg = CONST_S("You have never been here.");
@@ -1259,15 +1264,6 @@ void game::LookHandler(vector2d CursorPos)
 
   if(Character && (Character->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
     Character->DisplayInfo(Msg);
-
-  if(!IsInWilderness() && Square->CanBeSeenByPlayer() && Square->HasEngravings())
-      {
-	if(Square->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
-	  Square->DisplayEngravedInfo(Msg);
-	else
-	  Msg << " Something has been engraved here.";
-      }
-
 
   if(!(RAND() % 10000))
     Msg << " You see here a frog eating a magnolia.";
@@ -1490,8 +1486,8 @@ void game::InitDangerMap()
 	  {
 	    if(First)
 	      {
-		NextDangerId.Type = c;
-		NextDangerId.Config = i->first;
+		NextDangerID.Type = c;
+		NextDangerID.Config = i->first;
 		First = false;
 	      }
 
@@ -1511,21 +1507,21 @@ void game::CalculateNextDanger()
   if(IsInWilderness() || !*CurrentLevel->GetLevelScript()->GenerateMonsters())
     return;
 
-  const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerId.Type);
+  const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerID.Type);
   const character::databasemap& Config = Proto->GetConfig();
-  character::databasemap::const_iterator ConfigIterator = Config.find(NextDangerId.Config);
-  dangermap::iterator DangerIterator = DangerMap.find(NextDangerId);
+  character::databasemap::const_iterator ConfigIterator = Config.find(NextDangerID.Config);
+  dangermap::iterator DangerIterator = DangerMap.find(NextDangerID);
 
   if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
     {
-      character* Char = Proto->Clone(NextDangerId.Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+      character* Char = Proto->Clone(NextDangerID.Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       float CurrentDanger = Char->GetRelativeDanger(Player, true);
 
       if(DangerIterator->second.NakedDanger > CurrentDanger)
 	DangerIterator->second.NakedDanger = (DangerIterator->second.NakedDanger * 9 + CurrentDanger) / 10;
 
       delete Char;
-      Char = Proto->Clone(NextDangerId.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+      Char = Proto->Clone(NextDangerID.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       CurrentDanger = Char->GetRelativeDanger(Player, true);
 
       if(DangerIterator->second.EquippedDanger > CurrentDanger)
@@ -1536,23 +1532,23 @@ void game::CalculateNextDanger()
       for(++ConfigIterator; ConfigIterator != Config.end(); ++ConfigIterator)
 	if(!ConfigIterator->second.IsAbstract && ConfigIterator->second.CanBeGenerated)
 	  {
-	    NextDangerId.Config = ConfigIterator->first;
+	    NextDangerID.Config = ConfigIterator->first;
 	    return;
 	  }
 
       while(true)
 	{
-	  if(NextDangerId.Type < protocontainer<character>::GetProtoAmount() - 1)
-	    ++NextDangerId.Type;
+	  if(NextDangerID.Type < protocontainer<character>::GetProtoAmount() - 1)
+	    ++NextDangerID.Type;
 	  else
-	    NextDangerId.Type = 1;
+	    NextDangerID.Type = 1;
 
-	  const character::databasemap& Config = protocontainer<character>::GetProto(NextDangerId.Type)->GetConfig();
+	  const character::databasemap& Config = protocontainer<character>::GetProto(NextDangerID.Type)->GetConfig();
 
 	  for(ConfigIterator = Config.begin(); ConfigIterator != Config.end(); ++ConfigIterator)
 	    if(!ConfigIterator->second.IsAbstract && ConfigIterator->second.CanBeGenerated)
 	      {
-		NextDangerId.Config = ConfigIterator->first;
+		NextDangerID.Config = ConfigIterator->first;
 		return;
 	      }
 	}
@@ -1603,7 +1599,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
     {
       SetIsInWilderness(false);
       CurrentLevelIndex = Area;
-      bool New = !GetCurrentDungeon()->PrepareLevel(Area);
+      bool New = !PrepareRandomBone(Area) && !GetCurrentDungeon()->PrepareLevel(Area);
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
       GetCurrentLevel()->AddCharacter(Pos, Player);
@@ -1673,7 +1669,6 @@ void game::SetStandardListAttributes(felist& List)
 {
   List.SetPos(vector2d(26, 42));
   List.SetWidth(652);
-  List.SetBackColor(MakeRGB16(16, 16, 40));
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
 }
 
@@ -1873,7 +1868,9 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 festring game::GetHomeDir()
 {
 #ifdef LINUX
-  return festring(getenv("HOME")) + "/";
+  festring Dir;
+  Dir << getenv("HOME") << '/';
+  return Dir;
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -1884,7 +1881,9 @@ festring game::GetHomeDir()
 festring game::GetSaveDir()
 {
 #ifdef LINUX
-  return festring(getenv("HOME")) + "/IvanSave/";
+  festring Dir;
+  Dir << getenv("HOME") << "/IvanSave/";
+  return Dir;
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -1900,6 +1899,17 @@ festring game::GetGameDir()
 
 #if defined(WIN32) || defined(__DJGPP__)
   return "";
+#endif
+}
+
+festring game::GetBoneDir()
+{
+#ifdef LINUX
+  return DATADIR "/ivan/bones";
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "Bones/";
 #endif
 }
 
@@ -2078,3 +2088,138 @@ void game::SeeWholeMap()
 }
 
 #endif
+
+void game::CreateBone()
+{
+  if(/**!WizardModeIsActive() && */!IsInWilderness() && GetCurrentLevel()->PreProcessForBone())
+    {
+      ushort BoneIndex;
+      festring BoneName;
+
+      for(BoneIndex = 0; BoneIndex < 1000; ++BoneIndex)
+	{
+	  BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + CurrentLevelIndex + BoneIndex;
+	  inputfile BoneFile(BoneName, 0, false);
+
+	  if(!BoneFile.IsOpen())
+	    break;
+	}
+
+      if(BoneIndex != 1000)
+	{
+	  festring BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + CurrentLevelIndex + BoneIndex;
+	  outputfile BoneFile(BoneName);
+	  BoneFile << PLAYER->GetAssignedName();
+	  BoneFile << CurrentLevel;
+	}
+    }
+}
+
+bool game::PrepareRandomBone(ushort LevelIndex)
+{
+  /* Don't load a bone over a shop, etc. */
+
+  if(!*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
+    return false;
+
+  ushort BoneIndex;
+  festring BoneName;
+
+  for(BoneIndex = 0; BoneIndex < 1000; ++BoneIndex)
+    {
+      BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
+      inputfile BoneFile(BoneName, 0, false);
+
+      if(BoneFile.IsOpen())/// || RAND() & 1)
+	{
+	  festring PlayerName;
+	  BoneFile >> PlayerName;
+	  level* NewLevel = GetCurrentDungeon()->LoadLevel(BoneFile, LevelIndex);
+
+	  if(!NewLevel->PostProcessForBone())
+	    {
+	      delete NewLevel;
+	      GetBoneItemIDMap().clear();
+	      GetBoneCharacterIDMap().clear();
+	      continue;
+	    }
+
+	  NewLevel->FinalProcessForBone();
+	  GetBoneItemIDMap().clear();
+	  GetBoneCharacterIDMap().clear();
+	  CurrentArea = NewLevel;
+	  CurrentLevel = NewLevel;
+	  CurrentLSquareMap = NewLevel->GetMap();
+	  GetCurrentDungeon()->SetGenerated(LevelIndex, true);
+
+	  if(PlayerName == PLAYER->GetAssignedName())
+	    ADD_MESSAGE("This place is oddly familiar. Like you had been here in one of your past lives.");
+	  else
+	    ADD_MESSAGE("You smell the stench of death.");
+
+	  break;
+	}
+    }
+
+  if(BoneIndex != 1000)
+    {
+      remove(BoneName.CStr());
+      return true;
+    }
+  else
+    return false;
+}
+
+float game::CalculateAverageDanger(const std::vector<character*>& EnemyVector, character* Char)
+{
+  float DangerSum = 0;
+  ushort Enemies = 0;
+
+  for(ushort c = 0; c < EnemyVector.size(); ++c)
+    {
+      DangerSum += EnemyVector[c]->GetRelativeDanger(Char, true);
+      ++Enemies;
+    }
+
+  return DangerSum / Enemies;
+}
+
+float game::CalculateAverageDangerOfAllNormalEnemies()
+{
+  float DangerSum = 0;
+  ushort Enemies = 0;
+
+  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c);
+      const character::databasemap& Config = Proto->GetConfig();
+
+      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(!i->second.IsAbstract && !i->second.IsUnique && i->second.CanBeGenerated)
+	  {
+	    DangerSum += DangerMap.find(configid(c, i->first))->second.EquippedDanger;
+	    ++Enemies;
+	  }
+    }
+
+  return DangerSum / Enemies;
+}
+
+character* game::CreateGhost()
+{
+  float AverageDanger = game::CalculateAverageDangerOfAllNormalEnemies();
+  std::vector<character*> EnemyVector;
+  protosystem::CreateEveryNormalEnemy(EnemyVector);
+  ghost* Ghost = new ghost;
+  Ghost->SetTeam(GetTeam(MONSTER_TEAM));
+  Ghost->SetOwnerSoul(PLAYER->GetAssignedName());
+  Ghost->SetIsActive(false);
+  Ghost->EditAllAttributes(-4);
+  PLAYER->SetSoulID(Ghost->GetID());
+  while(game::CalculateAverageDanger(EnemyVector, Ghost) > AverageDanger && Ghost->EditAllAttributes(1));
+
+  for(ushort c = 0; c < EnemyVector.size(); ++c)
+    delete EnemyVector[c];
+
+  return Ghost;
+}

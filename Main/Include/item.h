@@ -99,6 +99,7 @@ struct itemdatabase
   uchar AttachedGod;
   uchar BreakEffectRange;
   vector2d WieldedBitmapPos;
+  bool IsQuestItem;
 };
 
 class itemprototype
@@ -108,7 +109,7 @@ class itemprototype
   itemprototype(itemprototype*, item* (*)(ushort, ushort), const char*);
   item* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   item* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
   const itemprototype* GetBase() const { return Base; }
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
@@ -119,7 +120,7 @@ class itemprototype
   itemprototype* Base;
   std::map<ushort, itemdatabase> Config;
   item* (*Cloner)(ushort, ushort);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class item : public object
@@ -165,8 +166,6 @@ class item : public object
   virtual ushort GetSize() const { return Size; }
   ulong GetID() const { return ID; }
   void SetID(ulong What) { ID = What; }
-  ulong GetBackupID() const { return BackupID; }
-  void SetBackupID(ulong What) { BackupID = What; }
   void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   slot* GetSlot() const { return Slot; }
@@ -303,6 +302,7 @@ class item : public object
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
   DATA_BASE_VALUE(uchar, BreakEffectRange);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
+  DATA_BASE_BOOL(IsQuestItem);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -346,8 +346,6 @@ class item : public object
   ulong GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
-  bool CarriedByPlayer() const;
-  bool CarriedBy(const character*) const;
   item* DuplicateToStack(stack*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
@@ -377,6 +375,7 @@ class item : public object
   virtual bool IsEncryptedScroll() const { return false; }
   const char* GetStrengthValueDescription() const;
   const char* GetBaseToHitValueDescription() const;
+  const char* GetBaseBlockValueDescription() const;
   virtual bool IsInCorrectSlot(ushort) const;
   bool IsInCorrectSlot() const;
   ushort GetEquipmentIndex() const;
@@ -397,6 +396,10 @@ class item : public object
   virtual void AddAttackInfo(felist&) const;
   void AddMiscellaneousInfo(felist&) const;
 #endif
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
+  virtual void FinalProcessForBone() { }
+  virtual bool SuckSoul(character*, character* = 0) { return false; }
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;
@@ -410,7 +413,6 @@ class item : public object
   bool Cannibalised;
   ushort Size;
   ulong ID;
-  ulong BackupID;
   const database* DataBase;
   ulong Volume;
   ulong Weight;
@@ -457,3 +459,4 @@ name : public base\
 }; ABSTRACT_ITEM_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
+

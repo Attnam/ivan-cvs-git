@@ -59,7 +59,7 @@ private:
   static bool EquipmentScreen(character*);
   static bool WhatToEngrave(character*);
   static bool Zap(character*);
-  static bool RestUntilHealed(character*);
+  static bool Rest(character*);
   static bool OutlineCharacters(character*);
   static bool OutlineItems(character*);
   static bool Sit(character*);
@@ -87,6 +87,7 @@ private:
   static bool ReloadDatafiles(character*);
   static bool SummonMonster(character*);
   static bool LevelTeleport(character*);
+  static bool Possess(character*);
 #endif
 };
 

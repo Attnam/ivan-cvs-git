@@ -245,10 +245,7 @@ void lsquare::ForceEmitterEmitation()
 
 void lsquare::NoxifyEmitter(vector2d Dir)
 {
-  /*
-   * DO NOT remove the iterator, or ForceEmitterEmitation() will not work properly!
-   * (had to add add this comment when I came here for the nth time and thought not to do it is really stupid...)
-   */
+  /* DO NOT remove the iterator, or ForceEmitterEmitation() will not work properly! */
 
   for(std::vector<emitter>::iterator i = Emitter.begin(); i != Emitter.end(); ++i)
     if(i->Pos == Dir)
@@ -572,9 +569,7 @@ void lsquare::AddCharacter(character* Guy)
   Guy->SetSquareUnder(this);
   SignalEmitationIncrease(Guy->GetEmitation());
   NewDrawRequested = true;
-
-  //if(Guy->IsAnimated())
-    IncAnimatedEntities();
+  IncAnimatedEntities();
 }
 
 void lsquare::Clean()
@@ -589,9 +584,7 @@ void lsquare::RemoveCharacter()
 {
   if(Character)
     {
-      //if(Character->IsAnimated())
-	DecAnimatedEntities();
-
+      DecAnimatedEntities();
       character* Backup = Character;
       SetCharacter(0);
       SignalEmitationDecrease(Backup->GetEmitation());
@@ -617,51 +610,61 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  Anything = true;
 		}
 
-	      std::vector<itemvector> PileVector;
-	      GetStack()->Pile(PileVector, PLAYER);
-
-	      if(PileVector.size())
+	      if(IsTransparent())
 		{
-		  if(Anything)
-		    MemorizedDescription << " and ";
+		  std::vector<itemvector> PileVector;
+		  GetStack()->Pile(PileVector, PLAYER);
 
-		  if(PileVector.size() == 1)
-		    PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
-		  else
-		    MemorizedDescription = CONST_S("many items");
+		  if(PileVector.size())
+		    {
+		      if(Anything)
+			MemorizedDescription << " and ";
 
-		  MemorizedDescription << " on ";
-		  Anything = true;
-		}
-	      else if(Anything)
-		MemorizedDescription << " on ";
+		      if(PileVector.size() == 1)
+			PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
+		      else
+			MemorizedDescription = CONST_S("many items");
 
-	      GLTerrain->AddName(MemorizedDescription, INDEFINITE);
-	      ushort Items = 0;
+		      MemorizedDescription << " on ";
+		      Anything = true;
+		    }
+		  else if(Anything)
+		    MemorizedDescription << " on ";
 
-	      for(ushort c = 0; c < 4; ++c)
-		{
-		  stack* Stack = GetSideStackOfAdjacentSquare(c);
-
-		  if(Stack)
-		    Items += Stack->GetItems(PLAYER, Cheat);
-		}
-
-	      if(Items > 1)
-		MemorizedDescription << " and many items on the wall";
-	      else if(Items == 1)
-		{
-		  MemorizedDescription << " and ";
+		  GLTerrain->AddName(MemorizedDescription, INDEFINITE);
+		  ushort Items = 0;
 
 		  for(ushort c = 0; c < 4; ++c)
 		    {
 		      stack* Stack = GetSideStackOfAdjacentSquare(c);
 
-		      if(Stack && Stack->GetItems(PLAYER, Cheat))
-			Stack->GetBottomItem(PLAYER, Cheat)->AddName(MemorizedDescription, INDEFINITE);
+		      if(Stack)
+			Items += Stack->GetItems(PLAYER, Cheat);
 		    }
 
-		  MemorizedDescription << " on the wall";
+		  if(Items > 1)
+		    MemorizedDescription << " and many items on the wall";
+		  else if(Items == 1)
+		    {
+		      MemorizedDescription << " and ";
+
+		      for(ushort c = 0; c < 4; ++c)
+			{
+			  stack* Stack = GetSideStackOfAdjacentSquare(c);
+
+			  if(Stack && Stack->GetItems(PLAYER, Cheat))
+			    Stack->GetBottomItem(PLAYER, Cheat)->AddName(MemorizedDescription, INDEFINITE);
+			}
+
+		      MemorizedDescription << " on the wall";
+		    }
+		}
+	      else
+		{
+		  if(Anything)
+		    MemorizedDescription << " on ";
+
+		  GLTerrain->AddName(MemorizedDescription, INDEFINITE);
 		}
 	    }
 	  else
@@ -890,13 +893,8 @@ void lsquare::MoveCharacter(lsquare* To)
       SignalEmitationDecrease(Emit);
       NewDrawRequested = true;
       To->NewDrawRequested = true;
-
-      //if(Movee->IsAnimated())
-	{
-	  DecAnimatedEntities();
-	  To->IncAnimatedEntities();
-	}
-
+      DecAnimatedEntities();
+      To->IncAnimatedEntities();
       To->StepOn(Movee, this);
     }
 }
@@ -935,19 +933,10 @@ void lsquare::SwapCharacter(lsquare* With)
 	With->SignalEmitationDecrease(EmitTwo);
 	NewDrawRequested = true;
 	With->NewDrawRequested = true;
-
-	//if(MoveeOne->IsAnimated())
-	  {
-	    DecAnimatedEntities();
-	    With->IncAnimatedEntities();
-	  }
-
-	//if(MoveeTwo->IsAnimated())
-	  {
-	    IncAnimatedEntities();
-	    With->DecAnimatedEntities();
-	  }
-
+	DecAnimatedEntities();
+	With->IncAnimatedEntities();
+	IncAnimatedEntities();
+	With->DecAnimatedEntities();
 	With->StepOn(MoveeOne, this);
 	StepOn(MoveeTwo, With);
       }
@@ -1662,6 +1651,7 @@ void lsquare::SignalSmokeAlphaChange(short What)
 	  SmokeAlphaSum += What;
 	  ForceEmitterEmitation();
 	  CalculateLuminance();
+	  DescriptionChanged = true;
 
 	  if(LastSeen == game::GetLOSTurns())
 	    game::SendLOSUpdateRequest();
@@ -1677,6 +1667,7 @@ void lsquare::SignalSmokeAlphaChange(short What)
 	{
 	  ForceEmitterEmitation();
 	  CalculateLuminance();
+	  DescriptionChanged = true;
 
 	  if(LastSeen == game::GetLOSTurns())
 	    game::SendLOSUpdateRequest();
@@ -1720,13 +1711,57 @@ bool lsquare::CanBeFeltByPlayer() const
   return OLTerrain && !OLTerrain->IsWalkable() && Pos.IsAdjacent(PLAYER->GetPos());
 }
 
-bool lsquare::EngravingsCanBeReadByCharacter(const character* Who)
+void lsquare::PreProcessForBone()
 {
-  return !Engraved.IsEmpty() && Who == Character && Who->CanRead(); 
-  // Might be a good idea to improve sometime in the distant future.
+  delete Memorized;
+  Memorized = 0;
+  LastSeen = 0;
+
+  if(!Smoke.empty())
+    {
+      DecAnimatedEntities();
+
+      for(ushort c = 0; c < Smoke.size(); ++c)
+	Smoke[c]->SendToHell();
+
+      Smoke.clear();
+      SmokeAlphaSum = 0;
+    }
+
+  if(Character && !Character->PreProcessForBone())
+    {
+      Character->SendToHell();
+      RemoveCharacter();
+    }
+
+  GetStack()->PreProcessForBone();
+}
+
+void lsquare::PostProcessForBone(float& DangerSum, ushort& Enemies)
+{
+  if(Character && !Character->PostProcessForBone(DangerSum, Enemies))
+    {
+      Character->SendToHell();
+      RemoveCharacter();
+    }
+
+  GetStack()->PostProcessForBone();
+}
+
+void lsquare::FinalProcessForBone()
+{
+  if(Character)
+    Character->FinalProcessForBone();
+
+  GetStack()->FinalProcessForBone();
+}
+
+bool lsquare::EngravingsCanBeReadByPlayer()
+{
+  return PLAYER->CanRead(); // Might be a good idea to improve sometime in the distant future.
 }
 
 void lsquare::DisplayEngravedInfo(festring& Buffer) const
 {
-  Buffer << " There is a message engraved here: \"" << Engraved << "\".";
+  Buffer << " There is a message engraved here: \"" << Engraved << '\"';
 }

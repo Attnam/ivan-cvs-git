@@ -3,9 +3,9 @@
 const char* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
 const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
 
-itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<item>::Add(this); }
+itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
-item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), BackupID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight) { }
+item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(Item.ID), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight) { }
 item::item(donothing) : Slot(0), Cannibalised(false) { }
 void item::InstallDataBase() { databasecreator<item>::InstallDataBase(this); }
 bool item::IsOnGround() const { return GetSlot()->IsOnGround(); }
@@ -150,7 +150,7 @@ bool item::Apply(character* Applier)
   return false;
 }
 
-/* returns bool that tells whether the Polymorph really happened */
+/* Returns bool that tells whether the Polymorph really happened */
 
 bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
 {
@@ -199,14 +199,14 @@ void item::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   object::Save(SaveFile);
-  SaveFile << Cannibalised << Size << ID << BackupID;
+  SaveFile << Cannibalised << Size << ID;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase();
-  SaveFile >> Cannibalised >> Size >> ID >> BackupID;
+  SaveFile >> Cannibalised >> Size >> ID;
 }
 
 void item::TeleportRandomly()
@@ -325,7 +325,6 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
   if(!(SpecialFlags & LOAD))
     {
       ID = game::CreateNewItemID();
-      BackupID = game::CreateNewItemID();
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
@@ -445,7 +444,7 @@ void item::WeaponSkillHit()
     static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }
 
-/* returns 0 if item cannot be cloned */
+/* Returns 0 if item cannot be cloned */
 
 item* item::Duplicate() const
 {
@@ -523,7 +522,7 @@ void itemdatabase::InitDefaults(ushort Config)
   /* TERRIBLE gum solution! */
 
   if(Config & DEVOUT)
-    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()).CapitalizeCopy();
+    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassID()).CapitalizeCopy();
 }
 
 ulong item::GetNutritionValue() const
@@ -541,16 +540,6 @@ void item::SignalSpoil(material*)
 
   RemoveFromSlot();
   SendToHell();
-}
-
-bool item::CarriedByPlayer() const
-{
-  return CarriedBy(PLAYER);
-}
-
-bool item::CarriedBy(const character* Who) const
-{
-  return Who->SearchForItemWithID(GetID()) != 0;
 }
 
 item* item::DuplicateToStack(stack* CurrentStack)
@@ -591,8 +580,7 @@ void item::Break(character* Breaker)
   item* Broken = RawDuplicate();
   Broken->SetConfig(GetConfig() | BROKEN);
   Broken->SetSize(Broken->GetSize() >> 1);
-  Broken->SetID(BackupID);
-  Broken->SetBackupID(ID);
+  Broken->SetID(ID);
   DonateSlotTo(Broken);
   SendToHell();
 
@@ -650,8 +638,7 @@ item* item::Fix()
       Fixed = RawDuplicate();
       Fixed->SetConfig(GetConfig() ^ BROKEN);
       Fixed->SetSize(Fixed->GetSize() << 1);
-      Fixed->SetID(BackupID);
-      Fixed->SetBackupID(ID);
+      Fixed->SetID(ID);
       DonateSlotTo(Fixed);
       SendToHell();
     }
@@ -702,6 +689,14 @@ const char* item::GetBaseToHitValueDescription() const
 {
   if(GetBaseToHitValue() < 10)
     return ToHitValueDescription[Min<ushort>(GetBaseToHitValue(), 6)];
+  else
+    return ToHitValueDescription[7];
+}
+
+const char* item::GetBaseBlockValueDescription() const
+{
+  if(GetBaseBlockValue() < 20)
+    return ToHitValueDescription[Min<ushort>(GetBaseBlockValue() >> 1, 6)];
   else
     return ToHitValueDescription[7];
 }
@@ -805,3 +800,26 @@ void item::AddMiscellaneousInfo(felist& List) const
 }
 
 #endif
+
+void item::PreProcessForBone()
+{
+  if(IsQuestItem())
+    {
+      RemoveFromSlot();
+      SendToHell();
+    }
+}
+
+void item::PostProcessForBone()
+{
+  boneidmap::iterator BI = game::GetBoneItemIDMap().find(ID);
+
+  if(BI == game::GetBoneItemIDMap().end())
+    {
+      ulong NewID = game::CreateNewItemID();
+      game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(ID, NewID));
+      ID = NewID;
+    }
+  else
+    ID = BI->second;
+}

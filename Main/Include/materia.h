@@ -66,7 +66,7 @@ class materialprototype
   materialprototype(materialprototype*, material* (*)(ushort, ulong, bool), const char*);
   material* Clone(ushort Config, ulong Volume = 0) const { return Cloner(Config, Volume, false); }
   material* CloneAndLoad(inputfile&) const;
-  const char* GetClassId() const { return ClassId; }
+  const char* GetClassID() const { return ClassID; }
   ushort GetIndex() const { return Index; }
   const materialprototype* GetBase() const { return Base; }
   const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
@@ -77,7 +77,7 @@ class materialprototype
   materialprototype* Base;
   std::map<ushort, materialdatabase> Config;
   material* (*Cloner)(ushort, ulong, bool);
-  const char* ClassId;
+  const char* ClassID;
 };
 
 class material
@@ -205,3 +205,4 @@ name : public base\
 }; MATERIAL_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
+
