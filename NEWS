@@ -1,6 +1,17 @@
 Version 0.410
 -------------
 
+- added smoke effects
+- added eleven new monsters
+- added several new animations
+- user interface tweaks
+- removed all assembler code
+- the player's representation on the game screen now depends on his armor
+- added search command and searching state which can detect traps
+- a list of killed monsters is now displayed when the game ends
+- breaking wands now all have unique effects
+- dipping to corpses is again possible
+
 Version 0.401
 -------------
 
