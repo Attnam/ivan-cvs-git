@@ -119,3 +119,4 @@ It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more
 //Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
 Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
 //The Hideous RAM Boulder Monster Spawn Error.
+Lanterns put inside itemcontainers still emit light
