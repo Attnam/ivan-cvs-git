@@ -111,6 +111,7 @@ struct characterdatabase
   std::string PostFix;
   uchar ArticleMode;
   bool IsAbstract;
+  bool IsPolymorphable;
 };
 
 class characterprototype
@@ -492,6 +493,7 @@ class character : public entity, public id
   DATABASEVALUE(std::string, NamePlural);
   DATABASEVALUE(std::string, PostFix);
   DATABASEVALUE(uchar, ArticleMode);
+  DATABASEBOOL(IsPolymorphable);
 
   virtual item* GetLifeSaver() const;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }

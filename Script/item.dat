@@ -46,6 +46,7 @@ item
 	/* Obligatory: ContainedMaterialConfig */
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
 	IsAbstract = true; /* This is false by default and does not inherit! */
+	IsPolymorphable = true;
 }
 
 materialcontainer
@@ -69,7 +70,6 @@ banana /* materialcontainer-> */
 	NameSingular = "banana";
 	MainMaterialConfig == BANANAPEAL;
 	ContainedMaterialConfig == BANANAFLESH;
-	/*DefaultMaterial = BANANAPEAL;*/
 }
 
 holybanana /* materialcontainer->banana-> */
@@ -86,6 +86,7 @@ holybanana /* materialcontainer->banana-> */
 	Adjective = "holy";
 	PostFix = "of Liukas Vipro";
 	ArticleMode = DEFINITEARTICLE;
+	IsPolymorphable = false;
 }
 
 lantern
@@ -103,7 +104,6 @@ lantern
 	OfferModifier = 10000;
 	NameSingular = "lantern";
 	MainMaterialConfig == GLASS;
-	/*DefaultMaterial = GLASS;*/
 }
 
 can /* materialcontainer-> */
@@ -211,6 +211,8 @@ valpurusjustifier /* meleeweapon->longsword-> */
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == VALPURIUM;
 	SecondaryMaterialConfig == VALPURIUM;
+	MaterialConfigChances == 100;
+	IsPolymorphable = false;
 }
 
 axe /* meleeweapon-> */
@@ -315,9 +317,10 @@ goldeneagleshirt /* bodyarmor->shirt-> */
 	DefaultMainVolume = 1000;
 	BaseEmitation = 333;
 	/* StrengthModifier not used, SV == constant 100 */
-	PostFix = "of the Golden Eagle";
+	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == CLOTH;
 	ArticleMode = DEFINITEARTICLE;
+	IsPolymorphable = false;
 } 
 
 potion /* materialcontainer-> */
@@ -354,7 +357,7 @@ bananapeals
 	MainMaterialConfig == BANANAPEAL;
 }
 
-brokenbottle
+brokenbottle /* cannot contain anything, so NOT bottle-> */
 {
 	DefaultSize = 10;
 	Possibility = 50;
@@ -434,6 +437,7 @@ leftnutofpetrus /* nut-> */
 	Adjective = "left";
 	PostFix = "of Petrus";
 	ArticleMode = DEFINITEARTICLE;
+	IsPolymorphable = false;
 }
 
 bone
@@ -506,6 +510,8 @@ neercseulb /* meleeweapon->spikedmace-> */
 	MainMaterialConfig == DIAMOND;
 	SecondaryMaterialConfig == DIAMOND;
 	ContainedMaterialConfig == FROGFLESH;
+	MaterialConfigChances == 100;
+	IsPolymorphable = false;
 }
 
 loaf
@@ -606,6 +612,7 @@ avatarofvalpurus
 	NameSingular = "Avatar of Valpurus";
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == VALPURIUM;
+	IsPolymorphable = false;
 }
 
 wandofstriking /* wand-> */
@@ -1031,6 +1038,7 @@ headofelpuri
 	NameSingular = "head of Elpuri";
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == ELPURIFLESH;
+	IsPolymorphable = false;
 }
 
 corpse
@@ -1045,6 +1053,7 @@ corpse
 	FormModifier = 15;
 	NPModifier = 100;
 	OfferModifier = 100;
+	NameSingular = "corpse";
 }
 
 wandoflocking /* wand-> */

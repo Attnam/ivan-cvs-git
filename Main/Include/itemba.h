@@ -66,6 +66,7 @@ struct itemdatabase
   std::vector<long> ContainedMaterialConfig;
   std::vector<long> MaterialConfigChances;
   bool IsAbstract;
+  bool IsPolymorphable;
 };
 
 class itemprototype
@@ -243,6 +244,7 @@ class item : public object
   DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
+  DATABASEBOOL(IsPolymorphable);
 
   virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }

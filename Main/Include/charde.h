@@ -170,7 +170,6 @@ class CHARACTER
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() { return HealTimer; }
   virtual void Save(outputfile&) const;
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
   virtual void CreateInitialEquipment();
@@ -248,7 +247,6 @@ class CHARACTER
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
   virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 64); }
@@ -301,7 +299,6 @@ class CHARACTER
   },*/
  public:
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual void BeTalkedTo(character*);
   virtual bool HasInfraVision() const { return true; }
@@ -374,7 +371,6 @@ class CHARACTER
   virtual bool CanOpen() const { return false; }
   //static bool CanBeGenerated() { return false; }
   virtual bool Hit(character*);
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual void BeTalkedTo(character*);
   virtual ulong CurrentDanger() const { return character::CurrentDanger() * 5; }
   virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }
@@ -441,7 +437,6 @@ class CHARACTER
   virtual void VirtualConstructor(bool);
   //static bool CanBeGenerated() { return false; }
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual void BeTalkedTo(character*);
   virtual bool Hit(character*);
@@ -863,7 +858,6 @@ class CHARACTER
   virtual bool CanOpen() const { return false; }
   virtual bool CanWalk() const { return false; }
   virtual bool CanSwim() const { return true; }
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
   virtual ulong TotalVolume() const { return 150000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOLPHINFLESH, Volume); }
@@ -1387,7 +1381,6 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual bool HasInfraVision() const { return true; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;

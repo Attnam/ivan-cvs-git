@@ -1,5 +1,11 @@
 May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Datafilezation checking
+	* IsPolymorphable added to item and char databases
+	* The Vile Dog Bulimia Bug of Ultimate Damage fixed
+
+May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Corrected a bug in the corpse creation code
 	* Color tweaks
 	* Added an alpha blend transparency effect for glass and liquids,

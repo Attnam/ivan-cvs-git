@@ -1973,6 +1973,12 @@ bool character::Zap()
 
 bool character::Polymorph(character* NewForm, ushort Counter)
 {
+  if(!IsPolymorphable())
+    {
+      delete NewForm;
+      return false;
+    }
+
   if(GetAction())
     GetAction()->Terminate(false);
 
@@ -4014,7 +4020,7 @@ void character::ReceiveNutrition(long SizeOfEffect)
 {
   if(GetHungerState() == BLOATED)
     {
-      game::GetPlayer()->ReceiveDamage(0, SizeOfEffect / 1000, BULIMIA, TORSO);
+      ReceiveDamage(0, SizeOfEffect / 1000, BULIMIA, TORSO);
       CheckDeath("choked on his food");
     }
 

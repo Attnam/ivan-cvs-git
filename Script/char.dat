@@ -47,6 +47,7 @@ character
 	/* NameSingular + "s" by default: NamePlural */
 	ArticleMode = NORMALARTICLE;
 	IsAbstract = true; /* This is false by default and does not inherit! */
+	IsPolymorphable = true;
 }
 
 humanoid
@@ -112,6 +113,7 @@ petrus
 	BaseEmitation = 333;
 	CanRead = true;
 	NameSingular = "High Priest of the Great Frog";
+	IsPolymorphable = false;
 }
 
 farmer
@@ -164,6 +166,7 @@ shopkeeper
 	MeleeStrength = 2000;
 	TotalSize = 160;
 	NameSingular = "shopkeeper";
+	IsPolymorphable = false;
 }
 
 priest
@@ -209,6 +212,7 @@ oree
 	TotalSize = 225;
 	CanRead = true;
 	NameSingular = "Blood Daemon King";
+	IsPolymorphable = false;
 }
 
 darkknight
@@ -248,6 +252,7 @@ ennerbeast
 	SkinColor = rgb(112, 112, 64);
 	NameSingular = "enner beast";
 	Article = "an";
+	IsPolymorphable = false;
 }
 
 frog
@@ -292,6 +297,7 @@ elpuri
 	TotalSize = 300;
 	CanOpen = true;
 	NameSingular = "Master Dark Frog";
+	IsPolymorphable = false;
 }
 
 billswill
@@ -557,6 +563,7 @@ dolphin
 	TotalSize = 300;
 	SkinColor = rgb(64, 64, 64);
 	NameSingular = "female dolphin";
+	IsPolymorphable = false;
 }
 
 lightfrog

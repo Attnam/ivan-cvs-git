@@ -152,6 +152,7 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(PostFix);
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(IsAbstract);
+  ANALYZEDATA(IsPolymorphable);
 }
 
 void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
@@ -200,6 +201,7 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(ContainedMaterialConfig);
   ANALYZEDATA(MaterialConfigChances);
   ANALYZEDATA(IsAbstract);
+  ANALYZEDATA(IsPolymorphable);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

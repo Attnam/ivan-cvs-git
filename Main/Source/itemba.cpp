@@ -160,9 +160,14 @@ bool item::Zap(character*, vector2d, uchar)
 
 bool item::Polymorph(stack* CurrentStack)
 {
-  CurrentStack->AddItem(protosystem::BalancedCreateItem());
-  SetExists(false);
-  return true;
+  if(!IsPolymorphable())
+    return false;
+  else
+    {
+      CurrentStack->AddItem(protosystem::BalancedCreateItem());
+      SetExists(false);
+      return true;
+    }
 }
 
 bool item::Consume(character* Eater, long Amount)
