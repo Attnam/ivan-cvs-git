@@ -117,7 +117,7 @@ uchar game::GodNumber;
 ulong game::Turns;
 float game::SoftGamma = 0.9f;
 bool game::OutlineItems = false, game::OutlineCharacters = false;
-ushort game::AutosaveInterval = 0;
+ushort game::AutosaveInterval = 100;
 
 void game::InitScript()
 {

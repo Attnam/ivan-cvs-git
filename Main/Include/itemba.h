@@ -104,6 +104,7 @@ protected:
 	} static name##_ProtoInstaller;\
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+	name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); }\
 	void name::SetDefaultStats() { setstats }\
 	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
 	const item* const name::GetPrototype() { return protocontainer<item>::GetProto(StaticType()); }\
@@ -121,7 +122,7 @@ name : public base\
 {\
 public:\
 	name(bool = true, bool = true, bool = true);\
-	name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
+	name(material*, bool = true);\
 	virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
 	virtual typeable* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
 	static ushort StaticType();\

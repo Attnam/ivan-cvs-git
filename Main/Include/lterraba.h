@@ -87,6 +87,7 @@ public:
 	} static name##_ProtoInstaller;\
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+	name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
 	void name::SetDefaultStats() { setstats }\
 	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
 	const protobase* const name::GetPrototype() { return protocontainer<protobase>::GetProto(StaticType()); }\
@@ -104,7 +105,7 @@ name : public base\
 {\
 public:\
 	name(bool = true, bool = true, bool = true);\
-	name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+	name(material*, bool = true);\
 	static ushort StaticType();\
 	static const protobase* const GetPrototype();\
 	virtual std::string ClassName() const { return #name; }\

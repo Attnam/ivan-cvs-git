@@ -341,7 +341,7 @@ ushort stack::ConsumableItems(character* Eater)
 
 ushort stack::DrawConsumableContents(character* Eater, std::string Topic) const
 {
-	stack ConsumableStack;
+	stack ConsumableStack(GetSquareUnder());
 	item* TheItem;
 	ushort Key;
 

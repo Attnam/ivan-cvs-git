@@ -281,8 +281,8 @@ protected:
 	virtual std::string NormalThirdPersonHitVerb(bool Critical) const	{ return Critical ? "critically hits" : "hits"; }
 	virtual std::string FirstPersonBiteVerb(bool Critical) const		{ return Critical ? "critically bite" : "bite"; }
 	virtual std::string ThirdPersonBiteVerb(bool Critical) const		{ return Critical ? "critically bites" : "bites"; }
-	virtual std::string FirstPersonPSIVerb(bool Critical) const		{ return Critical ? "emit very powerful psychic waves at" : "emit psychic waves at"; }
-	virtual std::string ThirdPersonPSIVerb(bool Critical) const		{ return Critical ? "emits very powerful psychic waves at" : "emits psychic waves at"; }
+	virtual std::string FirstPersonPSIVerb(bool Critical) const		{ return Critical ? "emit powerful psi waves at" : "emit psi waves at"; }
+	virtual std::string ThirdPersonPSIVerb(bool Critical) const		{ return Critical ? "emits powerful psi waves at" : "emits psi waves at"; }
 	virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomit extremely acidous brown slime at" : "vomit brown slime at"; }
 	virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits extremely acidous brown slime at" : "vomits brown slime at"; }
 	virtual std::string FirstPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomit extremely stale pepsi at" : "vomit pepsi at"; }
@@ -336,6 +336,7 @@ protected:
 	} static name##_ProtoInstaller;\
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
+	name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
 	character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
 	typeable* name::CloneAndLoad(inputfile& SaveFile) const { character* Char = new name(false, false, false); Char->Load(SaveFile); return Char; }\
 	void name::SetDefaultStats() { setstats }\
@@ -355,7 +356,7 @@ name : public base\
 {\
 public:\
 	name(bool = true, bool = true, bool = true, bool = true);\
-	name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); VirtualConstructor(); }\
+	name(material*, bool = true, bool = true);\
 	virtual character* Clone(bool = true, bool = true, bool = true) const;\
 	virtual typeable* CloneAndLoad(inputfile&) const;\
 	static ushort StaticType();\

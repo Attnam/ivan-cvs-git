@@ -38,6 +38,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 					{
 						if(Char->StateIsActivated(CONSUMING)) 
 							Char->EndConsuming();
+
 						TempPlayerGroup.push_back(Char);
 						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 					}

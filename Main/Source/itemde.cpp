@@ -60,9 +60,25 @@ bool potion::Consume(character* Eater, float Amount)
 		ADD_MESSAGE("You feel that this was an evil deed.");
 	}
 
+	ushort Emit = GetEmitation();
+
 	if(!GetMaterial(1)->GetVolume())
 		ChangeMaterial(1,0);
-	
+
+	if(GetSquareUnder())
+	{
+		GetSquareUnder()->SetDescriptionChanged(true);
+
+		if(GetSquareUnder()->CanBeSeen())
+			GetSquareUnder()->UpdateMemorizedDescription();
+
+		if(!game::GetInWilderness())
+			GetLevelSquareUnder()->SignalEmitationDecrease(Emit);
+
+		GetSquareUnder()->SendNewDrawRequest();
+		GetSquareUnder()->SendMemorizedUpdateRequest();
+	}
+
 	return false;
 }
 

@@ -258,7 +258,6 @@ void character::Be()
 	}
 }
 
-
 bool character::GoUp()
 {
 	if(GetSquareUnder()->GetOverTerrain()->GoUp(this))
@@ -751,6 +750,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 						{
 							if(Char->StateIsActivated(CONSUMING)) 
 								Char->EndConsuming();
+
 							TempPlayerGroup.push_back(Char);
 							game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 						}
@@ -2642,22 +2642,6 @@ bool character::CheckForUsefulItemsOnGround()
 {
 	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
 	{
-		if(CanWield() && long(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength()) > long(GetAttackStrength()) && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
-			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
-			{
-				item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
-
-				if(GetWielded())
-					GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
-
-				SetWielded(ToWield);
-
-				if(GetLevelSquareUnder()->CanBeSeen())
-					ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
-
-				return true;
-			}
-
 		if(CanWear() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
 			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
 			{
@@ -2670,6 +2654,22 @@ bool character::CheckForUsefulItemsOnGround()
 
 				if(GetLevelSquareUnder()->CanBeSeen())
 					ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
+
+				return true;
+			}
+
+		if(CanWield() && long(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength()) > long(GetAttackStrength()) && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
+			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
+			{
+				item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
+
+				if(GetWielded())
+					GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
+
+				SetWielded(ToWield);
+
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
 
 				return true;
 			}
@@ -2872,6 +2872,14 @@ bool character::GainDivineKnowledge()
 
 bool character::Displace(character* Who)
 {
+	if(!GetBurdenState())
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You try to use your claws to crawl forward. But your load is too heavy.");
+
+		return true;
+	}
+
 	if(CurrentDanger() > Who->CurrentDanger() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
 	{
 		if(GetIsPlayer())

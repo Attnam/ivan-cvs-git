@@ -274,7 +274,7 @@ void humanoid::Save(outputfile& SaveFile) const
 
 	ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
 
-	SaveFile << Index << ArmType << HeadType << LegType << TorsoType << SingleWeaponSkill;
+	SaveFile << Index << ArmType << HeadType << LegType << TorsoType << ShieldType << SingleWeaponSkill;
 
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
 		SaveFile << GetCategoryWeaponSkill(c);
@@ -286,7 +286,7 @@ void humanoid::Load(inputfile& SaveFile)
 
 	ushort Index;
 
-	SaveFile >> Index >> ArmType >> HeadType >> LegType >> TorsoType >> SingleWeaponSkill;
+	SaveFile >> Index >> ArmType >> HeadType >> LegType >> TorsoType >> ShieldType >> SingleWeaponSkill;
 
 	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
 

@@ -107,7 +107,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 			if(Char)
 			{
 				if(Char->StateIsActivated(CONSUMING)) 
-					Char->EndConsuming();				
+					Char->EndConsuming();	
+			
 				MonsterList.push_back(Char);
 				game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 			}
@@ -148,6 +149,9 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 
 					if(Char->GetTeam() == Who->GetTeam())
 					{
+						if(Char->StateIsActivated(CONSUMING)) 
+							Char->EndConsuming();	
+
 						TempPlayerGroup.push_back(Char);
 						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 					}

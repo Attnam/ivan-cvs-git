@@ -835,7 +835,6 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
-	virtual ulong GetBloodColor() const RET(WHITE)
 	virtual void MoveRandomly() { MoveRandomlyInRoom(); }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(80,0)

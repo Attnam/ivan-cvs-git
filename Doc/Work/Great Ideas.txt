@@ -12,7 +12,7 @@ Thougth Control.
 Mikroaaltouuni.
 Different types of item enchantments.
 Random gods.
-Ego monsters.
+Ego monsters. (also named ones)
 Monster, item and god memories.
 The Saveloader.
 Random fellow adventurers.
