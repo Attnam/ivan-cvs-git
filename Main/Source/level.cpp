@@ -15,6 +15,7 @@
 #include "team.h"
 #include "config.h"
 #include "femath.h"
+#include "message.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -1033,4 +1034,39 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 		game::GetPlayer()->CheckGearExistence();
 		game::GetPlayer()->CheckDeath("killed by an explosion");
 	}
+}
+
+bool level::CollectCreatures(std::vector<character*>& CharacterArray, character* Leader, bool AllowHostiles)
+{
+	if(!AllowHostiles)
+		DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
+		{
+			character* Char = GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
+
+			if(Char)
+				if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))
+				{
+					ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
+					return false;
+				}
+		})
+
+	DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
+	{
+		character* Char = GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
+
+		if(Char)
+			if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))
+			{
+				ADD_MESSAGE("%s follows you.", Char->CNAME(DEFINITE));
+
+				if(Char->StateIsActivated(CONSUMING)) 
+					Char->EndConsuming();
+
+				CharacterArray.push_back(Char);
+				game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
+			}
+	})
+
+	return true;
 }

@@ -1044,13 +1044,6 @@ void levelsquare::DrawParticles(ushort Color, uchar)
 		while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-/*const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
-
-#define DOWN 0
-#define LEFT 1
-#define UP 2
-#define RIGHT 3*/
-
 void levelsquare::StrikeEverything(character* Zapper, uchar Direction)
 {
 	GetStack()->StruckByWandOfStriking(Zapper);

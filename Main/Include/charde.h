@@ -232,7 +232,7 @@ class CHARACTER
 		SetSize(160);
 		SetAgility(10);
 		SetStrength(25);
-		SetEndurance(30);
+		SetEndurance(40);
 		SetPerception(30);
 		SetLegType(2);
 		SetTorsoType(7);

@@ -107,19 +107,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 
 		std::vector<character*> MonsterList;
 
-		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-		{
-			character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-
-			if(Char)
-			{
-				if(Char->StateIsActivated(CONSUMING)) 
-					Char->EndConsuming();	
-			
-				MonsterList.push_back(Char);
-				game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
-			}
-		})
+		if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
+			return false;
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		game::GetCurrentDungeon()->SaveLevel();
@@ -142,28 +131,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 		{
 			std::vector<character*> TempPlayerGroup;
 
-			DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			{
-				character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-
-				if(Char)
-				{
-					if(Char->GetTeam()->GetRelation(Who->GetTeam()) == HOSTILE)
-					{
-						ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
-						return false;
-					}
-
-					if(Char->GetTeam() == Who->GetTeam())
-					{
-						if(Char->StateIsActivated(CONSUMING)) 
-							Char->EndConsuming();	
-
-						TempPlayerGroup.push_back(Char);
-						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
-					}
-				}
-			})
+			if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, false))
+				return false;
 
 			game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
 			game::GetCurrentDungeon()->SaveLevel();
@@ -199,18 +168,8 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 
 		std::vector<character*> MonsterList;
 
-		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-		{
-			character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-
-			if(Char)
-			{
-				if(Char->StateIsActivated(CONSUMING)) 
-					Char->EndConsuming();
-				MonsterList.push_back(Char);
-				game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
-			}
-		})
+		if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
+			return false;
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		game::GetCurrentDungeon()->SaveLevel();

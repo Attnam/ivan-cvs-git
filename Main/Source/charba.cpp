@@ -800,28 +800,8 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 				std::vector<character*> TempPlayerGroup;
 
-				DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-				{
-					character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-
-					if(Char)
-					{
-						if(Char->GetTeam()->GetRelation(GetTeam()) == HOSTILE)
-						{
-							ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
-							return false;
-						}
-
-						if(Char->GetTeam() == GetTeam())
-						{
-							if(Char->StateIsActivated(CONSUMING)) 
-								Char->EndConsuming();
-
-							TempPlayerGroup.push_back(Char);
-							game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
-						}
-					}
-				})
+				if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, this, false))
+					return false;
 
 				game::GetCurrentArea()->RemoveCharacter(GetPos());
 				game::GetCurrentDungeon()->SaveLevel();
@@ -2681,6 +2661,8 @@ void character::StruckByWandOfStriking(character* Zapper)
 
 bool character::CheckForEnemies()
 {
+	bool HostileCharsNear = false;
+
 	character* NearestChar = 0;
 	ulong NearestDistance = 0xFFFFFFFF;
 
@@ -2690,6 +2672,9 @@ bool character::CheckForEnemies()
 				if((*i)->GetExists() && *i != game::GetPlayerBackup())
 				{
 					ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+
+					if(ThisDistance <= LOSRangeSquare())
+						HostileCharsNear = true;
 
 					if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))
 					{
@@ -2715,7 +2700,13 @@ bool character::CheckForEnemies()
 			else
 				return true;
 		else
-			return false;
+			if(HostileCharsNear)
+			{
+				MoveRandomly(); // one has heard that an enemy is near but doesn't know where
+				return true;
+			}
+			else
+				return false;
 }
 
 bool character::CheckForDoors()
@@ -2724,15 +2715,7 @@ bool character::CheckForDoors()
 	{
 		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverLevelTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
-		{
-			/*if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
-				if(GetLevelSquareUnder()->CanBeSeen())
-					ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
-				else
-					ADD_MESSAGE("Something opens the door.");*/
-
-			return true;
-		})
+			return true;)
 	}
 
 	return false;

@@ -73,6 +73,7 @@ public:
 	virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
 	virtual void AddRoom(room*);
 	virtual void Explosion(character*, vector2d, ushort);
+	virtual bool CollectCreatures(std::vector<character*>&, character*, bool);
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

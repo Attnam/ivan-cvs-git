@@ -95,6 +95,9 @@ void guard::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new iron))));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail)));
+
+	GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(1000);
+	GetCurrentSingleWeaponSkill()->AddHit(1000);
 }
 
 ushort humanoid::CalculateArmorModifier() const
@@ -646,6 +649,9 @@ void shopkeeper::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe(new mithril))));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
+
+	GetCategoryWeaponSkill(AXES)->AddHit(1000);
+	GetCurrentSingleWeaponSkill()->AddHit(1000);
 }
 
 void farmer::CreateInitialEquipment()

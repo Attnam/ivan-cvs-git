@@ -87,9 +87,10 @@ short item::CalculateOfferValue(char GodAlignment) const
 
 /******************************************
 *This fly system seems to have been made, *
-*just to handle only player			  *
+*just to handle only player               *
 *kicking and throwing things...		  *
 ******************************************/
+
 bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 {
 	vector2d StartingPos = Start->GetPos();

@@ -31,19 +31,8 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 			{
 				std::vector<character*> TempPlayerGroup;
 
-				DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-				{
-					character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-
-					if(Char && Char->GetTeam() == Who->GetTeam())
-					{
-						if(Char->StateIsActivated(CONSUMING)) 
-							Char->EndConsuming();
-
-						TempPlayerGroup.push_back(Char);
-						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
-					}
-				})
+				if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
+					return false;
 
 				game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
 				game::GetCurrentDungeon()->SaveLevel();
