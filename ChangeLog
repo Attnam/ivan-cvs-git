@@ -1,3 +1,9 @@
+November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Stats of summoned bodyparts are now more intelligent
+	* The dead are no longer counted when calculating population
+	* Anvil, broken bear trap, large chest and "small" chest added to item.pcx by Kahvi
+
 November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Totally weird and odd bug in charde.cpp.
@@ -10,7 +16,7 @@ November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	- "0 scrolls of wishing dropped"
 	- Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
 	- The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
-	
+
 November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* A lethal bug in the banana grower encourager's and a minor one in the ostriches'
@@ -22,7 +28,7 @@ November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Decreased the amount of wolves Silva creates in towns
 	* The fly symbol is a bit clearer now
 	* Banana growers and ostriches now displace any movable creature on the landing
-	  platform; if it isn't possible (the creature is a plant something), they'll
+	  platform; if it isn't possible (the creature is a plant or something), they'll
 	  attack it
 	* Added yet another silhouette color level; colors of old ones adjusted
 	* Dark frogs and rarely even greater ones appear in fountains (Hex forgot them)

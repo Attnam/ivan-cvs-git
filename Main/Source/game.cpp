@@ -75,6 +75,10 @@ long game::CurrentEmitterPosY;
 vector2d game::CurrentEmitterPos;
 bool game::Generating = false;
 bool game::BusyAnimationDisabled = false;
+float game::AveragePlayerArmStrength;
+float game::AveragePlayerLegStrength;
+float game::AveragePlayerDexterity;
+float game::AveragePlayerAgility;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
@@ -279,6 +283,7 @@ bool game::Init(const std::string& Name)
 	UpdateCamera();
 	game::SendLOSUpdateRequest();
 	Ticks = 0;
+	AveragePlayerArmStrength = AveragePlayerLegStrength = AveragePlayerDexterity = AveragePlayerAgility = 10;
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
@@ -1750,6 +1755,56 @@ void game::SignalGeneration(ushort Type, ushort Config)
     Iterator->second.HasBeenGenerated = true;
 }
 
+void game::UpdatePlayerAttributeAverage()
+{
+  if(!GetPlayer()->IsHumanoid())
+    return;
 
+  humanoid* Player = static_cast<humanoid*>(GetPlayer());
+  float PlayerArmStrength = 0;
+  float PlayerLegStrength = 0;
+  float PlayerDexterity = 0;
+  float PlayerAgility = 0;
+  ushort Arms = 0;
+  ushort Legs = 0;
 
+  if(Player->GetRightArm() && Player->GetRightArm()->IsAlive())
+    {
+      PlayerArmStrength += Player->GetRightArm()->GetStrength();
+      PlayerDexterity += Player->GetRightArm()->GetDexterity();
+      ++Arms;
+    }
 
+  if(Player->GetLeftArm() && Player->GetLeftArm()->IsAlive())
+    {
+      PlayerArmStrength += Player->GetLeftArm()->GetStrength();
+      PlayerDexterity += Player->GetLeftArm()->GetDexterity();
+      ++Arms;
+    }
+
+  if(Player->GetRightLeg() && Player->GetRightLeg()->IsAlive())
+    {
+      PlayerLegStrength += Player->GetRightLeg()->GetStrength();
+      PlayerAgility += Player->GetRightLeg()->GetAgility();
+      ++Legs;
+    }
+
+  if(Player->GetLeftLeg() && Player->GetLeftLeg()->IsAlive())
+    {
+      PlayerLegStrength += Player->GetLeftLeg()->GetStrength();
+      PlayerAgility += Player->GetLeftLeg()->GetAgility();
+      ++Legs;
+    }
+
+  if(Arms)
+    {
+      AveragePlayerArmStrength = (49 * AveragePlayerArmStrength + PlayerArmStrength / Arms) / 50;
+      AveragePlayerDexterity = (49 * AveragePlayerDexterity + PlayerDexterity / Arms) / 50;
+    }
+
+  if(Legs)
+    {
+      AveragePlayerLegStrength = (49 * AveragePlayerLegStrength + PlayerLegStrength / Legs) / 50;
+      AveragePlayerAgility = (49 * AveragePlayerAgility + PlayerAgility / Legs) / 50;
+    }
+}

@@ -735,6 +735,7 @@ class character : public entity, public id
   virtual bool CanCreateBodyPart(ushort) const { return false; }
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
   virtual std::string& ProcessMessage(std::string&) const;
+  virtual bool IsHumanoid() const { return false; }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

@@ -106,8 +106,8 @@ Hit effects of thrown items.
 //Calamus and whip of Calamus should work together.
 //Treasure room to the right arm of the Cathedral.
 //?Artifact vault.
-/Village and tunnel.
-/Kick system should be checked. (timo)
+//Village and tunnel.
+Kick system should be checked. (timo)
 //Kamikaze dwarves should be separated by colours.
 ?Manual.
 //Item possibilities. (timo)
@@ -129,9 +129,9 @@ Balancing Loricatus.
 //Smithy to Attnam.
 //Cut down the size of Elpuri's cave.
 //Mana should be hidden.
-Solving the Elpuri Cave distance problem.
+//Solving the Elpuri Cave distance problem.
 //Apply + chests.
-Stats of summoned bodyparts must be made more intelligent.
+//Stats of summoned bodyparts must be made more intelligent.
 //Ergonomification of corpse consumption.
 //RDAM and similiar unclear attributes should be moved to an own screen.
 //?Snake flesh should be poisonous.
@@ -148,9 +148,9 @@ Checking throw balance.
 //?Flaming effect for holy banana.
 //?Solving the iron cloak conundrum.
 ?Broad tapeworm.
-Imperialist quest.
+//Imperialist quest.
 //Moving the lamp room to the tunnel.
-New background story.
+//New background story.
 //?Armor breaking.
 //Tunnel boss.
 ?Something special to tunnel level 2.

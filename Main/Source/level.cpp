@@ -629,16 +629,10 @@ void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort 
 
 void level::GenerateMonsters()
 {
-  if(*LevelScript->GetGenerateMonsters())
-    {
-      ushort Population = 0;
-
-      for(ushort c = 0; c < game::GetTeams(); ++c)
-	Population += game::GetTeam(c)->GetMember().size();
-
-      if(Population < IdealPopulation && !(RAND() % MonsterGenerationInterval))
-	GenerateNewMonsters(1);
-    }
+  if(*LevelScript->GetGenerateMonsters()
+  && game::GetTeam(MONSTER_TEAM)->GetEnabledMembers() < IdealPopulation
+  && !(RAND() % MonsterGenerationInterval))
+    GenerateNewMonsters(1);
 }
 
 void level::Save(outputfile& SaveFile) const

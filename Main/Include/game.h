@@ -233,6 +233,11 @@ class game
   static bool IsDark(ulong);
   static void SetStandardListAttributes(felist&);
   static void SignalGeneration(ushort, ushort);
+  static float GetAveragePlayerArmStrength() { return AveragePlayerArmStrength; }
+  static float GetAveragePlayerLegStrength() { return AveragePlayerLegStrength; }
+  static float GetAveragePlayerDexterity() { return AveragePlayerDexterity; }
+  static float GetAveragePlayerAgility() { return AveragePlayerAgility; }
+  static void UpdatePlayerAttributeAverage();
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -279,11 +284,10 @@ class game
   static dangermap DangerMap;
   static configid NextDangerId;
   static bool BusyAnimationDisabled;
+  static float AveragePlayerArmStrength;
+  static float AveragePlayerLegStrength;
+  static float AveragePlayerDexterity;
+  static float AveragePlayerAgility;
 };
 
 #endif
-
-
-
-
-

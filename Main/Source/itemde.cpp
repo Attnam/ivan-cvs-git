@@ -1801,6 +1801,7 @@ bool corpse::RaiseTheDead(character* Summoner)
   GetLSquareUnder()->AddCharacter(GetDeceased());
   RemoveFromSlot();
   GetDeceased()->SetHasBe(true);
+  GetDeceased()->GetTeam()->IncreaseEnabledMembers();
   GetDeceased()->SetMotherEntity(0);
   GetDeceased()->CompleteRiseFromTheDead();
   Deceased = 0;
@@ -2454,16 +2455,36 @@ void head::InitSpecialAttributes()
 void arm::InitSpecialAttributes()
 {
   bodypart::InitSpecialAttributes();
-  Strength = Master->GetDefaultArmStrength() * (100 + Master->GetAttributeBonus()) / 100;
-  Dexterity = Master->GetDefaultDexterity() * (100 + Master->GetAttributeBonus()) / 100;
+
+  if(!Master->IsPlayer() || Master->IsInitializing())
+    {
+      Strength = Master->GetDefaultArmStrength() * (100 + Master->GetAttributeBonus()) / 100;
+      Dexterity = Master->GetDefaultDexterity() * (100 + Master->GetAttributeBonus()) / 100;
+    }
+  else
+    {
+      Strength = ushort(game::GetAveragePlayerArmStrength());
+      Dexterity = ushort(game::GetAveragePlayerDexterity());
+    }
+
   BaseUnarmedStrength = Master->GetBaseUnarmedStrength();
 }
 
 void leg::InitSpecialAttributes()
 {
   bodypart::InitSpecialAttributes();
-  Strength = Master->GetDefaultLegStrength() * (100 + Master->GetAttributeBonus()) / 100;
-  Agility = Master->GetDefaultAgility() * (100 + Master->GetAttributeBonus()) / 100;
+
+  if(!Master->IsPlayer() || Master->IsInitializing())
+    {
+      Strength = Master->GetDefaultLegStrength() * (100 + Master->GetAttributeBonus()) / 100;
+      Agility = Master->GetDefaultAgility() * (100 + Master->GetAttributeBonus()) / 100;
+    }
+  else
+    {
+      Strength = ushort(game::GetAveragePlayerLegStrength());
+      Agility = ushort(game::GetAveragePlayerAgility());
+    }
+
   BaseKickStrength = Master->GetBaseKickStrength();
 }
 

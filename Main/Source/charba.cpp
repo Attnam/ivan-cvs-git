@@ -98,7 +98,7 @@ character::~character()
     }
 
   if(Team)
-    Team->Remove(GetTeamIterator());
+    Team->Remove(this);
 
   delete Stack;
   ushort c;
@@ -356,6 +356,9 @@ void character::Be()
 	    }
 
 	  game::CalculateNextDanger();
+
+	  if(!StateIsActivated(POLYMORPHED))
+	    game::UpdatePlayerAttributeAverage();
 
 	  if(!GetAction())
 	    GetPlayerCommand();
@@ -893,6 +896,7 @@ void character::CreateCorpse()
   Corpse->SetDeceased(this);
   GetStackUnder()->AddItem(Corpse);
   SetHasBe(false);
+  GetTeam()->DecreaseEnabledMembers();
 }
 
 void character::Die(bool ForceMsg)
@@ -1586,7 +1590,12 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> TemporaryStateCounter[c];
 
   if(ReadType<bool>(SaveFile))
-    SetTeam(game::GetTeam(ReadType<ushort>(SaveFile)));
+    {
+      SetTeam(game::GetTeam(ReadType<ushort>(SaveFile)));
+
+      if(!IsEnabled())
+	Team->DecreaseEnabledMembers();
+    }
 
   if(ReadType<bool>(SaveFile))
     GetTeam()->SetLeader(this);
@@ -2199,6 +2208,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
       NewForm->SetPolymorphBackup(this);
       SetPolymorphed(true);
       SetHasBe(false);
+      GetTeam()->DecreaseEnabledMembers();
     }
 
   GetStack()->MoveItemsTo(NewForm->GetStack());
@@ -2855,7 +2865,7 @@ void character::SetTeam(team* What)
 void character::ChangeTeam(team* What)
 {
   if(GetTeam())
-    GetTeam()->Remove(GetTeamIterator());
+    GetTeam()->Remove(this);
 
   Team = What;
   GetSquareUnder()->SendNewDrawRequest();
@@ -3996,7 +4006,7 @@ void character::ReceiveHeal(long Amount)
 	else if(CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s grows a new %s!", CHAR_NAME(DEFINITE), GetBodyPartName(c).c_str());
 
-	GenerateRandomBodyPart()->SetHP(1);
+	CreateBodyPart(c)->SetHP(1);
 	Amount -= 500;
       }
 }
@@ -4780,6 +4790,7 @@ void character::EndPolymorph()
   SetPolymorphBackup(0);
   GetSquareUnder()->AddCharacter(Char);
   Char->SetHasBe(true);
+  Char->GetTeam()->IncreaseEnabledMembers();
   Char->SetPolymorphed(false);
   SetSquareUnder(0);
   GetStack()->MoveItemsTo(Char->GetStack());

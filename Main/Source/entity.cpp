@@ -26,8 +26,8 @@ entity::~entity()
 /*
  * Calling SendToHell() marks the entity dead,
  * so that it will be removed by hell::Burn() at the end of the tick.
- * In general, you should never delete an entity instead of calling this.
- * This is because pool::Be() will crash if the entity currently Be()ing is deleted.
+ * In general, you should never delete an entity instead of calling this,
+ * because pool::Be() will crash if the entity currently Be()ing is deleted.
  */
 
 void entity::SendToHell()

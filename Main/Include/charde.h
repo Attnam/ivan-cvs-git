@@ -149,6 +149,7 @@ class ABSTRACT_CHARACTER
   virtual void CalculateDodgeValue();
   virtual bool CheckZap();
   virtual void AddAttributeInfo(std::string&) const;
+  virtual bool IsHumanoid() const { return true; }
   virtual bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) { return true; }
  protected:
