@@ -123,4 +123,3 @@ inline inputfile& operator>>(inputfile& SaveFile, sweaponskill*& WeaponSkill)
 }
 
 #endif
-

@@ -180,6 +180,7 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual void NeutralAICommand() { SoldierAICommand(); }
+	virtual void CreateInitialEquipment();
 protected:
 	virtual std::string NameSingular() const RET("city guard")
 	virtual std::string NamePlural() const RET("city guards")
@@ -296,6 +297,7 @@ protected:
 	virtual std::string NamePlural() const RET("Enner Beasts")
 	virtual float GetMeleeStrength() const RET(200000)
 	virtual void HostileAICommand();
+	virtual void CreateCorpse();
 );
 
 class ABSTRACT_CHARACTER
@@ -650,4 +652,3 @@ protected:
 );
 
 #endif
-

@@ -20,8 +20,6 @@ void can::PositionedDrawToTileBuffer(uchar) const
 
 item* can::TryToOpen(stack* Stack)
 {
-	//ADD_MESSAGE("You succeed in opening the can!");
-
 	item* x = new lump(GetMaterial(1));
 
 	Stack->AddItem(x);
@@ -33,14 +31,6 @@ item* can::TryToOpen(stack* Stack)
 
 bool corpse::Consume(character* Eater, float Amount)
 {
-	/*if(Eater == game::GetPlayer())
-	{
-		if(Amount == 100)
-			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
-		else
-			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}*/
-
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
 
 	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
@@ -55,14 +45,6 @@ bool corpse::Consume(character* Eater, float Amount)
 
 bool banana::Consume(character* Eater, float Amount)
 {
-	/*if(Amount > 100) Amount = 100;
-	if(Eater == game::GetPlayer())
-	{
-		if(Amount == 100)
-			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
-		else
-			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}*/
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
 	if(!GetMaterial(1)->GetVolume())
@@ -73,14 +55,6 @@ bool banana::Consume(character* Eater, float Amount)
 
 bool lump::Consume(character* Eater, float Amount)
 {
-	/*if(Amount > 100) Amount = 100;
-	if(Eater == game::GetPlayer())
-	{
-		if(Amount == 100)
-			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
-		else
-			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}*/
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
 
 	return GetMaterial(0)->GetVolume() ? false : true;
@@ -88,15 +62,6 @@ bool lump::Consume(character* Eater, float Amount)
 
 bool potion::Consume(character* Eater, float Amount)
 {
-	/*if(Amount > 100) Amount = 100;
-	if(Eater == game::GetPlayer())
-	{
-		if(Amount == 100)
-			ADD_MESSAGE("You drink %s.", CNAME(DEFINITE));
-		else
-			ADD_MESSAGE("You drink part of %s.", CNAME(DEFINITE));
-	}*/
-
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
 	if(!GetMaterial(1)->GetVolume())
@@ -216,15 +181,6 @@ void potion::PositionedDrawToTileBuffer(uchar) const
 
 bool loaf::Consume(character* Eater, float Amount)
 {
-	/*if(Amount > 100) Amount = 100;
-	if(Eater == game::GetPlayer())
-	{
-		if(Amount == 100)
-			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
-		else
-			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}*/
-
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
 	ulong p = GetMaterial(0)->GetVolume();
 	return GetMaterial(0)->GetVolume() ? false : true;
@@ -232,10 +188,6 @@ bool loaf::Consume(character* Eater, float Amount)
 
 bool abone::Consume(character* Consumer, float Amount)
 {
-	/*if(Consumer == game::GetPlayer())
-		ADD_MESSAGE("You consume %s.", CNAME(DEFINITE));
-	else if(Consumer->GetLevelSquareUnder()->CanBeSeen())
-		ADD_MESSAGE("%s consumes %s.", Consumer->CNAME(DEFINITE), CNAME(DEFINITE));*/
 	GetMaterial(0)->EatEffect(Consumer, Amount, NPModifier());
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
@@ -545,16 +497,15 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 	if(Strength > 20000 + rand() % 40000)
 	{
 		character* Wearer = ItemsStack->GetSquareUnder()->GetCharacter();
+
 		if(Wearer && Wearer->GetTorsoArmor() == this)
-		{
 			Wearer->SetTorsoArmor(0);
-		}
+
 		ImpactDamage(ushort(Strength), false, ItemsStack);
 
-
-		
 		if(Shown)
 			ADD_MESSAGE("The plate mail is damaged by the loud sound.");
+
 		return true;
 	}
 	return false;
@@ -563,8 +514,13 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 
 void platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
+	if (IsShown)
+		ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
+
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
-	ItemStack->AddItem(new brokenplatemail);
-	if (IsShown) ADD_MESSAGE("The plate mail is damaged.");
+	item* Plate = new brokenplatemail(false);
+	Plate->InitMaterials(GetMaterial(0));
+	ItemStack->AddItem(Plate);
+	SetMaterial(0,0);
 	SetExists(false);
 }

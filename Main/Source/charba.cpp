@@ -22,8 +22,6 @@
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), IsPlayer(false), State(0), ConsumingCurrently(0)
 {
-	//SetConsumingCurrently(0xFFFF);
-
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
 
@@ -124,7 +122,7 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 		SetRelations(0);
 
 	DeActivateVoluntaryStates();
-	//if(GetConsumingCurrently() != 0xFFFF) StopEating();
+
 	if(!(rand() % 20))
 	{
 		ushort Damage = ushort(WeaponStrength * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 5 ? 2 : 1);
@@ -193,8 +191,6 @@ void character::Be()
 		for(uchar c = 0; c < STATES; ++c)
 			if(StateIsActivated(c))
 				(this->*StateHandler[c])();
-			//if(!(StateCounter[c]--))
-				//(this->*EndState[c])();
 			
 		if(!game::Flag)
 		{
@@ -206,7 +202,6 @@ void character::Be()
 			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED))
 				Faint();
 
-			//if(CanMove())
 			switch(GetBurdenState())
 			{
 			case UNBURDENED:
@@ -220,17 +215,12 @@ void character::Be()
 				SetAP(GetAP() + 50 + (GetAgility() >> 2));
 			break;
 			}
-
-			//if(GetConsumingCurrently() != 0xFFFF) ContinueEating();
 		}
 		else
 			game::Flag = false;
 
 		if(GetAP() >= 1000)
 		{
-			//SetConsumingCurrently(0xFFFF);
-			//if(GetFainted()) SetFainted(false);
-
 			if(GetIsPlayer())
 			{
 				static ushort Timer = 0;
@@ -1165,10 +1155,6 @@ bool character::ReadItem(int ToBeRead, stack* ItemsStack)
 	}
 }
 
-// 2500 * S Burdened
-// 5000 * S Stressed
-// 7000 * S Overload
-
 uchar character::GetBurdenState(ulong Mass) const
 {
 	ulong SumOfMasses;
@@ -1328,20 +1314,6 @@ bool character::SeeWholeMap()
 	}
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
-
-	return false;
-}
-
-bool character::IncreaseGamma()
-{
-	//GGG graphics::Gamma(0, game::EditGamma(-5));
-
-	return false;
-}
-
-bool character::DecreaseGamma()
-{
-	//GGG graphics::Gamma(0, game::EditGamma(5));
 
 	return false;
 }
@@ -1601,7 +1573,6 @@ void character::NeutralAICommand()
 	dynarray<character*> SeenCharacters;
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
-	//DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(), LOSRange(),
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter())
 			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter());
@@ -1660,14 +1631,10 @@ void character::NeutralAICommand()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
 		{
-			//item* ToEat = GetLevelSquareUnder()->GetStack()->RemoveItem(c);
-
 			if(SquareUnder->CanBeSeen())
 				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
 
 			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
-
-			//delete ToEat; //This should take time also.
 
 			return;
 		}
@@ -1751,13 +1718,6 @@ void character::HostileAICommand()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
 		{
-			/*item* ToEat = GetLevelSquareUnder()->GetStack()->RemoveItem(c);
-
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), ToEat->CNAME(DEFINITE));
-
-			delete ToEat; //This should take time also.*/
-
 			if(SquareUnder->CanBeSeen())
 				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
 
@@ -1929,15 +1889,13 @@ long character::Score() const
 	return Score;
 }
 
-long character::AddScoreEntry(std::string Description, float Multiplier) const
+void character::AddScoreEntry(std::string Description, float Multiplier) const
 {
 	highscore HScore;
 
 	HScore.Add(long((Score() - game::GetBaseScore()) * Multiplier), game::GetPlayerName() + ", " + Description);
 
 	HScore.Save();
-
-	return 0; //??????????
 }
 
 bool character::CheckDeath(std::string Msg)
@@ -2078,43 +2036,6 @@ void character::GetPlayerCommand()
 	}
 }
 
-/*void character::ContinueEating()
-{
-	if(GetAPsToBeEaten() + GetAP() > 50000)
-	{
-		if(GetIsPlayer())
-			ADD_MESSAGE("You have eaten for a long time now...");
-
-		StopEating();
-	}
-	else if(GetAP() >= 1000)
-	{
-		if(GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this))
-			delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());
-
-		SetConsumingCurrently(0xFFFF);
-
-		Hunger(ushort(GetAPsToBeEaten() / 1000));
-		Regenerate(ushort(GetAPsToBeEaten() / 1000));
-		game::Turn(ushort(GetAPsToBeEaten() / 1000));
-		game::ApplyDivineTick(ushort(GetAPsToBeEaten() / 1000));
-	}
-}
-
-void character::StopEating()
-{
-	float NowEaten = GetAPsToBeEaten() + GetAP();
-	float Temp = (NowEaten / GetAPsToBeEaten()) * 100;
-	SetAP(1000);
-	if(GetStack()->GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this, Temp))
-		delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());
-	Hunger(ushort(NowEaten / 1000));
-	Regenerate(ushort(NowEaten / 1000));
-	game::Turn(ushort(NowEaten / 1000));
-	game::ApplyDivineTick(ushort(NowEaten / 1000));
-	SetConsumingCurrently(0xFFFF);
-}*/
-
 void character::Vomit(ushort HowMuch)
 {
 	if(GetIsPlayer())
@@ -2224,7 +2145,6 @@ bool character::Polymorph()
 		ADD_MESSAGE("Your body glows in a crimson ligth. You transform into %s!", NewForm->CNAME(INDEFINITE));
 		game::SetPlayerBackup(this);
 		game::SetPlayer(NewForm);
-		//game::SetPolymorphCounter(1000);
 		NewForm->ActivateState(POLYMORPHED);
 		NewForm->SetStateCounter(POLYMORPHED, 1000);
 		NewForm->SetRelations(FRIEND);
@@ -2234,20 +2154,6 @@ bool character::Polymorph()
 
 	return true;
 }
-
-/*void character::ChangeBackToPlayer()
-{
-	SetExists(false);
-
-	GetSquareUnder()->RemoveCharacter();
-	GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
-
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
-
-	game::SetPlayer(game::GetPlayerBackup());
-	game::SetPlayerBackup(0);	
-}*/
 
 worldmapsquare* character::GetWorldMapSquareUnder() const
 {
@@ -2374,30 +2280,8 @@ void character::FaintHandler()
 
 void character::EatHandler()
 {
-	/*if(GetAPsToBeEaten() + GetAP() > 50000)
-	{
-		if(GetIsPlayer())
-			ADD_MESSAGE("You have eaten for a long time now...");
-
-		StopEating();
-	}
-	else if(GetAP() >= 1000)
-	{
-		if(GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this))
-			delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());
-
-		SetConsumingCurrently(0xFFFF);
-
-		Hunger(ushort(GetAPsToBeEaten() / 1000));
-		Regenerate(ushort(GetAPsToBeEaten() / 1000));
-		game::Turn(ushort(GetAPsToBeEaten() / 1000));
-		game::ApplyDivineTick(ushort(GetAPsToBeEaten() / 1000));
-	}*/
-
 	if(GetConsumingCurrently()->Consume(this, 1000))
 	{
-		//ADD_MESSAGE("The %s .", GetConsumingCurrently()->CNAME(DEFINITE));
-
 		item* ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
 
 		EndEating();
@@ -2436,22 +2320,6 @@ void character::EndFainted()
 
 void character::EndEating()
 {
-	/*float NowEaten = GetAPsToBeEaten() + GetAP();
-	float Temp = (NowEaten / GetAPsToBeEaten()) * 100;
-	SetAP(1000);
-	if(GetStack()->GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this, Temp))
-		delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());
-	Hunger(ushort(NowEaten / 1000));
-	Regenerate(ushort(NowEaten / 1000));
-	game::Turn(ushort(NowEaten / 1000));
-	game::ApplyDivineTick(ushort(NowEaten / 1000));*/
-	//SetConsumingCurrently(0xFFFF);
-
-	/*float Temp = (NowEaten / GetAPsToBeEaten()) * 100;
-
-	if(GetStack()->GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this, Temp))
-		delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());*/
-
 	if(StateIsActivated(EATING))
 	{
 		if(GetIsPlayer())
@@ -2524,7 +2392,7 @@ void character::StruckByWandOfStriking()
 		if(GetSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
-	SetHP(GetHP() - 5 - rand() % 3);
+	SetHP(GetHP() - 10 - rand() % 10);
 	
 	CheckDeath("killed by a wand of striking");
 }

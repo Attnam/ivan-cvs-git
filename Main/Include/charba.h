@@ -77,12 +77,10 @@ public:
 	virtual bool HasHeadOfElpuri() const;
 	virtual bool HasMaakotkaShirt() const;
 	virtual bool HasPerttusNut() const;
-	//virtual bool GetFainted() const { return Fainted; }
 	virtual bool GetIsPlayer() const { return IsPlayer; }
 	virtual bool Apply();
 	virtual bool Close();
 	virtual bool Consume();
-	virtual bool DecreaseGamma();
 	virtual bool DecreaseSoftGamma();
 	virtual bool Dip();
 	virtual bool DrawMessageHistory();
@@ -92,7 +90,6 @@ public:
 	virtual bool GainAllItems();
 	virtual bool GoDown();
 	virtual bool GoUp();
-	virtual bool IncreaseGamma();
 	virtual bool IncreaseSoftGamma();
 	virtual bool Kick();
 	virtual bool Look();
@@ -110,7 +107,7 @@ public:
 	virtual bool SeeWholeMap();
 	virtual bool ShowInventory();
 	virtual bool ShowKeyLayout();
-	virtual bool ShowWeaponSkills();// { return DrawWeaponSkillList(); }
+	virtual bool ShowWeaponSkills();
 	virtual bool Talk();
 	virtual bool Throw();
 	virtual bool WalkThroughWalls();
@@ -118,8 +115,7 @@ public:
 	virtual bool WhatToEngrave();
 	virtual bool Wield();
 	virtual bool WizardMode();
-	//virtual bool DrawWeaponSkillList();
-	virtual long AddScoreEntry(std::string, float = 1) const;
+	virtual void AddScoreEntry(std::string, float = 1) const;
 	virtual long Score() const;
 	virtual float GetAttackStrength() const;
 	virtual float GetDifficulty() const;
@@ -128,7 +124,6 @@ public:
 	virtual worldmapsquare* GetWorldMapSquareUnder() const;
 	virtual long GetAgilityExperience() const { return AgilityExperience; }
 	virtual long GetAP() const { return AP; }
-	//virtual long GetAPsToBeEaten() const { return APsToBeEaten; }
 	virtual long GetEnduranceExperience() const { return EnduranceExperience; }
 	virtual long GetNP() const					{ return NP; }
 	virtual long GetPerceptionExperience() const { return PerceptionExperience; }
@@ -158,7 +153,6 @@ public:
 	virtual void AddHitMessage(character*, const bool = false) const;
 	virtual void ApplyExperience();
 	virtual void BeTalkedTo(character*);
-	//virtual void ContinueEating();
 	virtual void Darkness(long);
 	virtual void Die();
 	virtual void DrawToTileBuffer() const;
@@ -178,11 +172,9 @@ public:
 	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
 	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
 	virtual void SetAP(long What) { AP = What; }
-	//virtual void SetAPsToBeEaten(long What) { APsToBeEaten = What; }
 	virtual void SetConsumingCurrently(item* What) { ConsumingCurrently = What; }
 	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
-	//virtual void SetFainted(bool To) { Fainted = To; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 	virtual void SetNP(long What) { NP = What; }
@@ -195,7 +187,6 @@ public:
 	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
 	virtual void SetWielded(item* Something) { Wielded = Something; }
 	virtual void SpillBlood(uchar);
-	//virtual void StopEating();
 	virtual void Vomit(ushort);
 	virtual void Be();
 	virtual bool Zap();
@@ -258,9 +249,6 @@ protected:
 	long NP, AP;
 	long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
 	uchar Relations;
-	//bool Fainted;
-	//ushort EatingCurrently;
-	//long APsToBeEaten;
 	item* ConsumingCurrently;
 	bool IsPlayer;
 	uchar State;

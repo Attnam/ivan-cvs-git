@@ -69,7 +69,7 @@ public:
 	virtual uchar GetGraphicsContainerIndex() const { return GITEM; }
 	virtual bool IsMaterialChangeable() const { return true; }
 	virtual void ChangeMainMaterial(material*);
-	virtual void CheckPickUpEffect(character*);
+	virtual void CheckPickUpEffect(character*) {}
 	virtual uchar GetWeaponCategory() const;
 	virtual void StruckByWandOfStriking(stack*);
 protected:

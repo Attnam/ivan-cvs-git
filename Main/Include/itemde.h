@@ -25,7 +25,7 @@ class ITEM
 		SetSize(20);
 	},
 public:
-	virtual ushort Possibility() const RET(50)
+	virtual ushort Possibility() const RET(200)
 	virtual std::string Name(uchar Case) const RET(NameSized(Case,"a", 15, 40))
 	virtual uchar GetConsumeType() const RET(Material[1]->GetConsumeType())
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 112))
@@ -48,7 +48,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(1)
+	virtual ushort Possibility() const RET(10)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, bananapeal::StaticType()))
 	virtual std::string NameSingular() const RET("holy banana of Liukas Vipro")
 	virtual std::string NamePlural() const RET("holy bananas of Liukas Vipro")
@@ -69,7 +69,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(50)
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual ushort GetEmitation() const RET(300)
 	virtual std::string NameSingular() const RET("lamp")
@@ -92,7 +92,7 @@ class ITEM
 		SetSize(10);
 	},
 public:
-	virtual ushort Possibility() const RET(100)
+	virtual ushort Possibility() const RET(200)
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
 	virtual item* TryToOpen(stack*);
@@ -116,7 +116,7 @@ class ITEM
 		SetSize(10);
 	},
 public:
-	virtual ushort Possibility() const RET(0)
+	virtual ushort Possibility() const RET(200)
 	virtual std::string Name(uchar Case) const RET(NameThingsThatAreLikeLumps(Case, "a")) 
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
 	virtual bool Consume(character*, float = 100);
@@ -162,7 +162,7 @@ class ITEM
 		SetSize(175);
 	},
 public:
-	virtual ushort Possibility() const RET(3)
+	virtual ushort Possibility() const RET(20)
 	virtual std::string NameSingular() const RET("two-handed sword")
 	virtual std::string NamePlural() const RET("two-handed swords")
 	virtual vector2d GetBitmapPos() const RETV(0,0)
@@ -181,7 +181,7 @@ class ITEM
 		SetSize(175);
 	},
 public:
-	virtual ushort Possibility() const RET(1)
+	virtual ushort Possibility() const RET(10)
 	virtual std::string NameSingular() const RET("curved two-handed sword")
 	virtual std::string NamePlural() const RET("curved two-handed swords")
 	virtual float OfferModifier() const RET(0.25)
@@ -221,7 +221,7 @@ class ITEM
 		SetSize(125);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(200)
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,16))
 	virtual std::string NameSingular() const RET("axe")
 	virtual std::string NamePlural() const RET("axes")
@@ -241,7 +241,7 @@ class ITEM
 		SetSize(150);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(100)
 	virtual std::string NameSingular() const RET("pick-axe")
 	virtual std::string NamePlural() const RET("pick-axes")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 64))
@@ -261,7 +261,7 @@ class ITEM
 		SetSize(200);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(100)
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,96))
 	virtual bool CanBeDippedInto(item*) const RET(Material[2] ? false : true)
 	virtual std::string NameSingular() const RET("spear")
@@ -292,7 +292,7 @@ class ITEM
 		SetSize(75);
 	},
 public:
-	virtual ushort Possibility() const RET(3)
+	virtual ushort Possibility() const RET(5)
 	virtual ushort GetArmorValue() const;
 	virtual std::string NameSingular() const RET("plate mail")
 	virtual std::string NamePlural() const RET("plate mails")
@@ -311,7 +311,7 @@ class ITEM
 		SetSize(75);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(50)
 	virtual ushort GetArmorValue() const;
 	virtual std::string NameSingular() const RET("chain mail")
 	virtual std::string NamePlural() const RET("chain mails")
@@ -357,7 +357,7 @@ class ITEM
 		SetSize(0);
 	},
 public:
-	virtual ushort Possibility() const RET(0)
+	virtual ushort Possibility() const RET(50)
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
 	virtual bool Consume(character*, float = 100);
 	virtual std::string NameSingular() const RET("corpse")
@@ -379,7 +379,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(200)
 	virtual uchar GetConsumeType() const RET(Material[1] ? Material[1]->GetConsumeType() : ODD)
 	virtual bool Consume(character*, float = 100);
 	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
@@ -404,7 +404,7 @@ class ITEM
 		SetSize(20);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(100)
 	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", bananapeal::StaticType()))
 	virtual std::string NameSingular() const RET("banana peal")
 	virtual std::string NamePlural() const RET("banana peals")
@@ -425,7 +425,7 @@ class ITEM
 		SetSize(10);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(50)
 	virtual std::string NameSingular() const RET("broken bottle")
 	virtual std::string NamePlural() const RET("broken bottles")
 	virtual item* BetterVersion() const;
@@ -454,7 +454,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(100)
 	virtual std::string NameSingular() const RET("scroll of create monster")
 	virtual std::string NamePlural() const RET("scrolls of create monster")
 	virtual float OfferModifier() const RET(5)
@@ -471,7 +471,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(25)
+	virtual ushort Possibility() const RET(50)
 	virtual std::string NameSingular() const RET("scroll of teleportation")
 	virtual std::string NamePlural() const RET("scrolls of teleportation")
 	virtual float OfferModifier() const RET(5)
@@ -565,7 +565,7 @@ class ITEM
 		SetSize(50);
 	},
 public:
-	virtual ushort Possibility() const RET(50)
+	virtual ushort Possibility() const RET(200)
 	virtual std::string NameSingular() const RET("bone")
 	virtual std::string NamePlural() const RET("bones")
 	virtual std::string Name(uchar Case) const RET(NameSized(Case,"a", 15, 40))
@@ -588,7 +588,7 @@ class ITEM
 		SetSize(225);
 	},
 public:
-	virtual ushort Possibility() const RET(15)
+	virtual ushort Possibility() const RET(100)
 	virtual std::string NameSingular() const RET("poleaxe")
 	virtual std::string NamePlural() const RET("poleaxes")
 	virtual float OfferModifier() const RET(0.25f)
@@ -606,11 +606,11 @@ class ITEM
 		SetSize(150);
 	},
 public:
-	virtual ushort Possibility() const RET(5)
+	virtual ushort Possibility() const RET(50)
 	virtual std::string NameSingular() const RET("spiked mace")
 	virtual std::string NamePlural() const RET("spiked maces")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 0))
-	virtual float OfferModifier() const RET(0.125)
+	virtual float OfferModifier() const RET(0.125f)
 	virtual vector2d GetBitmapPos() const RETV(0,32)
 	virtual uchar GetWeaponCategory() const { return MACES; }
 protected:
@@ -648,7 +648,7 @@ class ITEM
 		SetSize(40);
 	},
 public:
-	virtual ushort Possibility() const RET(200)
+	virtual ushort Possibility() const RET(100)
 	virtual std::string Name(uchar Case) const RET(NameThingsThatAreLikeLumps(Case, "a")) 
 	virtual std::string NameSingular() const RET("loaf")
 	virtual std::string NamePlural() const RET("loaves")
@@ -688,7 +688,7 @@ class ITEM
 		SetSize(10);
 	},
 public:
-	virtual ushort Possibility() const RET(0)
+	virtual ushort Possibility() const RET(10)
 	virtual std::string NameSingular() const RET("cheap copy of left nut of Perttu")
 	virtual std::string NamePlural() const RET("cheap copies of left nut of Perttu")
 	virtual long Score() const RET(1)
@@ -721,7 +721,7 @@ class ITEM
 		SetCharge(rand() % 5 + 1);
 	},
 public:
-	virtual ushort Possibility() const RET(3)
+	virtual ushort Possibility() const RET(20)
 	virtual std::string NameSingular() const RET("wand of polymorph")
 	virtual std::string NamePlural() const RET("wands of polymorph")
 	virtual float OfferModifier() const RET(30)
@@ -738,7 +738,7 @@ class ITEM
 		SetSize(100);
 	},
 public:
-	virtual ushort Possibility() const RET(40)
+	virtual ushort Possibility() const RET(200)
 	virtual std::string NameSingular() const RET("arrow")
 	virtual std::string NamePlural() const RET("arrows")
 	virtual float OfferModifier() const RET(0.5f)
@@ -756,7 +756,7 @@ class ITEM
 		SetSize(50);
 	},
 public:
-	virtual ushort Possibility() const RET(0)
+	virtual ushort Possibility() const RET(10)
 	virtual std::string Name(uchar Case) const RET(NameNormal(Case, "a"))
 	virtual std::string NameSingular() const RET("head of an Enner Beast")
 	virtual std::string NamePlural() const RET("heads of an Enner Beast")
@@ -774,7 +774,7 @@ class ITEM
 		SetSize(15);
 	},
 public:
-	virtual ushort Possibility() const RET(3)
+	virtual ushort Possibility() const RET(50)
 	virtual std::string NameSingular() const RET("broken lamp")
 	virtual std::string NamePlural() const RET("broken lamps")
 	virtual item* BetterVersion() const { item* P = new lamp(new glass(50)); return P; }
@@ -793,7 +793,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(2)
+	virtual ushort Possibility() const RET(3)
 	virtual std::string NameSingular() const RET("scroll of change material")
 	virtual std::string NamePlural() const RET("scrolls of change material")
 	virtual float OfferModifier() const RET(40)
@@ -831,7 +831,7 @@ class ITEM
 		SetCharge(rand() % 3 + 1);
 	},
 public:
-	virtual ushort Possibility() const RET(5)
+	virtual ushort Possibility() const RET(10)
 	virtual std::string NameSingular() const RET("wand of striking")
 	virtual std::string NamePlural() const RET("wands of striking")
 	virtual float OfferModifier() const RET(10)
@@ -839,23 +839,22 @@ public:
 	virtual bool Zap(vector2d, uchar);
 );
 
-
 class ITEM
 (
 	brokenplatemail,
 	item,
 	InitMaterials(new iron(4000)),
 	{
-		SetSize(75);
+		SetSize(70);
 	},
 public:
-	virtual ushort Possibility() const RET(1)
+	virtual ushort Possibility() const RET(10)
 	virtual std::string NameSingular() const RET("broken plate mail")
 	virtual std::string NamePlural() const RET("broken plate mails")
 	virtual float OfferModifier() const RET(0.1f)
 	virtual vector2d GetBitmapPos() const RETV(16,128)
+protected:
+	virtual ushort GetFormModifier() const RET(10)
 );
-
-
 
 #endif

@@ -51,17 +51,29 @@ void oree::CreateInitialEquipment()
 
 void swatcommando::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new curvedtwohandedsword)));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 5 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
 }
 
 void fallenvalpurist::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe)));
+	if(rand() % 10)
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)(new axe) : (item*)(new pickaxe))));
+	else
+	{
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
+		SetStrength(20);
+	}
 }
 
 void froggoblin::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)(new spear) : (item*)(new poleaxe))));
+}
+
+void cityguard::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new poleaxe)));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail)));
 }
 
 ushort humanoid::CalculateArmorModifier() const
@@ -196,6 +208,14 @@ void perttu::CreateCorpse()
 {
 	GetLevelSquareUnder()->GetStack()->AddItem(new leftnutofperttu);
 }
+
+void ennerbeast::CreateCorpse()
+{
+	character::CreateCorpse();
+
+	GetLevelSquareUnder()->GetStack()->AddItem(new headofennerbeast);
+}
+
 
 bool humanoid::WearArmor()
 {

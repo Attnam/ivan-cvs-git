@@ -200,4 +200,5 @@ protected:
 	virtual std::string NamePlural() const					{ return "grasses"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
 );
+
 #endif

@@ -76,7 +76,6 @@ public:
 	static bool GetWizardMode() { return WizardMode; }
 	static void SeeWholeMap();
 	static bool GetSeeWholeMapCheat() { return SeeWholeMapCheat; }
-	static uchar EditGamma(short Value) {if(Value > 255 - Gamma) Gamma = 255; else if(Value + Gamma < 0) Gamma = 0; else Gamma += Value; return Gamma; }
 	static bool EmitationHandler(ushort, ushort, ushort, ushort);
 	static bool NoxifyHandler(ushort, ushort, ushort, ushort);
 	static bool GetGoThroughWallsCheat() { return GoThroughWallsCheat; }
@@ -124,8 +123,6 @@ public:
 	static square* GetSquareInLoad() { return SquareInLoad; }
 	static character* GetPlayerBackup() { return PlayerBackup; }
 	static void SetPlayerBackup(character* What) { PlayerBackup = What; }
-	//static ushort GetPolymorphCounter() { return PolymorphCounter; }
-	//static void SetPolymorphCounter(ushort What) { PolymorphCounter = What; }
 	static uchar GetLevels();
 	static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeon]; }
 	static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
@@ -156,7 +153,6 @@ private:
 	static vector2d Camera;
 	static bool WizardMode;
 	static bool SeeWholeMapCheat;
-	static uchar Gamma;
 	static bool GoThroughWallsCheat;
 	static std::string PlayerName;
 	static uchar GodNumber;
@@ -170,7 +166,6 @@ private:
 	static area* AreaInLoad;
 	static square* SquareInLoad;
 	static character* PlayerBackup;
-	//static ushort PolymorphCounter;
 	static std::vector<dungeon*> Dungeon;
 	static gamescript GameScript;
 	static ulong NextObjectID;

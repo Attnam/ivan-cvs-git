@@ -32,7 +32,6 @@ area* game::AreaInLoad;
 square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
-//ushort game::PolymorphCounter = 0xFFFF;
 uchar game::CurrentDungeon;
 ulong game::NextObjectID = 0;
 
@@ -48,7 +47,6 @@ command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
 				new command(&character::Close, "close", 'c', false),
 				new command(&character::Consume, "consume", 'e', true),
-				new command(&character::DecreaseGamma, "decrease hardware gamma", 'G', true),
 				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'F', true),
 				new command(&character::Dip, "dip", 'D', true),
 				new command(&character::Drop, "drop", 'd', false),
@@ -56,7 +54,6 @@ command* game::Command[] = {	0,
 				new command(&character::GainAllItems, "give all items cheat", 'A', true),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
-				new command(&character::IncreaseGamma, "increase hardware gamma", 'g', true),
 				new command(&character::IncreaseSoftGamma, "increase software gamma", 'f', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
@@ -98,7 +95,6 @@ character* game::Player;
 vector2d game::Camera(0, 0);
 bool game::WizardMode;
 bool game::SeeWholeMapCheat;
-uchar game::Gamma = 255;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 std::string game::PlayerName;
@@ -133,7 +129,6 @@ void game::Init(std::string Name)
 	GoThroughWallsCheat = false;
 	InWilderness = false;
 	PlayerBackup = 0;
-	//PolymorphCounter = 0xFFFF;
 	srand(time(0));
 	game::CalculateGodNumber();
 
@@ -534,8 +529,8 @@ bool game::Save(std::string SaveName)
 	outputfile SaveFile(SaveName + ".sav");
 
 	SaveFile << PlayerName;
-	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat << Gamma;
-	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;// << PolymorphCounter;
+	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;
 
 	time_t Time = time(0);
 	srand(Time);
@@ -566,8 +561,8 @@ bool game::Load(std::string SaveName)
 		return false;
 
 	SaveFile >> PlayerName;
-	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat >> Gamma;
-	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;// >> PolymorphCounter;
+	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;
 
 	time_t Time;
 	SaveFile >> Time;
