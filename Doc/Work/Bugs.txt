@@ -68,7 +68,7 @@ Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
 // (hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
 // (hs) Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
 //(hs--) "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
-Golems can be poisoned at least by poison covered weapons.
+(hs) Golems can be poisoned at least by poison covered weapons.
 It seems to be possible to occasionally find traps by saveloading next to them.
 // (hs) Mushrooms can be kicked around.
 If a pet polymorphs into an invisible stalker which the player can't see, the polymorph msg is incorrect.
@@ -96,12 +96,12 @@ MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go
 //Graphics bug in vesana corpse.
 Light sources in glass chests don't work correctly.
 Digging walls with lanterns doesn't update memorized etc. correctly.
-Shopkeepers/librarians can buy items even if unconsciouss.
+(hs) Shopkeepers/librarians can buy items even if unconsciouss.
 If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
-You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
+(hs) You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
 One has no way to use stairs covered by sticky slime.
-Typo in GPL notice
-Taylor doesen't fix straight from equipment
+//Typo in GPL notice
+(hs) Tailor doesn't fix straight from equipment
 //Spider corpses are not poisonous.
 Charmed guards often block hallways when guarding them and the player who can't displace them has to dig a path around them.
 //Charming a tourist, leaving Attnam and entering a dungeon crashes. A usable autosave results, though, and the game can be continued with the tourist.
@@ -112,7 +112,7 @@ Then you can pray to a god and and get a new head made of eg. marble :-0
 You get stuck to slime even when flying.
 The patrol guard's AI works oddly if the player rests on one of his waypoints for a long time.
 You can probably give commands to unconscious monsters.
-Scroll of golem creation destroys chest contents.
+(hs) Scroll of golem creation destroys chest contents.
 //"The magic mushroom grunts happily."
 //Mammoth's corpse's weight is negative.
 Danger sensed when a bunny panics.
@@ -122,5 +122,6 @@ Do you get strength bonus for digging?
 //Are the angels supposed to leave the items in a bonefile? (stupid me. They just dissappear)
 (this problem verified only with windows version) Alt+tab then return to 
 program and alt-enter screws things up.
-Should picking up items from chests require one useable hand?
+(hs) Should picking up items from chests require one useable hand?
 "You sense danger message" seen after genie comes up and wish is made.
+I think there *might* be a screen update problem when a non-animated monster, for instance a kobold, chokes itself in a spider web (the 'Z' symbol may not appear immediately).
