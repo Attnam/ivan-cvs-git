@@ -7,8 +7,6 @@ Cannibalism abuse.
 *Alt+Enter twice.
 The dark death bug. (what does this mean?)
 Keys don't work on Win2k fullscreen mode.
-Does the hightline bug exist anymore?
 *Alt+Enter in config screen.
 *Picking sale items after polymorphing and killing the shopkeeper crashes.
 Shopkeeper + levelchange?
-Ivan + doors?

@@ -34,7 +34,7 @@ librarian	170	5	5	5	12	500
 angel		180	35*	35*	35*	45	10000		80000	*default; depends on alignment
 bat		20	40	2	1	24	20000		1000
 beholder
-genie
+genie		
 gibberling	90	20	5	5	15	10000		30000
 gnoll
 imp		100	15	10	10	15	20000		40000
@@ -44,7 +44,7 @@ large rat	30	10	3	2	12	20000		2000
 lion		300							150000
 mammoth		500	20	80	80	18	5000		5000000
 raven		60
-unicorn
+unicorn		
 werewolf (h)	170	15	15	15	15	2000		80000
 werewolf (w)	200	25	25	25	24	20000		80000
 zombie		160	5	10	5	12	1500		50000

@@ -76,5 +76,11 @@ As Heikki suggested, when one jumps in the WMap and is strong enough, one should
 Attnam's shopkeeper should give the player a quest to kill his competitor in the main dungeon.
 Silva + shop need tweaking.
 Punishment of cathedral terrain destruction.
-*Integration of the mammoth.
 Fountains should dry out, not disappear.
+Ivan should break doors.
+*Integration of the unicorn.
+Monsters that change colors.
+Drugs.
+Karateka.
+Jewel.
+Genies should be able to wish.

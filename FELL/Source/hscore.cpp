@@ -86,7 +86,7 @@ void highscore::Save(std::string File) const
 {
 	outputfile HighScore(File);
 
-	HighScore << Score << Entry << LastAdd;
+	HighScore << ushort(HIGHSCORE_VERSION) << Score << Entry << LastAdd;
 }
 
 void highscore::Load(std::string File)
@@ -96,5 +96,10 @@ void highscore::Load(std::string File)
 	if(!HighScore.GetBuffer().is_open())
 		return;
 
-	HighScore >> Score >> Entry >> LastAdd;
+	ushort HVersion;
+
+	HighScore >> HVersion;
+
+	if(HVersion == 110)
+		HighScore >> Score >> Entry >> LastAdd;
 }

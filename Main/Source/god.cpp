@@ -385,7 +385,7 @@ void silva::PrayGoodEffect()
 
 				character* Char = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter();
 
-				if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetType() != empty::StaticType() || (Char && Char->GetIsPlayer()))
+				if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetType() != empty::StaticType() || (Char && (Char->GetIsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
 					continue;
 
 				uchar Walkables = 0;

@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#define HIGHSCORE_VERSION 110
+
 #include <string>
 #include <vector>
 

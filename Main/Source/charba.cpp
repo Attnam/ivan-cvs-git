@@ -954,8 +954,9 @@ void character::Die(bool ForceMsg)
 	{
 		game::DrawEverything(false);
 
-		if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
-			GetStack()->DrawContents(this, "Your inventory");
+		if(GetStack()->GetItems())
+			if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
+				GetStack()->DrawContents(this, "Your inventory");
 
 		if(game::BoolQuestion("Do you want to see your message history? [y/n]", 2))
 			DrawMessageHistory();
@@ -1408,7 +1409,13 @@ void character::Save(outputfile& SaveFile) const
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile << StateCounter[c];
 
-	SaveFile << Team->GetID();
+	if(GetTeam())
+	{
+		SaveFile << uchar(1);
+		SaveFile << Team->GetID();
+	}
+	else
+		SaveFile << uchar(0);
 
 	if(StateIsActivated(CONSUMING))
 	{
@@ -1430,7 +1437,7 @@ void character::Save(outputfile& SaveFile) const
 	else
 		SaveFile << uchar(0);
 
-	if(GetTeam()->GetLeader() == this)
+	if(GetTeam() && GetTeam()->GetLeader() == this)
 		SaveFile << uchar(1);
 	else
 		SaveFile << uchar(0);
@@ -1484,11 +1491,16 @@ void character::Load(inputfile& SaveFile)
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile >> StateCounter[c];
 
-	ushort TeamID;
+	uchar TeamNZ;
 
-	SaveFile >> TeamID;
+	SaveFile >> TeamNZ;
 
-	SetTeam(game::GetTeam(TeamID));
+	if(TeamNZ)
+	{
+		ushort TeamID;
+		SaveFile >> TeamID;
+		SetTeam(game::GetTeam(TeamID));
+	}
 
 	uchar Stacky;
 
@@ -2341,7 +2353,7 @@ bool character::Polymorph(character* NewForm)
 		game::SetPlayerBackup(this);
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
-		NewForm->SetStateCounter(POLYMORPHED, 10000);
+		NewForm->SetStateCounter(POLYMORPHED, 1000);
 		game::SendLOSUpdateRequest();
 	}
 	else
@@ -2368,6 +2380,8 @@ bool character::Polymorph(character* NewForm)
 
 	if(GetTeam()->GetLeader() == this)
 		GetTeam()->SetLeader(NewForm);
+
+	ChangeTeam(0);
 
 	return true;
 }
@@ -2579,10 +2593,11 @@ void character::EndPolymorph()
 
 		GetSquareUnder()->RemoveCharacter();
 		GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
-		SetSquareUnder(0);
 
 		while(GetStack()->GetItems())
 			GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
+
+		SetSquareUnder(0);
 
 		if(game::GetPlayerBackup()->CanWield())
 			game::GetPlayerBackup()->SetWielded(GetWielded());
@@ -2594,6 +2609,8 @@ void character::EndPolymorph()
 
 		game::SetPlayer(game::GetPlayerBackup());
 		game::SetPlayerBackup(0);
+
+		game::GetPlayer()->ChangeTeam(GetTeam());
 
 		if(GetTeam()->GetLeader() == this)
 			GetTeam()->SetLeader(game::GetPlayer());
@@ -2676,7 +2693,7 @@ bool character::CheckForEnemies(bool CheckDoors)
 	for(uchar c = 0; c < game::GetTeams(); ++c)
 		if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 			for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-				if((*i)->GetExists() && *i != game::GetPlayerBackup())
+				if((*i)->GetExists())
 				{
 					ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
@@ -3218,9 +3235,13 @@ void character::SetTeam(team* What)
 
 void character::ChangeTeam(team* What)
 {
-	GetTeam()->Remove(GetTeamIterator());
+	if(GetTeam())
+		GetTeam()->Remove(GetTeamIterator());
+
 	Team = What;
-	SetTeamIterator(GetTeam()->Add(this));
+
+	if(GetTeam())
+		SetTeamIterator(GetTeam()->Add(this));
 }
 
 void character::ReceiveKoboldFleshEffect(long)

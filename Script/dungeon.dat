@@ -102,6 +102,18 @@ Dungeon 0;
 			AltarPossible=false;
 		}
 
+		Square, Random { Walkable=true; }
+		{
+			Character=spider;
+			Times=5;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=kobold;
+			Times=5;
+		}
+
 		Room 0;
 		{
 			Size=5,5;
