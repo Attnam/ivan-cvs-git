@@ -596,9 +596,34 @@ public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong Danger() const RET(6)
 protected:
-	virtual vector2d GetBitmapPos() const RETV(288,0)
+	virtual vector2d GetBitmapPos() const RETV(304,0)
 	virtual std::string NameSingular() const RET("jackal")
 	virtual std::string NamePlural() const RET("jackals")
+	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))																																																																																																																																													//Jackalit on epäoriginaaleja.
+	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual float GetMeleeStrength() const RET(3000)
+);
+
+class CHARACTER
+(
+	donkey,
+	character,
+	InitMaterials(new donkeyflesh(83000)),
+	{
+		SetSize(150);
+		SetAgility(4);
+		SetStrength(6);
+		SetEndurance(6);
+		SetPerception(17);
+	},
+public:
+	virtual ushort Possibility() const RET(100)
+	virtual ulong Danger() const RET(6)
+protected:
+	virtual vector2d GetBitmapPos() const RETV(288,0)
+	virtual std::string NameSingular() const RET("donkey")
+	virtual std::string NamePlural() const RET("donkeys")
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))

@@ -457,4 +457,16 @@ public:
 protected:
 	virtual std::string NameStem() const	{ return "jackal flesh"; }
 );
+
+class MATERIAL
+(
+	donkeyflesh,
+	flesh,
+public:
+	virtual uchar GetConsumeType() const		{ return MEAT; }
+	virtual ushort OfferValue() const			{ return 6; }
+	virtual uchar GetItemColor() const			{ return RED; }
+protected:
+	virtual std::string NameStem() const	{ return "donkey flesh"; }
+);
 #endif
