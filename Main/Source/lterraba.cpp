@@ -8,6 +8,7 @@
 #include "worldmap.h"
 #include "femath.h"
 #include "femath.h"
+#include "config.h"
 
 bool overlevelterrain::GoUp(character* Who) const // Try to go up
 {
@@ -22,6 +23,8 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
+      if(configuration::GetAutosaveInterval())
+	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
   else
@@ -44,6 +47,8 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
 	    game::SendLOSUpdateRequest();
 	    game::UpdateCamera();
+	    if(configuration::GetAutosaveInterval())
+	      game::Save(game::GetAutoSaveFileName().c_str());
 	    return true;
 	  }
 
@@ -71,6 +76,8 @@ bool overlevelterrain::GoDown(character* Who) const // Try to go down
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
+      if(configuration::GetAutosaveInterval())
+	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
   else

@@ -812,6 +812,8 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
 	    game::SendLOSUpdateRequest();
 	    game::UpdateCamera();
+	    if(configuration::GetAutosaveInterval())
+	      game::Save(game::GetAutoSaveFileName().c_str());
 	    return true;
 	  }
 
@@ -834,7 +836,6 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 bool character::ShowInventory()
 {
   GetStack()->DrawContents(this, "Character's Inventory, press ESC to exit");
-
   return false;
 }
 
@@ -1711,51 +1712,7 @@ bool character::Look()
 	  character* Character;
 
 	  if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
-	    {
-	      if(Character->GetIsPlayer())
-		ADD_MESSAGE("You are %s here.", Character->StandVerb().c_str());
-	      else
-		{
-		  ADD_MESSAGE("%s is %s here.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
-
-		  std::string Msg = std::string(game::PersonalPronoun(Character->GetSex())) + " is at danger level " + Character->DangerLevel();
-
-		  if(Character->GetWielded())
-		    {
-		      Msg += std::string(" and is wielding ") + Character->GetWielded()->CNAME(INDEFINITE);
-
-		      if(Character->GetTorsoArmor())
-			{
-			  ADD_MESSAGE("%s.", Msg.c_str());
-							
-			  Msg = std::string(game::PersonalPronoun(Character->GetSex())) + " wears " + Character->GetTorsoArmor()->CNAME(INDEFINITE);
-			}
-
-		      Msg += " and";
-		    }
-		  else if(Character->GetTorsoArmor())
-		    Msg += std::string(", is wearing ") + Character->GetTorsoArmor()->CNAME(INDEFINITE) + " and";
-		  else
-		    Msg += " and";
-
-		  if(Character->GetTeam() == game::GetPlayer()->GetTeam())
-		    ADD_MESSAGE("%s is tame.", Msg.c_str());
-		  else
-		    {
-		      uchar Relation = Character->GetTeam()->GetRelation(game::GetPlayer()->GetTeam());
-
-		      if(Relation == HOSTILE)
-			ADD_MESSAGE("%s is hostile.", Msg.c_str());
-		      else if(Relation == NEUTRAL)
-			ADD_MESSAGE("%s does not care about you.", Msg.c_str());
-		      else
-			ADD_MESSAGE("%s is friendly.", Msg.c_str());
-		    }
-		}
-
-	      if(game::GetWizardMode())
-		ADD_MESSAGE("(danger: %d)", Character->CurrentDanger());
-	    }
+	    Character->DisplayInfo();
 	}
       else
 	ADD_MESSAGE("You have no idea what might lie here.");
@@ -3345,4 +3302,69 @@ ushort character::DangerLevel()
   for(ushort c = 9;; --c)
     if(CurrentDanger() >= DangerPointMinimum[c])
       return c;
+}
+
+void character::DisplayInfo()
+{
+  if(GetIsPlayer())
+    ADD_MESSAGE("You are %s here.", StandVerb().c_str());
+  else
+    {
+      ADD_MESSAGE("%s is %s here.", CNAME(INDEFINITE), StandVerb().c_str());
+
+      std::string Msg = game::PersonalPronoun(GetSex());
+
+      if(GetTeam() == game::GetPlayer()->GetTeam())
+	Msg += std::string(" is at danger level ") + DangerLevel();
+
+      if(GetWielded())
+	{
+	  if(GetTorsoArmor())
+	    {
+	      if(GetTeam() == game::GetPlayer()->GetTeam())
+		Msg += " and";
+
+	      Msg += std::string(" is wielding ") + GetWielded()->CNAME(INDEFINITE);
+
+	      ADD_MESSAGE("%s.", Msg.c_str());
+	      Msg = std::string(game::PersonalPronoun(GetSex())) + " wears " + GetTorsoArmor()->CNAME(INDEFINITE);
+	    }
+	  else
+	    {
+	      if(GetTeam() == game::GetPlayer()->GetTeam())
+		Msg += ",";
+
+	      Msg += std::string(" is wielding ") + GetWielded()->CNAME(INDEFINITE);
+	    }
+
+	  Msg += " and";
+	}
+      else if(GetTorsoArmor())
+	{
+	  if(GetTeam() == game::GetPlayer()->GetTeam())
+	    Msg += ",";
+
+	  Msg += std::string(" is wearing ") + GetTorsoArmor()->CNAME(INDEFINITE) + " and";
+	}
+      else
+	if(GetTeam() == game::GetPlayer()->GetTeam())
+	  Msg += " and";
+
+      if(GetTeam() == game::GetPlayer()->GetTeam())
+	ADD_MESSAGE("%s is tame.", Msg.c_str());
+      else
+	{
+	  uchar Relation = GetTeam()->GetRelation(game::GetPlayer()->GetTeam());
+
+	  if(Relation == HOSTILE)
+	    ADD_MESSAGE("%s is hostile.", Msg.c_str());
+	  else if(Relation == NEUTRAL)
+	    ADD_MESSAGE("%s does not care about you.", Msg.c_str());
+	  else
+	    ADD_MESSAGE("%s is friendly.", Msg.c_str());
+	}
+    }
+
+  if(game::GetWizardMode())
+    ADD_MESSAGE("(danger: %d)", CurrentDanger());
 }

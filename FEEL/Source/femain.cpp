@@ -18,9 +18,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   globalerrorhandler::SetWindow(&hWnd);
 #else
 
-  int Main();
+  int Main(int, char**);
 
-  int main()
+  int main(int argc, char** argv)
     {
 #endif
       globalerrorhandler::Install();
@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #ifdef WIN32
 	  return Main(hInstance, hPrevInstance, &hWnd, lpCmdLine, nCmdShow);
 #else
-	  return Main();
+	  return Main(argc, argv);
 #endif
 	}
       catch(...)

@@ -16,6 +16,7 @@
 #include "stack.h"
 #include "itemba.h"
 #include "femath.h"
+#include "config.h"
 
 bool door::Open(character* Opener)
 {
@@ -129,6 +130,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
+      if(configuration::GetAutosaveInterval())
+	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
   else
@@ -150,6 +153,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 	  game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
 	  game::SendLOSUpdateRequest();
 	  game::UpdateCamera();
+	  if(configuration::GetAutosaveInterval())
+	    game::Save(game::GetAutoSaveFileName().c_str());
 	  return true;
 	}
 
@@ -192,6 +197,8 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
       game::ShowLevelMessage();
       game::UpdateCamera();
       game::SendLOSUpdateRequest();
+      if(configuration::GetAutosaveInterval())
+	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
   else

@@ -10,6 +10,7 @@
 #include "square.h"
 #include "graphics.h"
 #include "team.h"
+#include "config.h"
 
 bool attnam::GoDown(character* Who) const
 {
@@ -43,6 +44,9 @@ bool attnam::GoDown(character* Who) const
       game::GetPetrus()->SetStoryState(3);
     }
 
+  if(configuration::GetAutosaveInterval())
+    game::Save(game::GetAutoSaveFileName().c_str());
+
   return true;
 }
 
@@ -69,5 +73,9 @@ bool elpuricave::GoDown(character* Who) const
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
+
+  if(configuration::GetAutosaveInterval())
+    game::Save(game::GetAutoSaveFileName().c_str());
+
   return true;
 }

@@ -30,11 +30,14 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
     {
       AlreadyInstalled = true;
       graphics::Init();
+
+      std::string Title = std::string("IVAN ") + VERSION;
+
 #ifdef WIN32
-      graphics::SetMode(hInst, hWnd, "IVAN 0.310a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
+      graphics::SetMode(hInst, hWnd, Title.c_str(), 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 #endif
 #ifdef USE_SDL
-      graphics::SetMode("IVAN 0.310a", 800, 600, 16);
+      graphics::SetMode(Title.c_str(), 800, 600, 16);
 #endif
 #ifdef __DJGPP__
       graphics::SetMode(0x114);

@@ -185,6 +185,7 @@ void game::Init(std::string Name)
       Running = true;
       IsLoading = true;
       GetCurrentArea()->SendNewDrawRequest();
+      game::SendLOSUpdateRequest();
       ADD_MESSAGE("Game loaded successfully.");
     }
   else

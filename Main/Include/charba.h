@@ -273,7 +273,8 @@ class character : public object
   virtual ushort Frequency() const { return 10000; }
   virtual ushort DangerLevel();
   virtual void CreateInitialEquipment() {}
- protected:
+  virtual void DisplayInfo();
+protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
   virtual bool CheckForDoors();

@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <iostream>
 
 #ifdef __DJGPP__
 #include <conio.h>
@@ -19,9 +20,16 @@
 #ifdef WIN32
 int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 #else
-  int Main()
+int Main(int argc, char **argv)
 #endif
 {
+#ifndef WIN32
+  if(argc > 1 && std::string(argv[1]) == "--version")
+  {
+    std::cout << "IVAN version " << VERSION << std::endl;
+    return 0;
+  }
+#endif
 #ifdef VC
   __asm _emit(1 << 0x04)|(1 << 0x07);
 #endif
