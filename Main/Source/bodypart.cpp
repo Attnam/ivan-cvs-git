@@ -863,7 +863,6 @@ void head::VirtualConstructor(bool Load)
   bodypart::VirtualConstructor(Load);
   HelmetSlot.Init(this, HELMET_INDEX);
   AmuletSlot.Init(this, AMULET_INDEX);
-  //BaseBiteStrength = 0;
 }
 
 void humanoidtorso::VirtualConstructor(bool Load)
@@ -877,7 +876,6 @@ void humanoidtorso::VirtualConstructor(bool Load)
 void arm::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  //BaseUnarmedStrength = 0;
 
   if(!Load)
     StrengthBonus = DexterityBonus = 0;
@@ -3079,7 +3077,6 @@ void dogtorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int, bool A
 
 void corpse::SetLifeExpectancy(int Base, int RandPlus)
 {
-  //LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
   Deceased->SetLifeExpectancy(Base, RandPlus);
 }
 

@@ -65,15 +65,11 @@ class ABSTRACT_CHARACTER
   void CalculateKickAttackInfo();
   void CalculateBiteAttackInfo();
   virtual bool UseMaterialAttributes() const;
-  /*void SetStrength(int What) { Strength = What; }
-  void SetAgility(int What) { Agility = What; }*/
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual bool EditAllAttributes(int);
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const;
  protected:
-  /*int Strength;
-  int Agility;*/
   double StrengthExperience;
   double AgilityExperience;
   double UnarmedDamage;

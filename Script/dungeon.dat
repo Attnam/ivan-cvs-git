@@ -1226,7 +1226,7 @@ Dungeon ATTNAM;
 		TeamDefault = ATTNAM_TEAM;
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
-		CanGenerateBone = true;
+		CanGenerateBone = false;
 		DifficultyBase = 150;
 		DifficultyDelta = 0;
 		EnchantmentMinusChanceBase = 0;

@@ -46,7 +46,6 @@ class ABSTRACT_ITEM
   bool IsUnique() const { return !!(BodyPartFlags & UNIQUE); }
   void SetIsUnique(bool);
   virtual void DropEquipment(stack* = 0) { }
-  //virtual bool ApplyExperience() { return false; }
   virtual void InitSpecialAttributes() { }
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalEquipmentRemoval(gearslot*);

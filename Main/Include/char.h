@@ -280,7 +280,6 @@ class character : public entity, public id
   void AddMissMessage(const character*) const;
   void AddPrimitiveHitMessage(const character*, const festring&, const festring&, int) const;
   void AddWeaponHitMessage(const character*, const item*, int, bool = false) const;
-  //virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
   void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true, bool = true);
@@ -981,7 +980,6 @@ class character : public entity, public id
   bool BodyPartIsStuck(int) const;
   void PrintAttribute(const char*, int, int, int) const;
   virtual bool AllowUnconsciousness() const;
-  //virtual bool IsTooHurtToRegainConsciousness() const;
   bool CanPanic() const;
   int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual bool CanChokeOnWeb(web*) const { return CanChoke(); }

@@ -218,27 +218,6 @@ void dulcis::PrayBadEffect()
 
 void seges::PrayGoodEffect()
 {
-  /*if(!PLAYER->HasAllBodyParts())
-    {
-      bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
-
-      if(OldBodyPart)
-	{
-	  OldBodyPart->RemoveFromSlot();
-	  PLAYER->AttachBodyPart(OldBodyPart);
-	  OldBodyPart->SetHP(OldBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GetName(), OldBodyPart->GetBodyPartName().CStr());
-	}
-      else
-	{
-	  bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
-	  NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
-	}
-
-      return;
-    }*/
-
   if(PLAYER->IsInBadCondition())
     {
       ADD_MESSAGE("%s cures your wounds.", GetName());
@@ -298,12 +277,6 @@ void atavus::PrayGoodEffect()
       AdjustTimer(45000);
       AdjustRelation(-300);
     }
-  /*else if(!PLAYER->HasAllBodyParts())
-    {
-      bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
-      NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You gives you a new %s as a gift between friends.", NewBodyPart->GetBodyPartName().CStr());
-    }*/
   else
     ADD_MESSAGE("Nothing happens.");
 }
@@ -342,27 +315,6 @@ void atavus::PrayBadEffect()
 
 void silva::PrayGoodEffect()
 {
-  /*if(!PLAYER->HasAllBodyParts())
-    {
-      bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
-
-      if(OldBodyPart)
-	{
-	  OldBodyPart->RemoveFromSlot();
-	  PLAYER->AttachBodyPart(OldBodyPart);
-	  OldBodyPart->SetHP(1);
-	  ADD_MESSAGE("%s attaches your old %s back.", GetName(), OldBodyPart->GetBodyPartName().CStr());
-	}
-      else
-	{
-	  bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
-	  NewBodyPart->SetHP(1);
-	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
-	}
-
-      return;
-    }*/
-
   if(PLAYER->GetNP() < HUNGER_LEVEL)
     {
       ADD_MESSAGE("Your stomach feels full again.");
@@ -524,15 +476,6 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-  /*if(!PLAYER->HasAllBodyParts())
-    {
-      bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
-      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
-      NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s that is made of steel.", NewBodyPart->GetBodyPartName().CStr());
-      return;
-    }*/
-
   for(int c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
     {
       item* Equipment = PLAYER->GetEquipment(c);
@@ -865,8 +808,7 @@ void nefas::PrayGoodEffect()
 	      }
 	  }
     }
-  /*else if(RAND() & 7)
-    {*/
+
   mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
   vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
 
@@ -885,15 +827,6 @@ void nefas::PrayGoodEffect()
       Mistress->PutTo(Where);
       ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
     }
-    /*}
-  else
-    {
-      ADD_MESSAGE("%s wishes you to have fun with this potion.", GetName());
-      potion* Reward = new potion(0, NO_MATERIALS);
-      Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMMEL_URINE));
-      PLAYER->GetGiftStack()->AddItem(Reward);
-      ADD_MESSAGE("%s drops on the ground.", Reward->CHAR_NAME(DEFINITE));
-    }*/
 }
 
 void nefas::PrayBadEffect()
@@ -906,29 +839,6 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  /*if(!PLAYER->HasAllBodyParts())
-    {
-      bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
-
-      if(OldBodyPart)
-	{
-	  OldBodyPart->RemoveFromSlot();
-	  PLAYER->AttachBodyPart(OldBodyPart);
-	  OldBodyPart->SetHP(1);
-	  OldBodyPart->Mutate();
-	  ADD_MESSAGE("%s attaches your old %s back. But it seems somehow different...", GetName(), OldBodyPart->GetBodyPartName().CStr());
-	}
-      else
-	{
-	  bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
-	  NewBodyPart->SetHP(1);
-	  NewBodyPart->Mutate();
-	  ADD_MESSAGE("You grow a new %s, which seems to be a bit strange.", NewBodyPart->GetBodyPartName().CStr()); 
-	}
-
-      return;
-    }*/
-
   if(!RAND_N(10))
     {
       for(int c = 0; c < game::GetTeams(); ++c)
@@ -1031,15 +941,6 @@ void infuscor::PrayGoodEffect()
 
 void cruentus::PrayGoodEffect()
 {
-  /*if(!PLAYER->HasAllBodyParts())
-    {
-      bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
-      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(IRON));
-      NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s, which seems to be made of iron.", NewBodyPart->GetBodyPartName().CStr()); 
-      return;
-    }*/
-
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   bool AudiencePresent = false;

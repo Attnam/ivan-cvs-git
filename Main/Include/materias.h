@@ -115,7 +115,6 @@ class MATERIAL
   ironalloy,
   solid,
  public:
-  //virtual void AddName(festring&, bool = false, bool = true) const;
   virtual void SetRustLevel(int);
   virtual int GetStrengthValue() const;
   virtual int GetRustLevel() const { return RustData & 3; }

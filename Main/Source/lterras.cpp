@@ -929,21 +929,6 @@ void stairs::VirtualConstructor(bool Load)
       }
 }
 
-/*void boulder::Break()
-{
-  int HowManyParts = RAND() % 5 + 1;
-
-  for(int c = 0; c < HowManyParts; ++c)
-    {
-      material* StonesMaterial = GetMainMaterial()->Clone(1000);
-      item* Stone = new stone(0, NO_MATERIALS);
-      Stone->InitMaterials(StonesMaterial);
-      GetLSquareUnder()->AddItem(Stone);
-    }
-
-  olterrain::Break();
-}*/
-
 void sign::AddPostFix(festring& String) const
 {
   String << " with text \"" << Text << '\"';
@@ -1032,25 +1017,6 @@ void olterraincontainer::SetItemsInside(const fearray<contentscript<item> >& Ite
 	  }
       }
 }
-
-/*void wall::Break()
-{
-  int DigProduct = GetMainMaterial()->GetDigProductMaterial();
-
-  if(DigProduct)
-    {
-      int HowManyParts = 1 + (RAND() & 3);
-
-      for(int c = 0; c < HowManyParts; ++c)
-	{
-	  item* Stone = new stone(0, NO_MATERIALS);
-	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
-	  GetLSquareUnder()->AddItem(Stone);
-	}
-    }
-
-  olterrain::Break();
-}*/
 
 void door::ReceiveDamage(character* Villain, int Damage, int)
 {
@@ -1169,25 +1135,6 @@ bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
   return true;
 }
 
-/*void earth::Break()
-{
-  int DigProduct = GetMainMaterial()->GetDigProductMaterial();
-
-  if(DigProduct)
-    {
-      int HowManyParts = 1 + (RAND() & 3);
-
-      for(int c = 0; c < HowManyParts; ++c)
-	{
-	  item* Stone = new stone(0, NO_MATERIALS);
-	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
-	  GetLSquareUnder()->AddItem(Stone);
-	}
-    }
-
-  olterrain::Break();
-}*/
-
 void earth::VirtualConstructor(bool Load)
 {
   olterrain::VirtualConstructor(Load);
@@ -1227,9 +1174,26 @@ void liquidterrain::SurviveEffect(character* Survivor)
   Survivor->GetLSquareUnder()->SpillFluid(Survivor, static_cast<liquid*>(GetMainMaterial()->Clone(1000 + RAND_N(500))), false, false);  
 }
 
-
 void monsterportal::VirtualConstructor(bool Load)
 {
   olterrain::VirtualConstructor(Load);
   game::SetMonsterPortal(this);
+}
+
+void olterraincontainer::PreProcessForBone()
+{
+  olterrain::PreProcessForBone();
+  Contained->PreProcessForBone();
+}
+
+void olterraincontainer::PostProcessForBone()
+{
+  olterrain::PostProcessForBone();
+  Contained->PostProcessForBone();
+}
+
+void olterraincontainer::FinalProcessForBone()
+{
+  olterrain::FinalProcessForBone();
+  Contained->FinalProcessForBone();
 }

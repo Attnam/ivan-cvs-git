@@ -758,8 +758,10 @@ void cathedral::GetAddItemEffect(item* Dropped)
       else
 	{
 	  /* position is in kamikaze dwarf room */
+
 	  Dropped->RemoveFromSlot();
 	  game::GetCurrentLevel()->GetLSquare(18,21)->GetStack()->AddItem(Dropped, false);
+
 	  if(Dropped->CanBeSeenByPlayer())
 	    {
 	      if(SeenBeforeTeleport) 
@@ -770,7 +772,7 @@ void cathedral::GetAddItemEffect(item* Dropped)
 			    Dropped->GetName(DEFINITE).CStr());
 	    }
 	  else if(SeenBeforeTeleport)
-	    ADD_MESSAGE("%s dissappears.", Dropped->GetNameSingular().CStr());
+	    ADD_MESSAGE("%s disappears.", Dropped->GetNameSingular().CStr());
 	}
     }
 

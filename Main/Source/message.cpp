@@ -71,7 +71,6 @@ void msgsystem::AddMessage(const char* Format, ...)
 
   if(Buffer == LastMessage)
     {
-      //while(MessageHistory.GetLength() && MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
       for(int c = 0; c < LastMessageLines; ++c)
 	MessageHistory.Pop();
 
@@ -80,9 +79,6 @@ void msgsystem::AddMessage(const char* Format, ...)
     }
   else
     {
-      //for(int c = MessageHistory.GetLastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
-	//MessageHistory.SetColor(c, LIGHT_GRAY);
-
       Times = 1;
       Begin = End = vector2d(Time.Hour, Time.Min);
       LastMessage = Buffer;

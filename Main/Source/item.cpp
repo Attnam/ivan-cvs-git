@@ -587,12 +587,6 @@ item* item::Duplicate(ulong Flags)
   game::RemoveItemID(ID);
   ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
-
-  /*if(!(Flags & IGNORE_PROHIBITIONS)
-  && GetSecondaryMaterial()
-  && !GetSecondaryMaterial()->CanBeMirrored())
-    delete Clone->RemoveMaterial(GetSecondaryMaterial());*/
-
   return Clone;
 }
 

@@ -97,7 +97,6 @@ private:
   static bool GainAllItems(character*);
   static bool SecretKnowledge(character*);
   static bool DetachBodyPart(character*);
-  static bool ReloadDatafiles(character*);
   static bool SummonMonster(character*);
   static bool LevelTeleport(character*);
   static bool Possess(character*);

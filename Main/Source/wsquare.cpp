@@ -11,7 +11,6 @@
 
 /* Compiled through wmapset.cpp */
 
-
 wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0) { }
 
 wsquare::~wsquare()

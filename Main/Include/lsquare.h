@@ -148,8 +148,6 @@ class lsquare : public square
   void ChangeGLTerrain(glterrain*);
   void ChangeOLTerrain(olterrain*);
   void SetLTerrain(glterrain*, olterrain*);
-  /*void SetGLTerrain(glterrain*);
-  void SetOLTerrain(olterrain*);*/
   void ApplyScript(const squarescript*, room*);
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, long, bool = false) const ;

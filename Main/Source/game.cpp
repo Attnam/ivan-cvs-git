@@ -165,6 +165,9 @@ if(CharacterIDMap.find(ID) == CharacterIDMap.end())
 CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
 void game::AddItemID(item* Item, ulong ID) {
+  if(ID == 4747)
+    int esko = 2;
+
 if(ItemIDMap.find(ID) != ItemIDMap.end())
   int esko = esko = 2;
 ItemIDMap.insert(std::pair<ulong, item*>(ID, Item));
@@ -474,7 +477,7 @@ void game::Run()
 
 	      GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
 
-	      /*	      {
+	      /*{
 		item* Item;
 
 		if(!RAND_N(2))
@@ -2398,7 +2401,6 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
 
   for(;;)
     {
-      //DrawEverythingNoBlit();
       int Chosen = List.Draw();
 
       if(Chosen & FELIST_ERROR_BIT)
@@ -2419,7 +2421,6 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
 	  }
 
       SubList.Draw();
-      //List.SetSelected(Chosen);
     }
 
   ClearCharacterDrawVector();
@@ -2449,7 +2450,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && RAND() & 3 && GetCurrentLevel()->PreProcessForBone())
     {
       int BoneIndex;
       festring BoneName;
@@ -2485,7 +2486,7 @@ bool game::PrepareRandomBone(int LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen())// && !(RAND() & 7))
+      if(BoneFile.IsOpen() && !(RAND() & 7))
 	{
 	  if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
 	    {

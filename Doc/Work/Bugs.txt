@@ -24,8 +24,8 @@ Entering a dungeon and loading an autosave saves some time.
 (s) Wielded items can't be eaten.
 (s) Throwing a potion of water at a wall in a shop makes the guards hostile.
 (s) If the player can attack with arms but is a more powerful kicker, the danger system still only checks the arm attack.
-(s) The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
-(s) The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
+//The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
+//The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
 (s) The head of Ivan is left in bone levels.
 (s) Kamikaze dwarves die smiling even if headless.
 (s) Odd pentagram missing bug.
@@ -90,7 +90,7 @@ You can destroy terrains in Attnam with a wand of acid rain without causing an a
 Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death.
 "There is many items on the wall"
 Vladimir can now be teleported (example: magical whistle) to places where he destroys the cathedral and buildings like that before moving away from them.
-Funny colors with dexterity etc when going to change equipment and then pressing esc
+Funny colors with dexterity etc when going to change equipment and then pressing esc.
 // (hs) Smith not repairing equiped items.
 Etta the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.
-Graphics bug in vesana.
+Graphics bug in vesana corpse.

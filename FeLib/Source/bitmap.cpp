@@ -385,19 +385,6 @@ void bitmap::NormalBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int
 	for(int y = 0; y < Height; ++y)
 	  memcpy(&DestImage[DestY - y][DestX], &SrcImage[SourceY + y][SourceX], Bytes);
 
-	/*for(int y = 0; y < Height; ++y)
-	  {
-	    const ulong* SrcPtr = reinterpret_cast<const ulong*>(&SrcImage[SourceY + y][SourceX]);
-	    const ulong* EndPtr = SrcPtr + (Width >> 1);
-	    ulong* DestPtr = reinterpret_cast<ulong*>(&DestImage[DestY - y][DestX]);
-
-	    for(; SrcPtr != EndPtr; ++SrcPtr, ++DestPtr)
-	      *DestPtr = *SrcPtr;
-
-	    if(Width & 1)
-	      *reinterpret_cast<packedcolor16*>(DestPtr) = *reinterpret_cast<const packedcolor16*>(SrcPtr);
-	  }*/
-
 	break;
       }
 

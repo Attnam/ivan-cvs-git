@@ -351,7 +351,6 @@ class item : public object
   DATA_BASE_VALUE(int, DamageFlags);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
-  //virtual bool TryToUnstuck(character*, int, vector2d) { return false; }
   long GetBlockModifier() const;
   bool IsSimiliarTo(item*) const;
   virtual bool IsPickable(character*) const { return true; }

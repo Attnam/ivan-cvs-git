@@ -1693,7 +1693,7 @@ bool level::PostProcessForBone()
       Map[x][y]->PostProcessForBone(DangerSum, Enemies);
 
   if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > Difficulty * 10))
-      return false;
+    return false;
 
   return true;
 }
@@ -1703,6 +1703,9 @@ void level::FinalProcessForBone()
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
       Map[x][y]->FinalProcessForBone();
+
+  for(int c = 1; c < Room.size(); ++c)
+    Room[c]->FinalProcessForBone();
 }
 
 void level::GenerateDungeon(int Index)

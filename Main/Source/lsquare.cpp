@@ -214,9 +214,6 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance
 
 void lsquare::Draw()
 {
-  //if(!Character)
-    //return;
-
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
@@ -538,8 +535,6 @@ void lsquare::Save(outputfile& SaveFile) const
   SaveLinkedList(SaveFile, Trap);
 }
 
-//template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove);
-
 void lsquare::Load(inputfile& SaveFile)
 {
   Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
@@ -567,21 +562,6 @@ void lsquare::Load(inputfile& SaveFile)
       Memorized->FastBlit(FowMemorized);
       igraph::GetFOWGraphic()->NormalMaskedBlit(FowMemorized, 0, 0);
     }
-
-  /*if(Character && Character->GetAssignedName() != "Jarno")
-    {
-      Character->SendToHell();
-      Character->Remove();
-    }
-
-  while(Fluid)
-    {
-      fluid* F = Fluid;
-      RemoveLinkedListElement(Fluid, F);
-      F->SendToHell();
-    }
-
-  Stack->Clean();*/
 }
 
 void lsquare::CalculateLuminance()
@@ -1193,9 +1173,6 @@ void lsquare::SignalSeen(ulong Tick)
 
 void lsquare::DrawMemorized()
 {
-  //if(!Character)
-    //return;
-
   LastSeen = 0;
   Flags &= ~STRONG_NEW_DRAW_REQUEST;
   vector2d BitPos = game::CalculateScreenCoordinates(Pos);
@@ -1716,38 +1693,6 @@ void lsquare::SignalSmokeAlphaChange(int What)
 {
   SmokeAlphaSum += What;
   SignalPossibleTransparencyChange();
-  /*if(Flags & IS_TRANSPARENT)
-    {
-      if(SmokeAlphaSum + What >= 175)
-	{
-	  emittervector EmitterBackup = Emitter;
-	  GetLevel()->ForceEmitterNoxify(EmitterBackup);
-	  SmokeAlphaSum += What;
-	  Flags &= ~IS_TRANSPARENT;
-	  GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);
-	  CalculateLuminance();
-	  Flags |= DESCRIPTION_CHANGE;
-
-	  if(LastSeen == game::GetLOSTick())
-	    game::SendLOSUpdateRequest();
-	}
-      else
-	SmokeAlphaSum += What;
-    }
-  else
-    {
-      SmokeAlphaSum += What;
-
-      if(CalculateIsTransparent())
-	{
-	  GetLevel()->ForceEmitterEmitation(Emitter, SunEmitter);
-	  CalculateLuminance();
-	  Flags |= DESCRIPTION_CHANGE;
-
-	  if(LastSeen == game::GetLOSTick())
-	    game::SendLOSUpdateRequest();
-	}
-    }*/
 }
 
 int lsquare::GetDivineMaster() const
@@ -1789,6 +1734,9 @@ void lsquare::PreProcessForBone()
   DestroyMemorized();
   LastSeen = 0;
 
+  if(OLTerrain)
+    OLTerrain->PreProcessForBone();
+
   if(Smoke)
     {
       DecAnimatedEntities();
@@ -1814,6 +1762,9 @@ void lsquare::PreProcessForBone()
 
 void lsquare::PostProcessForBone(double& DangerSum, int& Enemies)
 {
+  if(OLTerrain)
+    OLTerrain->PostProcessForBone();
+
   if(Character && !Character->PostProcessForBone(DangerSum, Enemies))
     {
       Character->SendToHell();
@@ -1828,6 +1779,9 @@ void lsquare::PostProcessForBone(double& DangerSum, int& Enemies)
 
 void lsquare::FinalProcessForBone()
 {
+  if(OLTerrain)
+    OLTerrain->FinalProcessForBone();
+
   if(Character)
     Character->FinalProcessForBone();
 
@@ -1938,32 +1892,8 @@ int lsquare::GetWalkability() const
     return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
 }
 
-/*template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove)
-{
-  type* E = Element;
-
-  if(E == ToRemove)
-    Element = E->Next;
-  else
-    {
-      type* LE;
-
-      do
-	{
-	  LE = E;
-	  E = E->Next;
-	}
-      while(E != ToRemove);
-
-      LE->Next = E->Next;
-    }
-}*/
-
-
-
 void lsquare::RemoveFluid(fluid* ToRemove)
 {
-  //RemoveLinkedListElement(Fluid, ToRemove);
   fluid*& F = ListFind(Fluid, pointercomparer<fluid>(ToRemove));
   F = F->Next;
   SignalEmitationDecrease(ToRemove->GetEmitation());
@@ -1990,30 +1920,6 @@ void lsquare::AddFluid(liquid* ToBeAdded)
       F = new fluid(ToBeAdded, this);
       SignalEmitationIncrease(ToBeAdded->GetEmitation());
     }
-
-  /*fluid* F = Fluid;
-
-  if(!F)
-    Fluid = new fluid(ToBeAdded, this);
-  else
-    {
-      fluid* LF;
-
-      do
-	{
-	  if(ToBeAdded->IsSameAs(F->GetLiquid()))
-	    {
-
-	      goto end;
-	    }
-
-	  LF = F;
-	  F = F->Next;
-	}
-      while(F);
-
-      LF->Next = new fluid(ToBeAdded, this);
-    }*/
 
   SendNewDrawRequest();
   SendMemorizedUpdateRequest();

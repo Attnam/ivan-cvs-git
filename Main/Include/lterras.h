@@ -144,6 +144,9 @@ class OLTERRAIN
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
   virtual void Break();
   virtual bool AllowContentEmitation() const { return false; }
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   stack* Contained;

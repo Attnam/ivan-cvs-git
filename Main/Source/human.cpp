@@ -2527,14 +2527,6 @@ int humanoid::GetSWeaponSkillLevel(const item* Item) const
 
 bool humanoid::UseMaterialAttributes() const
 {
-  /*for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart && !BodyPart->UseMaterialAttributes())
-	return false;
-    }*/
-
   return CombineBodyPartPredicates<false>(this, &bodypart::UseMaterialAttributes);
 }
 
@@ -3635,8 +3627,10 @@ void playerkind::FinalProcessForBone()
     {
       boneidmap::iterator BI = game::GetBoneCharacterIDMap().find(SoulID);
 
-      if(BI != game::GetBoneItemIDMap().end())
+      if(BI != game::GetBoneCharacterIDMap().end())
 	SoulID = BI->second;
+      else
+	SoulID = 0;
     }
 }
 
@@ -4100,10 +4094,6 @@ bodypart* playerkind::MakeBodyPart(int I) const
 bool golem::AddAdjective(festring& String, bool Articled) const
 {
   int TotalRustLevel = SumBodyPartProperties(this, &bodypart::GetMainMaterialRustLevel);
-
-  /*for(int c = 0; c < BodyParts; ++c)
-    if(GetBodyPart(c))
-      TotalRustLevel += GetBodyPart(c)->GetMainMaterial()->GetRustLevel();*/
 
   if(!TotalRustLevel)
     return humanoid::AddAdjective(String, Articled);
@@ -4858,11 +4848,6 @@ bool humanoid::AllowUnconsciousness() const
   return DataBase->AllowUnconsciousness
       && TorsoIsAlive() && BodyPartIsVital(HEAD_INDEX);
 }
-
-/*bool humanoid::IsTooHurtToRegainConsciousness() const
-{
-  return AllowUnconsciousness() && GetHead()->IsBadlyHurt();
-}*/
 
 bool humanoid::CanChokeOnWeb(web* Trap) const
 {

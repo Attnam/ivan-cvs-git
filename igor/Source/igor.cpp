@@ -83,7 +83,7 @@ int Main(int, char**)
   vector2d Cursor(0, 0);
   int k = 0;
   Selected = 0;
-  color16 Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
+  packedcolor16 Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
   std::vector<vector2d> DrawQueue;
   uchar TempBuffer[256];
 
@@ -205,10 +205,10 @@ int Main(int, char**)
       for(c = 0; c < DrawQueue.size(); ++c)
 	{
 	  DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, DrawQueue[c], RES_X - STRETCH * 32 - 20, RES_Y - STRETCH * 16 - 10, 16, 16, STRETCH);
-	  CursorBitmap.MaskedBlit(DOUBLE_BUFFER, 0, 0, DrawQueue[c], 16, 16);
+	  CursorBitmap.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, DrawQueue[c], 16, 16);
 	}
 
-      CursorBitmap.MaskedBlit(DOUBLE_BUFFER, 0, 0, Cursor, 16, 16);
+      CursorBitmap.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, Cursor, 16, 16);
       graphics::BlitDBToScreen();
       k = GET_KEY();
     }

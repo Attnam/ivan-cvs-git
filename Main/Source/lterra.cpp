@@ -100,14 +100,6 @@ void olterrain::Break()
 
 	    if(Item)
 	      {
-		/*const materialscript* MScript = ItemArray[c1].GetMainMaterial();
-
-		if(MScript && MScript->GetConfig() == MAIN_MATERIAL)
-		  {
-		    long Volume = MScript->GetVolume() ? MScript->GetVolume()->Randomize() : 0;
-		    Item->ChangeMainMaterial(GetMainMaterial()->CloneDigMaterial(Volume));
-		  }*/
-
 		Square->AddItem(Item);
 		Item->SpecialGenerationHandler();
 	      }
@@ -335,28 +327,6 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
 	      }
 	  }
     }
-
-  /*if(TempConfig[0]->CreateLockConfigurations)
-    {
-      const item::databasemap& KeyConfig = key_ProtoType.GetConfig();
-
-      for(olterrain::databasemap::const_iterator i1 = Config.begin(); !(i1->first & LOCK_BITS); ++i1)
-	if(!i1->second.IsAbstract)
-	  {
-	    int NewConfig = i1->first | BROKEN_LOCK;
-	    olterraindatabase& TempDataBase = Config.insert(std::pair<int, olterraindatabase>(NewConfig, i1->second)).first->second;
-	    TempDataBase.InitDefaults(this, NewConfig);
-	    TempDataBase.PostFix << "with a broken lock";
-
-	    for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
-	      {
-		int NewConfig = i1->first | i2->first;
-		olterraindatabase& TempDataBase = Config.insert(std::pair<int, olterraindatabase>(NewConfig, i1->second)).first->second;
-		TempDataBase.InitDefaults(this, NewConfig);
-		TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
-	      }
-	  }
-    }*/
 
   if(TempConfig[0]->CreateWindowConfigurations)
     {

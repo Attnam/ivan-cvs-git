@@ -97,9 +97,8 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', true, true),
   new command(&GainAllItems, "gain all items", '$', '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, false),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, true),
   new command(&DetachBodyPart, "detach a limb", '0', '0', true, true),
-  /*new command(&ReloadDatafiles, "reload datafiles", 'R', 'R', true, true),*/
   new command(&SummonMonster, "summon monster", '&', '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', '|', false, true),
   new command(&Possess, "possess creature", '{', '{', false, true),
@@ -499,26 +498,8 @@ bool commandsystem::Talk(character* Char)
   return false;
 }
 
-/*#include "igraph.h"
-#include "graphics.h"
-#include "whandler.h"*/
-
 bool commandsystem::NOP(character* Char)
 {
-  /*igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
-  graphics::BlitDBToScreen();
-  GET_KEY();*/
-  //  ADD_MESSAGE("Danger: %d.", int(game::GetGameSituationDanger() * 1000));
-  //  return false;
-
-  /*{
-    //humanoid* H = static_cast<humanoid*>(Char);
-
-    for(int c = 0; c < Char->GetBodyParts(); ++c)
-      Char->GetBodyPart(c)->EditHP(-Char->GetBodyPart(c)->GetHP() / 2);
-  }*/
-
-  //game::GetScore();
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);
   Char->EditAP(-Char->GetStateAPGain(1000));
@@ -1029,12 +1010,6 @@ bool commandsystem::Sit(character* Char)
 
 bool commandsystem::Go(character* Char)
 {
-  /*if(Char->StateIsActivated(CONFUSED))
-    {
-      ADD_MESSAGE("In this mental state you would forget your destination immediately.");
-      return false;
-    }*/
-
   int Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key]"), false);
 
   if(Dir == DIR_ERROR)
@@ -1460,12 +1435,6 @@ bool commandsystem::SecretKnowledge(character* Char)
 bool commandsystem::DetachBodyPart(character* Char)
 {
   Char->DetachBodyPart();
-  return false;
-}
-
-bool commandsystem::ReloadDatafiles(character*)
-{
-  databasesystem::Initialize();
   return false;
 }
 

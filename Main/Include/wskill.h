@@ -29,11 +29,8 @@ class weaponskill
   weaponskill() : Level(0), Hits(0), HitCounter(0) { }
   int GetLevel() const { return Level; }
   int GetHits() const { return Hits; }
-  //uint GetHitCounter() const { return HitCounter; }
   bool Tick();
-  //bool AddHit();
   bool AddHit(int);
-  //bool SubHit();
   bool SubHit(int);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

@@ -81,6 +81,7 @@ class room
   virtual void ReceiveVomit(character*) { }
   virtual bool IsOKToDestroyWalls(const character*) const;
   virtual void GetAddItemEffect(item*) { };
+  void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool) { }
   mutable character* Master;

@@ -274,7 +274,6 @@ const char* character::ThirdPersonCriticalBiteVerb() const { return "critically 
 const char* character::UnarmedHitNoun() const { return "attack"; }
 const char* character::KickNoun() const { return "kick"; }
 const char* character::BiteNoun() const { return "attack"; }
-//int character::GetSpecialBodyPartFlags(int) const { return ST_NORMAL; }
 const char* character::GetEquipmentName(int) const { return ""; }
 const std::list<ulong>& character::GetOriginalBodyPartID(int I) const { return OriginalBodyPartID[I]; }
 square* character::GetNeighbourSquare(int I) const { return GetSquareUnder()->GetNeighbourSquare(I); }
@@ -705,7 +704,6 @@ void character::Be()
 
   if(AP >= 1000)
     {
-      //ApplyExperience();
       SpecialTurnHandler();
       BlocksSinceLastTurn = 0;
 
@@ -1348,14 +1346,6 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	  stack* StackUnder = LSquareUnder[0]->GetStack();
 	  GetStack()->MoveItemsTo(StackUnder);
 	  DoForBodyParts(this, &bodypart::DropEquipment, StackUnder);
-
-	  /*for(int c = 0; c < BodyParts; ++c)
-	    {
-	      bodypart* BodyPart = GetBodyPart(c);
-
-	      if(BodyPart)
-		BodyPart->DropEquipment(StackUnder);
-	    }*/
 	}
       else
 	{
@@ -1661,11 +1651,6 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile << CWeaponSkill[c];
 
-  /*if(IsStuck())
-    SaveFile << bool(true) << GetStackUnder()->SearchItem(StuckTo) << (int)StuckToBodyPart;
-  else
-    SaveFile << bool(false);*/
-
   SaveFile << (ushort)GetConfig();
 }
 
@@ -1719,12 +1704,6 @@ void character::Load(inputfile& SaveFile)
 
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile >> CWeaponSkill[c];
-
-  /*if(ReadType<bool>(SaveFile))
-    {
-      StuckTo = GetStackUnder()->GetItem(ReadType<int>(SaveFile));
-      SaveFile >> (int&)StuckToBodyPart;
-    }*/
 
   databasecreator<character>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 
@@ -2957,9 +2936,6 @@ void character::ChangeSecondaryMaterial(material*, int)
 
 void character::TeleportRandomly(bool Intentional)
 {
-  /*StuckTo = 0;
-  SetStuckToBodyPart(NONE_INDEX);*/
-
   if(StateIsActivated(TELEPORT_CONTROL))
     {
       if(IsPlayer())
@@ -3026,15 +3002,6 @@ void character::TeleportRandomly(bool Intentional)
 void character::RestoreHP()
 {
   DoForBodyParts(this, &bodypart::RestoreHP);
-
-  /*for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->RestoreHP();
-    }*/
-
   HP = MaxHP;
 }
 
@@ -3580,8 +3547,6 @@ void character::UpdatePictures()
 {
   if(!PictureUpdatesForbidden)
     DoIndexParameterRoutine(this, &character::JustUpdateTheDamnBodyPartPicture, BodyParts);
-    /*for(int c = 0; c < BodyParts; ++c)
-      UpdateBodyPartPicture(c);*/
 }
 
 bodypart* character::MakeBodyPart(int I) const
@@ -3961,19 +3926,6 @@ void character::AddBoneConsumeEndMessage() const
     ADD_MESSAGE("%s barks happily.", CHAR_NAME(DEFINITE)); // this suspects that nobody except dogs can eat bones
 }
 
-/* Returns true if character manages to unstuck himself (from all traps).
-   vector2d is the direction which the character has tried to escape to. */
-
-/*bool character::TryToUnstuck(vector2d Direction)
-{
-  return StuckTo->TryToUnstuck(this, StuckToBodyPart, Direction);
-}*/
-
-/*bool character::IsStuck() const
-{
-  return GetStuckToBodyPart() != NONE_INDEX;
-}*/
-
 bool character::RawEditAttribute(double& Experience, int Amount) const
 {
   /* Check if the attribute is disabled for creature */
@@ -4068,9 +4020,6 @@ void character::DrawPanel(bool AnimationDraw) const
     case BURDENED:
       FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, BLUE, "Burdened");
     }
-
-  //if(GetBurdenState() != UNBURDENED)
-  //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, GetVerbalBurdenStateColor(), "%s", festring(GetVerbalBurdenState()).Capitalize().CStr);
 
   switch(GetTirednessState())
     {
@@ -4219,17 +4168,8 @@ void character::SignalEquipmentAdd(int EquipmentIndex)
 
 void character::SignalEquipmentRemoval(int)
 {
-  //bool CouldFly = !!(GetMoveType() & FLY);
   CalculateEquipmentState();
   CalculateAttributeBonuses();
-
-  /*if(CouldFly && !(GetMoveType() & FLY))
-    {
-      if(!game::IsInWilderness() && !GetLSquareUnder()->IsFreezed())
-	SignalStepFrom(0);
-
-      TestWalkability();
-    }*/
 }
 
 void character::CalculateEquipmentState()
@@ -5261,15 +5201,6 @@ void character::CalculateMaxHP()
 void character::CalculateBodyPartMaxHPs(ulong Flags)
 {
   DoForBodyParts(this, &bodypart::CalculateMaxHP, Flags);
-
-  /*for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->CalculateMaxHP(MayChangeHPs, CheckUsability);
-    }*/
-
   CalculateMaxHP();
   CalculateHP();
 }
@@ -5353,7 +5284,6 @@ int characterprototype::CreateSpecialConfigurations(characterdatabase** TempConf
 	const material::database*const* MaterialConfigData = Proto->GetConfigData();
 	const material::database*const* End = MaterialConfigData + Proto->GetConfigSize();
 
-	//for(material::databasemap::const_iterator i = MaterialConfig.begin(); i != MaterialConfig.end(); ++i)
 	for(++MaterialConfigData; MaterialConfigData != End; ++MaterialConfigData)
 	  {
 	    const material::database* MaterialDataBase = *MaterialConfigData;
@@ -6213,7 +6143,6 @@ bool character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Chos
     {
       game::DrawEverythingNoBlit();
       itemvector ItemVector;
-      //int Return = MainStack->DrawContents(ItemVector, this, CONST_S("Choose ") + GetEquipmentName(Chosen) + ':', NONE_AS_CHOICE|NO_MULTI_SELECT, Sorter);
       int Return = MainStack->DrawContents(ItemVector,
 					   SecStack,
 					   this,
@@ -6817,11 +6746,6 @@ void character::FinalProcessForBone()
 bool character::HasRepairableBodyParts() const
 {
   return CombineBodyPartPredicates<true>(this, &bodypart::IsRepairable);
-  /*for(int c = 0; c < BodyParts; ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->IsRepairable())
-      return true;
-
-  return false;*/
 }
 
 void character::SetSoulID(ulong What)
@@ -7250,7 +7174,6 @@ double character::RandomizeBabyExperience(double SumE)
 
   double E = (SumE / 4) - (SumE / 32) + (double(RAND()) / MAX_RAND) * (SumE / 16 + 1);
   return Limit(E, MIN_EXP, MAX_EXP);
-  //return Limit<int>((SumA & 3 ? (SumA >> 2) + (RAND() % (SumA & 3) ? 1 : 0) : SumA >> 2) + (RAND() & 1) - (RAND() & 1), 0, 100);
 }
 
 liquid* character::CreateBlood(long Volume) const
@@ -9106,25 +9029,15 @@ void character::PrintAttribute(const char* Desc, int I, int PanelPosX, int Panel
   if(Attribute != NoBonusAttribute)
     {
       int Where = PanelPosX + (ToPrint.GetSize() << 3);
-      //      FONT->Printf(DOUBLE_BUFFER, Where , PanelPosY * 10, WHITE, 
-      //		   "/");      
       FONT->Printf(DOUBLE_BUFFER, Where + 8, PanelPosY * 10, LIGHT_GRAY, 
 		   "%d", NoBonusAttribute); 
     }
-
-  //  const char* Format = AWB == ANB ? "%s %d" : "%s %d/%d";
-  //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY * 10, C, Format, Desc, AWB, ANB);
 }
 
 bool character::AllowUnconsciousness() const
 {
   return DataBase->AllowUnconsciousness && TorsoIsAlive();
 }
-
-/*bool character::IsTooHurtToRegainConsciousness() const
-{
-  return AllowUnconsciousness() && GetTorso()->IsBadlyHurt();
-}*/
 
 bool character::CanPanic() const
 {

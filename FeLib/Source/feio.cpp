@@ -344,7 +344,6 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      //DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 105, 9, 0);
       BackUp.NormalBlit(DOUBLE_BUFFER, 0, 0, Pos.X, Pos.Y + 10, 105, 9);
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       graphics::BlitDBToScreen();
@@ -421,8 +420,6 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
 
       BackUp.NormalBlit(DOUBLE_BUFFER, 0, 0, Pos.X, Pos.Y, ((Topic.GetSize() + 14) << 3) + 1, 10);
       BackUp.NormalBlit(DOUBLE_BUFFER, 0, 10, Pos.X, Pos.Y + 10, 203, 10);
-      //DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, ((Topic.GetSize() + 14) << 3) + 1, 10, 0);
-      //DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
 
       if(FirstTime)
 	{

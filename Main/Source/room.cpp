@@ -97,3 +97,15 @@ bool room::IsOKToDestroyWalls(const character* Infidel) const
   return !MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE;
 }
 
+void room::FinalProcessForBone()
+{
+  if(MasterID)
+    {
+      boneidmap::iterator BI = game::GetBoneCharacterIDMap().find(MasterID);
+
+      if(BI != game::GetBoneCharacterIDMap().end())
+	MasterID = BI->second;
+      else
+	MasterID = 0;
+    }
+}

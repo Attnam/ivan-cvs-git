@@ -82,13 +82,6 @@ inline color16 MakeRGB16(int Red, int Green, int Blue)
   return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F);
 }
 
-/*inline color16 EditRGB16(color16 Color, int Red, int Green, int Blue)
-{
-  return MakeRGB16(Limit(GetRed16(Color) + Red, 0, 0xFF),
-		   Limit(GetGreen16(Color) + Green, 0, 0xFF),
-		   Limit(GetBlue16(Color) + Blue, 0, 0xFF));
-}*/
-
 inline color16 MakeShadeColor(color16 Color)
 {
   return MakeRGB16(GetRed16(Color) / 3,

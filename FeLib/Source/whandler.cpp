@@ -214,7 +214,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	      return;
 	    }
 	  else
-	    KeyPressed = KEY_ENTER;//Event->key.keysym.unicode;
+	    KeyPressed = KEY_ENTER; //Event->key.keysym.unicode;
 
 	  break;
 	case SDLK_DOWN:

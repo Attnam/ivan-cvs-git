@@ -14,7 +14,6 @@
 void meleeweapon::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
-//int meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
 double meleeweapon::GetTHVBonus() const { return Enchantment * .5; }
 double meleeweapon::GetDamageBonus() const { return Enchantment; }
 color16 meleeweapon::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
@@ -421,11 +420,6 @@ void meleeweapon::EditEnchantment(int Amount)
   Enchantment += Amount;
   SignalEnchantmentChange();
 }
-
-/*double meleeweapon::GetWeaponStrength() const
-{
-  return item::GetWeaponStrength() * (20 + Enchantment) / 20;
-}*/
 
 int meleeweapon::GetStrengthValue() const
 {

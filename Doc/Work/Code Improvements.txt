@@ -51,7 +51,7 @@ Kirjallisen yliluonnollisuuden epäfunktioittaminen.
 //Repliikkien datafilesaatio.
 Raajarajapinta.
 //Jumalten arrayttäminen.
-Tiedostojen tekijätiedottaminen.
+//Tiedostojen tekijätiedottaminen.
 Hyökkäyslajien olioiminen.
 Markkinatalouden yhdenmukaistaminen.
 Potentiaali konfiguraatioiden eksplisiittiseen periyttämiseen.
@@ -61,7 +61,7 @@ Leikisti aktiivin 1. partisiipissa olevien data-arvojen muokkaus kykylauseiksi.
 Hidastinten kirjastointi.
 //Litkujen materialisoiminen.
 (r) Massattomat maastot.
-Metsästysvälineiden lokeroittaminen.
+//Metsästysvälineiden lokeroittaminen.
 Artikkelien bitittäminen.
 //Inttien synninpäästö.
 Tehokkuustietojen välitys ruutuilmiöihin.

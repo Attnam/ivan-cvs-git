@@ -317,6 +317,9 @@ class olterrain : public lterrain, public oterrain
   virtual bool IsFountainWithWater() const { return false; }
   bool ShowThingsUnder() const;
   bool WillBeDestroyedBy(const character*) const;
+  virtual void PreProcessForBone() { }
+  virtual void PostProcessForBone() { }
+  virtual void FinalProcessForBone() { }
  protected:
   virtual vector2d GetBitmapPos(int) const;
   virtual void ModifyAnimationFrames(int&) const;

@@ -2246,12 +2246,6 @@ bool potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
   return item::ReceiveDamage(Damager, Damage, Type, Dir);
 }
 
-/*bool beartrap::IsStuck() const
-{
-  character* Char = GetLSquareUnder()->GetCharacter();
-  return Char && Char->GetStuckTo() && Char->GetStuckTo()->GetID() == GetID();
-}*/
-
 void beartrap::Fly(character* Thrower, int Direction, int Force)
 {
   if(!IsStuck())

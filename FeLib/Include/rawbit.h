@@ -78,8 +78,6 @@ class rawbitmap
   static bool IsMaterialColor(int Color) { return Color >= 192; }
   static int GetMaterialColorIndex(int Color) { return Color - 192 >> 4; }
   int GetMaterialColorIndex(int X, int Y) const { return PaletteBuffer[Y][X] - 192 >> 4; }
-  //uchar& AccessPaletteEntry(int X, int Y) const { return PaletteBuffer[Y][X]; }
-  //uchar& AccessPaletteEntry(vector2d Pos) const { return PaletteBuffer[Pos.Y * XSize + Pos.X]; }
   bool IsTransparent(vector2d) const;
   bool IsMaterialColor1(vector2d) const;
   vector2d RandomizeSparklePos(const vector2d*, vector2d*, vector2d, vector2d, int, bool*) const;
