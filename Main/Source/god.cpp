@@ -421,7 +421,7 @@ void mellis::PrayBadEffect(void)
 void pestifer::PrayGoodEffect(void)
 {
 	ADD_MESSAGE("Suddenly a very ugly head appears beside you, groaning horribly into your ear!");
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new head);
+	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new headofennerbeast);
 	game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() + 1);
 }
 
@@ -640,6 +640,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 void god::PrintRelation(void) const
 {
 	std::string VerbalRelation;
+
 	if(GetRelation() == 1000)
 		VerbalRelation = "greets you as a Champion of the Cause!";
 	else if(GetRelation() > 750)

@@ -283,6 +283,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	vector Pos = Start->GetPos();
 	bool Breaks = false;
 	float Speed = float(Force) / GetWeight() * 1500;
+
 	for(;;)
 	{
 		if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
@@ -318,9 +319,12 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 
 		}
 	}
+
 	Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
+
 	if(Breaks)
 		ImpactDamage(Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
+
 	if(Pos == StartingPos)
 		return false;
 	else
@@ -337,7 +341,9 @@ bool item::HitCharacter(character* Dude, float Speed, bool CanBeSeen)
 		if(CanBeSeen) ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
 		return false;
 	}
+
 	Dude->HasBeenHitByItem(this, Speed, CanBeSeen);
+
 	return true;
 }
 
@@ -354,9 +360,7 @@ bool abone::Consume(character* Consumer, float Amount)
 ushort can::PrepareForConsuming(character* Consumer, stack* Stack)
 {
 	if(Consumer != game::GetPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
-	{
 		return TryToOpen(Stack);
-	}
 	else
 		return 0xFFFF;
 }
@@ -412,6 +416,7 @@ bool pickaxe::Apply(character* User)
 			return true;
 		}
 	}	
+
 	return false;
 }
 
@@ -431,8 +436,8 @@ ushort platemail::GetArmorValue(void) const
 {
 	float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3;
 
-	if(Base < 0)
-		Base = 0;
+	if(Base < 1)
+		Base = 1;
 
 	if(Base > 100)
 		Base = 100;
@@ -444,8 +449,8 @@ ushort chainmail::GetArmorValue(void) const
 {
 	float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2;
 
-	if(Base < 0)
-		Base = 0;
+	if(Base < 1)
+		Base = 1;
 
 	if(Base > 100)
 		Base = 100;
@@ -456,7 +461,9 @@ ushort chainmail::GetArmorValue(void) const
 bool wand::Apply(character* StupidPerson)
 {
 	if(StupidPerson == game::GetPlayer()) ADD_MESSAGE("The wand brakes in two and then explodes.");
+
 	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+
 	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter())
 	{
 		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->ReceiveFireDamage(5);
@@ -473,11 +480,13 @@ bool wand::Apply(character* StupidPerson)
 bool wandofpolymorph::Zap(vector Pos, uchar Direction)
 {
 	vector CurrentPos = Pos;
+
 	if(!GetCharge())
 	{
 		ADD_MESSAGE("Nothing happens.");
 		return false;
 	}
+
 	if(Direction != '.')
 		for(ushort Length = 0;Length < 5;Length++)
 		{
@@ -514,6 +523,7 @@ bool wandofpolymorph::Zap(vector Pos, uchar Direction)
 	}
 
 	SetCharge(GetCharge() - 1);
+
 	return true;
 }
 
@@ -529,4 +539,14 @@ bool item::Polymorph(stack* CurrentStack)
 	CurrentStack->RemoveItem(CurrentStack->SearchItem(this));
 	delete this;
 	return true;
+}
+
+void wand::Save(std::ofstream& SaveFile) const
+{
+	SaveFile.put(Charge);
+}
+
+void wand::Load(std::ifstream& SaveFile)
+{
+	Charge = SaveFile.get();
 }

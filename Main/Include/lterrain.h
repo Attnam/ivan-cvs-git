@@ -91,6 +91,7 @@ protected:
 	public:\
 		name(bool = true, bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -108,6 +109,7 @@ protected:
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
 	void name::SetDefaultStats(void) { setstats }\
+	ushort name::StaticType(void) { return name##_ProtoInstaller.GetIndex(); }\
 	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
@@ -119,6 +121,7 @@ protected:
 	public:\
 		name(bool = true, bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\

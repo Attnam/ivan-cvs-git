@@ -85,6 +85,7 @@ protected:
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
 		virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
 		virtual typeable* CloneAndLoad(std::ifstream& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -102,6 +103,7 @@ protected:
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
 	void name::SetDefaultStats(void) { setstats }\
+	ushort name::StaticType(void) { return name##_ProtoInstaller.GetIndex(); }\
 	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
@@ -115,6 +117,7 @@ protected:
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
 		virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
 		virtual typeable* CloneAndLoad(std::ifstream& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -815,7 +818,9 @@ public:
 	virtual bool Apply(character*);
 	virtual bool CanBeZapped(void) const RET(true)
 	virtual uchar GetCharge(void) const { return Charge; } 
-	virtual void SetCharge(uchar What) { Charge = What; } 
+	virtual void SetCharge(uchar What) { Charge = What; }
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 protected:
 	virtual ushort GetFormModifier(void) const RET(40)
 	uchar Charge;
@@ -852,11 +857,10 @@ public:
 	virtual std::string NameSingular(void) const RET("arrow")
 	virtual std::string NamePlural(void) const RET("arrows")
 	virtual float OfferModifier(void) const RET(0.5f)
-	virtual vector GetBitmapPos(void) const RETV(0,64)
+	virtual vector GetBitmapPos(void) const RETV(144,80)
 protected:
 	virtual ushort GetFormModifier(void) const RET(70)
 );
-
 
 class ITEM
 (
@@ -871,9 +875,11 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameNormal(Case, "a"))
 	virtual std::string NameSingular(void) const RET("head of enner beast")
 	virtual std::string NamePlural(void) const RET("heads of enner beast")
-	virtual long Score(void) const RET(3);
-	virtual vector GetBitmapPos(void) const RETV(176,0)
+	virtual long Score(void) const RET(250);
+	virtual vector GetBitmapPos(void) const RETV(0,176)
+	virtual bool CanBeWished(void) const RET(true)
 );
+
 FINISH_PROTOTYPING(item)
 
 #endif

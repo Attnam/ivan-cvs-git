@@ -256,6 +256,7 @@ protected:
 		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 		virtual character* Clone(bool = true, bool = true, bool = true) const;\
 		virtual typeable* CloneAndLoad(std::ifstream&) const;\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -275,6 +276,7 @@ protected:
 	character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
 	typeable* name::CloneAndLoad(std::ifstream& SaveFile) const { character* Char = new name(false, false, false); Char->Load(SaveFile); return Char; }\
 	void name::SetDefaultStats(void) { setstats }\
+	ushort name::StaticType(void) { return name##_ProtoInstaller.GetIndex(); }\
 	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
@@ -288,6 +290,7 @@ protected:
 		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 		virtual character* Clone(bool = true, bool = true, bool = true) const;\
 		virtual typeable* CloneAndLoad(std::ifstream&) const;\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\

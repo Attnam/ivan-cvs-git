@@ -152,7 +152,7 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
-		WorldMap = new worldmap(128, 128);
+		WorldMap = new worldmap(256, 256);
 		WorldMap->Generate();
 
 		InWilderness = true;

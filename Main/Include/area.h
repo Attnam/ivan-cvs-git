@@ -6,87 +6,180 @@
 #define STILL_ON_POSSIBLE_ROUTE	4
 #define PREFERRED		8
 
-#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)	\
-{								\
-	ushort DoX, DoY, DoIndex = 0;				\
-								\
-	if(X && Y)						\
-	{							\
-		DoX = X - 1; DoY = Y - 1;			\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(Y)							\
-	{							\
-		DoX = X; DoY = Y - 1;				\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(X < BorderX - 1 && Y)				\
-	{							\
-		DoX = X + 1; DoY = Y - 1;			\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(X)							\
-	{							\
-		DoX = X - 1; DoY = Y;				\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(X < BorderX - 1)					\
-	{							\
-		DoX = X + 1; DoY = Y;				\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(X && Y < BorderY - 1)				\
-	{							\
-		DoX = X - 1; DoY = Y + 1;			\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(Y < BorderY - 1)					\
-	{							\
-		DoX = X; DoY = Y + 1;				\
-								\
-		Then;						\
-	}							\
-								\
-	DoIndex++;						\
-								\
-	if(X < BorderX - 1 && Y < BorderY - 1)			\
-	{							\
-		DoX = X + 1; DoY = Y + 1;			\
-								\
-		Then;						\
-	}							\
+#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)		\
+{									\
+	while(true)							\
+	{								\
+		ushort DoX, DoY, DoIndex = 0;				\
+									\
+		if(X && Y)						\
+		{							\
+			DoX = X - 1; DoY = Y - 1;			\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(Y)							\
+		{							\
+			DoX = X; DoY = Y - 1;				\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X < BorderX - 1 && Y)				\
+		{							\
+			DoX = X + 1; DoY = Y - 1;			\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X)							\
+		{							\
+			DoX = X - 1; DoY = Y;				\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X < BorderX - 1)					\
+		{							\
+			DoX = X + 1; DoY = Y;				\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X && Y < BorderY - 1)				\
+		{							\
+			DoX = X - 1; DoY = Y + 1;			\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(Y < BorderY - 1)					\
+		{							\
+			DoX = X; DoY = Y + 1;				\
+									\
+			Then;						\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X < BorderX - 1 && Y < BorderY - 1)			\
+		{							\
+			DoX = X + 1; DoY = Y + 1;			\
+									\
+			Then;						\
+		}							\
+									\
+		break;							\
+	}								\
+}
+
+#define DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(X, Y, BorderX, BorderY, FirstCommand, SecondCommand, CommonCommand)\
+{									\
+	while(true)							\
+	{								\
+		ushort DoX, DoY, DoIndex = 0;				\
+									\
+		if(X && Y)						\
+		{							\
+			DoX = X - 1; DoY = Y - 1;			\
+									\
+			FirstCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(Y)							\
+		{							\
+			DoX = X; DoY = Y - 1;				\
+									\
+			FirstCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X < BorderX - 1 && Y)				\
+		{							\
+			DoX = X + 1; DoY = Y - 1;			\
+									\
+			FirstCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X)							\
+		{							\
+			DoX = X - 1; DoY = Y;				\
+									\
+			FirstCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X < BorderX - 1)					\
+		{							\
+			DoX = X + 1; DoY = Y;				\
+									\
+			SecondCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X && Y < BorderY - 1)				\
+		{							\
+			DoX = X - 1; DoY = Y + 1;			\
+									\
+			SecondCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(Y < BorderY - 1)					\
+		{							\
+			DoX = X; DoY = Y + 1;				\
+									\
+			SecondCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		DoIndex++;						\
+									\
+		if(X < BorderX - 1 && Y < BorderY - 1)			\
+		{							\
+			DoX = X + 1; DoY = Y + 1;			\
+									\
+			SecondCommand;					\
+			CommonCommand;					\
+		}							\
+									\
+		break;							\
+	}								\
 }
 
 #define DO_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoOne, DoTwo, DoThree, DoFour)		\
 {																\
-	long Left    = (CenterX) - (Radius),											\
-	    Top     = (CenterY) - (Radius),											\
-	    Rigth   = (CenterX) + (Radius),											\
-	    Bottom  = (CenterY) + (Radius);											\
+	long	Left    = (CenterX) - (Radius),											\
+		Top     = (CenterY) - (Radius),											\
+		Rigth   = (CenterX) + (Radius),											\
+		Bottom  = (CenterY) + (Radius);											\
 																\
 	if(Left   < (ClipLeft))		Left   = (ClipLeft);									\
 	if(Top    < (ClipTop))		Top    = (ClipTop);									\
@@ -122,10 +215,10 @@
 
 #define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat)				\
 {																\
-	long Left    = (CenterX) - (Radius),											\
-	    Top     = (CenterY) - (Radius),											\
-	    Rigth   = (CenterX) + (Radius),											\
-	    Bottom  = (CenterY) + (Radius);											\
+	long	Left    = (CenterX) - (Radius),											\
+		Top     = (CenterY) - (Radius),											\
+		Rigth   = (CenterX) + (Radius),											\
+		Bottom  = (CenterY) + (Radius);											\
 																\
 	if(Left   < (ClipLeft))		Left   = (ClipLeft);									\
 	if(Top    < (ClipTop))		Top    = (ClipTop);									\

@@ -1,3 +1,4 @@
+#include "strover.h"
 #include "wsquare.h"
 #include "igraph.h"
 #include "char.h"
@@ -88,9 +89,9 @@ void worldmapsquare::UpdateMemorizedDescription(void)
 	if(TerrainChanged)
 	{
 		if(GetOverTerrain()->Name(UNARTICLED) != "atmosphere")
-			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE));
+			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetMotherWorldMap()->GetContinentUnder(Pos));
 		else
-			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetMotherWorldMap()->GetContinentUnder(Pos));
 
 		TerrainChanged = false;
 	}

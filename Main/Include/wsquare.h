@@ -26,14 +26,14 @@ public:
 	virtual groundworldmapterrain* GetGroundWorldMapTerrain(void) const;
 	virtual overworldmapterrain* GetOverWorldMapTerrain(void) const;
 	virtual void ChangeWorldMapTerrain(groundworldmapterrain*, overworldmapterrain*);
-	virtual short GetAltitude(void) { return Altitude; };
-	virtual void SetAltitude(short What) { Altitude = What; }
+	//virtual short GetAltitude(void) { return Altitude; };
+	//virtual void SetAltitude(short What) { Altitude = What; }
 	virtual worldmap* GetMotherWorldMap(void) const { return (worldmap*)MotherArea; }
 	virtual void SetMotherWorldMap(worldmap* What) { MotherArea = (area*)What; }
 	virtual void UpdateMemorizedDescription(void);
 protected:
-	worldmap* MotherWorldMap;
-	short Altitude;
+	//worldmap* MotherWorldMap;
+	//short Altitude;
 	bool TerrainChanged;
 };
 

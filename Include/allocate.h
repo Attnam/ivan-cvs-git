@@ -32,7 +32,7 @@ template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize,
 
 	ulong XPointer = ulong(Map) + MapXSize, TrueYSize = YSize * sizeof(Type);
 
-	for(ulong x = 0; x < XSize; x++, Pointer += TrueYSize)
+	for(ulong x = 0; x < XSize; x++, XPointer += TrueYSize)
 	{
 		Map[x] = (Type*)XPointer;
 

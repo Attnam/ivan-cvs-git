@@ -61,6 +61,7 @@ protected:
 	{\
 	public:\
 		name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -77,6 +78,7 @@ protected:
 	} static name##_ProtoInstaller;\
 	\
 	void name::SetDefaultStats(void) { setstats }\
+	ushort name::StaticType(void) { return name##_ProtoInstaller.GetIndex(); }\
 	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
@@ -87,6 +89,7 @@ protected:
 	{\
 	public:\
 		name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
+		static ushort StaticType(void);\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
