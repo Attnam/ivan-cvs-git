@@ -229,6 +229,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(HPRequirementForGeneration);
   ANALYZE_DATA(IsExtraCoward);
   ANALYZE_DATA(SpillsBlood);
+  ANALYZE_DATA(HasEyes);
 
   return Found;
 }

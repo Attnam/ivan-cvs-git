@@ -847,4 +847,14 @@ class CHARACTER
   virtual void GetAICommand();
 );
 
+class CHARACTER  
+(
+  floatingeye,
+  nonhumanoid,
+ public:
+  virtual bool Hit(character*, bool);
+  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+ protected:
+  virtual void GetAICommand();
+);
 #endif

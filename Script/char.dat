@@ -83,6 +83,7 @@ character
 	HPRequirementForGeneration = 0;
 	IsExtraCoward = false;
 	SpillsBlood = true;
+	HasEyes = true;
 }
 
 humanoid
@@ -1111,6 +1112,7 @@ mommo
 	HasFeet = false;
 	FleshMaterial = BROWN_SLIME;
 	DeathMessage = "@Dd turns into lifeless goo.";
+	HasEyes = false;
 
 	Config CONICAL;
 	{
@@ -3064,4 +3066,34 @@ chameleon
 	HPRequirementForGeneration = 80;
 	Frequency = 1000;
 	IsExtraCoward = true;
+}
+
+
+floatingeye
+{
+	DefaultArmStrength = 1; 
+	DefaultAgility = 3;
+	DefaultEndurance = 4;
+	DefaultPerception = 40;
+	DefaultIntelligence = 2;
+	DefaultWisdom = 2;
+	DefaultCharisma = 8;
+	DefaultMana = 0;
+	CanOpen = false;
+	TotalVolume = 14000;
+	HostileReplies == "@du stares at you.";
+	FriendlyReplies == "@du stares at you.";
+	TotalSize = 15;
+	/* SkinColor overridden */
+	NameSingular = "floating eye";
+	AttackStyle = USE_HEAD; /* shouldn't really ever use this */
+	BaseBiteStrength = 1;
+	CanBeGenerated = true;
+	FleshMaterial = FLOATING_EYE_FLESH;
+	IgnoreDanger = true;
+	HPRequirementForGeneration = 0;
+	Frequency = 1000;
+	TorsoBitmapPos = 32, 0;
+	SkinColor = rgb16(140,140,140);
+	ClothColor = rgb16(0, 0, 100); // eye color
 }

@@ -412,3 +412,4 @@ Golems' corpses should be somehow useful. (eg parchment golems should give out p
 The smith should fix damaged metal limbs for a fee.
 Finding Attnam in the map can be difficult if the distance is long.  
 Make golem scroll.
+Zapping food with wand of slow/haste should slow/fasten the spoiling time.

@@ -4153,3 +4153,47 @@ item* zombie::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
   return BodyPart;
 }
+
+void floatingeye::GetAICommand()
+{
+  SeekLeader();
+
+  for(ushort c = 0;; ++c)
+    {
+      if(c == 8)
+	{
+	  MoveRandomly();
+	  return;
+	}
+      if(GetNeighbourLSquare(c)->GetCharacter() && GetNeighbourLSquare(c)->GetCharacter()->GetRelation(this) == HOSTILE)
+	break;
+    }
+  EditAP(-1000);  
+}
+
+bool floatingeye::Hit(character* Enemy, bool ForceHit)
+{
+  if(IsPlayer())
+    {
+      ADD_MESSAGE("You stare at %s.", Enemy->CHAR_NAME(DEFINITE));
+      return true;
+    }
+  else if(Enemy->IsPlayer())
+    {
+      ADD_MESSAGE("%s stares at you.", CHAR_NAME(DEFINITE));
+      return true;
+    }
+  EditAP(-1000);
+}
+
+uchar floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+{
+  uchar Return = nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+
+  if(Return != HAS_DIED && Enemy->HasEyes() && RAND() % 3) /* Changes for fainting 2 out of 3 */
+    {
+      Enemy->Faint();
+    }
+
+  return Return;
+}

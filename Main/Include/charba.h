@@ -160,6 +160,7 @@ struct characterdatabase
   ushort HPRequirementForGeneration;
   bool IsExtraCoward;
   bool SpillsBlood;
+  bool HasEyes;
 };
 
 class characterprototype
@@ -751,6 +752,7 @@ class character : public entity, public id
   std::string GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(ushort) const { return 0; }
+  DATA_BASE_BOOL(HasEyes);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
