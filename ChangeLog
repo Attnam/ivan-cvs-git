@@ -1,4 +1,4 @@
-July 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added CreateDivineConfigurations boolean datavalue to all databases, which can be used
 	  to add new god-dependent characters, items, materials and terrains very easily,
