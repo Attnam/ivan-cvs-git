@@ -464,13 +464,14 @@ void petrus::BeTalkedTo()
 	}
       else
 	{
-	  ADD_MESSAGE("\"I see. Thy greed hast overcome thy wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
+	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thy greed hast overcome thy wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 
 	  /* And now we actually make his face change color ;-) */
 
 	  GetHead()->GetMainMaterial()->SetSkinColor(MakeRGB16(255, 75, 50));
 	  GetHead()->UpdatePictures();
 	  GetSquareUnder()->SendNewDrawRequest();
+	  game::AskForKeyPress("You are attacked! [press any key to continue]");
 	  game::GetPlayer()->GetTeam()->Hostility(GetTeam());
 	  return;
 	}
@@ -480,7 +481,7 @@ void petrus::BeTalkedTo()
     {
       game::TextScreen(	"You have slain Elpuri, and Petrus grants you the freedom you desire.\n"
 			"You spend the next months in Attnam as an honored hero and when the\n"
-			"sea finally melts, you board the first ship and leave your past forever\n"
+			"sea finally melts, you board the first ship, leaving your past forever\n"
 			"behind.\n\nYou are victorious!");
 
       AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
@@ -493,7 +494,7 @@ void petrus::BeTalkedTo()
 	  if(game::GetPlayer()->HasEncryptedScroll())
 	    {
 	      game::TextScreen( "You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
-				"Petrus raises his hand, the scroll glows yellow, and lo! The letters are clear and\n"
+				"Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
 				"readable. Petrus asks you to voice them aloud. The first two thousand words praise\n"
 				"Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
 				"Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
@@ -506,10 +507,10 @@ void petrus::BeTalkedTo()
 				"slave that brought the message will henceforth be at Your disposal. I am certain this\n"
 				"satisfies the crown's needs.\"\n\n"
 				"\"Yours sincerely,\n"
-				"Richel Decos, the Viceroy of New Attnam\"");
+				"Richel Decos, the viceroy of New Attnam\"");
 
 	      game::TextScreen( "You almost expected the last bit. Petrus seems to be deep in his thoughts and you\n"
-				"wonder what shape your is destiny taking in his mind. Suddenly he seems to return\n"
+				"wonder what shape your destiny is taking in his mind. Suddenly he seems to return\n"
 				"to this reality and talks to you.\n\n"
 				"\"Oh, thou art still here. We were just discussing telepathically with Sir Galladon.\n"
 				"We started doubting Decos's alleged poverty a while back when he bought a couple of\n"
@@ -541,7 +542,7 @@ void petrus::BeTalkedTo()
 	      StoryState = 1;
 	    }
 	  else
-	    ADD_MESSAGE("\"Yes, citizen? We are quite busy now, thou shalt not disturb us without proper cause.\"");
+	    ADD_MESSAGE("\"Yes, citizen? We are quite busy now, thou shalt not disturb Us without proper cause.\"");
 	}
       else /* StoryState == 1 */
 	ADD_MESSAGE("Petrus says: \"Bring me the head of Elpuri and we'll talk.\"");

@@ -237,10 +237,10 @@ bool game::Init(const std::string& Name)
 			      "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
 			      "colony, and were led directly to him.");
 
-	iosystem::TextScreen( "\"I have a task for you, citizen\", said the viceroy picking his teeth,\n"
-			      "\"The market price of bananas has took a deep dive and yet the central\n"
-			      "government is about to raise taxes. I have sent appeals to high priest\n"
-			      "Petrus but received no response. I fear that my enemies in Attnam are\n"
+	iosystem::TextScreen( "\"I have a task for you, citizen\", said the viceroy picking his golden\n"
+			      "teeth, \"The market price of bananas has took a deep dive and yet the\n"
+			      "central government is about to raise taxes. I have sent appeals to high\n"
+			      "priest Petrus but received no response. I fear my enemies in Attnam are\n"
 			      "plotting against me and intercepting my messages before they reach him!\"\n\n"
 			      "\"That is why you must travel to Attnam with a letter I'll give you and\n"
 			      "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
