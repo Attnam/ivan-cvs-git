@@ -2086,7 +2086,8 @@ Functions:
 
 material(ulong Volume)
 
-	Constructor of material. Volume is volume of the material to be created.
+	Constructor of material. Volume is volume of the material to be
+	created.
 
 material(std::ifstream* SaveFile)
 
@@ -2098,7 +2099,8 @@ uchar CFleshColor(void)
 
 uchar CItemColor(void)
 
-	Returns the color of the material when it is used as a material for an item.
+	Returns the color of the material when it is used as a material for
+	an item.
 
 std::string Name(uchar Case = 0)
 
@@ -2110,8 +2112,8 @@ std::string Name(uchar Case = 0)
 
 ushort GetHitValue()
 
-	Returns the hitvalue of the item, which increses the weaponstrength of
-	an item made of it.
+	Returns the hitvalue of the item, which increses the weaponstrength
+	of an item made of it.
 
 uchar CConsumeType()
 
@@ -2193,78 +2195,125 @@ MinusAmount(float Amount)
 	decreases the volume of the material by Amount percent.
 
 NormalFoodEffect(character* Eater, float Amount, float NPModifier)
-	Eater reseaves the normal food effect. Amount is the percent
-	of the volume that is going to be eaten and NPModifier is 
-	floating point number that is used to multiply this volume.
-	NPModifier is used by some items.
 
+	Eater reseives the normal food effect. Amount is the percent of the
+	volume that is going to be eaten and NPModifier is floating point
+	number that is used to multiply this volume. NPModifier is used by
+	some items.
+
+prototypecontainer<class ProtoType> (proto.h)
+---------------------------------------------
+
+A template class that contains a prototype vector, an array of type
+ProtoType* including a pointer to each and every concrete class derived
+from ProtoType. The first and last elements must always be zero.
+Used by the game's generation and save systems.
+
+Functions:
+
+prototypecontainer()
+
+	Creates the container and sets its first element to zero.
+
+Add(const ushort Index, ProtoType* Proto)
+
+	Adds Proto to the position determined by Index, resizing the
+	array and setting its last element to zero if obligatory.
+
+const ProtoType* const Access(ushort Index) const
+const ProtoType* const operator [] (ushort Index) const
+
+	Returns the prototype of specified Index, so that inspectors
+	like cloning functions and such may be called through it.
 
 stack (stack.h)
 ---------------
 
 stack(square* SqureUnder)
+
 	Stack's constructor. SquareUnder is surprisingly the square
 	under the stack.
 
 stack(std::ifstream* SaveFile)
-	Saves the stack to SaveFile
+
+	Saves the stack to SaveFile.
 
 PositionedDrawToTileBuffer(uchar LevelSquarePosition)
+
 	Draws the stack to the right place on the TileBuffer.	
-	LevelSquarePosition is NOT used for ANYTHING.
+	LevelSquarePosition is passed to item::PositionedDrawToTileBuffer().
+	Refer to it if you need to know what it does.
+
 ushort AddItem(item* ToBeAdded)
-	Adds ToBeAdded to the stack and then returns the index
-	of ToBeAdded.
+
+	Adds ToBeAdded to the stack and then returns the index of ToBeAdded.
+	Updates ligths if needed.
 
 ushort FastAddItem(item* ToBeAdded)
+
 	Same as the above, but does not update lights.
 
 item* RemoveItem(ushort Index)
-	Removes item number Index and then returns
-	a pointer to that file.
+
+	Removes item number Index and then returns a pointer to that item.
+	Updates ligths if needed.
 
 FastRemoveItem(ushort Index)
-	Just removes the number Index item and does 
-	not update lights.
+
+	Just removes the number Index item and does not update lights.
 
 Clean()
-	Cleans the stack of 0 pointered items. 
+
+	Deletes all items of the stack.
 
 ushort MoveItem(ushort Index, stack* MoveTo)
-	Moves item number Index to the stack that MoveTo
-	is pointing at. Then returns the new index of the
-	item in question.
+
+	Moves item number Index to the stack that MoveTo is pointing at.
+	Then returns the new index of the item in question. Updates
+	ligths if needed.
 
 Optimize(ushort OptimizeBoundary)
-	Optimizes the inventory from the index OptimeBoundary
-	onwards.
+
+	Optimizes the stack if there are more than OptimizeBoundary
+	zero pointers. Optimizing means all of these are removed.
+	Note: The game does not support zero pointers correctly.
+	Use zero as the OptimizeBoundary always!
 
 ushort DrawContents(const char* Topic)
-	Draws the contents on the screen as a neatly organized
-	list. The Topic is also dislplayed on the screen.
+
+	Draws the contents on the screen as a neatly organized list and
+	waits for keypress. The Topic is also displayed on the screen.
+	The list uses list::Draw and returns the same things as it does.
 
 ushort CEmitation()
-	Returns the total emitation of all the items in the
-	stack.
+
+	Returns the total emitation of all the items in the stack.
 
 ulong stack::SumOfMasses()
-	returns the sum of the masses in this stack.
+
+	Returns the sum of the masses in this stack.
 
 Save(std::ofstream* SaveFile)
+
 	Saves the stack in SaveFile.
 
 stack::stack(std::ifstream* SaveFile)
+
 	Constructor of stack that loads itself from SaveFile.
 
 ushort SearchItem(item* ToBeSearched)
-	Searches for item ToBeSearched in the stack and then returns
-	its index.
+
+	Searches for item ToBeSearched in the stack and then returns its
+	index, or 0xFFFF if it was not found.
 
 void stack::Move(levelsquare* To)
-	Moves the whole stack to levelsquare To.
+
+	Moves the whole stack to levelsquare To and updates ligths if
+	necessary.
 
 vector CPos(void)
-	returns the position of the stack.
+
+	Returns the position of the stack.
 
 ----------------------------------------------------------------------------
 
