@@ -1498,11 +1498,6 @@ Dungeon UNDER_WATER_TUNNEL;
 			{
 				Items == lantern;
 			}
-
-			Square, Pos 2,3;
-			{
-				OTerrain = MITHRIL door;
-			}
 		}
 	}
 
