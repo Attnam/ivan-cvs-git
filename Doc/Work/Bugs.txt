@@ -143,3 +143,26 @@ Odd monsters seem to be able to apply.
 Dipping to corpses doesn't work.
 (this may not be a bug, but it is a problem) Go and heal commands might be too fast on a very fast machine (> 1 GHz or something like that)
 Does using a two-handed weapon yield exp to only one arm?
+
+
+Game always crashes when one door is kicked with this trace.
+
+(notice there isn't a boobytrap on the door)
+/////////
+#0  0x08157e70 in material::GetAlpha() const (this=0x0)
+    at ../../Main/Include/materia.h:129
+#1  0x08157ef9 in material::IsTransparent() const (this=0x0)
+    at ../../Main/Include/materia.h:155
+#2  0x0816db62 in door::IsTransparent() const (this=0x89131a8)
+    at lterras.cpp:1076
+#3  0x08165e61 in lsquare::ChangeOLTerrainAndUpdateLights(olterrain*) (
+    this=0x8913000, NewTerrain=0x8719950) at lsquare.cpp:918
+#4  0x0816be01 in door::Break() (this=0x89131a8) at lterras.cpp:598
+#5  0x08169ec2 in door::BeKicked(character*, unsigned short) (this=0x89131a8, 
+    Kicker=0x891b9f0, KickDamage=3) at lterras.cpp:144
+#6  0x08165267 in lsquare::BeKicked(character*, item*, float, float, short, bool, bool) (this=0x8913000, Kicker=0x891b9f0, Boot=0x893b828, 
+    KickDamage=3.18698192, KickToHitValue=3.375, Success=0, Critical=false, 
+    ForceHit=false) at lsquare.cpp:651
+#7  0x080a0e4f in humanoid::Kick(lsquare*, bool) (this=0x891b9f0, 
+    Square=0x8913000, ForceHit=false) at human.cpp:1628
+//////////

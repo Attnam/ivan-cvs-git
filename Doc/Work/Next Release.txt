@@ -29,3 +29,4 @@ It seems that due to certain bitshift rounding errors, resting causes more exp m
 //"Angel of Atavus is crawling here."
 Horn of bravery and horn of fear.
 //Poison + golems.
+When two boots are lying in the same square as player the game should say "there are 2 iron boots" here NOT "there are several items here".
