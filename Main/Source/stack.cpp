@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "itemba.h"
 #include "stack.h"
 #include "festring.h"
@@ -314,24 +316,27 @@ ushort stack::SearchItem(item* ToBeSearched) const
   return 0xFFFF;
 }
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
 {
-  return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
+  return DrawContents(0, Viewer, Topic, "", "", SelectItem, ShowSpecialInfo, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
 
-item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
+item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
 {
   felist Contents(Topic, WHITE, 0);
 
-  Contents.AddDescription("");
-  Contents.AddDescription(std::string("Overall weight: ") + (GetWeight() + (MergeStack ? MergeStack->GetWeight() : 0)) + " grams");
+  if(ShowSpecialInfo)
+    {
+      Contents.AddDescription("");
+      Contents.AddDescription(std::string("Overall weight: ") + (MergeStack ? GetWeight() + MergeStack->GetWeight() : GetWeight()) + " grams");
+    }
 
   if(MergeStack)
-    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, SelectItem, SorterFunction);
+    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, SelectItem, ShowSpecialInfo, SorterFunction);
 
-  AddContentsToList(Contents, Viewer, ThisDesc, SelectItem, SorterFunction);
+  AddContentsToList(Contents, Viewer, ThisDesc, SelectItem, ShowSpecialInfo, SorterFunction);
   ushort Chosen = Contents.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
@@ -352,48 +357,50 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
   return Item;
 }
 
-void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
+/* fix selectitem warning! */
+
+void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, bool SelectItem, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
 {
-  bool UseSorterFunction = SorterFunction != 0;
-  bool DescDrawn = false;
+  std::vector<std::vector<item*> > PileVector;
+  Pile(PileVector, Viewer, SorterFunction);
 
-  for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
+  bool DrawDesc = Desc.length() != 0;
+  uchar LastCategory = 0xFF;
+
+  for(ushort p = 0; p < PileVector.size(); ++p)
     {
-      bool CatDescDrawn = false;
+      if(DrawDesc)
+	{
+	  if(!Contents.IsEmpty())
+	    Contents.AddEntry("", WHITE, 0, 0, false);
 
-      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-	if(i->GetCategory() == c && (!UseSorterFunction || SorterFunction(*i, Viewer)) && (IgnoreVisibility || i->CanBeSeenBy(Viewer)))
-	  {
-	    if(!DescDrawn && Desc.length())
-	      {
-		if(!Contents.IsEmpty())
-		  Contents.AddEntry("", WHITE, 0, 0, false);
+	  Contents.AddEntry(Desc, WHITE, 0, 0, false);
+	  Contents.AddEntry("", WHITE, 0, 0, false);
+	  DrawDesc = false;
+	}
 
-		Contents.AddEntry(Desc, WHITE, 0, 0, false);
-		Contents.AddEntry("", WHITE, 0, 0, false);
-		DescDrawn = true;
-	      }
+      item* Item = PileVector[p].back();
 
-	    if(!CatDescDrawn)
-	      {
-		Contents.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, 0, false);
-		CatDescDrawn = true;
-	      }
+      if(Item->GetCategory() != LastCategory)
+	{
+	  LastCategory = Item->GetCategory();
+	  Contents.AddEntry(item::ItemCategoryName(LastCategory), LIGHTGRAY, 0, 0, false);
+	}
 
-	    std::string Buffer;
-	    i->AddInventoryEntry(Viewer, Contents);
-	  }
+      Item->AddInventoryEntry(Viewer, Contents, PileVector[p].size(), ShowSpecialInfo);
     }
 }
 
 item* stack::SearchChosen(ushort& Pos, ushort Chosen, const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
 {
-  bool UseSorterFunction = SorterFunction != 0;
+  /* Not really efficient... :( */
 
-  for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
-    for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-      if(i->GetCategory() == c && (!UseSorterFunction || SorterFunction(*i, Viewer)) && (IgnoreVisibility || i->CanBeSeenBy(Viewer)) && Pos++ == Chosen)
-	return *i;
+  std::vector<std::vector<item*> > PileVector;
+  Pile(PileVector, Viewer, SorterFunction);
+
+  for(ushort p = 0; p < PileVector.size(); ++p)
+    if(Pos++ == Chosen)
+      return PileVector[p].back();
 
   return 0;
 }
@@ -418,7 +425,7 @@ bool stack::TryKey(item* Key, character* Applier)
 
 bool stack::Open(character* Opener)
 {
-  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", false, &item::OpenableSorter);
+  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", false, true, &item::OpenableSorter);
 
   if(ToBeOpened == 0)
     return false;
@@ -534,6 +541,9 @@ bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
 void stack::AddElement(item* Item)
 {
   ++Items;
+
+  /* "I love writing illegible code." - Guy who wrote this */
+
   (Top = (Bottom ? Top->Next : Bottom) = new stackslot(this, Top))->PutInItem(Item);
 }
 
@@ -562,4 +572,43 @@ item* stack::GetBottomItem(const character* Char, bool ForceIgnoreVisibility) co
     return Bottom ? **Bottom : 0;
   else
     return GetBottomVisibleItem(Char);
+}
+
+bool CategorySorter(const std::vector<item*>& V1, const std::vector<item*>& V2)
+{
+  return (*V1.begin())->GetCategory() < (*V2.begin())->GetCategory();
+}
+
+void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
+{
+  bool UseSorterFunction = SorterFunction != 0;
+  std::list<item*> List;
+
+  for(stackiterator s = GetBottom(); s.HasItem(); ++s)
+    if((!UseSorterFunction || SorterFunction(*s, Viewer)) && (IgnoreVisibility || s->CanBeSeenBy(Viewer)))
+      List.push_back(*s);
+
+  for(std::list<item*>::iterator i = List.begin(); i != List.end(); ++i)
+    {
+      PileVector.resize(PileVector.size() + 1);
+      std::vector<item*>& Pile = PileVector.back();
+      Pile.push_back(*i);
+
+      if((*i)->CanBePiled())
+	{
+	  std::list<item*>::iterator j = i;
+
+	  for(++j; j != List.end();)
+	    if((*i)->CanBePiledWith(*j, Viewer))
+	      {
+		Pile.push_back(*j);
+		std::list<item*>::iterator Dirt = j++;
+		List.erase(Dirt);
+	      }
+	    else
+	      ++j;
+	}
+    }
+
+  std::stable_sort(PileVector.begin(), PileVector.end(), CategorySorter);
 }

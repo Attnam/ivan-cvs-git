@@ -222,6 +222,5 @@ void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
 
 ulong material::GetTotalNutritionValue(const item* What) const
 { 
-  return GetNutritionValue() * GetWeight() * What->GetNPModifier() / 500000000; 
+  return GetNutritionValue() * GetWeight() * What->GetNPModifier() / 500000;
 }
-

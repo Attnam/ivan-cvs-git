@@ -46,7 +46,7 @@ std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed",
 bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false, false, true, false };
 bool character::StateCanBeRandomlyActivated[] = { false,true,true,true,false,true,true,true,true,false,true,true, true, false };
 
-character::character(const character& Char) : entity(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -518,9 +518,9 @@ bool character::Eat()
   item* Item;
 
   if(!game::IsInWilderness() && GetStackUnder()->SortedItems(this, &item::EatableSorter))
-    Item = GetStack()->DrawContents(GetStackUnder(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", true, &item::EatableSorter);
+    Item = GetStack()->DrawContents(GetStackUnder(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", true, true, &item::EatableSorter);
   else
-    Item = GetStack()->DrawContents(this, "What do you wish to eat?", true, &item::EatableSorter);
+    Item = GetStack()->DrawContents(this, "What do you wish to eat?", true, true, &item::EatableSorter);
 
   if(Item)
     {
@@ -550,9 +550,9 @@ bool character::Drink()
   item* Item;
 
   if(!game::IsInWilderness() && GetStackUnder()->SortedItems(this, &item::DrinkableSorter))
-    Item = GetStack()->DrawContents(GetStackUnder(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", true, &item::DrinkableSorter);
+    Item = GetStack()->DrawContents(GetStackUnder(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", true, true, &item::DrinkableSorter);
   else
-    Item = GetStack()->DrawContents(this, "What do you wish to drink?", true, &item::DrinkableSorter);
+    Item = GetStack()->DrawContents(this, "What do you wish to drink?", true, true, &item::DrinkableSorter);
 
   if(Item)
     {
@@ -1045,7 +1045,7 @@ void character::Die(bool ForceMsg)
 
 bool character::OpenItem()
 {
-  item* Item = Stack->DrawContents(this, "What do you want to open?", true, &item::OpenableSorter);
+  item* Item = Stack->DrawContents(this, "What do you want to open?", true, true, &item::OpenableSorter);
   return Item && Item->Open(this);
 }
 
@@ -1214,26 +1214,27 @@ void character::ApplyExperience(bool Edited)
     if(GetBodyPart(c) && GetBodyPart(c)->ApplyExperience())
       Edited = true;
 
-  if(CheckForAttributeIncrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("You feel tougher than anything!");
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks tougher.", CHARNAME(DEFINITE));
+  if(IsAlive())
+    if(CheckForAttributeIncrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
+      {
+	if(IsPlayer())
+	  ADD_MESSAGE("You feel tougher than anything!");
+	else if(CanBeSeenByPlayer())
+	  ADD_MESSAGE("Suddenly %s looks tougher.", CHARNAME(DEFINITE));
 
-      CalculateBodyPartMaxHPs();
-      Edited = true;
-    }
-  else if(CheckForAttributeDecrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("You feel less healthy.");
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks less healthy.", CHARNAME(DEFINITE));
+	CalculateBodyPartMaxHPs();
+	Edited = true;
+      }
+    else if(CheckForAttributeDecrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
+      {
+	if(IsPlayer())
+	  ADD_MESSAGE("You feel less healthy.");
+	else if(CanBeSeenByPlayer())
+	  ADD_MESSAGE("Suddenly %s looks less healthy.", CHARNAME(DEFINITE));
 
-      CalculateBodyPartMaxHPs();
-      Edited = true;
-    }
+	CalculateBodyPartMaxHPs();
+	Edited = true;
+      }
 
   if(CheckForAttributeIncrease(BaseAttribute[PERCEPTION], BaseExperience[PERCEPTION]))
     {
@@ -1398,7 +1399,7 @@ bool character::Read()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to read?", true, &item::ReadableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to read?", true, true, &item::ReadableSorter);
   return Item && ReadItem(Item);
 }
 
@@ -1460,7 +1461,7 @@ bool character::Dip()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", true, &item::DippableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", true, true, &item::DippableSorter);
 
   if(Item)
     {
@@ -1477,7 +1478,7 @@ bool character::Dip()
 	}
       else
 	{
-	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", true, &item::DipDestinationSorter);
+	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", true, true, &item::DipDestinationSorter);
 
 	  if(DipTo && Item != DipTo)
 	    {
@@ -2109,7 +2110,7 @@ bool character::Apply()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", true, &item::AppliableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", true, true, &item::AppliableSorter);
   return Item && Item->Apply(this);
 }
 
@@ -2129,7 +2130,7 @@ bool character::Zap()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", true, &item::ZappableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", true, true, &item::ZappableSorter);
 
   if(Item)
     {
@@ -3029,8 +3030,13 @@ bool character::SecretKnowledge()
   List.AddEntry("Character attack info", LIGHTGRAY);
   List.AddEntry("Character defence info", LIGHTGRAY);
   List.AddEntry("Character danger values", LIGHTGRAY);
-  List.AddEntry("Item miscellaneous info", LIGHTGRAY);
-  ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB(0, 0, 16));
+  List.AddEntry("Miscellaneous item info", LIGHTGRAY);
+  ushort Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB(0, 0, 16));
+  ushort c, PageLength;
+
+  if(Chosen & 0x8000)
+    return false;
+
   List.Empty();
 
   if(Chosen < 3)
@@ -3038,7 +3044,6 @@ bool character::SecretKnowledge()
       std::vector<character*> Character;
       protosystem::CreateEveryCharacter(Character);
       bitmap Pic(16, 16);
-      ushort PageLength;
 
       switch(Chosen)
 	{
@@ -3096,10 +3101,6 @@ bool character::SecretKnowledge()
 	  break;
 	}
 
-      List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB(0, 0, 16), false);
-      List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
-      ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
-
       for(c = 0; c < Character.size(); ++c)
 	delete Character[c];
     }
@@ -3107,7 +3108,7 @@ bool character::SecretKnowledge()
     {
       std::vector<item*> Item;
       protosystem::CreateEveryItem(Item);
-      List.AddDescription("                                        \177                OV                NV");
+      List.AddDescription("                                        \177              OV             NV");
 
       for(c = 0; c < Item.size(); ++c)
 	{
@@ -3117,14 +3118,15 @@ bool character::SecretKnowledge()
 	  Item[c]->AddMiscellaneousInfo(List);
 	}
 
-      List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), false);
-      List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
-      ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
+      PageLength = 20;
 
       for(c = 0; c < Item.size(); ++c)
 	delete Item[c];
     }
 
+  List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB(0, 0, 16), false);
+  List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
   return false;
 }
 
@@ -3452,7 +3454,7 @@ bool character::EquipmentScreen()
       else
 	{
 	  game::DrawEverythingNoBlit();
-	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", true, EquipmentSorter(Chosen));
+	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", true, true, EquipmentSorter(Chosen));
 
 	  if(Item != OldEquipment)
 	    EquipmentChanged = true;
@@ -4977,7 +4979,7 @@ void character::PoisonedHandler()
 bool character::IsWarm() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->GetMainMaterial()->IsAlive())
+    if(GetBodyPart(c) && GetBodyPart(c)->IsAlive())
       return true;
 
   return false;
@@ -5318,6 +5320,9 @@ void character::CalculateBodyPartMaxHPs()
 
 bool character::EditAttribute(ushort Identifier, short Value)
 {
+  if(Identifier == ENDURANCE && !IsAlive())
+    return false;
+
   if(RawEditAttribute(BaseAttribute[Identifier], Value))
     {
       if(!Initializing)
@@ -5336,6 +5341,14 @@ bool character::EditAttribute(ushort Identifier, short Value)
     }
   else
     return false;
+}
+
+void character::EditExperience(ushort Identifier, long Value)
+{
+  if(Identifier == ENDURANCE && !IsAlive())
+    return;
+
+  BaseExperience[Identifier] += Value;
 }
 
 bool character::ActivateRandomState(ushort Time)
@@ -5694,4 +5707,3 @@ void character::SignalSpoil()
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoil(0);
 }
-

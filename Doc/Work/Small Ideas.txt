@@ -265,7 +265,7 @@ Allow animate and allow alpha blend options to configuration.
 Draw during automated action as an option.
 We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
 Look stretch config option.
-If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
+//If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
 Bodyparts should be rotated when they are severed.
 Weight should be the fundamental character of materials, not volume?
 Kicking should do more damage if metal boots are worn.
@@ -291,3 +291,6 @@ Wings should be bodyparts.
 It shouldn't be possible to mutate nor resurrect non-living bodyparts.
 A special message should be printed when zapping a WoR at a bone or a skull.
 If the player is polymorphed into a monster that can't heal, the rest command should be disabled.
+Hallucination state.
+Random items to certain monsters' inventories.
+NP shouldn't be consumed if polymorphed into a golem.

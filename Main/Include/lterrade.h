@@ -151,6 +151,7 @@ class OLTERRAIN
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }
+  virtual bool HasContainedMaterial() const { return true; }
  protected:
   virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials();

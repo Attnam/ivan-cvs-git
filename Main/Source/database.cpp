@@ -241,7 +241,6 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(FireResistance);
   ANALYZEDATA(PoisonResistance);
   ANALYZEDATA(BulimiaResistance);
-  ANALYZEDATA(IsStackable);
   ANALYZEDATA(StrengthModifier);
   ANALYZEDATA(FormModifier);
   ANALYZEDATA(NPModifier);
@@ -276,6 +275,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(CanBeBroken);
   ANALYZEDATAWITHDEFAULT(WallBitmapPos, BitmapPos);
   ANALYZEDATAWITHDEFAULT(FlexibleNameSingular, NameSingular);
+  ANALYZEDATA(CanBePiled);
 
   return Found;
 }

@@ -234,10 +234,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new golem(VALPURIUM));
-
-	Player->GetStack()->AddItem(new wandofresurrection);
-
+	SetPlayer(new human);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -1430,7 +1427,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
+	      Stack->DrawContents(game::GetPlayer(), "Items here", false, false);
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1579,7 +1576,7 @@ void game::InitDangerMap()
 void game::CalculateNextDanger()
 {
   if(IsInWilderness() || !*GetCurrentLevel()->GetLevelScript()->GetGenerateMonsters())
-    ;//return;
+    return;
 
   const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerId.Type);
   const character::databasemap& Config = Proto->GetConfig();

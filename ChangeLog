@@ -1,3 +1,16 @@
+August 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added item piling
+	* Removed numerous tests forgotten in the last commit
+	* One can no longer see weights etc. when looking at far away stacks
+	* The Obscure Mithril-Handled Wooden Sword Bug corrected
+	* Fixed some warnings given by gcc compilation
+	* Corrected a database bug that caused non-living creatures to print
+	  odd messages when running a gcc-compiled binary
+	* Removed two other simultaneously found bugs concerning non-living
+	  creatures' attributes
+	* Weapon and armor prices are somewhat more correct now
+
 August 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* StringQuestion again shows a "Too short!" message when appropriate

@@ -145,6 +145,7 @@ class ABSTRACT_CHARACTER
   virtual item* SevereBodyPart(ushort);
   virtual void AddDefenceInfo(felist&) const;
   virtual uchar GetSWeaponSkillLevel(const item*) const;
+  virtual bool IsAlive() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -213,6 +214,7 @@ class ABSTRACT_CHARACTER
   virtual void CalculateUnarmedAttackInfo();
   virtual void CalculateKickAttackInfo();
   virtual void CalculateBiteAttackInfo();
+  virtual bool IsAlive() const { return GetTorso()->IsAlive(); }
  protected:
   ushort Strength;
   ushort Agility;

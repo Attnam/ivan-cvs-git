@@ -21,7 +21,6 @@ item
 	FireResistance = 0;
 	PoisonResistance = 0;
 	BulimiaResistance = 0;
-	IsStackable = true;
 	StrengthModifier;
 	/* Obligatory: FormModifier */
 	NPModifier = 10000;
@@ -53,6 +52,7 @@ item
 	CreateDivineConfigurations = false;
 	ForcedVisualEffects = 0;
 	CanBeBroken = false;
+	CanBePiled = true;
 }
 
 materialcontainer
@@ -138,6 +138,7 @@ meleeweapon
 	ContainedMaterialConfig == 0;
 	IsAbstract = true;
 	CanBeBroken = true;
+	CanBePiled = false;
 
 	Config LONGSWORD;
 	{
@@ -339,6 +340,7 @@ banana /* materialcontainer-> */
 	Alias == "gun";
 	Roundness = 15;
 	CanBeBroken = true;
+	CanBePiled = true;
 
 	Config BROKEN;
 	{
@@ -457,6 +459,7 @@ pickaxe /* meleeweapon-> */
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
 	IsTwoHanded = true;
+	Price = 50; /* bonus for being able to dig */
 
 	Config BROKEN;
 	{
@@ -467,6 +470,7 @@ pickaxe /* meleeweapon-> */
 armor
 {
 	IsAbstract = true;
+	CanBePiled = false;
 }
 
 bodyarmor /* armor-> */
@@ -733,6 +737,7 @@ wand
 	NameSingular = "wand";
 	IsAbstract = true;
 	Roundness = 5;
+	CanBePiled = false;
 }
 
 wandofpolymorph /* wand-> */
@@ -929,6 +934,7 @@ oillamp
 	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 40;
+	CanBePiled = false; /* otherwise you could summon a genie only from the first piled item */
 }
 
 stone
@@ -960,7 +966,7 @@ wandoffireballs /* wand-> */
 scrolloftaming /* scroll-> */
 {
 	Possibility = 5;
-	Price = 350;
+	Price = 500;
 	PostFix = "of taming";
 }
 
@@ -1037,6 +1043,7 @@ shield
 	MaterialConfigChances = { 5, 250, 150, 150, 50, 10; }
 	Roundness = 80;
 	WeaponCategory = SHIELDS;
+	CanBePiled = false;
 }
 
 cloak /* armor-> */
@@ -1077,6 +1084,7 @@ boot /* armor-> */
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 250, 100, 50, 10; }
 	Roundness = 50;
+	CanBePiled = true;
 
 	Config BOOTOFSPEED;
 	{
@@ -1101,6 +1109,7 @@ gauntlet /* armor-> */
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 250, 100, 50, 10; }
 	Roundness = 60;
+	CanBePiled = true;
 }
 
 belt
@@ -1117,6 +1126,7 @@ belt
 	MainMaterialConfig = { 3, LEATHER, CLOTH, FABRIC; }
 	MaterialConfigChances = { 3, 250, 50, 50; }
 	Roundness = 10;
+	CanBePiled = false;
 }
 
 ring
@@ -1400,6 +1410,7 @@ chest
 	Roundness = 50;
 	DefaultMainVolume = 100000;
 	BitmapPos = 48, 80;
+	CanBePiled = false;
 }
 
 wandofdoorcreation /* wand-> */

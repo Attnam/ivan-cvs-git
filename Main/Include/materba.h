@@ -141,7 +141,7 @@ class material
   void CalculateWeight() { Weight = ulong(float(Volume) * GetDensity() / 1000); }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  bool IsSameAs(const material* What) const { return What->GetConfig() == GetConfig(); }
+  bool IsSameAs(const material* What) const { return What->Config == Config; }
   void SetConfig(ushort);
   static material* Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
   bool IsTransparent() const { return GetAlpha() != 255; }

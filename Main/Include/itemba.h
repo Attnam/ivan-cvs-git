@@ -44,7 +44,6 @@ struct itemdatabase
   ushort FireResistance;
   ushort PoisonResistance;
   ushort BulimiaResistance;
-  bool IsStackable;
   ushort StrengthModifier;
   ushort FormModifier;
   ulong NPModifier;
@@ -79,6 +78,7 @@ struct itemdatabase
   bool CanBeBroken;
   vector2d WallBitmapPos;
   std::string FlexibleNameSingular;
+  bool CanBePiled;
 };
 
 class itemprototype
@@ -224,7 +224,6 @@ class item : public object
   virtual DATABASEVALUE(ushort, FireResistance);
   virtual DATABASEVALUE(ushort, PoisonResistance);
   virtual DATABASEVALUE(ushort, BulimiaResistance);
-  virtual DATABASEBOOL(IsStackable);
   virtual DATABASEVALUE(ushort, StrengthModifier);
   virtual DATABASEVALUE(ushort, FormModifier);
   virtual DATABASEVALUE(ulong, NPModifier);
@@ -257,6 +256,7 @@ class item : public object
   virtual DATABASEBOOL(CanBeBroken);
   virtual DATABASEVALUEWITHPARAMETER(vector2d, WallBitmapPos, ushort);
   virtual DATABASEVALUE(const std::string&, FlexibleNameSingular);
+  virtual DATABASEBOOL(CanBePiled);
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -287,20 +287,21 @@ class item : public object
   virtual void DropEquipment() { }
   virtual bool DangerousToStepOn(const character*) const { return false; } 
   void WeaponSkillHit();
-  virtual void SetTeam(ushort What) { }
+  virtual void SetTeam(ushort) { }
   virtual void SpecialGenerationHandler() { }
   item* Duplicate() const;
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const { return ushort(GetWeaponStrength() * 3 / 20000); }
   ushort GetBaseMaxDamage() const { return ushort(GetWeaponStrength() * 5 / 20000 + 1); }
   ushort GetBaseBlockValue(const character* Char) const { return ushort(12.5f * GetBlockModifier(Char) / (2500 + float(GetWeight() - 500))); }
-  virtual void AddInventoryEntry(const character*, felist&) const;
+  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const { return true; }
   bool CarriedByPlayer() const;
   bool CarriedBy(const character*) const;
+  virtual bool CanBePiledWith(const item*, const character*) const;
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

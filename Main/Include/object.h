@@ -65,6 +65,8 @@ class object : public entity, public id
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
   void SetConfig(ushort);
   virtual void CalculateAll() = 0;
+  virtual bool HasSecondaryMaterial() const { return false; }
+  virtual bool HasContainedMaterial() const { return false; }
  protected:
   void CopyMaterial(material* const&, material*&);
   virtual material*& GetMaterialReference(ushort) { return MainMaterial; }

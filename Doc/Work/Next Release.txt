@@ -91,6 +91,7 @@ Consummo's pray effect. (hex)
 Glitter effect.
 //Fire effect.
 Lightning effect.
+Flies over spoiling items effect.
 Monster mine triggering should be limited.
 //Boots and gauntlets should be generated in pairs of two.
 Re-enable Golden Eagle Quest danger requirement.
@@ -103,6 +104,7 @@ Applying wielded item should be possible.
 Vodka.
 //Splitting lines in highscores.
 Calamus and whip of Calamus should work together.
+Treasure room to the right arm of the Cathedral.
 Artifact vault.
 Village and tunnel.
 Kick system should be checked. (timo)
@@ -111,3 +113,5 @@ Manual.
 Item possibilities. (timo)
 Skull. (hex)
 Wand of cloning. (hex)
+Water should make gunpowder useless.
+Temporary invisibility should be cancelled if the character hits something.

@@ -175,6 +175,16 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
 
       GetMainMaterial()->SetConfig(Iterator->second);
       Word = SaveFile.ReadWord();
+      Iterator = ValueMap.find(Word);
+
+      if(Iterator != ValueMap.end())
+	{
+	  if(!GetSecondaryMaterial(false))
+	    SecondaryMaterial.SetMember(new materialscript);
+
+	  GetSecondaryMaterial()->SetConfig(Iterator->second);
+	  Word = SaveFile.ReadWord();
+	}
     }
 
   ContentType = SearchCodeName(Word);
@@ -243,11 +253,11 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate());
 
-  if(GetSecondaryMaterial(false))
+  if(GetSecondaryMaterial(false) && Instance[0]->HasSecondaryMaterial())
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate());
 
-  if(GetContainedMaterial(false))
+  if(GetContainedMaterial(false) && Instance[0]->HasContainedMaterial())
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate());
 }

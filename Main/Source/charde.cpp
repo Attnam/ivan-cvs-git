@@ -2510,6 +2510,12 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
 void nonhumanoid::ApplyExperience(bool Edited)
 {
+  if(!IsAlive())
+    {
+      character::ApplyExperience(false);
+      return;
+    }
+
   if(CheckForAttributeIncrease(Strength, StrengthExperience, true))
     {
       if(IsPlayer())
@@ -2656,14 +2662,14 @@ ushort nonhumanoid::GetAttribute(ushort Identifier) const
     return character::GetAttribute(Identifier);
   else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
     {
-      if(GetTorso()->GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	return Strength >> 1;
       else
 	return GetTorso()->GetMainMaterial()->GetStrengthValue();
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
-      if(GetTorso()->GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	return Agility >> 1;
       else
 	return GetTorso()->GetMainMaterial()->GetFlexibility();
@@ -2680,9 +2686,9 @@ bool nonhumanoid::EditAttribute(ushort Identifier, short Value)
   if(Identifier < BASEATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
   else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
-    return RawEditAttribute(Strength, Value, true);
+    return IsAlive() && RawEditAttribute(Strength, Value, true);
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
-    return RawEditAttribute(Agility, Value, true);
+    return IsAlive() && RawEditAttribute(Agility, Value, true);
   else
     {
       ABORT("Illegal nonhumanoid attribute %d edit request!", Identifier);
@@ -2695,9 +2701,15 @@ void nonhumanoid::EditExperience(ushort Identifier, long Value)
   if(Identifier < BASEATTRIBUTES)
     character::EditExperience(Identifier, Value);
   else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
-    StrengthExperience += Value;
+    {
+      if(IsAlive())
+	StrengthExperience += Value;
+    }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
-    AgilityExperience += Value;
+    {
+      if(IsAlive())
+	AgilityExperience += Value;
+    }
   else
     ABORT("Illegal nonhumanoid attribute %d experience edit request!", Identifier);
 }
@@ -3649,4 +3661,13 @@ uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
       return GetSWeaponSkill(c)->GetLevel();
 
   return 0;
+}
+
+bool humanoid::IsAlive() const
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c) && GetBodyPart(c)->IsAlive())
+      return true;
+
+  return false;
 }

@@ -454,15 +454,17 @@ void potion::DipInto(material* Material, character* Dipper)
   Dipper->DexterityAction(10);
 }
 
-ulong meleeweapon::Price() const
+ulong meleeweapon::GetPrice() const
 {
-  return ulong(GetWeaponStrength() * GetWeaponStrength() * GetWeaponStrength() / (float(GetWeight()) * 1000000));
+  float WeaponStrengthModifier = float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight();
+  WeaponStrengthModifier *= WeaponStrengthModifier;
+  return ulong(WeaponStrengthModifier / (5000000000000.0f * sqrt(GetWeight()))) + item::GetPrice();
 }
 
-ulong bodyarmor::Price() const
+ulong bodyarmor::GetPrice() const
 {
-  float ArmorModifier = GetStrengthValue() / 10;
-  return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
+  float StrengthValue = GetStrengthValue();
+  return ulong(StrengthValue * StrengthValue * StrengthValue * 75 / sqrt(GetWeight())) + item::GetPrice();
 }
 
 void lantern::SignalSquarePositionChange(uchar NewSquarePosition)
@@ -846,7 +848,7 @@ void scrollofcharging::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", true, &item::ChargeableSorter);
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", true, true, &item::ChargeableSorter);
 
 	if(Item)
 	  {
@@ -1018,7 +1020,7 @@ bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, 
 
 ushort bodypart::GetStrengthValue() const
 {
-  if(GetMaster() && GetMainMaterial()->IsAlive())
+  if(GetMaster() && IsAlive())
     return ulong(GetStrengthModifier()) * GetMaster()->GetAttribute(ENDURANCE) / 1000;
   else
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
@@ -1671,7 +1673,7 @@ void bodypart::Regenerate()
   if(HP == MaxHP)
     return;
 
-  if(MainMaterial->IsAlive())
+  if(IsAlive())
     {
       ulong RegenerationBonus = ulong(MaxHP) * Master->GetAttribute(ENDURANCE);
 
@@ -1787,7 +1789,7 @@ bool corpse::IsDestroyable() const
   return true;
 }
 
-ulong corpse::Price() const
+ulong corpse::GetPrice() const
 {
   ulong Price = 0;
 
@@ -2245,12 +2247,15 @@ void meleeweapon::GenerateMaterials()
 
 bool arm::ApplyExperience()
 {
+  if(!IsAlive())
+    return false;
+
   bool Edited = false;
 
   if(GetMaster()->CheckForAttributeIncrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2259,7 +2264,7 @@ bool arm::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2269,7 +2274,7 @@ bool arm::ApplyExperience()
   if(GetMaster()->CheckForAttributeIncrease(Dexterity, DexterityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels quite dextrous.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels quite dextrous.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2278,7 +2283,7 @@ bool arm::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Dexterity, DexterityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels clumsy.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels clumsy.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2290,12 +2295,15 @@ bool arm::ApplyExperience()
 
 bool leg::ApplyExperience()
 {
+  if(!IsAlive())
+    return false;
+
   bool Edited = false;
 
   if(GetMaster()->CheckForAttributeIncrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2305,7 +2313,7 @@ bool leg::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2316,7 +2324,7 @@ bool leg::ApplyExperience()
   if(GetMaster()->CheckForAttributeIncrease(Agility, AgilityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels very agile!", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels very agile!", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2325,7 +2333,7 @@ bool leg::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Agility, AgilityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels slower.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("Your %s feels slower.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHARNAME(DEFINITE));
 
@@ -2353,14 +2361,14 @@ ushort arm::GetAttribute(ushort Identifier) const
 {
   if(Identifier == ARMSTRENGTH)
     {
-      if(GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	return Strength;
       else
 	return GetMainMaterial()->GetStrengthValue();
     }
   else if(Identifier == DEXTERITY)
     {
-      if(GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	return Dexterity;
       else
 	return GetMainMaterial()->GetFlexibility();
@@ -2375,9 +2383,9 @@ ushort arm::GetAttribute(ushort Identifier) const
 bool arm::EditAttribute(ushort Identifier, short Value)
 {
   if(Identifier == ARMSTRENGTH)
-    return GetMaster()->RawEditAttribute(Strength, Value);
+    return IsAlive() && GetMaster()->RawEditAttribute(Strength, Value);
   else if(Identifier == DEXTERITY)
-    return GetMaster()->RawEditAttribute(Dexterity, Value);
+    return IsAlive() && GetMaster()->RawEditAttribute(Dexterity, Value);
   else
     {
       ABORT("Illegal arm attribute %d edit request!", Identifier);
@@ -2388,9 +2396,15 @@ bool arm::EditAttribute(ushort Identifier, short Value)
 void arm::EditExperience(ushort Identifier, long Value)
 {
   if(Identifier == ARMSTRENGTH)
-    StrengthExperience += Value;
+    {
+      if(IsAlive())
+	StrengthExperience += Value;
+    }
   else if(Identifier == DEXTERITY)
-    DexterityExperience += Value;
+    {
+      if(IsAlive())
+	DexterityExperience += Value;
+    }
   else
     ABORT("Illegal arm attribute %d experience edit request!", Identifier);
 }
@@ -2399,14 +2413,14 @@ ushort leg::GetAttribute(ushort Identifier) const
 {
   if(Identifier == LEGSTRENGTH)
     {
-      if(GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	return Strength;
       else
 	return GetMainMaterial()->GetStrengthValue();
     }
   else if(Identifier == AGILITY)
     {
-      if(GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	return Agility;
       else
 	return GetMainMaterial()->GetFlexibility();
@@ -2421,9 +2435,9 @@ ushort leg::GetAttribute(ushort Identifier) const
 bool leg::EditAttribute(ushort Identifier, short Value)
 {
   if(Identifier == LEGSTRENGTH)
-    return GetMaster()->RawEditAttribute(Strength, Value);
+    return IsAlive() && GetMaster()->RawEditAttribute(Strength, Value);
   else if(Identifier == AGILITY)
-    return GetMaster()->RawEditAttribute(Agility, Value);
+    return IsAlive() && GetMaster()->RawEditAttribute(Agility, Value);
   else
     {
       ABORT("Illegal leg attribute %d edit request!", Identifier);
@@ -2434,9 +2448,15 @@ bool leg::EditAttribute(ushort Identifier, short Value)
 void leg::EditExperience(ushort Identifier, long Value)
 {
   if(Identifier == LEGSTRENGTH)
-    StrengthExperience += Value;
+    {
+      if(IsAlive())
+	StrengthExperience += Value;
+    }
   else if(Identifier == AGILITY)
-    AgilityExperience += Value;
+    {
+      if(IsAlive())
+	AgilityExperience += Value;
+    }
   else
     ABORT("Illegal leg attribute %d experience edit request!", Identifier);
 }
@@ -3043,7 +3063,7 @@ void bodypart::CalculateMaxHP()
 
   if(GetMaster())
     {
-      if(GetMainMaterial()->IsAlive())
+      if(IsAlive())
 	MaxHP = GetBodyPartVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
       else
 	MaxHP = GetBodyPartVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
@@ -3135,7 +3155,7 @@ void bodypart::CalculateAttackInfo()
   CalculateAPCost();
 }
 
-bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool)
 {
   if(RAND() & 1)
     {
@@ -3234,7 +3254,7 @@ meleeweapon::~meleeweapon()
   delete ContainedMaterial;
 }
 
-bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool)
 {
   if(!(RAND() % 5))
     {
@@ -3267,8 +3287,9 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
     {
       if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s smashes %s with the full force of Turox.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
+
       square* Square = Enemy->GetSquareUnder();
-      std::string DeathMSG = "Killed by " + Enemy->GetName(DEFINITE); 
+      std::string DeathMSG = "killed by " + Enemy->GetName(DEFINITE); 
       Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Square->GetPos(), 20);
       return true;
     }
@@ -3476,64 +3497,93 @@ bool whipofcleptia::CleptiaHelps(const character* Enemy, const character* Hitter
     return !(RAND() % 5);
 }
 
-void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List) const
+void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List, ushort, bool ShowSpecialInfo) const // never piled
 {
   std::string Entry;
   AddName(Entry, INDEFINITE);
-  Entry << " [" << GetWeight() << "g, BDAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
 
-  uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
-  uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+  if(ShowSpecialInfo)
+    {
+      Entry << " [" << GetWeight() << "g, BDAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
 
-  if(CWeaponSkillLevel)
-    Entry << ", CS " << CWeaponSkillLevel;
+      uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+      uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-  if(SWeaponSkillLevel)
-    Entry << ", SS " << CWeaponSkillLevel;
+      if(CWeaponSkillLevel)
+	Entry << ", CS " << CWeaponSkillLevel;
 
-  Entry << "]";
+      if(SWeaponSkillLevel)
+	Entry << ", SS " << CWeaponSkillLevel;
+
+      Entry << "]";
+    }
+
   List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
-void armor::AddInventoryEntry(const character* Viewer, felist& List) const
+void banana::AddInventoryEntry(const character* Viewer, felist& List, ushort Amount, bool ShowSpecialInfo) const
 {
-  std::string Entry;
-  AddName(Entry, INDEFINITE);
-  Entry << " [" << GetWeight() << "g, AV " << GetStrengthValue() << "]";
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+  item::AddInventoryEntry(Viewer, List, Amount, ShowSpecialInfo);
 }
 
-void shield::AddInventoryEntry(const character* Viewer, felist& List) const
+void armor::AddInventoryEntry(const character*, felist& List, ushort Amount, bool ShowSpecialInfo) const
 {
   std::string Entry;
-  AddName(Entry, INDEFINITE);
-  Entry << " [" << GetWeight() << "g, BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
 
-  uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
-  uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
-
-  if(CWeaponSkillLevel)
-    Entry << ", CS " << CWeaponSkillLevel;
-
-  if(SWeaponSkillLevel)
-    Entry << ", SS " << CWeaponSkillLevel;
-
-  Entry << "]";
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
-}
-
-void wand::AddInventoryEntry(const character* Viewer, felist& List) const
-{
-  std::string Entry;
-  AddName(Entry, INDEFINITE);
-  Entry << " [" << GetWeight();
-
-  if(TimesUsed == 1)
-    Entry << ", used 1 time]";
-  else if(TimesUsed)
-    Entry << ", used " << TimesUsed << " times]";
+  if(Amount == 1)
+    AddName(Entry, INDEFINITE);
   else
-    Entry << "]";
+    {
+      Entry << Amount << " ";
+      AddName(Entry, PLURAL);
+    }
+
+  if(ShowSpecialInfo)
+    Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << "]";
+
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+void shield::AddInventoryEntry(const character* Viewer, felist& List, ushort, bool ShowSpecialInfo) const // never piled
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+    {
+      Entry << " [" << GetWeight() << "g, BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
+
+      uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+      uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+      if(CWeaponSkillLevel)
+	Entry << ", CS " << CWeaponSkillLevel;
+
+      if(SWeaponSkillLevel)
+	Entry << ", SS " << CWeaponSkillLevel;
+
+      Entry << "]";
+    }
+
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+void wand::AddInventoryEntry(const character*, felist& List, ushort, bool ShowSpecialInfo) const // never piled
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+    {
+      Entry << " [" << GetWeight();
+
+      if(TimesUsed == 1)
+	Entry << ", used 1 time]";
+      else if(TimesUsed)
+	Entry << ", used " << TimesUsed << " times]";
+      else
+	Entry << "]";
+    }
 
   List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
@@ -3679,3 +3729,75 @@ void corpse::SignalSpoil(material*)
       SendToHell();
     }
 }
+
+bool materialcontainer::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  if(!item::CanBePiledWith(Item, Viewer))
+    return false;
+
+  const materialcontainer* Weapon = static_cast<const materialcontainer*>(Item);
+
+  if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
+    return true;
+
+  return ContainedMaterial != 0 && Weapon->ContainedMaterial != 0 && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial);
+}
+
+bool meleeweapon::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  if(!item::CanBePiledWith(Item, Viewer))
+    return false;
+
+  const meleeweapon* Weapon = static_cast<const meleeweapon*>(Item);
+
+  if(!SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial))
+    return false;
+
+  if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
+    return true;
+
+  return ContainedMaterial != 0 && Weapon->ContainedMaterial != 0 && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial);
+}
+
+bool key::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  return item::CanBePiledWith(Item, Viewer) && LockType == static_cast<const key*>(Item)->LockType;
+}
+
+bool bodypart::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  return materialcontainer::CanBePiledWith(Item, Viewer) && OwnerDescription == static_cast<const bodypart*>(Item)->OwnerDescription;
+}
+
+bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  if(GetType() != Item->GetType()
+  || GetConfig() != Item->GetConfig()
+  || GetWeight() != Item->GetWeight()
+  || Viewer->GetCWeaponSkillLevel(this) != Viewer->GetCWeaponSkillLevel(Item)
+  || Viewer->GetSWeaponSkillLevel(this) != Viewer->GetSWeaponSkillLevel(Item))
+    return false;
+
+  const corpse* Corpse = static_cast<const corpse*>(Item);
+
+  if(Deceased->GetBodyParts() != Corpse->Deceased->GetBodyParts())
+    return false;
+
+  for(ushort c = 0; c < Deceased->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart1 = Deceased->GetBodyPart(c);
+      bodypart* BodyPart2 = Corpse->Deceased->GetBodyPart(c);
+
+      if(BodyPart1 == 0 && BodyPart2 == 0)
+	continue;
+
+      if(BodyPart1 == 0 || BodyPart2 == 0 || !BodyPart1->CanBePiledWith(BodyPart2, Viewer))
+	return false;
+    }
+
+  if(Deceased->GetName(UNARTICLED) != Corpse->Deceased->GetName(UNARTICLED))
+    return false;
+
+  return true;
+}
+

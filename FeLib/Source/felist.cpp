@@ -233,7 +233,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       if(Entry[c].Bitmap.size())
 	{
-	  if(Str.length() <= (Width - 50) / 8)
+	  if(ushort(Str.length()) <= (Width - 50) / 8)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 	      Entry[c].Bitmap[globalwindowhandler::GetTick() % Entry[c].Bitmap.size()]->MaskedBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16);

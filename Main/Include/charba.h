@@ -512,7 +512,7 @@ class character : public entity, public id
   virtual void Kick(lsquare*) = 0;
   virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier]; }
   virtual bool EditAttribute(ushort, short);
-  virtual void EditExperience(ushort Identifier, long Value) { BaseExperience[Identifier] += Value; }
+  virtual void EditExperience(ushort, long);
   virtual bool CheckForAttributeIncrease(ushort&, long&, bool = false);
   virtual bool CheckForAttributeDecrease(ushort&, long&, bool = false);
   virtual bool RawEditAttribute(ushort&, short&, bool = false);
@@ -681,6 +681,9 @@ class character : public entity, public id
   virtual void PrintEndPanicMessage() const;
   virtual void CheckPanic(ulong);
   virtual void SignalSpoil();
+  bool HasSecondaryMaterial() const { return false; }
+  bool HasContainedMaterial() const { return true; }
+  virtual bool IsAlive() const = 0;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

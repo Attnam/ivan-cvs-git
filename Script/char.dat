@@ -217,7 +217,7 @@ guard
 	NameSingular = "guard";
 	Helmet = IRON helmet;
 	BodyArmor = IRON bodyarmor(CHAINMAIL);
-	RightWielded = IRON meleeweapon(LONGSWORD);
+	RightWielded = IRON IRON meleeweapon(LONGSWORD);
 	LeftWielded = IRON shield;
 	KnownCWeaponSkills == LARGE_SWORDS;
 	CWeaponSkillHits == 200;
@@ -361,7 +361,7 @@ darkknight
 		AttributeBonus = -25;
 		Helmet = WOOD helmet;
 		BodyArmor = LEATHER bodyarmor(PLATEMAIL);
-		RightWielded = WOOD meleeweapon(LONGSWORD);
+		RightWielded = WOOD WOOD meleeweapon(LONGSWORD);
 		LeftWielded = WOOD shield;
 		Adjective = "rookie";
 		CWeaponSkillHits == 50;
@@ -373,7 +373,7 @@ darkknight
 		AttributeBonus = -10;
 		Helmet = BRONZE helmet;
 		BodyArmor = BRONZE bodyarmor(CHAINMAIL);
-		RightWielded = BRONZE meleeweapon(LONGSWORD);
+		RightWielded = BRONZE BRONZE meleeweapon(LONGSWORD);
 		LeftWielded = BRONZE shield;
 		Adjective = "veteran";
 		CWeaponSkillHits == 100;
@@ -384,7 +384,7 @@ darkknight
 	{
 		Helmet = IRON helmet;
 		BodyArmor = IRON bodyarmor(CHAINMAIL);
-		RightWielded = IRON meleeweapon(LONGSWORD);
+		RightWielded = IRON IRON meleeweapon(LONGSWORD);
 		LeftWielded = IRON shield;
 		Adjective = "elite";
 		CWeaponSkillHits == 200;
@@ -396,7 +396,7 @@ darkknight
 		AttributeBonus = 10;
 		Helmet = STEEL helmet;
 		BodyArmor = STEEL bodyarmor(CHAINMAIL);
-		RightWielded =IRON meleeweapon(TWOHANDEDSWORD);
+		RightWielded = IRON IRON meleeweapon(TWOHANDEDSWORD);
 		Adjective = "master";
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 200;
@@ -407,7 +407,7 @@ darkknight
 		AttributeBonus = 25;
 		Helmet = MITHRIL helmet;
 		BodyArmor = IRON bodyarmor(PLATEMAIL);
-		RightWielded = IRON meleeweapon(CURVEDTWOHANDEDSWORD);
+		RightWielded = IRON IRON meleeweapon(CURVEDTWOHANDEDSWORD);
 		Adjective = "grand master";
 		CWeaponSkillHits == 1000;
 		RightSWeaponSkillHits = 500;
@@ -511,8 +511,9 @@ elpuri
 
 billswill
 {
-	/* Strength and Agility depend on the material */
-	/* Endurance has no effect */
+	DefaultArmStrength = 0; /* depends on material */
+	DefaultAgility = 0; /* depends on material */
+	DefaultEndurance = 0; /* has no effect */
 	DefaultPerception = 27;
 	DefaultIntelligence = 2;
 	DefaultWisdom = 2;
@@ -584,7 +585,7 @@ skeleton
 	{
 		AttributeBonus = 200;
 		BodyArmor = STEEL bodyarmor(BROKEN|PLATEMAIL);
-		RightWielded = STEEL flamingsword;
+		RightWielded = STEEL STEEL flamingsword;
 		LeftWielded = STEEL shield;
 		KnownCWeaponSkills == LARGE_SWORDS;
 		CWeaponSkillHits == 200;
@@ -675,6 +676,10 @@ goblin
 
 mommo
 {
+	DefaultArmStrength = 0; /* depends on material */
+	DefaultAgility = 0; /* depends on material */
+	DefaultEndurance = 0; /* has no effect */
+	DefaultMana = 0;
 	CanOpen = "false";
 	StandVerb = "bubbling";
 	TalkVerb = "vibrates oddly";
@@ -687,15 +692,13 @@ mommo
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
+
 	Config CONICAL;
 	{
-		/* Strength and Agility depend on the slime type */
-		/* Endurance has no effect */
 		DefaultPerception = 9;
 		DefaultIntelligence = 3;
 		DefaultWisdom = 2;
 		DefaultCharisma = 4;
-		DefaultMana = 0;
 		TotalVolume = 250000;
 		TorsoBitmapPos = 176, 0;
 		TotalSize = 100;
@@ -704,13 +707,10 @@ mommo
 
 	Config FLAT;
 	{
-		/* Strength and Agility depend on the slime type */
-		/* Endurance has no effect */
 		DefaultPerception = 9;
 		DefaultIntelligence = 2;
 		DefaultWisdom = 3;
 		DefaultCharisma = 3;
-		DefaultMana = 0;
 		TotalVolume = 150000;
 		TorsoBitmapPos = 192, 0;
 		TotalSize = 75;
@@ -720,8 +720,11 @@ mommo
 
 golem
 {
-	/* Strengths, dexterity and agility depend on material */
-	/* Endurance has no effect */
+	DefaultArmStrength = 0; /* depends on material */
+	DefaultLegStrength = 0; /* depends on material */
+	DefaultDexterity = 0; /* depends on material */
+	DefaultAgility = 0; /* depends on material */
+	DefaultEndurance = 0; /* has no effect */
 	DefaultPerception = 12;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
@@ -1968,7 +1971,7 @@ cossack
 	Cloak = LEATHER cloak;
 	BodyArmor = IRON bodyarmor(CHAINMAIL);
 	Belt = LEATHER belt;
-	RightWielded = IRON meleeweapon(LONGSWORD);
+	RightWielded = IRON IRON meleeweapon(LONGSWORD);
 	KnownCWeaponSkills == LARGE_SWORDS;
 	CWeaponSkillHits == 100;
 	RightSWeaponSkillHits = 100;

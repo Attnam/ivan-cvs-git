@@ -334,9 +334,6 @@ void item::LoadDataBaseStats()
 
 void item::Initialize(ushort NewConfig, bool CallGenerateMaterials, bool Load)
 {
-  if(dynamic_cast<meleeweapon*>(this) != 0 && NewConfig == SPIKEDMACE)
-    int esko = 2;
-
   if(!Load)
     {
       Config = NewConfig;
@@ -474,11 +471,21 @@ item* item::Duplicate() const
   return Clone;
 }
 
-void item::AddInventoryEntry(const character*, felist& List) const
+void item::AddInventoryEntry(const character*, felist& List, ushort Amount, bool ShowSpecialInfo) const
 {
   std::string Entry;
-  AddName(Entry, INDEFINITE);
-  Entry << " [" << GetWeight() << "g]";
+
+  if(Amount == 1)
+    AddName(Entry, INDEFINITE);
+  else
+    {
+      Entry << Amount << " ";
+      AddName(Entry, PLURAL);
+    }
+
+  if(ShowSpecialInfo)
+    Entry << " [" << GetWeight() * Amount << "g]";
+
   List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
@@ -533,8 +540,7 @@ void itemdatabase::InitDefaults(ushort Config)
 
 void item::AddMiscellaneousInfo(felist& List) const
 {
-  std::string Entry = "   ";
-  Entry.resize(40, ' ');
+  std::string Entry(40, ' ');
   Entry << int(GetPrice());
   Entry.resize(55, ' ');
   Entry << int(GetOfferValue(NEUTRAL));
@@ -565,4 +571,14 @@ bool item::CarriedByPlayer() const
 bool item::CarriedBy(const character* Who) const
 {
   return Who->SearchForItemWithID(GetID()) != 0;
+}
+
+bool item::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  return GetType() == Item->GetType()
+      && Config == Item->Config
+      && Weight == Item->Weight
+      && MainMaterial->IsSameAs(Item->MainMaterial)
+      && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
+      && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item);
 }

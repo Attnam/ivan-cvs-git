@@ -220,7 +220,7 @@ Dungeon 0;
 				Types
 				{
 					c = scrollofchangematerial;
-					L = IRON meleeweapon(LONGSWORD);
+					L = IRON IRON meleeweapon(LONGSWORD);
 					C = MITHRIL bodyarmor(CHAINMAIL);
 					s = wandofstriking;
 					a = lantern;
@@ -640,8 +640,8 @@ Dungeon 1;
 					k = kiwi;
 					p = pineapple;
 					o = IRON meleeweapon(POLEAXE);
-					l = MITHRIL meleeweapon(LONGSWORD);
-					t = IRON meleeweapon(TWOHANDEDSWORD);
+					l = MITHRIL MITHRIL meleeweapon(LONGSWORD);
+					t = IRON IRON meleeweapon(TWOHANDEDSWORD);
 					m = IRON meleeweapon(SPIKEDMACE);
 					s = IRON meleeweapon(SPEAR);
 					c = bodyarmor(CHAINMAIL);

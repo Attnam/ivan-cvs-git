@@ -11,7 +11,7 @@
 #include "whandler.h"
 #include "festring.h"
 
-object::object(const object& Object) : entity(Object), Config(Object.Config), VisualEffects(Object.VisualEffects), AnimationFrames(Object.AnimationFrames)
+object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects), AnimationFrames(Object.AnimationFrames)
 {
   CopyMaterial(Object.MainMaterial, MainMaterial);
 }
