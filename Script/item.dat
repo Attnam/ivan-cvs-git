@@ -1289,6 +1289,7 @@ wand
 		BeamEffect = BEAM_LIGHTNING;
 		BeamStyle = LIGHTNING_BEAM;
 		AttachedGod = INFUSCOR;
+		BreakEffectRange = 2;
 	}
 }
 
