@@ -2065,7 +2065,7 @@ void character::Vomit(ushort HowMuch)
 
 	SetNP(GetNP() - 20 - rand() % 21);
 
-	GetLevelSquareUnder()->SpillFluid(HowMuch, MAKE_RGB(10,230,10),5,50);
+	GetLevelSquareUnder()->ReceiveVomit(this);
 }
 
 bool character::Apply()
