@@ -33,7 +33,7 @@ typedef std::priority_queue<nodepointerstorer> nodequeue;
 
 struct node
 {
-  node(ushort x, ushort y, lsquare* Square) : Pos(x, y), Square(Square) { }
+  node(ushort x, ushort y, lsquare* Square) : Square(Square), Pos(x, y) { }
   void CalculateNextNodes();
   lsquare* Square;
   node* Last;
