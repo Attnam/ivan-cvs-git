@@ -16,3 +16,4 @@ Ego monsters. (also named ones)
 Monster, item and god memories.
 The Saveloader.
 Random fellow adventurers.
+Indiana Jones.

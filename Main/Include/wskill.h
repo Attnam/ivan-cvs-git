@@ -1,7 +1,7 @@
 #ifndef __WSKILL_H__
 #define __WSKILL_H__
 
-#define WEAPON_SKILL_GATEGORIES	12
+#define WEAPON_SKILL_GATEGORIES	13
 
 #define UNCATEGORIZED	0
 #define UNARMED		1
@@ -15,6 +15,7 @@
 #define AXES		9
 #define HALBERDS	10
 #define SPEARS		11
+#define WHIPS		12
 
 #include <string>
 
