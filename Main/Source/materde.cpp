@@ -1,7 +1,7 @@
 #include "materde.h"
 #include "charba.h"
 #include "message.h"
-
+#include "lsquare.h"
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	Eater->ReceiveSchoolFoodEffect(Volume > Amount ? Amount : Volume);
@@ -57,7 +57,7 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 	if(Eater == game::GetPlayer())
 		ADD_MESSAGE("You feel like a hippie.");
 	else
-		ADD_MESSAGE("%s doesn't seem to care about you anymore.", Eater->CNAME(DEFINITE));
+		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s doesn't seem to care about you anymore.", Eater->CNAME(DEFINITE));
 
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);

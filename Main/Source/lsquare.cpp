@@ -84,7 +84,7 @@ void levelsquare::DrawToTileBuffer() const
 	GetGroundLevelTerrain()->DrawToTileBuffer();
 
 	if(Fluided)
-		GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+		GetFluidBuffer()->AlphaBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, 255 - TimeFromSpill);
 
 	GetOverLevelTerrain()->DrawToTileBuffer();
 	GetStack()->PositionedDrawToTileBuffer();
@@ -106,7 +106,7 @@ void levelsquare::DrawToTileBuffer() const
 
 void levelsquare::UpdateMemorizedAndDraw()
 {
-	if(NewDrawRequested)
+	if(NewDrawRequested || Fluided)
 	{
 		if(!GetKnown())
 		{
@@ -374,14 +374,14 @@ void levelsquare::Load(inputfile& SaveFile)
 void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
 {
 	NewDrawRequested = true;
-
+	
 	if(!Fluided)
 	{
 		FluidBuffer = new bitmap(16, 16);
-		GetFluidBuffer()->ClearToColor(0xF81F);
+		GetFluidBuffer()->ClearToColor(PINK);
 		Fluided = true;
-		TimeFromSpill = 0;
 	}
+	TimeFromSpill = 0;
 
 	for(ushort c = 0; c < Amount; ++c)
 	{
@@ -599,7 +599,7 @@ void levelsquare::HandleFluids()
 		FluidBuffer = 0;
 	}
 	else
-		TimeFromSpill++;
+		TimeFromSpill += rand() % 3;
 }
 
 void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelterrain* NewOver)
@@ -650,7 +650,7 @@ overterrain* levelsquare::GetOverTerrain() const
 
 void levelsquare::DrawCheat()
 {
-	if(NewDrawRequested)
+	if(NewDrawRequested || Fluided)
 	{
 		DrawToTileBuffer();
 

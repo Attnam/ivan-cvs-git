@@ -20,3 +20,4 @@ Game crashes when a brokable item hits a monster.
 Felist crashes when an empty list ougth to be drawn.
 Dark frog effect is far too high.
 Single weapon skill's name isn't updated when the name of the item changes.
+Throwing a bone to dog now crashes the game.
