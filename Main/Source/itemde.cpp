@@ -386,11 +386,24 @@ vector2d can::GetBitmapPos() const
 
 bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
-	if(!(rand() % 25) && Strength > 10 + rand() % 10)
+	if(!(rand() % 75) && Strength > 10 + rand() % 10)
 	{
 		ImpactDamage(ushort(Strength), Shown, ItemsStack);
 		if(Shown)
 			ADD_MESSAGE("The lamp is destroyed by the sound.");
+		return true;
+	}
+	return false;
+	
+}
+
+bool potion::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
+{
+	if(!(rand() % 75) && Strength > 10 + rand() % 10)
+	{
+		ImpactDamage(ushort(Strength), Shown, ItemsStack);
+		if(Shown)
+			ADD_MESSAGE("The potion is destroyed by the sound.");
 		return true;
 	}
 	return false;

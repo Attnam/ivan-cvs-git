@@ -378,6 +378,7 @@ public:
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual float OfferModifier() const RET(0.1f)
 	virtual vector2d GetBitmapPos() const RETV(0,144)
+	virtual bool ReceiveSound(float, bool, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );
