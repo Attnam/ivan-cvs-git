@@ -1,24 +1,24 @@
 /* Numeric material data loaded during game startup */
 
-/* Members (values marked with (*) are obligatory):
+/* Members (values marked with (*) are obligatory, others are preceded with their default value):
 
    ushort StrengthValue; (*)
    ushort ConsumeType; (*)
    ushort Density; (*)
    ushort OfferValue; (*)
    ushort Color; (*)
-   ushort PriceModifier;
-   bool IsSolid;
-   ushort Emitation;
-   bool CanBeWished;
-   uchar Alignment;
-   ushort NutritionValue;
-   bool IsAlive;
-   bool IsBadFoodForAI;
-   ushort ExplosivePower;
-   bool IsFlammable;
-   bool IsFlexible;
-   bool IsExplosive;
+   ushort PriceModifier; (0)
+   bool IsSolid; (false)
+   ushort Emitation; (0)
+   bool CanBeWished; (true)
+   uchar Alignment; (NEUTRAL)
+   ushort NutritionValue; (0)
+   bool IsAlive; (false)
+   bool IsBadFoodForAI; (false)
+   ushort ExplosivePower; (0)
+   bool IsFlammable; (false)
+   bool IsFlexible; (false)
+   bool IsExplosive; (false)
 */
 
 iron

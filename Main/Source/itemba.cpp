@@ -173,10 +173,10 @@ bool item::Polymorph(stack* CurrentStack)
   return true;
 }
 
-uchar item::GetWeaponCategory() const
+/*uchar item::GetWeaponCategory() const
 {
   return UNCATEGORIZED;
-}
+}*/
 
 bool item::Consume(character* Eater, float Amount)
 {

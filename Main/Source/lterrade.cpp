@@ -792,12 +792,12 @@ void door::CreateBoobyTrap()
 
 bool door::ReceiveApply(item* Thingy, character* Applier)
 {
-  if(Thingy->GetType() == key::StaticType())  
+  if(Thingy->GetType() == key::StaticType()) // This is still EEEEEEEEEEVIIIIIIIIIIIIIIIIIL.
     {
       if(IsOpen)
 	return false;
 
-      if(Thingy->GetLockType() == GetLockType())
+      if(((key*)Thingy)->GetLockType() == GetLockType())
 	{
 	  if(Applier->GetIsPlayer())
 	    {
@@ -813,6 +813,7 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
 	      else
 		ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
 	    }
+
 	  SetIsLocked(!GetIsLocked());	      
 	}
       else

@@ -900,12 +900,6 @@ bool scrollofcharging::Read(character* Reader)
       return false;
     }
 
-  if(!Item->IsChargable())
-    {
-      ADD_MESSAGE("You can't charge %s.", Item->CHARNAME(INDEFINITE));
-      return false;
-    }
-
   game::DrawEverythingNoBlit();
   Item->ChargeFully(Reader);
   ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHARNAME(DEFINITE));

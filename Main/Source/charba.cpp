@@ -1804,10 +1804,8 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown)
 {
   if(Direction > 7)
     ABORT("Throw in TOO odd direction...");
-  /*if(GetWielded() && ToBeThrown->UseThrowGetStrengthModifier())
-    return ToBeThrown->Fly(Direction, ushort(GetStrength() * GetThrowGetStrengthModifier()), GetStack(), GetIsPlayer());
-  else*/
-    return ToBeThrown->Fly(this, Direction, GetStrength());
+
+  return ToBeThrown->Fly(this, Direction, GetStrength());
 }
 
 void character::HasBeenHitByItem(character* Thrower, item* Thingy, float Speed)
@@ -1944,12 +1942,6 @@ bool character::Zap()
 
   if(Item)
     {
-      if(!Item->CanBeZapped())
-	{
-	  ADD_MESSAGE("You can't zap that!");
-	  return false;
-	}
-
       uchar Answer = game::DirectionQuestion("In what direction do you wish to zap?  [press a direction key, space or .]", 0xFF, false, true);
 
       if(Answer == 0xFF)
@@ -2416,14 +2408,6 @@ bool character::OutlineItems()
   configuration::SetOutlineItems(!configuration::GetOutlineItems());
   game::GetCurrentArea()->SendNewDrawRequest();
   return false;
-}
-
-float character::GetThrowGetStrengthModifier() const
-{
-  /*if(GetWielded())
-    return GetWielded()->GetThrowGetStrengthModifier();
-  else*/
-    return 1;
 }
 
 ushort character::GetMeleeAttributeModifier() const

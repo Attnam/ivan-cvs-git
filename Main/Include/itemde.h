@@ -54,13 +54,13 @@ class ITEM
   virtual uchar GetWeaponCategory() const { return CLUBS; }
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 40; case 1: return 150; default: return 0; } }
   virtual ulong Price() const { return GetContainedMaterial()->RawPrice(); }
-  virtual bool CanBeZapped() const { return true; }
+  //virtual bool CanBeZapped() const { return true; }
   virtual bool Zap(character*, vector2d, uchar);
   virtual uchar GetCharges() const { return Charges; }
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsChargable() const { return true; }
+  //virtual bool IsChargable() const { return true; }
   virtual void ChargeFully(character*) { SetCharges(6); }
   virtual uchar GetCategory() const { return FOOD; }
   virtual bool IsZappable(character*) const { return true; }
@@ -410,7 +410,7 @@ class ABSTRACT_ITEM
   bodyarmor,
   item,
  public:
-  virtual bool CanBeWorn() const { return true; }
+  //virtual bool CanBeWorn() const { return true; }
   virtual vector2d GetInHandsPic() const { return vector2d(160,144); }
   virtual ulong Price() const;
   virtual uchar GetCategory() const { return BODYARMOR; }
@@ -885,11 +885,11 @@ class ABSTRACT_ITEM
   item,
  public:
   virtual bool Apply(character*);
-  virtual bool CanBeZapped() const { return true; }
+  //virtual bool CanBeZapped() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
-  virtual bool IsExplosive() const { return true; }
+  //virtual bool IsExplosive() const { return true; }
   virtual uchar GetCharges() const { return Charges; }
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual uchar GetTimesUsed() const { return TimesUsed; }
@@ -898,7 +898,7 @@ class ABSTRACT_ITEM
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*) { return false; };
   virtual ushort GetBeamColor() const = 0;
   virtual void ChargeFully(character*) { SetTimesUsed(0); }
-  virtual bool IsChargable() const { return true; }
+  //virtual bool IsChargable() const { return true; }
   virtual uchar GetCategory() const { return WAND; }
   virtual bool IsAppliable(character*) const { return true; }
   virtual bool IsZappable(character*) const { return true; }
@@ -1199,7 +1199,7 @@ class ITEM
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual bool Apply(character*);
-  virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive()) ? true : false; }
+  //virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive()) ? true : false; }
   virtual uchar GetCategory() const { return TOOL; }
   virtual bool IsAppliable(character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
@@ -1405,10 +1405,10 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
-  virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive()) ? true : false; }
+  //virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive()) ? true : false; }
   virtual uchar GetCharged() const { return Charged; }
   virtual void SetCharged(bool What) { Charged = What; }
-  bool IsChargable() const { return true; }
+  //bool IsChargable() const { return true; }
   virtual bool GetStepOnEffect(character *);
   static ushort Possibility() { return 20; }
   virtual std::string NameSingular() const { return "mine"; }

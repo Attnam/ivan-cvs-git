@@ -257,7 +257,7 @@ class character : public entity, public id
   virtual bool RestUntilHealed();
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
-  virtual float GetThrowGetStrengthModifier() const;
+  //virtual float GetThrowGetStrengthModifier() const;
   virtual short GetMaxHP() const;
   virtual ushort GetMeleeAttributeModifier() const;
   virtual float GetToHitValue() const;

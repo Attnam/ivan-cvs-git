@@ -67,7 +67,7 @@ class item : public object
   virtual void DrawToTileBuffer(bool) const;
   virtual void DrawToTileBuffer(vector2d Pos, bool) const;
   virtual void PositionedDrawToTileBuffer(uchar, bool) const;
-  virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
+  //virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
   virtual item* TryToOpen(character*);
   virtual bool Consume(character*, float);
   virtual bool IsHeadOfElpuri() const { return false; }
@@ -78,58 +78,58 @@ class item : public object
   virtual void ReceiveHitEffect(character*, character*) { }
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
-  virtual bool CanBeWorn() const { return false; }
+  //virtual bool CanBeWorn() const { return false; }
   virtual item* BetterVersion() const { return 0; }
   virtual short CalculateOfferValue(char) const;
-  virtual float OfferModifier() const { return 0; }
-  virtual long Score() const { return 0; }
-  virtual bool Destroyable() const { return true; }
+  //virtual float OfferModifier() const { return 0; }
+  //virtual long Score() const { return 0; }
+  //virtual bool Destroyable() const { return true; }
   virtual bool Fly(character*, uchar, ushort);
   virtual bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual item* PrepareForConsuming(character*);
   virtual item* Clone(bool = true, bool = true) const = 0;
-  static bool CanBeWished() { return true; }
-  static item* CreateWishedItem() { return 0; } // never called
+  //static bool CanBeWished() { return true; }
+  //static item* CreateWishedItem() { return 0; } // never called
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar);
-  virtual bool CanBeZapped() const { return false; }
+  //virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);
-  virtual bool IsMaterialChangeable() const { return true; }
+  //virtual bool IsMaterialChangeable() const { return true; }
   virtual void CheckPickUpEffect(character*) { }
-  virtual uchar GetWeaponCategory() const;
-  virtual float GetThrowGetStrengthModifier() const { return 1; }
-  virtual bool UseThrowGetStrengthModifier() const { return false; }
+  //virtual uchar GetWeaponCategory() const;
+  //virtual float GetThrowGetStrengthModifier() const { return 1; }
+  //virtual bool UseThrowGetStrengthModifier() const { return false; }
   virtual bool GetStepOnEffect(character*) { return false; }
-  virtual ulong Price() const { return 0; }
+  //virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
   virtual bool IsBadFoodForAI(character*) const;
   virtual std::string GetConsumeVerb() const { return "eating"; }
-  static bool PolymorphSpawnable() { return true; }
-  virtual bool IsExplosive() const { return false; }
+  //static bool PolymorphSpawnable() { return true; }
+  //virtual bool IsExplosive() const { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
-  virtual bool IsChargable() const { return false; }
+  //virtual bool IsChargable() const { return false; }
   virtual void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
   virtual ulong GetID() const { return ID; }
   virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport();
   virtual ushort GetStrengthValue() const;
-  static bool AutoInitializable() { return true; }
+  //static bool AutoInitializable() { return true; }
   virtual slot* GetSlot() const { return Slot; }
   virtual void SetSlot(slot* What) { Slot = What; }
   virtual void PlaceToSlot(slot*);
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
-  virtual uchar GetLockType() const { return 0; }
+  //virtual uchar GetLockType() const { return 0; }
   virtual void DonateSlotTo(item*);
-  virtual ushort GetOneHandedStrengthPenalty(character*) { return 0; }
-  virtual ushort GetOneHandedToHitPenalty(character*) { return 0; }
-  virtual uchar GetCategory() const = 0;
+  //virtual ushort GetOneHandedStrengthPenalty(character*) { return 0; }
+  //virtual ushort GetOneHandedToHitPenalty(character*) { return 0; }
+  //virtual uchar GetCategory() const = 0;
   static uchar ItemCategories() { return 18; }
   static std::string ItemCategoryName(uchar);
   static bool ConsumableSorter(item* Item, character* Char) { return Item->IsConsumable(Char); }
@@ -169,27 +169,27 @@ class item : public object
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
   virtual bool RemoveMaterial(uchar);
-  virtual ushort SoundResistance() const { return 0; }
+  /*virtual ushort SoundResistance() const { return 0; }
   virtual ushort EnergyResistance() const { return 0; }
   virtual ushort AcidResistance() const { return 0; }
   virtual ushort FireResistance() const { return 0; }
   virtual ushort PoisonResistance() const { return 0; }
-  virtual ushort BulimiaResistance() const { return 0; }
-  static bool SpecialWishedItem() { return false; }
+  virtual ushort BulimiaResistance() const { return 0; }*/
+  //static bool SpecialWishedItem() { return false; }
   virtual ushort GetType() const { return Type(); }
   virtual void SetDivineMaster(uchar) { }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
-  virtual bool IsStackable() const { return false; }
+  //virtual bool IsStackable() const { return false; }
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
   virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
  protected:
-  virtual ushort GetStrengthModifier() const = 0;
+  //virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
   virtual void SetDefaultStats() = 0;
-  virtual ushort GetFormModifier() const { return 0; }
-  virtual float NPModifier() const { return 1.0f; }
+  //virtual ushort GetFormModifier() const { return 0; }
+  //virtual float NPModifier() const { return 1.0f; }
   virtual bool ShowMaterial() const { return true; }
   slot* Slot;
   bool Cannibalised;
