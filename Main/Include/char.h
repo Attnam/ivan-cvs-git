@@ -186,7 +186,7 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
-  bool CheckDeath(const std::string&, character*, bool = false);
+  bool CheckDeath(const std::string&, const character*, bool = false);
   bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*, bool = false) = 0;
   bool OpenPos(vector2d);
@@ -218,7 +218,7 @@ class character : public entity, public id
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
-  void Die(const std::string& = "", bool = false);
+  void Die(const character* = 0, const std::string& = "", bool = false);
   void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);
@@ -536,7 +536,7 @@ class character : public entity, public id
   bool IsWarm() const;
   void CalculateEquipmentState();
   void Draw(bitmap*, vector2d, ulong, bool) const;
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
   god* GetMasterGod() const;
   void PoisonedHandler();
   void PrintBeginTeleportMessage() const;
@@ -714,6 +714,8 @@ class character : public entity, public id
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
   bool CanMove() const { return CanWalk() || CanFly() || CanSwim(); }
+  void ShowAdventureInfo() const;
+  void DrawBodyPartVector(std::vector<bitmap*>&) const;
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

@@ -46,12 +46,14 @@ class object : public entity, public id
   void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual uchar GetForcedVisualEffects() const { return 0; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
+  ushort GetAnimationFrames() const { return AnimationFrames; }
   bool IsAnimated() const { return AnimationFrames > 1; }
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
   virtual void Draw(bitmap*, vector2d, ulong, bool) const;
   void SolidDraw(bitmap*, vector2d, ulong, bool) const;
+  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual god* GetMasterGod() const;
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;

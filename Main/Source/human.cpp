@@ -2057,54 +2057,54 @@ void angel::VirtualConstructor(bool Load)
   LastHealed = 0;
 }
 
-void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
   /* Order is important: Don't use a loop. */
 
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
   
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
-    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }
 
-void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate);
+    GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate);
+    GetRightLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate);
+    GetLeftLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
   
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
-    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAnimate);
+    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAnimate, AllowAlpha);
 }
 
 ushort angel::GetTorsoMainColor() const
@@ -2920,14 +2920,14 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
-  humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAnimate);
+  humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
     {
       ushort Color = MakeRGB16(0, 160, 0);
-      bitmap* Temp = igraph::GetHumanoidRawGraphic()->Colorize(vector2d(160, 208), vector2d(16, 16), &Color, StateIsActivated(INVISIBLE) ? 150 : 255);
+      bitmap* Temp = igraph::GetHumanoidRawGraphic()->Colorize(vector2d(160, 208), vector2d(16, 16), &Color, StateIsActivated(INVISIBLE) && AllowAlpha ? 150 : 255);
       Temp->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
       delete Temp;
     }

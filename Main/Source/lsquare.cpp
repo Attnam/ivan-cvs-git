@@ -1519,7 +1519,7 @@ ushort lsquare::GetSpoiledItems() const
   return GetStack()->GetSpoiledItems();
 }
 
-bool lsquare::LowerEnchantment(character* Zapper, const std::string& DeathMsg, uchar Direction)
+bool lsquare::LowerEnchantment(character* Zapper, const std::string&, uchar)
 {
   character* Char = GetCharacter();
   itemvector AllItems;

@@ -100,7 +100,7 @@ class stack
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;
   void Search(const character*, ushort);
-  bool stack::IsDangerous(const character*) const;
+  bool IsDangerous(const character*) const;
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);

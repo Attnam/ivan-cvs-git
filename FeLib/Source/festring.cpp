@@ -232,3 +232,19 @@ void festring::SearchAndReplace(std::string& Where, const std::string& What, con
       Where.insert(Pos, With);
     }
 }
+
+/* Returns whether First is behind Second in alphabetical order, ignoring case */
+
+bool festring::IgnoreCaseCompare(const std::string& First, const std::string& Second)
+{
+  for(strsize Pos = 0; Pos < First.length() && Pos < Second.length(); ++Pos)
+    {
+      char Char1 = CapitalizeCopy(First[Pos]);
+      char Char2 = CapitalizeCopy(Second[Pos]);
+
+      if(Char1 != Char2)
+	return Char1 < Char2;
+    }
+
+  return First.length() < Second.length();
+}

@@ -28,6 +28,7 @@ public:
   static std::string CapitalizeCopy(std::string String) { Capitalize(String[0]); return String; }
   static strsize IgnoreCaseFind(const std::string&, const std::string&, strsize = 0);
   static void SearchAndReplace(std::string&, const std::string&, const std::string&, strsize = 0);
+  static bool IgnoreCaseCompare(const std::string&, const std::string&);
 private:
   static char** IntegerMap;
   static char IntegerBuffer[12];

@@ -454,3 +454,4 @@ Rings of teleportation on the ground should occasionally teleport around the lev
 Characters wearing bright colored cloaks should be more visible in the dark.
 Fire immunity for imps.
 One should occasionally pray to a wrong god when confused.
+When showing inventory at the endgame, equipment should also be displayed.

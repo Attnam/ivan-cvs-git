@@ -84,6 +84,7 @@ inputfile& operator>>(inputfile&, dangerid&);
 
 typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
+typedef std::map<configid, ushort> massacremap;
 
 class game
 {
@@ -256,6 +257,10 @@ class game
   static void SetCurrentLSquareMap(lsquare*** What) { CurrentLSquareMap = What; }
   static const std::string& GetDefaultPolymorphTo() { return DefaultPolymorphTo; }
   static void SetDefaultPolymorphTo(const std::string What) { DefaultPolymorphTo = What; }
+  static void SignalDeath(const character*, const character*);
+  static void DisplayMassacreLists();
+  static void DisplayMassacreList(const massacremap&, const std::string&);
+  static bool MassacreListsEmpty();
  private:
   static std::string Alignment[];
   static god** God;
@@ -320,6 +325,9 @@ class game
   static wsquare*** CurrentWSquareMap;
   static lsquare*** CurrentLSquareMap;
   static std::string DefaultPolymorphTo;
+  static massacremap PlayerMassacreMap;
+  static massacremap PetMassacreMap;
+  static massacremap MiscMassacreMap;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

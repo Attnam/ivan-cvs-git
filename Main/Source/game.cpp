@@ -31,7 +31,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 
-#define SAVE_FILE_VERSION 111 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 112 // Increment this if changes make savefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -74,6 +74,9 @@ float game::AveragePlayerAgility;
 uchar game::Teams;
 uchar game::Dungeons;
 uchar game::StoryState;
+massacremap game::PlayerMassacreMap;
+massacremap game::PetMassacreMap;
+massacremap game::MiscMassacreMap;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -216,7 +219,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new petrus);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -234,6 +237,9 @@ bool game::Init(const std::string& Name)
 	Ticks = 0;
 	InitPlayerAttributeAverage();
 	StoryState = 0;
+	PlayerMassacreMap.clear();
+	PetMassacreMap.clear();
+	MiscMassacreMap.clear();
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
@@ -486,6 +492,7 @@ bool game::Save(const std::string& SaveName)
   SaveFile << LOSTurns << femath::GetSeed();
   SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
   SaveFile << Teams << Dungeons << StoryState;
+  SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   ushort c;
 
   for(c = 1; c < Dungeons; ++c)
@@ -532,6 +539,7 @@ uchar game::Load(const std::string& SaveName)
   femath::SetSeed(ReadType<ulonglong>(SaveFile));
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
   SaveFile >> Teams >> Dungeons >> StoryState;
+  SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   ushort c;
 
   Dungeon = new dungeon*[Dungeons];
@@ -1903,4 +1911,81 @@ void game::InstallCurrentEmitter(vector2d Pos, ulong Emitation)
   CurrentRedLuxTable = LuxTable[GetRed24(Emitation)];
   CurrentGreenLuxTable = LuxTable[GetGreen24(Emitation)];
   CurrentBlueLuxTable = LuxTable[GetBlue24(Emitation)];
+}
+
+void game::SignalDeath(const character* Ghost, const character* Murderer)
+{
+  massacremap* MassacreMap;
+
+  if(!Murderer)
+    MassacreMap = &MiscMassacreMap;
+  else if(Murderer->IsPlayer())
+    MassacreMap = &PlayerMassacreMap;
+  else if(Murderer->GetTeam()->GetID() == PLAYER_TEAM)
+    MassacreMap = &PetMassacreMap;
+  else
+    MassacreMap = &MiscMassacreMap;
+
+  configid CI(Ghost->GetType(), Ghost->GetConfig());
+  massacremap::iterator i = MassacreMap->find(CI);
+
+  if(i == MassacreMap->end())
+    MassacreMap->insert(std::pair<configid, ushort>(CI, 1));
+  else
+    ++i->second;
+}
+
+void game::DisplayMassacreLists()
+{
+  DisplayMassacreList(PlayerMassacreMap, "Creatures killed directly by you");
+  DisplayMassacreList(PetMassacreMap, "Creatures killed by your allies");
+  DisplayMassacreList(MiscMassacreMap, "Creatures killed by other reasons during your adventure");
+}
+
+struct massacresetentry
+{
+  bool operator<(const massacresetentry& MSE) const { return festring::IgnoreCaseCompare(Key, MSE.Key); }
+  std::string Key;
+  std::string String;
+  std::vector<bitmap*> Picture;
+};
+
+void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string& Topic)
+{
+  std::multiset<massacresetentry> MassacreSet;
+
+  for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
+    {
+      character* Victim = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
+      massacresetentry Entry;
+      Victim->DrawBodyPartVector(Entry.Picture);
+
+      if(i1->second == 1)
+	{
+	  Victim->AddName(Entry.Key, UNARTICLED);
+	  Victim->AddName(Entry.String, INDEFINITE);
+	}
+      else
+	{
+	  Victim->AddName(Entry.Key, PLURAL);
+	  Entry.String << i1->second << " " << Entry.Key;
+	}
+
+      MassacreSet.insert(Entry);
+      delete Victim;
+    }
+
+  felist List(Topic);
+  game::SetStandardListAttributes(List);
+  List.SetPageLength(15);
+
+  for(std::multiset<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
+    List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture);
+
+  List.Draw();
+}
+
+bool game::MassacreListsEmpty()
+{
+  return PlayerMassacreMap.empty() && PetMassacreMap.empty() && MiscMassacreMap.empty();
 }

@@ -109,7 +109,7 @@ class ABSTRACT_CHARACTER
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
   virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
@@ -343,7 +343,7 @@ class CHARACTER
   femaleslave,
   humanoid,
  public:
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );
@@ -448,7 +448,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;

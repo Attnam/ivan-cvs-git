@@ -7,6 +7,15 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 22 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a few gcc warnings
+	* Contents of containers in containers and etc. are now shown correctly upon
+	  death
+	* Lists of monsters killed by you, by pets and by other reasons during the
+	  adventure are now shown upon death
+	* Adventure information may now be shown when the player quits, too
+
 March 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Kicking mines no longer crashes

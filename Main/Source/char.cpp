@@ -288,6 +288,7 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
     }
 
   std::string DeathMsg = "killed by " + Enemy->GetKillName();
+
   if(CheckDeath(DeathMsg, Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
@@ -713,7 +714,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-void character::Die(const std::string& Msg, bool ForceMsg)
+void character::Die(const character* Killer, const std::string& Msg, bool ForceMsg)
 {
   // Note: This function MUST NOT delete any objects in any case! 
 
@@ -745,11 +746,10 @@ void character::Die(const std::string& Msg, bool ForceMsg)
 	    }
 	}
     }
-  else
-    if(CanBeSeenByPlayer())
-      ProcessAndAddMessage(GetDeathMessage());
-    else if(ForceMsg)
-      ADD_MESSAGE("You sense the death of something.");
+  else if(CanBeSeenByPlayer())
+    ProcessAndAddMessage(GetDeathMessage());
+  else if(ForceMsg)
+    ADD_MESSAGE("You sense the death of something.");
 
   if(StateIsActivated(LIFE_SAVED))
     {
@@ -767,9 +767,17 @@ void character::Die(const std::string& Msg, bool ForceMsg)
   if(!game::IsInWilderness())
     {
       if(!StateIsActivated(POLYMORPHED))
-	CreateCorpse(GetLSquareUnder());
+	{
+	  if(!IsPlayer())
+	    game::SignalDeath(this, Killer);
+
+	  CreateCorpse(GetLSquareUnder());
+	}
       else
 	{
+	  if(!IsPlayer())
+	    game::SignalDeath(GetPolymorphBackup(), Killer);
+
 	  GetPolymorphBackup()->CreateCorpse(GetLSquareUnder());
 	  GetPolymorphBackup()->SetPolymorphed(false);
 	  SetPolymorphBackup(0);
@@ -782,21 +790,7 @@ void character::Die(const std::string& Msg, bool ForceMsg)
       if(!game::IsInWilderness())
 	GetLSquareUnder()->SetTemporaryEmitation(GetEmitation());
 
-      if(GetStack()->GetItems())
-	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", REQUIRES_ANSWER))
-	  {
-	    GetStack()->DrawContents(this, "Your inventory", NO_SELECT);
-
-	    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-	      i->DrawContents(this);
-
-	    for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-	      if(GetEquipment(c))
-		GetEquipment(c)->DrawContents(this);
-	  }
-
-      if(game::BoolQuestion("Do you want to see your message history? [y/n]", REQUIRES_ANSWER))
-	msgsystem::DrawMessageHistory();
+      ShowAdventureInfo();
 
       if(!game::IsInWilderness())
 	GetLSquareUnder()->SetTemporaryEmitation(0);
@@ -1355,7 +1349,7 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
     }
 }
 
-bool character::CheckDeath(const std::string& Msg, character* Murderer, bool ForceMsg)
+bool character::CheckDeath(const std::string& Msg, const character* Murderer, bool ForceMsg)
 {
   if(!IsEnabled())
     return true;
@@ -1373,7 +1367,7 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s.", NewMsg.c_str());
 
-      Die(NewMsg, ForceMsg);
+      Die(Murderer, NewMsg, ForceMsg);
       return true;
     }
   else
@@ -1384,7 +1378,7 @@ bool character::CheckStarvationDeath(const std::string& Msg)
 {
   if(GetNP() < 1 && UsesNutrition())
     {
-      Die(Msg);
+      Die(0, Msg);
       return true;
     }
   else
@@ -1725,9 +1719,6 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
   bool HostileCharsNear = false;
   character* NearestChar = 0;
   ulong NearestDistance = 0xFFFFFFFF;
-
-  if(Config == MASTER)
-    int esko = 2;
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -4083,9 +4074,9 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAn
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
-void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
-  GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+  GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }
 
 void character::PrintBeginTeleportMessage() const
@@ -5588,3 +5579,41 @@ void character::PrintEndGasImmunityMessage() const
     ADD_MESSAGE("Yuck! The world smells bad again.");
 }
 
+void character::ShowAdventureInfo() const
+{
+  if(GetStack()->GetItems() && game::BoolQuestion("Do you want to see your inventory? [y/n]", REQUIRES_ANSWER))
+    {
+      GetStack()->DrawContents(this, "Your inventory", NO_SELECT);
+
+      for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+	i->DrawContents(this);
+
+      for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+	if(GetEquipment(c))
+	  GetEquipment(c)->DrawContents(this);
+    }
+
+  if(game::BoolQuestion("Do you want to see your message history? [y/n]", REQUIRES_ANSWER))
+    msgsystem::DrawMessageHistory();
+
+  if(!game::MassacreListsEmpty() && game::BoolQuestion("Do you want to see your massacre history? [y/n]", REQUIRES_ANSWER))
+    game::DisplayMassacreLists();
+}
+
+void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
+{
+  ushort c, AnimationFrames = 1;
+
+  for(c = 0; c < BodyParts; ++c)
+    if(GetBodyPart(c) && GetBodyPart(c)->GetAnimationFrames() > AnimationFrames)
+      AnimationFrames = GetBodyPart(c)->GetAnimationFrames();
+
+  Bitmap.resize(AnimationFrames);
+
+  for(c = 0; c < AnimationFrames; ++c)
+    {
+      Bitmap[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
+      globalwindowhandler::SetTick(c);
+      DrawBodyParts(Bitmap[c], vector2d(0, 0), NORMAL_LUMINANCE, true, false);
+    }
+}

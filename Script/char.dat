@@ -1034,7 +1034,7 @@ skeleton
 		KnownCWeaponSkills == BLUNT_WEAPONS;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
-		PostFix = "warrior";
+		NameSingular = "skeleton warrior";
 		TotalVolume = 20000;
 		EyeColor = rgb16(255, 0, 0);
 		ClothColor = rgb16(32, 32, 32);
@@ -1055,7 +1055,7 @@ skeleton
 		CWeaponSkillHits = { 2, 500, 500; }
 		RightSWeaponSkillHits = 200;
 		LeftSWeaponSkillHits = 200;
-		PostFix = "warlord";
+		NameSingular = "skeleton warlord";
 		IsUnique = true;
 		DefaultName = "Xinroch";
 		DangerModifier = 6000;
@@ -1110,7 +1110,7 @@ goblin
 		RightWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
 		CWeaponSkillHits == 20;
 		RightSWeaponSkillHits = 10;
-		PostFix = "berserker";
+		NameSingular = "goblin berserker";
 		ClothColor = rgb16(0, 96, 0);
 	}
 
@@ -1122,7 +1122,7 @@ goblin
 		RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
-		PostFix = "butcher";
+		NameSingular = "goblin butcher";
 		ClothColor = rgb16(200, 0, 0);
 		Inventory == potion { ContainedMaterial = TROLL_BLOOD; Chance = 10; }
 	}
@@ -1137,7 +1137,7 @@ goblin
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
-		PostFix = "prince";
+		NameSingular = "goblin prince";
 		HeadBitmapPos = 112, 288;
 		TorsoBitmapPos = 48, 208;
 		HairColor = rgb16(220, 220, 0);
@@ -1160,7 +1160,7 @@ goblin
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
 		LeftSWeaponSkillHits = 100;
-		PostFix = "king";
+		NameSingular = "goblin king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
 		DangerModifier = 8000;
@@ -1185,8 +1185,7 @@ mommo
 	HostileReplies == "@Dd vibrates in fury.";
 	FriendlyReplies == "@Dd vibrates oddly.";
 	BloodColor = rgb16(7, 155, 0);
-	NameSingular = "mommo";
-	PostFix = "slime";
+	NameSingular = "mommo slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 800;
@@ -1350,6 +1349,7 @@ dog
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
 	SkinColor = rgb16(111, 74, 37);
 	NameSingular = "puppy";
+	NamePlural = "puppies";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 350;
 	CanBeGenerated = true;
@@ -1434,6 +1434,7 @@ ass
 	SkinColor = rgb16(80, 80, 80);
 	Adjective = "mutant";
 	NameSingular = "ass";
+	NamePlural = "asses";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 150;
 	CanBeGenerated = true;
@@ -1671,6 +1672,7 @@ petrusswife
 	TotalSize = 170;
 	CanRead = true;
 	NameSingular = "Petrus's wife";
+	NamePlural = "Petrus's wives";
 	ArticleMode = NO_ARTICLE;
 	IsAbstract = true;
 	PanicLevel = 95;
@@ -1758,6 +1760,7 @@ housewife
 	TotalSize = 160;
 	CanRead = true;
 	NameSingular = "housewife";
+	NamePlural = "housewives";
 	KnownCWeaponSkills = { 2, UNARMED, UNCATEGORIZED; }
 	CWeaponSkillHits = { 2, 50, 50; }
 	BaseUnarmedStrength = 200;
@@ -1992,6 +1995,7 @@ mistress
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "mistress";
+	NamePlural = "mistresses";
 	CanBeGenerated = true;
 	BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
 	RightGauntlet = LEATHER gauntlet;
@@ -2027,7 +2031,7 @@ mistress
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 500;
 		LeftSWeaponSkillHits = 500;
-		PostFix = "torturing chief";
+		NameSingular = "mistress torturing chief";
 		PanicLevel = 15;
 	}
 
@@ -2043,7 +2047,7 @@ mistress
 		CWeaponSkillHits == 1000;
 		RightSWeaponSkillHits = 1000;
 		LeftSWeaponSkillHits = 1000;
-		PostFix = "whip champion";
+		NameSingular = "mistress whip champion";
 		PanicLevel = 10;
 	}
 
@@ -2060,7 +2064,8 @@ mistress
 		CWeaponSkillHits == 2000;
 		RightSWeaponSkillHits = 2000;
 		LeftSWeaponSkillHits = 2000;
-		PostFix = "warlady";
+		NameSingular = "mistress warlady";
+		NamePlural = "mistress warladies";
 		PanicLevel = 5;
 		Inventory == Random { Category = RING; Chance = 10; }
 	}
@@ -2082,7 +2087,7 @@ mistress
 		CWeaponSkillHits == 5000;
 		RightSWeaponSkillHits = 5000;
 		LeftSWeaponSkillHits = 5000;
-		PostFix = "queen";
+		NameSingular = "mistress queen";
 		PanicLevel = 0;
 		ClassStates = INVISIBLE|HASTE|INFRA_VISION;
 		IsCharmable = false;
@@ -2210,7 +2215,7 @@ kobold
 		RightWielded = COPPER meleeweapon(SPEAR);
 		CWeaponSkillHits == 10;
 		RightSWeaponSkillHits = 5;
-		PostFix = "chieftain";
+		NameSingular = "kobold chieftain";
 		PanicLevel = 50;
 		ClothColor = rgb16(100, 100, 48);
 		LegMainColor = rgb16(111, 74, 37);
@@ -2222,7 +2227,7 @@ kobold
 		RightWielded = IRON meleeweapon(SPEAR);
 		CWeaponSkillHits == 20;
 		RightSWeaponSkillHits = 10;
-		PostFix = "lord";
+		NameSingular = "kobold lord";
 		PanicLevel = 33;
 		ClothColor = rgb16(160, 0, 0);
 		LegMainColor = rgb16(111, 74, 37);
@@ -2241,7 +2246,7 @@ kobold
 		RightBoot = TROLL_HIDE boot;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
-		PostFix = "patriarch";
+		NameSingular = "kobold patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
 		DangerModifier = 10000;
@@ -2416,6 +2421,7 @@ kamikazedwarf
 	TotalSize = 130;
 	CanRead = true;
 	NameSingular = "kamikaze dwarf";
+	NamePlural = "kamikaze dwarves";
 	CanBeGenerated = true;
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
@@ -2752,7 +2758,7 @@ orc
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
-		PostFix = "slaughterer";
+		NameSingular = "orc slaughterer";
 		PanicLevel = 40;
 		Inventory == potion { ContainedMaterial = TROLL_BLOOD; Chance = 10; }
 	}
@@ -2770,7 +2776,7 @@ orc
 		KnownCWeaponSkills == POLE_ARMS;
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
-		PostFix = "squad leader";
+		NameSingular = "orc squad leader";
 		PanicLevel = 30;
 	}
 
@@ -2792,7 +2798,7 @@ orc
 		KnownCWeaponSkills == POLE_ARMS;
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 200;
-		PostFix = "officer";
+		NameSingular = "orc officer";
 		PanicLevel = 20;
 	}
 
@@ -2814,7 +2820,7 @@ orc
 		KnownCWeaponSkills == POLE_ARMS;
 		CWeaponSkillHits == 1000;
 		RightSWeaponSkillHits = 500;
-		PostFix = "general";
+		NameSingular = "orc general";
 		PanicLevel = 10;
 		Inventory = { 2, potion { ContainedMaterial = HEALING_LIQUID; Chance = 10; }, Random { Category = RING; Chance = 10; } }
 		TotalVolume = 120000;
@@ -2843,7 +2849,7 @@ orc
 		KnownCWeaponSkills == POLE_ARMS;
 		CWeaponSkillHits == 2000;
 		RightSWeaponSkillHits = 1000;
-		PostFix = "marshal";
+		NameSingular = "orc marshal";
 		PanicLevel = 0;
 		IsUnique = true;
 		DefaultName = "Ur-Khan";
@@ -3097,6 +3103,7 @@ ostrich
 	TorsoMainColor = rgb16(48, 48, 48); /* the body feathers */
 	Adjective = "levitating";
 	NameSingular = "ostrich";
+	NamePlural = "ostriches";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 200;
 	KnownCWeaponSkills == BITE;

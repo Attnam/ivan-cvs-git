@@ -1700,6 +1700,9 @@ void itemcontainer::DrawContents(const character* Char)
 {
   std::string Topic = "Contents of your " + GetName(UNARTICLED);
   GetContained()->DrawContents(Char, Topic, NO_SELECT);
+
+  for(stackiterator i = GetContained()->GetBottom(); i.HasItem(); ++i)
+    i->DrawContents(Char);
 }
 
 void backpack::ReceiveFluidSpill(material* Liquid)
@@ -2140,9 +2143,9 @@ void wand::BreakEffect(character* Terrorist, const std::string& DeathMsg)
   SendToHell();
 }
 
-bool beartrap::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool beartrap::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(!IsBroken() && (Type == PHYSICAL_DAMAGE) && Damage)
+  if(!IsBroken() && Type == PHYSICAL_DAMAGE && Damage)
     {
       if(Damage > 125 || !(RAND() % (250 / Damage)))
 	{
