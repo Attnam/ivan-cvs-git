@@ -1,10 +1,12 @@
 #include <iostream>
 #include <stdlib.h>
-#include "error.h"
 
 #ifdef __DJGPP__
 #include <conio.h>
 #endif
+
+#include "graphics.h"
+#include "error.h"
 
 #ifdef WIN32
 int Main(HINSTANCE, HINSTANCE, HWND*, LPSTR, int);
@@ -42,7 +44,7 @@ int main()
 	std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
 #endif
 #ifdef __DJGPP__
-	textmode(0x3);
+	graphics::DeInit();
 	std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
 #endif
 		exit(3);

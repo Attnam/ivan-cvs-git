@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "config.h"
 #include "save.h"
 #include "felist.h"
@@ -55,12 +57,12 @@ void configuration::Load()
 {
 	inputfile SaveFile(CONFIG_FILENAME, false);
 
-	if(!SaveFile.GetBuffer().is_open())
+	if(!SaveFile.IsOpen())
 		return;
 
 	std::map<std::string, long> ValueMap;
 
-	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.GetBuffer().eof(); Word = SaveFile.ReadWord(false))
+	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
 	{
 		if(Word == "DefaultName")
 		{

@@ -55,9 +55,9 @@ void worldmap::Save(outputfile& SaveFile) const
 	for(ulong c = 0; c < XSizeTimesYSize; ++c)
 		Map[0][c]->Save(SaveFile);
 
-	SaveFile.GetBuffer().write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-	SaveFile.GetBuffer().write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-	SaveFile.GetBuffer().write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+	SaveFile.Write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.Write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
+	SaveFile.Write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
 	SaveFile << Continent << PlayerGroup;
 }
@@ -79,9 +79,9 @@ void worldmap::Load(inputfile& SaveFile)
 	AltitudeBuffer = Alloc2D<short>(XSize, YSize);
 	ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
 
-	SaveFile.GetBuffer().read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-	SaveFile.GetBuffer().read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-	SaveFile.GetBuffer().read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+	SaveFile.Read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.Read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
+	SaveFile.Read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
 	continent::TypeBuffer = TypeBuffer;
 	continent::AltitudeBuffer = AltitudeBuffer;
@@ -374,3 +374,4 @@ void worldmap::RemoveEmptyContinents()
 					Continent.pop_back();
 				}
 }
+

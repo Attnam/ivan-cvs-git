@@ -8,10 +8,14 @@
 
 #ifdef USE_SDL
 #include <stdlib.h>
-#include "sys/stat.h"
+#include <sys/stat.h>
 #define IDNO 1
 #define IDYES 0
 #define IDCANCEL 2
+#endif
+
+#ifdef __DJGPP__
+#include <sys/stat.h>
 #endif
 
 #include "game.h"
@@ -158,6 +162,10 @@ void game::Init(std::string Name)
 
 #ifdef WIN32
 	_mkdir("Save");
+#endif
+
+#ifdef __DJGPP__
+	mkdir("Save", S_IWUSR);
 #endif
 
 #ifdef USE_SDL
@@ -590,7 +598,7 @@ bool game::Load(std::string SaveName)
 {
 	inputfile SaveFile(SaveName + ".sav", false);
 
-	if(!SaveFile.GetBuffer().is_open())
+	if(!SaveFile.IsOpen())
 		return false;
 
 	SaveFile >> PlayerName;
@@ -1000,10 +1008,7 @@ void game::DoNeutralDeed(ushort Amount)
 
 void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
 {
-  outputfile SaveFile(SaveName + ".wm");
-  
-	//	outputfile SaveFile(SaveName + ".wm");
-
+	outputfile SaveFile(SaveName + ".wm");
 	SaveFile << WorldMap;
 
 	if(DeleteAfterwards)

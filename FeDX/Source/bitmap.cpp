@@ -12,23 +12,22 @@
 
 bitmap::bitmap(std::string FileName) : AlphaMap(0)
 {
-	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
+	inputfile File(FileName.c_str(), false);
 
-	if(!File.is_open())
+	if(!File.IsOpen())
 		ABORT("Bitmap %s not found!", FileName.c_str());
 
 	uchar Palette[768];
-	File.seekg(-768, std::ios::end);
-	File.read((char*)Palette, 768);
+	File.SeekPosEnd(-768);
+	File.Read((char*)Palette, 768);
+	File.SeekPosBeg(8);
 
-	File.seekg(8, std::ios::beg);
+	XSize  =  File.Get();
+	XSize += (File.Get() << 8) + 1;
+	YSize  =  File.Get();
+	YSize += (File.Get() << 8) + 1;
 
-	XSize  =  File.get();
-	XSize += (File.get() << 8) + 1;
-	YSize  =  File.get();
-	YSize += (File.get() << 8) + 1;
-
-	File.seekg(128, std::ios::beg);
+	File.SeekPosBeg(128);
 
 	Alloc2D<ushort>(Data, YSize, XSize);
 
@@ -37,11 +36,11 @@ bitmap::bitmap(std::string FileName) : AlphaMap(0)
 	for(ushort y = 0; y < YSize; ++y)
 		for(ushort x = 0; x < XSize; ++x)
 		{
-			int Char1 = File.get();
+			int Char1 = File.Get();
 
 			if(Char1 > 192)
 			{
-				int Char2 = File.get();
+				int Char2 = File.Get();
 
 				--x;
 
@@ -78,12 +77,12 @@ bitmap::~bitmap()
 
 void bitmap::Save(outputfile& SaveFile) const
 {
-	SaveFile.GetBuffer().write((char*)Data[0], (XSize * YSize) << 1);
+	SaveFile.Write((char*)Data[0], (XSize * YSize) << 1);
 
 	if(AlphaMap)
 	{
 		SaveFile << uchar(1);
-		SaveFile.GetBuffer().write((char*)AlphaMap[0], XSize * YSize);
+		SaveFile.Write((char*)AlphaMap[0], XSize * YSize);
 	}
 	else
 		SaveFile << uchar(0);
@@ -91,7 +90,7 @@ void bitmap::Save(outputfile& SaveFile) const
 
 void bitmap::Load(inputfile& SaveFile)
 {
-	SaveFile.GetBuffer().read((char*)Data[0], (XSize * YSize) << 1);
+	SaveFile.Read((char*)Data[0], (XSize * YSize) << 1);
 
 	uchar Alpha;
 	SaveFile >> Alpha;
@@ -99,13 +98,12 @@ void bitmap::Load(inputfile& SaveFile)
 	if(Alpha)
 	{
 		Alloc2D<uchar>(AlphaMap, XSize, YSize);
-		SaveFile.GetBuffer().read((char*)AlphaMap[0], XSize * YSize);
+		SaveFile.Read((char*)AlphaMap[0], XSize * YSize);
 	}
 }
 
 void bitmap::Save(std::string FileName) const
 {
-
 	static char BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
 					 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),
 					 char(0x00), char(0x00), char(0x28), char(0x00), char(0x00), char(0x00),
@@ -123,7 +121,7 @@ void bitmap::Save(std::string FileName) const
 	BMPHeader[0x16] =  YSize       & 0xFF;
 	BMPHeader[0x17] = (YSize >> 8) & 0xFF;
 
-	SaveFile.GetBuffer().write(BMPHeader, 0x36);
+	SaveFile.Write(BMPHeader, 0x36);
 
 	for(long y = YSize - 1; y >= 0; --y)
 		for(ushort x = 0; x < XSize; ++x)
@@ -131,7 +129,6 @@ void bitmap::Save(std::string FileName) const
 			ushort Pixel = Data[y][x];
 			SaveFile << char(Pixel << 3) << char((Pixel >> 5) << 2) << char((Pixel >> 11) << 3);
 		}
-
 }
 
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
@@ -597,3 +594,4 @@ void bitmap::FadeToScreen()
 	MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, uchar(0), 0);
 	graphics::BlitDBToScreen();
 }
+

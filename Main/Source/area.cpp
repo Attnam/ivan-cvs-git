@@ -43,7 +43,7 @@ void area::Save(outputfile& SaveFile) const
 {
 	SaveFile << XSize << YSize;
 
-	SaveFile.GetBuffer().write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.Write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
 void area::Load(inputfile& SaveFile)
@@ -57,7 +57,7 @@ void area::Load(inputfile& SaveFile)
 	Alloc2D(Map, XSize, YSize);
 	Alloc2D(FlagMap, XSize, YSize);
 
-	SaveFile.GetBuffer().read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.Read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
 void area::RemoveCharacter(vector2d Pos)
@@ -181,3 +181,4 @@ void area::Draw() const
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 				Map[x][y]->Draw();
 }
+

@@ -91,15 +91,14 @@ void highscore::Save(std::string File) const
 
 void highscore::Load(std::string File)
 {
-
   {
 	inputfile HighScore(File, false);
 
-	if(!HighScore.GetBuffer().is_open())
+	if(!HighScore.IsOpen())
 		return;
 
-	HighScore.GetBuffer().get();
-	if(HighScore.GetBuffer().eof())
+	HighScore.Get();
+	if(HighScore.Eof())
 	  return;
   }
 	inputfile HighScore(File, false);
@@ -111,3 +110,4 @@ void highscore::Load(std::string File)
 	if(HVersion == 110)
 		HighScore >> Score >> Entry >> LastAdd;
 }
+

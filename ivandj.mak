@@ -5,82 +5,82 @@
 AR       = ar rs
 CC       = gcc -o
 FeDXDIR  = FeDX
-FeDXOBJ  = $(FeDXDIR)/Object/bitmap.o $(FeDXDIR)/Object/colorbit.o $(FeDXDIR)/Object/graphics.o
-FeDXASM  = $(FeDXDIR)/Object/gccblit.o
+FeDXOBJ  = $(FeDXDIR)/Source/bitmap.o $(FeDXDIR)/Source/colorbit.o $(FeDXDIR)/Source/graphics.o
+FeDXASM  = $(FeDXDIR)/Source/gccblit.o
 FEELDIR  = FEEL
-FEELOBJ  = $(FEELDIR)/Object/error.o $(FEELDIR)/Object/femain.o
+FEELOBJ  = $(FEELDIR)/Source/error.o $(FEELDIR)/Source/femain.o
 FeFileDIR  = FeFile
-FeFileOBJ  = $(FeFileDIR)/Object/save.o
+FeFileOBJ  = $(FeFileDIR)/Source/save.o
 FeIODIR  = FeIO
-FeIOOBJ  = $(FeIODIR)/Object/feio.o
+FeIOOBJ  = $(FeIODIR)/Source/feio.o
 FELLDIR  = FELL
-FELLOBJ  = $(FELLDIR)/Object/felist.o $(FELLDIR)/Object/hscore.o
+FELLOBJ  = $(FELLDIR)/Source/felist.o $(FELLDIR)/Source/hscore.o
 FeMathDIR  = FeMath
-FeMathOBJ  = $(FeMathDIR)/Object/femath.o
+FeMathOBJ  = $(FeMathDIR)/Source/femath.o
 FeWinDIR  = FeWin
-FeWinOBJ  = $(FeWinDIR)/Object/whandler.o
+FeWinOBJ  = $(FeWinDIR)/Source/whandler.o
 LTestDIR  = LibTest
 LTestBIN  = LibTest.exe
-LTestOBJ  = $(LTestDIR)/Object/libtest.o
+LTestOBJ  = $(LTestDIR)/Source/libtest.o
 IVANDIR  = Main
 IVANBIN  = Ivan.exe
-IVANOBJ  = $(IVANDIR)/Object/charba.o $(IVANDIR)/Object/area.o $(IVANDIR)/Object/team.o\
-           $(IVANDIR)/Object/charde.o $(IVANDIR)/Object/cont.o $(IVANDIR)/Object/dungeon.o\
-           $(IVANDIR)/Object/game.o $(IVANDIR)/Object/god.o $(IVANDIR)/Object/igraph.o\
-           $(IVANDIR)/Object/itemba.o $(IVANDIR)/Object/itemde.o $(IVANDIR)/Object/level.o\
-           $(IVANDIR)/Object/lsquare.o $(IVANDIR)/Object/lterraba.o $(IVANDIR)/Object/lterrade.o\
-           $(IVANDIR)/Object/main.o $(IVANDIR)/Object/materba.o $(IVANDIR)/Object/materde.o\
-           $(IVANDIR)/Object/message.o $(IVANDIR)/Object/object.o $(IVANDIR)/Object/pool.o\
-           $(IVANDIR)/Object/proto.o $(IVANDIR)/Object/roomba.o  $(IVANDIR)/Object/roomde.o\
-           $(IVANDIR)/Object/script.o $(IVANDIR)/Object/square.o $(IVANDIR)/Object/stack.o\
-           $(IVANDIR)/Object/wsquare.o $(IVANDIR)/Object/typeable.o $(IVANDIR)/Object/worldmap.o\
-           $(IVANDIR)/Object/wskill.o $(IVANDIR)/Object/wterraba.o $(IVANDIR)/Object/wterrade.o\
-           $(IVANDIR)/Object/config.o
-FLAGS = -IInclude -IFeDX/Include -IFEEL/Include -IFeFile/Include -IFeIO/Include -IFELL/Include -IFeMath/Include -IFeWin/Include -s -O3 -ffast-math -W -Wall
+IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source/team.o\
+           $(IVANDIR)/Source/charde.o $(IVANDIR)/Source/cont.o $(IVANDIR)/Source/dungeon.o\
+           $(IVANDIR)/Source/game.o $(IVANDIR)/Source/god.o $(IVANDIR)/Source/igraph.o\
+           $(IVANDIR)/Source/itemba.o $(IVANDIR)/Source/itemde.o $(IVANDIR)/Source/level.o\
+           $(IVANDIR)/Source/lsquare.o $(IVANDIR)/Source/lterraba.o $(IVANDIR)/Source/lterrade.o\
+           $(IVANDIR)/Source/main.o $(IVANDIR)/Source/materba.o $(IVANDIR)/Source/materde.o\
+           $(IVANDIR)/Source/message.o $(IVANDIR)/Source/object.o $(IVANDIR)/Source/pool.o\
+           $(IVANDIR)/Source/proto.o $(IVANDIR)/Source/roomba.o  $(IVANDIR)/Source/roomde.o\
+           $(IVANDIR)/Source/script.o $(IVANDIR)/Source/square.o $(IVANDIR)/Source/stack.o\
+           $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/typeable.o $(IVANDIR)/Source/worldmap.o\
+           $(IVANDIR)/Source/wskill.o $(IVANDIR)/Source/wterraba.o $(IVANDIR)/Source/wterrade.o\
+           $(IVANDIR)/Source/config.o
+FLAGS = -IInclude -I$(FeDXDIR)/Include -I$(FEELDIR)/Include -I$(FeFileDIR)/Include -I$(FeIODIR)/Include -I$(FELLDIR)/Include -I$(FeMathDIR)/Include -I$(FeWinDIR)/Include -W -Wall
 LIBS = -lstdcxx
 
 ivan:	$(IVANBIN)
 ltest:	$(LTestBIN)
 
-$(FeDXOBJ) : $(FeDXDIR)/Object/%.o : $(FeDXDIR)/Source/%.cpp
+$(FeDXOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeDXASM) : $(FeDXDIR)/Object/%.o : $(FeDXDIR)/Source/%.s
+$(FeDXASM) : %.o : %.s
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FEELOBJ) : $(FEELDIR)/Object/%.o : $(FEELDIR)/Source/%.cpp
+$(FEELOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeFileOBJ) : $(FeFileDIR)/Object/%.o : $(FeFileDIR)/Source/%.cpp
+$(FeFileOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeIOOBJ) : $(FeIODIR)/Object/%.o : $(FeIODIR)/Source/%.cpp
+$(FeIOOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FELLOBJ) : $(FELLDIR)/Object/%.o : $(FELLDIR)/Source/%.cpp
+$(FELLOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeMathOBJ) : $(FeMathDIR)/Object/%.o : $(FeMathDIR)/Source/%.cpp
+$(FeMathOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeWinOBJ) : $(FeWinDIR)/Object/%.o : $(FeWinDIR)/Source/%.cpp
+$(FeWinOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(LTestOBJ) : $(LTestDIR)/Object/%.o : $(LTestDIR)/Source/%.cpp
+$(LTestOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(IVANOBJ) : $(IVANDIR)/Object/%.o : $(IVANDIR)/Source/%.cpp
+$(IVANOBJ) : %.o : %.cpp
 	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS) -IMain/Include -IMain/Resource
+	@$(CC) $@ -c $< $(FLAGS) -I$(IVANDIR)/Include -I$(IVANDIR)/Resource
 
 $(LTestBIN) : $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(LTestOBJ)
 	@echo Compiling $(LTestBIN)...

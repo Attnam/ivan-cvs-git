@@ -52,18 +52,18 @@ inline outputfile& operator<<(outputfile& SaveFile, continent* Continent)
 {
 	if(Continent)
 	{
-		SaveFile.GetBuffer().put(1);
+		SaveFile.Put(1);
 		Continent->Save(SaveFile);
 	}
 	else
-		SaveFile.GetBuffer().put(0);
+		SaveFile.Put(0);
 
 	return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
 {
-	if(SaveFile.GetBuffer().get())
+	if(SaveFile.Get())
 	{
 		Continent = new continent;
 		Continent->Load(SaveFile);

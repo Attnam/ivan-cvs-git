@@ -1,10 +1,60 @@
-#include <cctype>
+#include <ctype.h>
 #include <string>
 
 #include "save.h"
 #include "strover.h"
 #include "error.h"
 #include "femath.h"
+
+//#ifdef __SAVE_H__
+
+outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
+{
+	if(AbortOnErr && !IsOpen())
+		ABORT("Can't open %s for output!", FileName.c_str());
+}
+
+inputfile::inputfile(std::string FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb"))
+{
+	if(AbortOnErr && !IsOpen())
+		ABORT("File %s not found!", FileName.c_str());
+}
+
+bool inputfile::Eof()
+{
+	int Char = fgetc(Buffer);
+
+	if(feof(Buffer) != 0)
+		return true;
+	else
+	{
+		ungetc(Char, Buffer);
+		return false;
+	}
+}
+
+int inputfile::Peek()
+{
+	int Char = fgetc(Buffer);
+	ungetc(Char, Buffer);
+	return Char;
+}
+
+/*#else
+
+outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::out | std::ios::binary)
+{
+	if(AbortOnErr && !IsOpen())
+		ABORT("Can't open %s for output!", FileName.c_str());
+}
+
+inputfile::inputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::in | std::ios::binary)
+{
+	if(AbortOnErr && !IsOpen())
+		ABORT("File %s not found!", FileName.c_str());
+}
+
+#endif*/
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
 {
@@ -14,7 +64,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 
 	for(;;)
 	{
-		if(GetBuffer().eof())
+		if(Eof())
 		{
 			if(AbortOnEOF)
 				ABORT("Unexpected end of script file!");
@@ -22,7 +72,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 			return Buffer;
 		}
 
-		int Char = GetBuffer().peek();
+		int Char = Peek();
 
 		if(isalpha(Char))
 		{
@@ -53,21 +103,21 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 		{
 			if(Char == '/')
 			{
-				GetBuffer().get();
+				Get();
 
-				if(!GetBuffer().eof())
-					if(GetBuffer().peek() == '*')
+				if(!Eof())
+					if(Peek() == '*')
 					{
 						for(;;)
 						{
-							Char = GetBuffer().get();
+							Char = Get();
 
-							if(GetBuffer().eof())
+							if(Eof())
 								ABORT("Script error: Unterminated comment!");
 
-							if(Char == '*' && GetBuffer().peek() == '/')
+							if(Char == '*' && Peek() == '/')
 							{
-								GetBuffer().get();
+								Get();
 
 								if(Mode == 2)
 									return Buffer;
@@ -91,40 +141,40 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 
 			if(Char == '"')
 			{
-				GetBuffer().get();
+				Get();
 
-				if(GetBuffer().eof())
+				if(Eof())
 					ABORT("Script error: Unterminated comment");
 
-				if(GetBuffer().peek() == '"')
+				if(Peek() == '"')
 				{
-					GetBuffer().get();
+					Get();
 					return Buffer;
 				}
 
 				for(;;)
 				{
-					Char = GetBuffer().get();
+					Char = Get();
 
-					if(GetBuffer().eof())
+					if(Eof())
 						ABORT("Script error: Unterminated comment");
 
-					if(GetBuffer().peek() == '"')
+					if(Peek() == '"')
 						if(Char == '\\')
 						{
 							Buffer += '"';
-							GetBuffer().get();
+							Get();
 
-							if(GetBuffer().peek() == '"')
+							if(Peek() == '"')
 							{
-								GetBuffer().get();
+								Get();
 								break;
 							}
 						}
 						else
 						{
 							Buffer += char(Char);
-							GetBuffer().get();
+							Get();
 							break;
 						}
 					else
@@ -135,11 +185,11 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 			}
 
 			Buffer += char(Char);
-			GetBuffer().get();
+			Get();
 			return Buffer;
 		}
 
-		GetBuffer().get();
+		Get();
 	}
 }
 
@@ -147,7 +197,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 {
 	for(;;)
 	{
-		if(GetBuffer().eof())
+		if(Eof())
 		{
 			if(AbortOnEOF)
 				ABORT("Unexpected end of script file!");
@@ -155,7 +205,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 			return 0;
 		}
 
-		int Char = GetBuffer().get();
+		int Char = Get();
 
 		if(isalpha(Char) || isdigit(Char))
 		{
@@ -166,19 +216,19 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 		{
 			if(Char == '/')
 			{
-				if(!GetBuffer().eof())
-					if(GetBuffer().peek() == '*')
+				if(!Eof())
+					if(Peek() == '*')
 					{
 						for(;;)
 						{
-							Char = GetBuffer().get();
+							Char = Get();
 
-							if(GetBuffer().eof())
+							if(Eof())
 								ABORT("Script error: Unterminated comment!");
 
-							if(Char == '*' && GetBuffer().peek() == '/')
+							if(Char == '*' && Peek() == '/')
 							{
-								GetBuffer().get();
+								Get();
 								break;
 							}		
 						}
@@ -211,7 +261,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 		if(Word == ";" || Word == ",")
 		{
 			if(CallLevel != 0xFF)
-				GetBuffer().seekg(-1, std::ios::cur);
+				SeekPosCur(-1);
 
 			return Value;
 		}
@@ -226,7 +276,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 			}\
 			else\
 			{\
-				GetBuffer().seekg(-1, std::ios::cur);\
+				SeekPosCur(-1);\
 				return Value;\
 			}
 
@@ -302,7 +352,7 @@ outputfile& operator<<(outputfile& SaveFile, std::string String)
 	SaveFile << Length;
 
 	if(Length)
-		SaveFile.GetBuffer().write(String.c_str(), Length);
+		SaveFile.Write(String.c_str(), Length);
 
 	return SaveFile;
 }
@@ -317,7 +367,7 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
 
 	if(Length)
 	{
-		SaveFile.GetBuffer().read(Buffer, Length);
+		SaveFile.Read(Buffer, Length);
 		Buffer[Length] = 0;
 		String = Buffer;
 	}
@@ -325,16 +375,4 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
 		String = "";
 
 	return SaveFile;
-}
-
-outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::out | std::ios::binary)
-{
-	if(AbortOnErr && !Buffer.is_open())
-		ABORT("Can't open %s for output!", FileName.c_str());
-}
-
-inputfile::inputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::in | std::ios::binary)
-{
-	if(AbortOnErr && !Buffer.is_open())
-		ABORT("File %s not found!", FileName.c_str());
 }

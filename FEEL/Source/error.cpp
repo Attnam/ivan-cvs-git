@@ -10,6 +10,7 @@
 #endif
 
 #include "error.h"
+#include "graphics.h"
 
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
@@ -76,7 +77,7 @@ void globalerrorhandler::Abort(const char* Format, ...)
 	std::cout << Buffer << std::endl;
 #endif
 #ifdef __DJGPP__
-	textmode(0x3);
+	graphics::DeInit();
 	std::cout << Buffer << std::endl;
 #endif
 
@@ -97,7 +98,7 @@ void globalerrorhandler::NewHandler()
 	std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
 #endif
 #ifdef __DJGPP__
-	textmode(0x3);
+	graphics::DeInit();
 	std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
 #endif
 
@@ -118,7 +119,7 @@ void globalerrorhandler::SignalHandler(int Signal)
 	{
 		AlreadySignalled = true;
 
-		textmode(0x3);
+		graphics::DeInit();
 
 		std::cout << "Fatal Error: ";
 

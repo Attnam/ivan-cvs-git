@@ -440,7 +440,7 @@ void fountain::Consume(character* Drinker)
 		Drinker->ChangeRandomStat(-1);
 
 		if(!(RAND() % 5))
-			Drinker->Polymorph(protosystem::CreateMonster(false), 250 + RAND() % 250);
+			Drinker->Polymorph(protosystem::CreateMonster(false), 2500 + RAND() % 2500);
 	break;
 	
 	case 2:

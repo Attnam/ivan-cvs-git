@@ -29,6 +29,7 @@ void igraph::Init()
 	if(!AlreadyInstalled)
 	{
 		AlreadyInstalled = true;
+		graphics::Init();
 #ifdef WIN32
 		graphics::SetMode(hInst, hWnd, "IVAN 0.310a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 #endif
@@ -55,8 +56,6 @@ void igraph::Init()
 
 		TileBuffer = new bitmap(16, 16);
 		OutlineBuffer = new bitmap(16, 16);
-
-		atexit(igraph::DeInit);
 	}
 }
 

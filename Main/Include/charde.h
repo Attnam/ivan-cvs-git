@@ -1380,7 +1380,7 @@ protected:
 	virtual std::string TalkVerb() const { return "roars"; }
 );
 
-class CHARACTER
+/*class CHARACTER
 (
  unicorn,
  character,
@@ -1398,7 +1398,7 @@ class CHARACTER
  virtual std::string NameSingular() const RET("unicorn")
  virtual float GetMeleeStrength() const RET(1200)
  virtual std::string TalkVerb() const { return "neigh"; }
- );
+ );*/
 
 #endif
 

@@ -1015,7 +1015,7 @@ void levelsquare::PolymorphEverything(character* Zapper)
 
 	if((Character = GetCharacter()))
 	{
-		Character->Polymorph(protosystem::CreateMonster(false), 500 + RAND() % 500);
+		Character->Polymorph(protosystem::CreateMonster(false), 5000 + RAND() % 5000);
 
 		if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 			Zapper->Hostility(Character);

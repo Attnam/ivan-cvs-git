@@ -86,7 +86,6 @@ private:
 	static SDL_Surface* screen;
 #endif
 #ifdef __DJGPP__
-	//static bitmap* Screen;
 	static ulong BufferSize;
 	static ushort ScreenSelector;
 	static struct vesainfo

@@ -41,7 +41,9 @@ int Main()
 	igraph::Init();
 #endif
 
-	//globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+#ifndef __DJGPP__
+	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+#endif
 
 	elpuri Elpuri(true, false, false, false);
 

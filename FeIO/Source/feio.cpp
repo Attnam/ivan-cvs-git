@@ -1,4 +1,5 @@
 #include <ctime>
+#include <ctype.h>
 
 #ifdef WIN32
 #include <io.h>
@@ -310,10 +311,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 
 	Check = Buffer.Draw(false, true);
 
-	while(Check > 0xFFFD)
-		Check = Buffer.Draw(false);
-
-	if(Check == 0xFFFD)
+	if(Check >= 0xFFFD)
 		return "";
 
 	return Buffer.GetEntry(Check);
@@ -344,10 +342,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 	      {
 		int Check = List.Draw(false, true);
 
-		while(Check > 0xFFFD)
-		  Check = List.Draw(false);
-
-		if(Check == 0xFFFD)
+		if(Check >= 0xFFFD)
 		  return "";
 
 		return List.GetEntry(Check);
@@ -376,48 +371,10 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 
 	Check = Buffer.Draw(false, true);
 
-	while(Check > 0xFFFD)
-		Check = Buffer.Draw(false);
-
-	if(Check == 0xFFFD)
+	if(Check >= 0xFFFD)
 		return "";
 
 	return Buffer.GetEntry(Check);
 #endif
-
-/*#ifdef __DJGPP__
-	struct ffblk Found;
-	int Check;
-	list Buffer("Chooseth a file and be sorry");
-	string Name;
-	Check = findfirst("Save.sav", &Found, FA_HIDDEN | FA_ARCH);
-	if(Check)
-	{
-		DOUBLEBUFFER->ClearToColor(0,0,800,600);
-		DOUBLEBUFFER->Printf(FONTW, 260, 200, "You don't have any previous saves.");
-		DOUBLEBUFFER->Blit(SCREEN, 0, 0, 0, 0, 800, 600);
-		getkey();
-		return;
-	}
-	while(!Check)
-	{
-		Buffer.AddString(Found.ff_name);
-		Check = findnext(&Found);
-	}
-
-	Check = 0xFFFF;
-	while(Check > 0xFFFD)
-	{
-		DOUBLEBUFFER->ClearToColor(0, 0, 800, 600);
-		Check = Buffer.Draw();
-	}
-	if(Check == 0xFFFD)
-		return;
-	Name = Buffer.GetString(Check);
-	Name.resize(Name.size() - 4);
-	game::Init(Name);
-	game::Run();
-	game::DeInit();
-#endif*/
 }
 

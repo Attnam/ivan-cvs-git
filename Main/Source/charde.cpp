@@ -716,6 +716,9 @@ void petrus::BeTalkedTo(character* Talker)
 		{
 			ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
 			ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
+
+			/* Perhaps we could use our material system to actually make his face red ;-) */
+
 			Talker->GetTeam()->Hostility(GetTeam());
 			return;
 		}

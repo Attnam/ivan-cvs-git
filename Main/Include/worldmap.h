@@ -55,18 +55,18 @@ inline outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
 {
 	if(WorldMap)
 	{
-		SaveFile.GetBuffer().put(1);
+		SaveFile.Put(1);
 		WorldMap->Save(SaveFile);
 	}
 	else
-		SaveFile.GetBuffer().put(0);
+		SaveFile.Put(0);
 
 	return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
 {
-	if(SaveFile.GetBuffer().get())
+	if(SaveFile.Get())
 	{
 		WorldMap = new worldmap;
 		WorldMap->Load(SaveFile);

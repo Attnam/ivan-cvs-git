@@ -5,7 +5,7 @@
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 {
 	if(EmptyBuffer)
-		while(kbhit());
+		while(kbhit()) getkey();
 
 	return getkey();
 				

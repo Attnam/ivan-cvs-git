@@ -436,14 +436,14 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 		if(ReCalculate && *ReCalculate)
 		{
-			SaveFile.GetBuffer().clear();
-			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
+			SaveFile.ClearFlags();
+			SaveFile.SeekPosBeg(BufferPos);
 		}
 		else
 			return;
 	}
 	else
-		BufferPos = SaveFile.GetBuffer().tellg();
+		BufferPos = SaveFile.TellPos();
 
 	if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in room script!");
@@ -673,14 +673,14 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 		if(ReCalculate && *ReCalculate)
 		{
-			SaveFile.GetBuffer().clear();
-			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
+			SaveFile.ClearFlags();
+			SaveFile.SeekPosBeg(BufferPos);
 		}
 		else
 			return;
 	}
 	else
-		BufferPos = SaveFile.GetBuffer().tellg();
+		BufferPos = SaveFile.TellPos();
 
 	if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in level script!");
@@ -986,7 +986,7 @@ void teamscript::ReadFrom(inputfile& SaveFile)
 
 void gamescript::ReadFrom(inputfile& SaveFile)
 {
-	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.GetBuffer().eof(); Word = SaveFile.ReadWord(false))
+	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
 	{
 		if(Word == "Dungeon")
 		{

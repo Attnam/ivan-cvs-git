@@ -52,18 +52,18 @@ inline outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)
 {
 	if(Dungeon)
 	{
-		SaveFile.GetBuffer().put(1);
+		SaveFile.Put(1);
 		Dungeon->Save(SaveFile);
 	}
 	else
-		SaveFile.GetBuffer().put(0);
+		SaveFile.Put(0);
 
 	return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 {
-	if(SaveFile.GetBuffer().get())
+	if(SaveFile.Get())
 	{
 		Dungeon = new dungeon;
 		Dungeon->Load(SaveFile);

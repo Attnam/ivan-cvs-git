@@ -1,45 +1,42 @@
-#include <fstream>
 #include <cstdio>
 #include <cstdarg>
+#include <fstream>
 
 #include "colorbit.h"
 #include "error.h"
 #include "bitmap.h"
 #include "graphics.h"
+#include "save.h"
 
 colorizablebitmap::colorizablebitmap(std::string FileName)
 {
-	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
+	inputfile File(FileName.c_str(), false);
 
-	if(!File.is_open())
+	if(!File.IsOpen())
 		ABORT("Bitmap %s not found!", FileName.c_str());
 
-	File.seekg(-768, std::ios::end);
-
+	File.SeekPosEnd(-768);
 	Palette = new uchar[768];
+	File.Read((char*)Palette, 768);
+	File.SeekPosBeg(8);
 
-	for(ulong c = 0; c < 768; ++c)
-		Palette[c] = File.get();
+	XSize  =  File.Get();
+	XSize += (File.Get() << 8) + 1;
+	YSize  =  File.Get();
+	YSize += (File.Get() << 8) + 1;
 
-	File.seekg(8, std::ios::beg);
-
-	XSize  =  File.get();
-	XSize += (File.get() << 8) + 1;
-	YSize  =  File.get();
-	YSize += (File.get() << 8) + 1;
-
-	File.seekg(128, std::ios::beg);
+	File.SeekPosBeg(128);
 
 	PaletteBuffer = new uchar[XSize * YSize];
 	uchar* Buffer = PaletteBuffer;
 
 	while(ulong(Buffer) != ulong(PaletteBuffer) + XSize * YSize)
 	{
-		int Char1 = File.get();
+		int Char1 = File.Get();
 
 		if(Char1 > 192)
 		{
-			int Char2 = File.get();
+			int Char2 = File.Get();
 
 			for(; Char1 > 192; Char1--)
                 		*(Buffer++) = Char2;
