@@ -108,6 +108,10 @@ SOURCE=.\Main\Source\char.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\dungeon.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\game.cpp
 # End Source File
 # Begin Source File
@@ -205,6 +209,10 @@ SOURCE=.\Main\Include\command.h
 # Begin Source File
 
 SOURCE=.\Main\Include\drawable.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\dungeon.h
 # End Source File
 # Begin Source File
 

@@ -8,3 +8,4 @@ Savekansion autoluonti.
 Stringquestion näyttää törkeältä jos se tulee scrollien päälle.
 Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
+Camera should be updated after initial dungeon entering.

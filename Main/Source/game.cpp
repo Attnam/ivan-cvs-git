@@ -19,14 +19,16 @@
 #include "message.h"
 #include "pool.h"
 #include "proto.h"
+#include "dungeon.h"
 
-level** game::Level;
-ushort game::Levels = 10, game::Current;
+//level** game::Level;
+ushort /*game::Levels = 10, */game::Current;
 long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
+dungeon* game::Dungeon;
 
 bool game::Flag;
 
@@ -147,28 +149,8 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
-		WorldMap = new worldmap(400, 400);
+		WorldMap = new worldmap(128, 128);
 		WorldMap->Generate();
-
-		Level = new level*[Levels];
-
-		{
-		for(ushort c = 0; c < game::Levels; c++)
-			Level[c] = new level(36, 36, c);
-		}
-
-		vector PerttuPos = vector(5 + rand() % (Level[0]->GetXSize() - 10), 5 + rand() % (Level[0]->GetYSize() - 10));
-
-		{
-		for(ushort c = 0; !Level[0]->MakeRoom(PerttuPos + vector(-2, -2), vector(5, 5), false); c++)
-			PerttuPos = vector(5 + rand() % (Level[0]->GetXSize() - 10), 5 + rand() % (Level[0]->GetYSize() - 10));
-		}
-
-		Level[0]->GetLevelSquare(PerttuPos)->ChangeLevelTerrain(new parquet, new stairsup);
-		Level[0]->SetUpStairs(PerttuPos);
-
-		Level[0]->GetLevelSquare(PerttuPos)->FastAddCharacter(new perttu);
-		//Level[0]->PutPlayerAround(PerttuPos);
 
 		InWilderness = true;
 
@@ -176,56 +158,9 @@ void game::Init(std::string Name)
 		WorldMap->GetSquare(vector(18, 18))->AddCharacter(game::GetPlayer());
 		game::GetPlayer()->SetSquareUnder(WorldMap->GetSquare(vector(18, 18)));
 
-		vector Pos = vector(6 + rand() % (Level[8]->GetXSize() - 12), 6 + rand() % (Level[8]->GetYSize() - 12));
+		Dungeon = new dungeon(10);
 
-		{
-		for(ushort c = 0; !Level[8]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false); c++)
-			Pos = vector(6 + rand() % (Level[8]->GetXSize() - 12), 6 + rand() % (Level[8]->GetYSize() - 12));
-		}
-
-		Level[9]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false, 16);
-
-		Level[8]->GetLevelSquare(Pos)->ChangeLevelTerrain(new parquet, new stairsdown(new pepsi(1)));
-		Level[8]->SetDownStairs(Pos);
-		Level[8]->GetLevelSquare(Pos + vector(0, -2))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector(0,  2))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector(-2, 0))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->GetLevelSquare(Pos + vector( 2, 0))->ChangeLevelTerrain(new parquet, new wall(new pepsi(1)));
-		Level[9]->GetLevelSquare(Pos + vector(0,  2))->ChangeLevelTerrain(new parquet, new stairsup(new pepsi(1)));
-		Level[9]->SetUpStairs(Pos + vector(0,  2));
-		altar* Altar = new altar(new pepsi(1));
-		Altar->SetOwnerGod(16);
-		Level[9]->GetLevelSquare(Pos + vector(0, -2))->ChangeLevelTerrain(new parquet, Altar); //GGG
-
-		DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, Level[9]->GetXSize() - 1, Level[9]->GetYSize() - 1, Level[9]->GetLevelSquare(vector(DoX, DoY))->FastAddCharacter(new swatcommando);)
-		Level[9]->GetLevelSquare(Pos + vector(0, -2))->FastAddCharacter(new oree);
-
-		Level[9]->GetLevelSquare(Pos + vector(0,  2))->FastAddCharacter(new golem(new pepsi(100000)));
-		Level[9]->GetLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
-		Level[9]->GetLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
-
-		{
-		for(ushort c = 0; c < game::GetLevels() - 1; c++)
-		{
-			Level[c]->Generate();
-
-			if(c != 6 && c != 8)
-				Level[c]->CreateDownStairs();
-		}
-		}
-
-		Level[0]->GetLevelSquare(PerttuPos)->GetStack()->Clean();
-
-		Pos = Level[3]->RandomSquare(true);
-		Level[3]->GetLevelSquare(Pos)->FastAddCharacter(new ennerbeast);
-
-		Pos = Level[6]->RandomSquare(true);
-		Level[6]->GetLevelSquare(Pos)->FastAddCharacter(new elpuri);
-
-		{
-		for(ushort c = 0; c < Levels; c++)
-			SaveLevel(SaveName(), c);
-		}
+		Dungeon->Generate();
 
 		/*Current = 0;
 
@@ -252,12 +187,13 @@ void game::Init(std::string Name)
 
 void game::DeInit(void)
 {
-	for(ushort c = 0; c < game::Levels; c++)
+	/*for(ushort c = 0; c < Dungeon->GetLevels(); c++)
 		delete Level[c];
 
-	delete [] Level;
+	delete [] Level;*/
 
 	delete WorldMap;
+	delete Dungeon;
 
 	BurnHellsContents();
 }
@@ -272,12 +208,12 @@ void game::Run(void)
 			break;
 
 		if(!InWilderness)
-			Level[Current]->HandleCharacters();
+			Dungeon->GetLevel(Current)->HandleCharacters();
 		else
 			game::GetPlayer()->SetHasActed(false);*/
 
 		if(!InWilderness)
-			Level[Current]->HandleCharacters();	// Temporary
+			Dungeon->GetLevel(Current)->HandleCharacters();	// Temporary
 
 		objectpool::Be();
 
@@ -362,15 +298,15 @@ bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX =
 	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
 		return false;
 
-	//Level[Current]->GetLevelSquare(vector(CX, CY))->SetFlag();
+	//Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->SetFlag();
 	GetCurrentArea()->GetSquare(vector(CX, CY))->SetFlag();
-	//GGG Level[Current]->GetLevelSquare(vector(CX, CY))->UpdateItemMemory();
+	//GGG Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->UpdateItemMemory();
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
 		if(!InWilderness)
-			return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+			return GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 		else
 			return true;
 }
@@ -689,7 +625,7 @@ bool game::Save(std::string SaveName)
 		return false;
 
 	SaveFile << PlayerName;
-	SaveFile.write((char*)&Levels, sizeof(Levels));
+	//SaveFile.write((char*)&Levels, sizeof(Levels));
 	SaveFile.write((char*)&Current, sizeof(Current));
 	SaveFile.write((char*)&Camera, sizeof(Camera));
 	SaveFile.write((char*)&WizardMode, sizeof(WizardMode));
@@ -705,10 +641,12 @@ bool game::Save(std::string SaveName)
 	srand(Time);
 	SaveFile.write((char*)&Time, sizeof(Time));
 
+	Dungeon->Save(SaveFile);
+
 	if(InWilderness)
 		WorldMap->Save(SaveFile);
 	else
-		SaveLevel(SaveName, Current, false);
+		Dungeon->SaveLevel(SaveName, Current, false);
 
 	{
 	for(ushort c = 1; GetGod(c); c++)
@@ -719,7 +657,7 @@ bool game::Save(std::string SaveName)
 
 	SaveFile.write((char*)&Pos, sizeof(Pos));
 
-	for(ushort c = 0; c < GetLevels(); c++)
+	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
 		SaveFile << LevelMsg[c];
 
 	return true;
@@ -733,7 +671,7 @@ bool game::Load(std::string SaveName)
 		return false;
 
 	SaveFile >> PlayerName;
-	SaveFile.read((char*)&Levels, sizeof(Levels));
+	//SaveFile.read((char*)&Levels, sizeof(Levels));
 	SaveFile.read((char*)&Current, sizeof(Current));
 	SaveFile.read((char*)&Camera, sizeof(Camera));
 	SaveFile.read((char*)&WizardMode, sizeof(WizardMode));
@@ -749,12 +687,15 @@ bool game::Load(std::string SaveName)
 	SaveFile.read((char*)&Time, sizeof(Time));
 	srand(Time);
 
-	Level = new level*[Levels];
+	//Level = new level*[Levels];
 
-	{
+	Dungeon = new dungeon;
+	Dungeon->Load(SaveFile);
+
+	/*{
 	for(ushort c = 0; c < Levels; c++)
 		Level[c] = 0;
-	}
+	}*/
 
 	if(InWilderness)
 	{
@@ -762,7 +703,7 @@ bool game::Load(std::string SaveName)
 		WorldMap->Load(SaveFile);
 	}
 	else
-		LoadLevel(SaveName);
+		Dungeon->LoadLevel(SaveName);
 
 	{
 	for(ushort c = 1; GetGod(c); c++)
@@ -775,7 +716,7 @@ bool game::Load(std::string SaveName)
 
 	SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
 
-	for(ushort c = 0; c < GetLevels(); c++)
+	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
 		SaveFile >> LevelMsg[c];
 
 	return true;
@@ -797,7 +738,7 @@ std::string game::SaveName(void)
 
 bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
-	ushort Emit = Level[Current]->GetLevelSquare(vector(OX, OY))->GetEmitation();
+	ushort Emit = GetLevel(Current)->GetLevelSquare(vector(OX, OY))->GetEmitation();
 
 	ushort MaxSize = (game::GetLuxTableSize()[Emit] >> 1);
 
@@ -806,22 +747,22 @@ bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 	else
 		Emit = game::GetLuxTable()[Emit][long(CX) - long(OX) + (game::GetLuxTableSize()[Emit] >> 1)][long(CY) - long(OY) + (game::GetLuxTableSize()[Emit] >> 1)];
 
-	Level[Current]->GetLevelSquare(vector(CX, CY))->AlterLuminance(vector(OX, OY), Emit);
+	Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->AlterLuminance(vector(OX, OY), Emit);
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
-	Level[Current]->GetLevelSquare(vector(CX, CY))->NoxifyEmitter(vector(OX, OY));
+	Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->NoxifyEmitter(vector(OX, OY));
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -983,7 +924,7 @@ bool game::EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)  // CurrentX =
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 long game::GodScore(void)
@@ -1037,18 +978,18 @@ void game::TriggerQuestForMaakotkaShirt(void)
 {
 	ADD_MESSAGE("The dungeon underneath vibrates violently.");
 
-	LoadLevel(SaveName(), 6);
-	LoadLevel(SaveName(), 7);
+	Dungeon->LoadLevel(SaveName(), 6);
+	Dungeon->LoadLevel(SaveName(), 7);
 
-	vector Pos = Level[6]->CreateDownStairs();
+	vector Pos = GetLevel(6)->CreateDownStairs();
 
-	Level[7]->PutStairs(Pos);
-	Level[7]->AttachPos(Pos);
+	GetLevel(7)->PutStairs(Pos);
+	GetLevel(7)->AttachPos(Pos);
 
 	LevelMsg[6] = "You feel something has changed since you were last here...";
 
-	SaveLevel(SaveName(), 6);
-	SaveLevel(SaveName(), 7);
+	Dungeon->SaveLevel(SaveName(), 6);
+	Dungeon->SaveLevel(SaveName(), 7);
 }
 
 void game::CalculateGodNumber(void)
@@ -1124,39 +1065,12 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 
 }
 
-void game::SaveLevel(std::string SaveName, ushort Index, bool DeleteAfterwards)
-{
-	std::ofstream SaveFile((SaveName + ".l" + Index).c_str(), std::ios::out | std::ios::binary);
-
-	if(!SaveFile.is_open())
-		ABORT("Level lost!");
-
-	Level[Index]->Save(SaveFile);
-
-	if(DeleteAfterwards)
-	{
-		delete Level[Index];
-		Level[Index] = 0;
-	}
-}
-
-void game::LoadLevel(std::string SaveName, ushort Index)
-{
-	std::ifstream SaveFile((SaveName + ".l" + Index).c_str(), std::ios::in | std::ios::binary);
-
-	if(!SaveFile.is_open())
-		ABORT("Level gone!");
-
-	Level[Index] = new level;
-	Level[Index]->Load(SaveFile);
-}
-
 void game::RemoveSaves(void)
 {
 	remove((SaveName() + ".sav").c_str());
 	remove((AutoSaveFileName + ".sav").c_str());
 
-	for(ushort c = 0; c < Levels; c++)
+	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
 	{
 		remove((SaveName() + ".l" + c).c_str());
 		remove((AutoSaveFileName + ".l" + c).c_str());
@@ -1171,3 +1085,22 @@ void game::SetPlayer(character* NP)
 		Player->SetIsPlayer(true);
 }
 
+area* game::GetCurrentArea(void)
+{
+	return !InWilderness ? (area*)Dungeon->GetLevel(Current) : (area*)WorldMap;
+}
+
+level* game::GetCurrentLevel(void)
+{
+	return Dungeon->GetLevel(Current);
+}
+
+level* game::GetLevel(ushort Index)
+{
+	return Dungeon->GetLevel(Index);
+}
+
+uchar game::GetLevels(void)
+{
+	return Dungeon->GetLevels();
+}

@@ -40,4 +40,6 @@ Menujen koristelu (pentagrammeja ja ehkä fadeja)
 Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistusongelmia eräillä henkilöillä)
 Syvyysefekti semiportaattomalla tummennuksella toteutettuna.
 Kloonaus.
+Rennen pää.
+Garbage can.
 Size of player increases from eating.

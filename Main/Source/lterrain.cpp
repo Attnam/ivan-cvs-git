@@ -7,6 +7,7 @@
 #include "lsquare.h"
 #include "message.h"
 #include "proto.h"
+#include "dungeon.h"
 
 bool overlevelterrain::GoUp(character* Who) // Try to go up
 {
@@ -14,9 +15,9 @@ bool overlevelterrain::GoUp(character* Who) // Try to go up
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
-		game::SaveLevel();
+		game::GetDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
-		game::LoadLevel();
+		game::GetDungeon()->LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
@@ -24,9 +25,10 @@ bool overlevelterrain::GoUp(character* Who) // Try to go up
 	}
 	else
 	{
-	if(Who == game::GetPlayer())
-		ADD_MESSAGE("You can't go up.");
-	return false;
+		if(Who == game::GetPlayer())
+			ADD_MESSAGE("You can't go up.");
+
+		return false;
 	}
 }
 
@@ -36,9 +38,9 @@ bool overlevelterrain::GoDown(character* Who) // Try to go down
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
-		game::SaveLevel();
+		game::GetDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
-		game::LoadLevel();
+		game::GetDungeon()->LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
@@ -46,9 +48,10 @@ bool overlevelterrain::GoDown(character* Who) // Try to go down
 	}
 	else
 	{
-	if(Who == game::GetPlayer())
-		ADD_MESSAGE("You can't go down.");
-	return false;
+		if(Who == game::GetPlayer())
+			ADD_MESSAGE("You can't go down.");
+
+		return false;
 	}
 }
 
@@ -98,9 +101,9 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
-		game::SaveLevel();
+		game::GetDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
-		game::LoadLevel();
+		game::GetDungeon()->LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
@@ -173,9 +176,9 @@ bool stairsdown::GoDown(character* Who)  // Try to go down
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
-		game::SaveLevel();
+		game::GetDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
-		game::LoadLevel();
+		game::GetDungeon()->LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();

@@ -29,6 +29,7 @@ class item;
 class command;
 class worldmap;
 class square;
+class dungeon;
 
 /* Presentation of the game class */
 
@@ -41,8 +42,8 @@ public:
 	static int Menu(std::string sMS); // hihi :-) (MENU)
 	static int GetMoveCommandKey(uchar Index)	{ return MoveCommandKey[Index]; }
 	static const vector GetMoveVector(uchar Index)	{ return MoveVector[Index]; }
-	static area* GetCurrentArea(void)	{ return !InWilderness ? (area*)Level[Current] : (area*)WorldMap; }
-	static level* GetCurrentLevel(void)	{ return Level[Current]; }
+	static area* GetCurrentArea(void);
+	static level* GetCurrentLevel(void);
 	static bool FlagHandler(ushort, ushort, ushort, ushort);
 	static bool DoLine(int, int, int, int, bool (*Proc)(ushort, ushort, ushort, ushort));
 	static class panel
@@ -60,7 +61,7 @@ public:
 	static void UpDateCameraX(void);
 	static void UpDateCameraY(void);
 	static bool Flag;
-	static level* GetLevel(ushort Index) { return Level[Index]; }
+	static level* GetLevel(ushort);
 	static void InitLuxTable(void);
 	static void DeInitLuxTable(void);
 	static const char* Insult(void);
@@ -87,7 +88,7 @@ public:
 	static bool KeyIsOK(char);
 	static void SetCurrent(ushort What) { Current = What; }
 	static ushort GetCurrent(void) { return Current; }
-	static ushort GetLevels(void) { return Levels; }
+	//static ushort GetLevels(void) { return Levels; }
 	static int GetMoveCommandKey(vector, vector);
 	static void DrawEverythingNoBlit(bool = true);
 	static god* GetGod(uchar Index) { return God[Index]; }
@@ -119,8 +120,6 @@ public:
 	static std::string GetAutoSaveFileName(void) { return AutoSaveFileName; }
 	static uchar DirectionQuestion(std::string, uchar = 8, bool = true);
 	static command* GetCommand(ushort Index) { return Command[Index]; }
-	static void SaveLevel(std::string = SaveName(), ushort = GetCurrent(), bool = true);
-	static void LoadLevel(std::string = SaveName(), ushort = GetCurrent());
 	static void RemoveSaves(void);
 	static bool GetInWilderness(void) { return InWilderness; }
 	static void SetInWilderness(bool What) { InWilderness = What; }
@@ -130,13 +129,16 @@ public:
 	static void SetSquareInLoad(square* What) { SquareInLoad = What; }
 	static area* GetAreaInLoad(void) { return AreaInLoad; }
 	static square* GetSquareInLoad(void) { return SquareInLoad; }
+	static dungeon* GetDungeon(void) { return Dungeon; }
+	static uchar GetLevels(void);
 private:
 	static dynarray<character*> Hell;
 	static std::string Alignment[];
 	static god* God[];
 	static unsigned int CountChars(char cSF,std::string sSH); // (MENU)
-	static level** Level;
-	static ushort Levels, Current;
+	//static level** Level;
+	//static ushort Levels, Current;
+	static ushort Current;
 	static int MoveCommandKey[DIRECTION_COMMAND_KEYS];
 	static const vector MoveVector[DIRECTION_COMMAND_KEYS];
 	static ushort*** LuxTable;
@@ -160,6 +162,7 @@ private:
 	static worldmap* WorldMap;
 	static area* AreaInLoad;
 	static square* SquareInLoad;
+	static dungeon* Dungeon;
 };
 
 #endif
