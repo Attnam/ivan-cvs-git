@@ -1120,7 +1120,6 @@ bool game::HandleQuitMessage()
 		    switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
 #else
 		    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
-		      GetCurrentArea()->SendNewDrawRequest();
 #endif
 			{
 			case IDYES:
@@ -1128,6 +1127,7 @@ bool game::HandleQuitMessage()
 				Save();
 				break;
 			case IDCANCEL:
+				GetCurrentArea()->SendNewDrawRequest();
 				return false;
 			default:
 				configuration::Save();

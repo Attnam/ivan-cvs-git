@@ -287,7 +287,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 	long hFile;
 	int Check = 0;
 	felist Buffer("Choose a file and be sorry:", TopicColor);
-	hFile = _findfirst(DirectoryName + "*.sav", &Found);
+	hFile = _findfirst((DirectoryName + "*.sav").c_str(), &Found);
 
 	if(hFile == -1L)
 	{
