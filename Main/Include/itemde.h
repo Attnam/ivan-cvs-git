@@ -433,7 +433,8 @@ class ITEM
 (
   potion,
   item,
-  InitMaterials(2, new glass, RAND() % 2 ? (material*)new water : (material*)new omleurine),
+  //  InitMaterials(2, new glass, RAND() % 2 ? (material*)new water : (material*)new omleurine),
+  GeneratePotionMaterials(),
   {
     SetSize(30);
   },
@@ -455,6 +456,7 @@ class ITEM
   virtual uchar GetConsumeMaterial() const { return 1; }
   virtual item* BetterVersion() const;
   virtual std::string GetConsumeVerb() const { return std::string("drinking"); }
+  virtual void GeneratePotionMaterials();
  protected:
   virtual ushort StrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,160); }

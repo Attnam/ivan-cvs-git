@@ -3628,3 +3628,17 @@ std::string character::Name(uchar Case) const
   else
     return NameNormal(Case, Article(), Adjective());
 } 
+
+void character::ReceiveHeal(long Amount)
+{
+  if(GetIsPlayer())
+    ADD_MESSAGE("You feel better.");
+  else
+    if(GetLSquareUnder()->CanBeSeen())
+      ADD_MESSAGE("%s looks healthier.", CNAME(DEFINITE));
+
+  if(GetHP() + Amount > GetMaxHP())
+    SetHP(GetMaxHP());
+  else
+    SetHP(GetHP() + Amount);
+}

@@ -1023,5 +1023,22 @@ class MATERIAL
  protected:
   virtual std::string NameStem() const { return "ruby"; }
 );
- 
+
+class MATERIAL
+(
+  healingliquid,
+  material,
+ public:
+  virtual ushort StrengthValue() const { return 1; }
+  virtual uchar GetConsumeType() const { return LIQUID; }
+  virtual ushort GetDensity() const { return 1100; }
+  virtual ushort OfferValue() const { return 70; }
+  virtual void EatEffect(character*, float, float);
+  virtual void HitEffect(character* Enemy);
+  virtual short NutritionValue() const { return 30; }
+  virtual ushort GetColor() const { return MAKE_RGB(128, 0, 0); }
+  virtual ulong RawPrice() const { return GetVolume() >> 2; }
+ protected:
+  virtual std::string NameStem() const { return "healing liquid"; }
+); 
 #endif

@@ -307,6 +307,7 @@ class character : public type, public entity
   virtual bool ShowClassName() const { return true; }
  
  virtual bool CanBeAssignedAName() const { return true; }
+ virtual void ReceiveHeal(long);
  protected:
 
   virtual void CreateBodyParts();

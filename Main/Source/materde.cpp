@@ -85,3 +85,16 @@ void koboldflesh::EatEffect(character* Eater, float Amount, float NPModifier)
   MinusAmount(Amount);
 }
 
+void healingliquid::EatEffect(character* Eater, float Amount, float NPModifier)
+{
+  if(Amount >= Volume)
+    Eater->ReceiveHeal(long(Volume > Amount ? Amount : Volume) / 100);
+
+  NormalFoodEffect(Eater, Amount, NPModifier);
+  MinusAmount(Amount);
+}
+
+void healingliquid::HitEffect(character* Enemy)
+{
+  Enemy->ReceiveHeal(Volume / 100);
+}

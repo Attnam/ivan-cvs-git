@@ -1287,3 +1287,12 @@ bool mine::GetStepOnEffect(character* Stepper)
 
   return false;
 }
+
+void potion::GeneratePotionMaterials()
+{ 
+  switch(RAND() % 2) 
+    {
+    case 0: InitMaterials(2, new glass, new omleurine); break;
+    case 1: InitMaterials(2, new glass, new healingliquid); break;
+    }
+}

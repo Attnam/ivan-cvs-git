@@ -1,3 +1,10 @@
+2002-03-30  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Source/materde.cpp: healingliquid::EatEffect and HitEffect added
+	* Main/Include/materde.h: healingliquid added
+	* Main/Include/itemde.h: 
+	* Main/Source/itemde.cpp: added GeneratePotionMaterials() to bottle for generating half bottles with omle urine and half with healingliquid 
+
 March 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Item.pcx: broken weapons (include banana), land mine and set & unset bear traps added by Kahvi
