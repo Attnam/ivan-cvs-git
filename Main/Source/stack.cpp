@@ -46,15 +46,16 @@ ushort stack::AddItem(item* ToBeAdded)
 	{
 		SetItems(GetItems() + 1);
 
-		GetLevelSquareUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
+		if(GetSquareUnder())
+			GetLevelSquareUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
 	}
 	else
 		SetItems(GetItems() + 1);
 
-	if(GetSquareUnder()->CanBeSeen())
+	if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
 		GetSquareUnder()->UpdateMemorizedDescription();
 
-	if(SquareUnder)
+	if(GetSquareUnder())
 		SquareUnder->SendNewDrawRequest();
 
 	return GetItems() - 1;
@@ -94,13 +95,13 @@ item* stack::RemoveItem(ushort Index)
 
 		Optimize(0);
 
-		if(IEmit > GetEmitation())
+		if(IEmit > GetEmitation() && GetSquareUnder())
 			GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
 
-		if(GetLevelSquareUnder()->CanBeSeen())
+		if(GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
 			GetLevelSquareUnder()->UpdateMemorizedDescription();
 
-		if(SquareUnder)
+		if(GetSquareUnder())
 			SquareUnder->SendNewDrawRequest();
 
 		return Removed;
@@ -157,16 +158,16 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 		}
 		else
 		{
-			if(MoveTo->SquareUnder)
+			if(MoveTo->GetSquareUnder())
 				MoveTo->SquareUnder->SendNewDrawRequest();
 
 			ToBeReturned = MoveTo->AddItem(GetItem(Index));
 			RemoveItem(Index);
 
-			if(GetLevelSquareUnder()->CanBeSeen())
+			if(GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
 				GetLevelSquareUnder()->UpdateMemorizedDescription();
 
-			if(MoveTo->GetLevelSquareUnder()->CanBeSeen())
+			if(MoveTo->GetSquareUnder() && MoveTo->GetLevelSquareUnder()->CanBeSeen())
 				MoveTo->GetLevelSquareUnder()->UpdateMemorizedDescription();
 		}
 

@@ -2159,6 +2159,7 @@ bool character::Polymorph()
 
 	GetSquareUnder()->RemoveCharacter();
 	GetSquareUnder()->AddCharacter(NewForm);
+	SetSquareUnder(0);
 
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, NewForm->GetStack());

@@ -473,6 +473,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		ushort LXPos = LPos.X, LYPos = LPos.Y;
 
+		Map[LXPos][LYPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate()); //Bug! Wrong room!
+		Map[LXPos][LYPos]->Clean();
+
 		FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
 		FlagMap[LXPos][LYPos] |= PREFERRED;
 
@@ -528,9 +531,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 		}
 
 		Door.Add(vector2d(XPos, YPos));
-
-		Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate());
-		Map[XPos][YPos]->Clean();
 	}
 
 	for(ushort c = 0; c < RoomScript->GetSquare().size(); ++c)

@@ -14,3 +14,5 @@ Lookmode + F4.
 Fullscreen + F10.
 Ligths go off when polymorph happens.
 Ligths should be updated when terrain changes.
+Material volume is undefined in 
+The door material bug.

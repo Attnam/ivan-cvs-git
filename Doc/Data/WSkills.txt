@@ -49,4 +49,4 @@ Level	Succesful hits	Unuse penalty	Idle Turns for
 10	50000		500/5				65
 
 Hit limit is 65535. Skill level confers a bonus of 20% to damage and speed
-from the first level and 5% per level thereafter.
+in the first level and 5% per level thereafter.

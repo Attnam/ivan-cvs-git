@@ -1,5 +1,5 @@
 All characters are divided into teams. Teams may have a leader,
-in which case all team members will follow and oby him/her/it.
+in which case all team members will follow and obey him/her/it.
 Teams are related to each other as follows:
 
 HOSTILE
