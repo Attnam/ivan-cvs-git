@@ -69,5 +69,3 @@ crown the faithful as his/her champion
      This could also be an independent command, since receiving altar bonuses when praying may
      become a habit for some players, and so the "Do you want to convert the altar?" prompt would
      become quite annoying.
-
-

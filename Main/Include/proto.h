@@ -64,7 +64,7 @@ public:
 	static character*		CreateMonster(ushort);
 	static item*			CreateItem(ushort);
 	static item*			CreateItem(std::string);
-	static material*		CreateRandomSolidMaterial(ulong);
+	static material*		CreateRandomSolidMaterial(ulong = 0);
 	static material*		CreateMaterial(ushort, ulong);
 	static material*		CreateMaterial(std::string, ulong);
 };

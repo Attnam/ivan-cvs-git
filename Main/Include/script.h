@@ -75,21 +75,35 @@ public:
 	contentscript() : ContentType(0) {}
 	void ReadFrom(inputfile&);
 	ushort* GetMaterialType(ushort, bool = true) const;
+	ulong* GetMaterialVolume(ushort, bool = true) const;
 	ushort* GetContentType(bool AOE = true) const { SCRIPT_RETURN(ContentType) }
 	type* Instantiate() const;
 protected:
-	std::vector<ushort*> MaterialType;
+	std::vector<std::pair<ushort*, ulong*> > MaterialData;
 	ushort* ContentType;
 };
 
 template <class type> ushort* contentscript<type>::GetMaterialType(ushort Index, bool AOE) const
 {
-	if(Index < MaterialType.size())
-		return MaterialType[Index];
+	if(Index < MaterialData.size() && MaterialData[Index].first)
+		return MaterialData[Index].first;
 	else
 	{
 		if(AOE)
-			ABORT("Undefined script member MaterialType[%d] sought!", Index);
+			ABORT("Undefined script member MaterialData[%d] sought!", Index);
+
+		return 0;
+	}
+}
+
+template <class type> ulong* contentscript<type>::GetMaterialVolume(ushort Index, bool AOE) const
+{
+	if(Index < MaterialData.size() && MaterialData[Index].second)
+		return MaterialData[Index].second;
+	else
+	{
+		if(AOE)
+			ABORT("Undefined script member MaterialData[%d] sought!", Index);
 
 		return 0;
 	}

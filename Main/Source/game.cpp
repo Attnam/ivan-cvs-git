@@ -187,7 +187,7 @@ void game::Init(std::string Name)
 		{
 		for(ushort c = 1; GetGod(c); ++c)
 		{
-			GetGod(c)->SetRelation(0);
+			GetGod(c)->SetRelation(1000);
 			GetGod(c)->SetTimer(0);
 		}
 		}
@@ -778,22 +778,20 @@ void game::ShowLevelMessage()
 void game::TriggerQuestForMaakotkaShirt()
 {
 	ADD_MESSAGE("The dungeon underneath vibrates violently.");
-	GetCurrentDungeon()->LoadLevel(SaveName(), 6);
-	GetLevel(6)->CreateStairs(false);
-	GetCurrentDungeon()->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
-	GetCurrentDungeon()->SaveLevel(SaveName(), 6);
+	GetDungeon(0)->PrepareLevel(6);
+	GetDungeon(0)->GetLevel(6)->CreateStairs(false);
+	GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
+	GetDungeon(0)->SaveLevel(SaveName(), 6);
 }
 
 void game::CalculateGodNumber()
 {
 	for(ushort c = 1;; ++c)
-	{
 		if(game::GetGod(c) == 0)
 		{
 			SetGodNumber(c - 1);
 			break;
 		}
-	}
 }
 
 uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)

@@ -176,5 +176,3 @@ Favours:
 Punishments:
 -bolt of black energy
 -(sends Greater Dark Frogs and Bill's wills to hunt the player)
-
-

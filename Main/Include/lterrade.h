@@ -7,7 +7,7 @@ class GROUNDLEVELTERRAIN
 (
 	parquet,
 	groundlevelterrain,
-	InitMaterials(new wood(1)),
+	InitMaterials(new wood),
 	{
 	},
 public:
@@ -22,7 +22,7 @@ class GROUNDLEVELTERRAIN
 (
 	floor,
 	groundlevelterrain,
-	InitMaterials(new gravel(1)),
+	InitMaterials(new gravel),
 	{
 	},
 public:
@@ -37,7 +37,7 @@ class GROUNDLEVELTERRAIN
 (
 	grassterrain,
 	groundlevelterrain,
-	InitMaterials(new grass(1)),
+	InitMaterials(new grass),
 	{
 	},
 public:
@@ -53,7 +53,7 @@ class OVERLEVELTERRAIN
 (
 	earth,
 	overlevelterrain,
-	InitMaterials(new moraine(1)),
+	InitMaterials(new moraine),
 	{
 	},
 public:
@@ -71,7 +71,7 @@ class OVERLEVELTERRAIN
 (
 	wall,
 	overlevelterrain,
-	InitMaterials(new stone(1)),
+	InitMaterials(new stone),
 	{
 	},
 public:
@@ -89,7 +89,7 @@ class OVERLEVELTERRAIN
 (
 	empty,
 	overlevelterrain,
-	InitMaterials(new air(1)),
+	InitMaterials(new air),
 	{
 	},
 public:
@@ -104,7 +104,7 @@ class OVERLEVELTERRAIN
 (
 	door,
 	overlevelterrain,
-	InitMaterials(new stone(1)),
+	InitMaterials(new stone),
 	{
 		SetIsOpen(false);
 		UpdatePicture();
@@ -132,7 +132,7 @@ class OVERLEVELTERRAIN
 (
 	stairsup,
 	overlevelterrain,
-	InitMaterials(new stone(1)),
+	InitMaterials(new stone),
 	{
 	},
 public:
@@ -149,7 +149,7 @@ class OVERLEVELTERRAIN
 (
 	stairsdown,
 	overlevelterrain,
-	InitMaterials(new stone(1)),
+	InitMaterials(new stone),
 	{
 	},
 public:
@@ -166,7 +166,7 @@ class OVERLEVELTERRAIN
 (
 	altar,
 	overlevelterrain,
-	InitMaterials(new stone(1)),
+	InitMaterials(new stone),
 	{
 		SetOwnerGod(rand() % game::GetGodNumber() + 1);
 	},
@@ -191,7 +191,7 @@ class OVERLEVELTERRAIN
 (
 	throne,
 	overlevelterrain,
-	InitMaterials(new gold(1)),
+	InitMaterials(new gold),
 	{
 	},
 public:

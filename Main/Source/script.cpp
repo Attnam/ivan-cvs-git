@@ -67,16 +67,35 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 	for(ushort c = 0;; ++c)
 		if(Index = protocontainer<material>::SearchCodeName(Word))
 		{
-			if(c < MaterialType.size())
-				*MaterialType[c] = Index;
+			if(c < MaterialData.size())
+			{
+				*MaterialData[c].first = Index;
+
+				Word = SaveFile.ReadWord();
+
+				if(Word == "(")
+				{
+					*MaterialData[c].second = SaveFile.ReadNumber(ValueMap);
+					Word = SaveFile.ReadWord();
+				}
+			}
 			else
 			{
 				ushort* NewIndex = new ushort;
+				ulong* NewVolume = 0;
 				*NewIndex = Index;
-				MaterialType.push_back(NewIndex);
-			}
 
-			Word = SaveFile.ReadWord();
+				Word = SaveFile.ReadWord();
+
+				if(Word == "(")
+				{
+					NewVolume = new ulong;
+					*NewVolume = SaveFile.ReadNumber(ValueMap);
+					Word = SaveFile.ReadWord();
+				}
+
+				MaterialData.push_back(std::pair<ushort*, ulong*>(NewIndex, NewVolume));
+			}
 		}
 		else
 			break;
@@ -102,8 +121,8 @@ template <class type> type* contentscript<type>::Instantiate() const
 
 	type* Instance = protocontainer<type>::GetProto(*ContentType)->Clone();
 
-	for(ushort c = 0; c < MaterialType.size(); ++c)
-		Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialType[c])->Clone(0));
+	for(ushort c = 0; c < MaterialData.size(); ++c)
+		Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialData[c].first)->Clone(MaterialData[c].second ? *MaterialData[c].second : 0));
 
 	return Instance;
 }

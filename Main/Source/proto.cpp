@@ -50,23 +50,19 @@ item* protosystem::BalancedCreateItem()
 {
 	ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
 
-	{
-	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-	{
+	ushort c;
+
+	for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 		SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
-	}
-	}
 		
 	RandomOne = 1 + rand() % (SumOfPossibilities);
 	
-	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+	for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 	{
 		Counter += protocontainer<item>::GetProto(c)->Possibility();
 
 		if(Counter >= RandomOne)
-		{
 			return CreateItem(c);
-		}
 	}
 
 	ABORT("Balanced Create Item kaatuuu");
@@ -101,6 +97,7 @@ material* protosystem::CreateMaterial(std::string What, ulong Volume)
 
 	return 0;
 }
+
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
 	for(ushort c = 1 + rand() % protocontainer<material>::GetProtoAmount();; c = 1 + rand() % protocontainer<material>::GetProtoAmount())

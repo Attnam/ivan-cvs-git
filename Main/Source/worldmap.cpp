@@ -125,7 +125,7 @@ void worldmap::Generate()
 		std::vector<continent*> PerfectForAttnam;
 
 		for(uchar c = 1; c < Continent.size(); ++c)
-			if(Continent[c]->Size() > 50 && Continent[c]->Size() < 200 && Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) > 1)
+			if(Continent[c]->Size() > 50 && Continent[c]->Size() < 200 && Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGroundTerrainAmount(snow::StaticType()))
 				PerfectForAttnam.push_back(Continent[c]);
 
 		if(!PerfectForAttnam.size())
@@ -141,7 +141,7 @@ void worldmap::Generate()
 
 			ushort CounterTwo = 0;
 
-			for(ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());; ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()))
+			for(ElpuriCavePos = PerttuLikes->GetRandomMember(snow::StaticType());; ElpuriCavePos = PerttuLikes->GetRandomMember(snow::StaticType()))
 			{
 				if(ElpuriCavePos != AttnamPos && (ElpuriCavePos.X - AttnamPos.X) * (ElpuriCavePos.X - AttnamPos.X) + (ElpuriCavePos.Y - AttnamPos.Y) * (ElpuriCavePos.Y - AttnamPos.Y) < 50)
 					break;

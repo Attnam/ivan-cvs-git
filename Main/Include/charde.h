@@ -72,7 +72,7 @@ class CHARACTER
 (
 	human,
 	humanoid,
-	InitMaterials(new humanflesh(60000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(150 + rand() % 51);
 		SetAgility(15 + rand() % 11);
@@ -97,7 +97,7 @@ class CHARACTER
 (
 	perttu,
 	human,
-	InitMaterials(new humanflesh(80000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(200);
 		SetAgility(80);
@@ -140,7 +140,7 @@ class CHARACTER
 (
 	farmer,
 	human,
-	InitMaterials(new humanflesh(30000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(170);
 		SetAgility(5);
@@ -165,7 +165,7 @@ class CHARACTER
 (
 	cityguard,
 	human,
-	InitMaterials(new humanflesh(60000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(180);
 		SetAgility(20);
@@ -192,7 +192,7 @@ class CHARACTER
 (
 	shopkeeper,
 	human,
-	InitMaterials(new humanflesh(100000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(160);
 		SetAgility(5);
@@ -217,7 +217,7 @@ class CHARACTER
 (
 	oree,
 	character,
-	InitMaterials(new pepsi(110000)),
+	InitMaterials(new pepsi),
 	{
 		SetSize(225);
 		SetAgility(40);
@@ -251,7 +251,7 @@ class CHARACTER
 (
 	swatcommando,
 	character,
-	InitMaterials(new humanflesh(110000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(200);
 		SetAgility(30);
@@ -279,7 +279,7 @@ class CHARACTER
 (
 	ennerbeast,
 	character,
-	InitMaterials(new ennerbeastflesh(30000)),
+	InitMaterials(new ennerbeastflesh),
 	{
 		SetSize(150);
 		SetAgility(10);
@@ -319,7 +319,7 @@ class CHARACTER
 (
 	darkfrog,
 	frog,
-	InitMaterials(new darkfrogflesh(1000)),
+	InitMaterials(new darkfrogflesh),
 	{
 		SetSize(15);
 		SetAgility(20);
@@ -341,7 +341,7 @@ class CHARACTER
 (
 	elpuri,
 	darkfrog,
-	InitMaterials(new elpuriflesh(8000000)),
+	InitMaterials(new elpuriflesh),
 	{
 		SetSize(300);
 		SetAgility(50);
@@ -368,7 +368,7 @@ class CHARACTER
 (
 	billswill,
 	character,
-	InitMaterials(new air(500000)),
+	InitMaterials(new air),
 	{
 		SetSize(100);
 		SetAgility(40);
@@ -398,7 +398,7 @@ class CHARACTER
 (
 	fallenvalpurist,
 	character,
-	InitMaterials(new bone(60000)),
+	InitMaterials(new bone),
 	{
 		SetSize(150);
 		SetAgility(10);
@@ -427,7 +427,7 @@ class CHARACTER
 (
 	froggoblin,
 	character,
-	InitMaterials(new goblinoidflesh(25000)),
+	InitMaterials(new goblinoidflesh),
 	{
 		SetSize(100);
 		SetAgility(15);
@@ -463,7 +463,7 @@ class CHARACTER
 (
 	conicalmommo,
 	mommo,
-	InitMaterials(new brownslime(250000)),
+	InitMaterials(new brownslime),
 	{
 		SetSize(100);
 		SetAgility(1);
@@ -487,7 +487,7 @@ class CHARACTER
 (
 	flatmommo,
 	mommo,
-	InitMaterials(new brownslime(150000)),
+	InitMaterials(new brownslime),
 	{
 		SetSize(50);
 		SetAgility(2);
@@ -510,7 +510,7 @@ class CHARACTER
 (
 	golem,
 	character,
-	InitMaterials(protosystem::CreateRandomSolidMaterial(100000)),
+	InitMaterials(protosystem::CreateRandomSolidMaterial()),
 	{
 		SetSize(250);
 		SetAgility(5);
@@ -539,7 +539,7 @@ class CHARACTER
 (
 	wolf,
 	character,
-	InitMaterials(new wolfflesh(40000)),
+	InitMaterials(new wolfflesh),
 	{
 		SetSize(100);
 		SetAgility(20);
@@ -565,7 +565,7 @@ class CHARACTER
 (
 	dog,
 	character,
-	InitMaterials(new dogflesh(30000)),
+	InitMaterials(new dogflesh),
 	{
 		SetSize(75);
 		SetAgility(15);
@@ -593,7 +593,7 @@ class CHARACTER
 (
 	spider,
 	character,
-	InitMaterials(new spiderflesh(100)),
+	InitMaterials(new spiderflesh),
 	{
 		SetSize(10);
 		SetAgility(4);
@@ -620,7 +620,7 @@ class CHARACTER
 (
 	jackal,
 	character,
-	InitMaterials(new jackalflesh(20000)),
+	InitMaterials(new jackalflesh),
 	{
 		SetSize(80);
 		SetAgility(6);
@@ -646,7 +646,7 @@ class CHARACTER
 (
 	donkey,
 	character,
-	InitMaterials(new donkeyflesh(40000)),
+	InitMaterials(new donkeyflesh),
 	{
 		SetSize(150);
 		SetAgility(4);

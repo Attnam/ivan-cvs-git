@@ -277,25 +277,16 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
-
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
 
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
 		}
 
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
@@ -351,15 +342,19 @@ Dungeon 1;
 			Character=farmer;
 		}
 
-		Square, Pos 30,63;
+		Square, Random { Walkable=true; }
 		{
-			Item=potion;
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
 		}
 
 		Square, Pos 31,63;
 		{
 			IsWorldMapEntry=true;
-			Item=glass potion;
 		}
 
 		Room 0;
@@ -436,8 +431,8 @@ Dungeon 1;
 				.vv...........vv.
 				.v.............v.
 				vv.............vv
-				v...............v
 				v......t.t......v
+				v...............v
 				v...............v
 				vv.............vv
 				.v.............v.
