@@ -390,3 +390,8 @@ bool go::TryDisplace()
   Terminate(false);
   return true;
 }
+
+void dig::VirtualConstructor(bool)
+{
+  RightBackupID = LeftBackupID = 0;
+}

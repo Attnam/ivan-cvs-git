@@ -618,6 +618,9 @@ void genetrixvesana::GetAICommand()
 		      }
 		  }
 	}
+
+      EditAP(-1000);
+      return;
     }
 
   AttackAdjacentEnemyAI();

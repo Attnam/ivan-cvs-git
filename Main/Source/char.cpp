@@ -3790,7 +3790,7 @@ void character::DrawPanel(bool AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz %d", GetSize());
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
+  //FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
   ++PanelPosY;
 

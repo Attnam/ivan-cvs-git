@@ -82,6 +82,7 @@ class ACTION
   virtual bool ShowEnvironment() const { return false; }
   void SetMoveDigger(bool What) { MoveDigger = What; }
  protected:
+  virtual void VirtualConstructor(bool);
   ulong RightBackupID;
   ulong LeftBackupID;
   vector2d SquareDug;
