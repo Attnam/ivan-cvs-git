@@ -1764,7 +1764,7 @@ void character::ReceiveOmleUrineEffect(long)
 	if(GetIsPlayer())
 		ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
 
-	SetStrength(GetStrength() + 1 + rand() % 5);
+	SetStrength(GetStrength() + 1 + rand() % 2);
 	SetHP(GetHP() + 2);
 }
 

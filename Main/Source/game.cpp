@@ -107,7 +107,7 @@ float game::SoftGamma = 1;
 
 void game::InitScript()
 {
-	srand(7);//time(0));
+	srand(time(0));
 	inputfile ScriptFile("Script/Dungeon.dat");
 	GameScript.ReadFrom(ScriptFile);
 }
@@ -133,7 +133,7 @@ void game::Init(std::string Name)
 	InWilderness = false;
 	PlayerBackup = 0;
 	PolymorphCounter = 0xFFFF;
-	srand(7);//time(0));
+	srand(time(0));
 	game::CalculateGodNumber();
 
 	if(Name == "")
@@ -537,7 +537,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << PolymorphCounter;
 
 	time_t Time = time(0);
-	srand(7);//Time);
+	srand(Time);
 	SaveFile << Time;
 
 	SaveFile << Dungeon;
@@ -609,6 +609,9 @@ std::string game::SaveName()
 
 bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
+	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
+		return false;
+
 	ushort Emit = GetLevel(Current)->GetLevelSquare(vector2d(OX, OY))->GetEmitation();
 
 	ushort MaxSize = (game::GetLuxTableSize()[Emit] >> 1);
@@ -628,6 +631,11 @@ bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 
 bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
+	if(CX == 63 || CY == 63)
+		int esko = 2;
+	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
+		return false;
+
 	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->NoxifyEmitter(vector2d(OX, OY));
 
 	if(CX == OX && CY == OY)

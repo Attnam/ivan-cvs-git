@@ -244,7 +244,7 @@ Dungeon 1;
 			GenerateTunnel=true;
 		}
 
-		Square, Random { Walkable=true; }
+		/*Square, Random { Walkable=true; }
 		{
 			Character=farmer;
 		}
@@ -340,7 +340,7 @@ Dungeon 1;
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
-		}
+		}*/
 
 		Square, Pos 31,63;
 		{
