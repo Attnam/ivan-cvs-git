@@ -285,5 +285,11 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
   }
 }
 
+// returns true if shift is being pressed
+// else false
+truth globalwindowhandler::ShiftIsDown() {
+  return false;
+
+}
 #endif
 

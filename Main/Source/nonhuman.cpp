@@ -2023,6 +2023,9 @@ void carnivorousplant::GetAICommand()
   if(AttackAdjacentEnemyAI())
     return;
 
+  if(CheckForUsefulItemsOnGround()) 
+    return;
+
   if(MoveRandomly())
     return;
 

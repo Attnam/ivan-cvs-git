@@ -738,11 +738,12 @@ void shop::ReceiveVomit(character* Who)
 
 void cathedral::AddItemEffect(item* Dropped)
 {
-  if(!Dropped->IsExplosive())
-    return;
 
   truth SeenBeforeTeleport = Dropped->CanBeSeenByPlayer();
   character* KamikazeDwarf = FindRandomExplosiveReceiver();
+
+  if(!Dropped->IsKamikazeWeapon(KamikazeDwarf))
+    return;
 
   if(KamikazeDwarf)
   {

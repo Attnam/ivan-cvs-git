@@ -1123,8 +1123,15 @@ void kamikazedwarf::GetAICommand()
 {
   if(GetHomeRoom())
     StandIdleAI();
-  else
-    character::GetAICommand();
+  else 
+    {
+      if(!RAND_N(10)) 
+	{
+	  SingRandomSong();
+	  return;
+	}
+      character::GetAICommand();
+    }
 }
 
 int humanoid::GetSize() const
@@ -4387,21 +4394,18 @@ void humanoid::DropBodyPart(int Index)
 
   if(Dropped)
   {
-    if(game::IsInWilderness())
-      GetStack()->AddItem(Dropped);
-    else
-      GetStackUnder()->AddItem(Dropped);
+    GetStack()->AddItem(Dropped);
 
     Dropped->DropEquipment();
 
     if(IsPlayer())
     {
-      ADD_MESSAGE("You feel very ill. Your %s drops to the ground.", NameOfDropped.CStr());
+      ADD_MESSAGE("You feel very ill. Your %s snaps off.", NameOfDropped.CStr());
       game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
       DeActivateVoluntaryAction();
     }
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("Suddenly %s's %s drops to the ground.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
+      ADD_MESSAGE("Suddenly %s's %s snaps off.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
   }
   else
   {
@@ -4947,3 +4951,55 @@ const char* humanoid::GetNormalDeathMessage() const
   else
     return "killed @k";
 }
+
+void kamikazedwarf::SingRandomSong()  
+{
+  festring Song;
+
+  switch(RAND_N(9)) {
+  case 0:
+    Song = festring("On the palm of ") + GetMasterGod()->GetName() 
+      + festring(" everybody fears everything");
+    break;
+  case 1:    
+    festring Title = GetMasterGod()->GetSex() == MALE ? "King" : "Queen";
+    Song = festring("Joy to the world, ") + GetMasterGod()->GetName() 
+      + festring(" is come! Let all above Valpurus receive her ") + Title;
+    break;
+  case 2:
+    Song = festring("Hark the herald angels sing. Glory to ") + GetMasterGod()->GetName() 
+      + festring("!");
+    break;
+  case 3:
+    Song = festring("O ") + GetMasterGod()->GetName() 
+      + festring(", You are so big, So absolutely huge, Gosh, we're all really impressed down here, I can tell You.");
+    break;
+  case 4:
+    Song = festring("Forgive us, O ") + GetMasterGod()->GetName() + festring(" for this, our dreadful toadying and barefaced flattery");
+    break;
+  case 5:
+    Song = festring("But you, ") + GetMasterGod()->GetName() + festring(", are so strong and, well, just so super fantastic. Amen.");
+    break;
+  case 6:
+    Song = festring("O ") + GetMasterGod()->GetName() + festring(", please don't burn us");
+    break;
+
+  case 7:
+    Song = festring("O ") + GetMasterGod()->GetName() + festring(", please don't grill or toast your flock");
+    break;
+
+  case 8:
+    Song = festring("O ") + GetMasterGod()->GetName() 
+      + festring(", please don't simmer us in stock");
+    break;
+  }
+  
+  EditAP(-1000);
+
+  if(CanBeSeenByPlayer()) {
+    ADD_MESSAGE("%s sings: \"%s\"", CHAR_DESCRIPTION(DEFINITE), Song.CStr());
+  } else {
+    ADD_MESSAGE("You hear someone sing: \"%s\"", Song.CStr());
+  }
+}
+

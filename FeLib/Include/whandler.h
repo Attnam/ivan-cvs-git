@@ -39,6 +39,7 @@ class globalwindowhandler
   static truth ControlLoopsInstalled() { return Controls; }
   static void EnableControlLoops() { ControlLoopsEnabled = true; }
   static void DisableControlLoops() { ControlLoopsEnabled = false; }
+  static truth ShiftIsDown();
 #ifdef USE_SDL
   static void Init();
   static void SetQuitMessageHandler(truth (*What)())

@@ -482,6 +482,7 @@ CHARACTER(kamikazedwarf, humanoid)
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(int);
   virtual truth IsKamikazeDwarf() const { return true; }
+  virtual void SingRandomSong();
  protected:
   virtual int GetTorsoMainColor() const;
   virtual int GetGauntletColor() const;

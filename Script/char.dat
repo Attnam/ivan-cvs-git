@@ -2183,7 +2183,7 @@ slave
   {
     5,
     "\"Whatever the master wants.\"",
-    "\"Work work work all day long. No, that was not a complain! Don't punish!\"",
+    "\"Work work work all day long. No, that was not a complaint! Don't punish!\"",
     "\"I love all my masters. At least when the whip is being washed.\"",
     "\"I would like to be like Ivan. Ivan is a good worker.\"",
     "\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
@@ -5327,4 +5327,44 @@ lobhse
   KnownCWeaponSkills == BITE;
   DestroysWalls = true;
   AllowUnconsciousness = false;
+}
+
+tailor
+{
+  DefaultArmStrength = 15;
+  DefaultLegStrength = 15;
+  DefaultDexterity = 35;
+  DefaultAgility = 15;
+  DefaultEndurance = 20;
+  DefaultPerception = 27;
+  DefaultIntelligence = 15;
+  DefaultWisdom = 15;
+  DefaultCharisma = 15;
+  DefaultMana = 10;
+  TotalVolume = 70000;
+  TotalSize = 180;
+  NameSingular = "tailor";
+  Cloak = LEATHER cloak { Enchantment = 1; }
+  BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+  RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
+  RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+  RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
+  KnownCWeaponSkills == BLUNT_WEAPONS;
+  CWeaponSkillHits == 500;
+  RightSWeaponSkillHits = 200;
+  LeftSWeaponSkillHits = 200;
+  TorsoBitmapPos = 48, 48;
+  HeadBitmapPos = 96, 0;
+  ArmBitmapPos = 64, 16;
+  LegBitmapPos = 0, 0;
+  ClothColor = rgb16(200, 200, 200);
+  LegMainColor = rgb16(111, 64, 37);
+  CanRead = true;
+  /* Replies overridden */
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  DefaultName = "Mirvo";
+  IsCharmable = false;
+  AttachedGod = SOPHOS;
 }
