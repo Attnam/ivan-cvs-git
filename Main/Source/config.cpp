@@ -89,7 +89,7 @@ void configuration::ShowConfigScreen()
 	while(true)
 	{
 		if(!game::GetRunning())
-			DOUBLEBUFFER->ClearToColor(0);
+			DOUBLEBUFFER->Fill(0);
 		else
 		{
 			EMPTY_MESSAGES();

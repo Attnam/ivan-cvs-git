@@ -19,7 +19,7 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 
 	for(ushort Min = 0, c = 0;; ++c)
 	{
-		DOUBLEBUFFER->ClearToColor(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
+		DOUBLEBUFFER->Fill(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
 
 		if(DrawLetters)
 			FONT->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%c: %s", 'A' + c - Min, Entry[c].String.c_str());
@@ -28,7 +28,7 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 
 		if(c - Min == 19 && c != Entry.size() - 1)
 		{
-			DOUBLEBUFFER->ClearToColor(20, 266 + Description.size() * 10, 758, 20, 128);
+			DOUBLEBUFFER->Fill(20, 266 + Description.size() * 10, 758, 20, 128);
 			FONT->Printf(DOUBLEBUFFER, 30, 266 + Description.size() * 10, WHITE, "- Press SPACE to continue, ESC to exit -");
 		}
 
@@ -86,15 +86,15 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 
 void felist::DrawDescription() const
 {
-	DOUBLEBUFFER->ClearToColor(20, 36, 758, 20, 128);
+	DOUBLEBUFFER->Fill(20, 36, 758, 20, 128);
 
 	for(ushort c = 0; c < Description.size(); ++c)
 	{
-		DOUBLEBUFFER->ClearToColor(20, 46 + c * 10, 758, 10, 128);
+		DOUBLEBUFFER->Fill(20, 46 + c * 10, 758, 10, 128);
 		FONT->Printf(DOUBLEBUFFER, 30, 46 + c * 10, Description[c].Color, Description[c].String.c_str());
 	}
 
-	DOUBLEBUFFER->ClearToColor(20, 46 + Description.size() * 10, 758, 10, 128);
+	DOUBLEBUFFER->Fill(20, 46 + Description.size() * 10, 758, 10, 128);
 }
 
 void felist::Empty()

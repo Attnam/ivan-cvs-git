@@ -196,42 +196,44 @@ void character::Be()
 {
 	if(game::GetPlayerBackup() != this)
 	{		
-		if(!game::Flag)
-		{
-			ApplyExperience();
-
-			switch(GetBurdenState())
-			{
-			case UNBURDENED:
-				SetAP(GetAP() + 100 + (GetAgility() >> 1));
-			break;
-			case BURDENED:
-				SetAP(GetAP() + 75 + (GetAgility() >> 1) - (GetAgility() >> 2));
-			break;
-			case STRESSED:
-			case OVERLOADED:
-				SetAP(GetAP() + 50 + (GetAgility() >> 2));
-			break;
-			}
-
-			for(uchar c = 0; c < STATES; ++c)
-				if(StateIsActivated(c))
-					(this->*StateHandler[c])();
-
-			if(!GetExists())
+		if(game::GetIsLoading())
+			if(!GetIsPlayer())
 				return;
+			else
+				game::SetIsLoading(false);
 
-			if(GetHP() < GetMaxHP() / 3)
-				SpillBlood(RAND() % 2);
+		ApplyExperience();
 
-			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
-			{
-				DeActivateVoluntaryStates();
-				Faint();
-			}
+		switch(GetBurdenState())
+		{
+		case UNBURDENED:
+			SetAP(GetAP() + 100 + (GetAgility() >> 1));
+		break;
+		case BURDENED:
+			SetAP(GetAP() + 75 + (GetAgility() >> 1) - (GetAgility() >> 2));
+		break;
+		case STRESSED:
+		case OVERLOADED:
+			SetAP(GetAP() + 50 + (GetAgility() >> 2));
+		break;
 		}
-		else
-			game::Flag = false;
+
+		for(uchar c = 0; c < STATES; ++c)
+			if(StateIsActivated(c))
+				(this->*StateHandler[c])();
+
+		if(!GetExists())
+			return;
+
+		if(GetHP() < GetMaxHP() / 3)
+			SpillBlood(RAND() % 2);
+
+		if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+		{
+			DeActivateVoluntaryStates();
+			Faint();
+			game::DrawEverything();
+		}
 
 		if(GetAP() >= 1000)
 		{
@@ -250,6 +252,8 @@ void character::Be()
 
 				if(CanMove())
 					GetPlayerCommand();
+				else
+					game::DrawEverything(false);
 
 				if(!StateIsActivated(CONSUMING))
 					Hunger();
@@ -1273,9 +1277,7 @@ bool character::Save()
 	if(game::BoolQuestion("Dost thee truly wish to save and flee? [y/N]"))
 	{
 		game::Save();
-
 		game::Quit();
-
 		return true;
 	}
         else
@@ -1656,7 +1658,7 @@ bool character::Look()
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 			if(Key == game::GetMoveCommandKey(c))
 			{
-				DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
+				DOUBLEBUFFER->Fill((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 				CursorPos += game::GetMoveVector(c);
 
 				if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1)	CursorPos.X = 0;
@@ -1749,7 +1751,7 @@ bool character::Look()
 	}
 
 
-	DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
+	DOUBLEBUFFER->Fill((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 	return false;
 }
 
@@ -3160,8 +3162,10 @@ void character::GoHandler()
 				StateVariables.Going.WalkingInOpen = false;
 
 		if(!TryMove(MoveToSquare->GetPos()) || GetLevelSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLevelSquareUnder()->GetStack()->GetItems())
+		{
 			EndGoing();
-
+			return;
+		}
 	}
 }
 

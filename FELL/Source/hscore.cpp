@@ -37,7 +37,7 @@ void highscore::Add(long NewScore, std::string NewEntry)
 
 void highscore::Draw() const
 {
-	DOUBLEBUFFER->ClearToColor(0);
+	DOUBLEBUFFER->Fill(0);
 
 	FONT->Printf(DOUBLEBUFFER, 30, 30,  WHITE, "Adventurers' Hall of Fame");
 
@@ -56,7 +56,7 @@ void highscore::Draw() const
 			if(GETKEY() == 0x1B)
 				return;
 
-			DOUBLEBUFFER->ClearToColor(0);
+			DOUBLEBUFFER->Fill(0);
 
 			FONT->Printf(DOUBLEBUFFER, 30, 30, WHITE, "Adventurers' Hall of Fame");
 		}

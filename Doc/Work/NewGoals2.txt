@@ -45,7 +45,7 @@ Throwers want justice
 ?Wishing artifacts in WMode
 ?Sitting worshippers
 Confuse
-Exploding wands should be illegal
+//Exploding wands should be illegal
 Strength requirement for opening things
 Money should weight something
 Chemical warfare from afar
@@ -78,6 +78,6 @@ Special eat effect for werewolf corpses
 *Inventory weight should be shown
 Effect for critically hitting a golem
 Werewolves should gain exp
-Cats should devour rats
+//Cats should devour rats
 /Starting pet
 //*Polypile balancement

@@ -32,7 +32,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 		{
 			graphics::UpdateBounds();
 
-			if(Initialized)
+			if(Initialized && Active)
 				graphics::BlitDBToScreen();
 
 			break;
@@ -40,7 +40,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		case WM_PAINT:
 		{
-			if(Initialized)
+			if(Initialized && Active)
 				graphics::BlitDBToScreen();
 
 			break;
@@ -111,9 +111,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			else
 			{
 				TranslateMessage(&msg);
-
-				if(msg.message != WM_SYSKEYUP)
-					DispatchMessage(&msg);
+				DispatchMessage(&msg);
 			}
 
 		while(KeyBuffer.Length())
@@ -160,9 +158,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 				else
 				{
 					TranslateMessage(&msg);
-
-					if(msg.message != WM_SYSKEYUP)
-						DispatchMessage(&msg);
+					DispatchMessage(&msg);
 				}
 			else
 				WaitMessage();
@@ -199,8 +195,6 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	*phWnd = hWnd;
 
 	GetKeyboardLayoutName(KeyboardLayoutName);
-
-	Initialized = true;
 }
 
 int globalwindowhandler::ReadKey()
@@ -215,9 +209,7 @@ int globalwindowhandler::ReadKey()
 			else
 			{
 				TranslateMessage(&msg);
-
-				if(msg.message != WM_SYSKEYUP)
-					DispatchMessage(&msg);
+				DispatchMessage(&msg);
 			}
 
 		if(Active)

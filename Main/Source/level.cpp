@@ -893,7 +893,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 	while(true)
 	{
 		if(short(BPos.X) < 0)
-			if(short(BPos.X) + SizeVect.X < 0)
+			if(short(BPos.X) + SizeVect.X <= 0)
 				break;
 			else
 			{
@@ -903,7 +903,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 			}
 
 		if(short(BPos.Y) < 0)
-			if(short(BPos.Y) + SizeVect.Y < 0)
+			if(short(BPos.Y) + SizeVect.Y <= 0)
 				break;
 			else
 			{
@@ -921,7 +921,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 		if(BPos.Y + SizeVect.Y > YRES)
 			SizeVect.Y = YRES - BPos.Y;
 
-		DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
+		DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
 		game::DrawEverythingNoBlit(false);
 
 		uchar Flags = RAND() % 8;

@@ -45,7 +45,7 @@ ulong game::LOSTurns;
 
 gamescript game::GameScript;
 
-bool game::Flag, game::InGetCommand = false;
+bool game::IsLoading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
@@ -148,7 +148,7 @@ void game::Init(std::string Name)
 	if(Name == "")
 		if(configuration::GetDefaultName() == "")
 		{
-			DOUBLEBUFFER->ClearToColor(0);
+			DOUBLEBUFFER->Fill(0);
 			SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20));
 		}
 		else
@@ -159,9 +159,8 @@ void game::Init(std::string Name)
 	if(Load())
 	{
 		Running = true;
-		Flag = true;
+		IsLoading = true;
 		GetCurrentArea()->SendNewDrawRequest();
-
 		ADD_MESSAGE("Game loaded successfully.");
 	}
 	else
@@ -237,7 +236,7 @@ void game::DeInit()
 	for(c = 0; c < Dungeon.size(); ++c)
 		delete Dungeon[c];
 
-	objectpool::Be(); // this removes dirt from the last be
+	objectpool::BurnTheDead();
 
 	for(c = 0; c < Team.size(); ++c)
 		delete GetTeam(c);
@@ -253,6 +252,7 @@ void game::Run()
 			GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();	// Temporary
 
 		objectpool::Be();
+		objectpool::BurnTheDead();
 
 		if(!GetRunning())
 			break;
@@ -399,7 +399,7 @@ bool game::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*
 
 void game::DrawPanel()
 {
-	DOUBLEBUFFER->ClearToColor(0, 512, 800, 88, 0);
+	DOUBLEBUFFER->Fill(0, 512, 800, 88, 0);
 
 	character* Player = GetPlayer();
 

@@ -161,7 +161,7 @@ void levelsquare::UpdateMemorized()
 		}
 		else
 		{
-			Memorized->ClearToColor(0);
+			Memorized->Fill(0);
 			igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 		}
 
@@ -202,7 +202,7 @@ void levelsquare::Draw()
 
 						if(GetCharacter())
 						{
-							igraph::GetTileBuffer()->ClearToColor(0xF81F);
+							igraph::GetTileBuffer()->Fill(0xF81F);
 							DrawCharacters();
 							igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 						}
@@ -216,7 +216,7 @@ void levelsquare::Draw()
 
 					if(GetCharacter())
 					{
-						igraph::GetTileBuffer()->ClearToColor(0xF81F);
+						igraph::GetTileBuffer()->Fill(0xF81F);
 
 						DrawCharacters();
 						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
@@ -231,7 +231,7 @@ void levelsquare::Draw()
 				DrawTerrain();
 
 				igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-				igraph::GetTileBuffer()->ClearToColor(0xF81F);
+				igraph::GetTileBuffer()->Fill(0xF81F);
 
 				if(DrawStacks())
 				{
@@ -245,7 +245,7 @@ void levelsquare::Draw()
 					igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 					if(GetCharacter())
-						igraph::GetTileBuffer()->ClearToColor(0xF81F);
+						igraph::GetTileBuffer()->Fill(0xF81F);
 				}
 
 				if(!configuration::GetOutlineCharacters())
@@ -263,7 +263,7 @@ void levelsquare::Draw()
 			}
 		}
 		else
-			DOUBLEBUFFER->ClearToColor(BitPos.X, BitPos.Y, 16, 16, 0);
+			DOUBLEBUFFER->Fill(BitPos.X, BitPos.Y, 16, 16, 0);
 
 		NewDrawRequested = false;
 	}
@@ -576,7 +576,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	if(!Fluided)
 	{
 		FluidBuffer = new bitmap(16, 16);
-		FluidBuffer->ClearToColor(0xF81F);
+		FluidBuffer->Fill(0xF81F);
 		Fluided = true;
 		GetFluidBuffer()->CreateAlphaMap(0);
 	}

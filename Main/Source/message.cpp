@@ -64,7 +64,7 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
 
 void globalmessagingsystem::Draw()
 {
-	DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
+	DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
 
 	ulong Length = BufferLength, Pointer = 0;
 
@@ -129,7 +129,7 @@ void globalmessagingsystem::Draw()
 
 				GETKEY();
 
-				DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
+				DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
 			}
 		}
 }

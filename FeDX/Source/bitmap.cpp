@@ -8,19 +8,16 @@
 #include "save.h"
 #include "allocate.h"
 
-bitmap::bitmap(std::string FileName) : BackupBuffer(0), DoubleBuffer(false), AlphaMap(0)
+bitmap::bitmap(std::string FileName) : AlphaMap(0)
 {
 	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
 
 	if(!File.is_open())
 		ABORT("Bitmap %s not found!", FileName.c_str());
 
-	File.seekg(-768, std::ios::end);
-
 	uchar Palette[768];
-
-	for(ulong c = 0; c < 768; ++c)
-		Palette[c] = File.get();
+	File.seekg(-768, std::ios::end);
+	File.read((char*)Palette, 768);
 
 	File.seekg(8, std::ios::beg);
 
@@ -31,17 +28,11 @@ bitmap::bitmap(std::string FileName) : BackupBuffer(0), DoubleBuffer(false), Alp
 
 	File.seekg(128, std::ios::beg);
 
-	graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
+	Alloc2D<ushort>(Data, YSize, XSize);
 
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-	ushort* Buffer = (ushort*)ddsd.lpSurface;
+	ushort* Buffer = Data[0];
 
 	for(ushort y = 0; y < YSize; ++y)
-	{
 		for(ushort x = 0; x < XSize; ++x)
 		{
 			int Char1 = File.get();
@@ -60,81 +51,31 @@ bitmap::bitmap(std::string FileName) : BackupBuffer(0), DoubleBuffer(false), Alp
 					{
 						x = 0;
 						++y;
-						Buffer = (ushort*)(ulong(Buffer) + ddsd.lPitch - (XSize << 1));
 					}
 				}
         		}
 			else
 				*(Buffer++) = ushort(Palette[Char1 + (Char1 << 1)] >> 3) << 11 | ushort(Palette[Char1 + (Char1 << 1) + 1] >> 2) << 5 | ushort(Palette[Char1 + (Char1 << 1) + 2] >> 3);
 		}
-
-		Buffer = (ushort*)(ulong(Buffer) + ddsd.lPitch - (XSize << 1));
-	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
-	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
-
-	BitmapContainerIterator = graphics::BitmapContainer.insert(graphics::BitmapContainer.end(), this);
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupBuffer(0), DoubleBuffer(false), AlphaMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), Data(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
 {
-	HRESULT hr = graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
-
-	if(hr != S_OK)
-		ABORT("Bitmap initialization failed with code 0x%X!", hr);
-
-	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
-	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
-
-	BitmapContainerIterator = graphics::BitmapContainer.insert(graphics::BitmapContainer.end(), this);
-}
-
-bitmap::bitmap(IDirectDrawSurface7* DDSurface, ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupBuffer(0), DoubleBuffer(true), AlphaMap(0)
-{
-	DXSurface = new CSurface;
-
-	DXSurface->Create(DDSurface);
-
-	DDSURFACEDESC2 ddsd;
-
-	DDSurface->GetSurfaceDesc(&ddsd);
-
-	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
-	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
-
-	BitmapContainerIterator = graphics::BitmapContainer.insert(graphics::BitmapContainer.end(), this);
 }
 
 bitmap::~bitmap()
 {
-	delete DXSurface;
-	delete [] BackupBuffer;
+	delete [] Data;
 	delete [] AlphaMap;
-
-	graphics::BitmapContainer.erase(BitmapContainerIterator);
 }
 
 void bitmap::Save(outputfile& SaveFile) const
 {
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-	ulong Buffer = ulong(ddsd.lpSurface);
-
-	for(ushort y = 0; y < YSize; ++y, Buffer += ddsd.lPitch)
-		SaveFile.GetBuffer().write((char*)Buffer, XSize << 1);
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
+	SaveFile.GetBuffer().write((char*)Data[0], (XSize * YSize) << 1);
 
 	if(AlphaMap)
 	{
 		SaveFile << uchar(1);
-
 		SaveFile.GetBuffer().write((char*)AlphaMap[0], XSize * YSize);
 	}
 	else
@@ -143,26 +84,14 @@ void bitmap::Save(outputfile& SaveFile) const
 
 void bitmap::Load(inputfile& SaveFile)
 {
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-	ulong Buffer = ulong(ddsd.lpSurface);
-
-	for(ushort y = 0; y < YSize; ++y, Buffer += ddsd.lPitch)
-		SaveFile.GetBuffer().read((char*)Buffer, XSize << 1);
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
+	SaveFile.GetBuffer().read((char*)Data[0], (XSize * YSize) << 1);
 
 	uchar Alpha;
-
 	SaveFile >> Alpha;
 
 	if(Alpha)
 	{
 		Alloc2D<uchar>(AlphaMap, XSize, YSize);
-
 		SaveFile.GetBuffer().read((char*)AlphaMap[0], XSize * YSize);
 	}
 }
@@ -181,11 +110,6 @@ void bitmap::Save(std::string FileName) const
 
 	outputfile SaveFile(FileName);
 
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
 	BMPHeader[0x12] =  XSize       & 0xFF;
 	BMPHeader[0x13] = (XSize >> 8) & 0xFF;
 	BMPHeader[0x16] =  YSize       & 0xFF;
@@ -193,117 +117,101 @@ void bitmap::Save(std::string FileName) const
 
 	SaveFile.GetBuffer().write(BMPHeader, 0x36);
 
-	ulong Off = ulong(ddsd.lpSurface) + (YSize - 1) * ddsd.lPitch;
-
-	for(ushort y = 0; y < YSize; ++y, Off -= (XSize << 1) + ddsd.lPitch)
-		for(ushort x = 0; x < XSize; ++x, Off += 2)
+	for(long y = YSize - 1; y >= 0; --y)
+		for(ushort x = 0; x < XSize; ++x)
 		{
-			ushort Pixel = *(ushort*)Off;
-
+			ushort Pixel = Data[y][x];
 			SaveFile << char(Pixel << 3) << char((Pixel >> 5) << 2) << char((Pixel >> 11) << 3);
 		}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-void bitmap::PutPixel(ushort X, ushort Y, ushort Color)
+/*void bitmap::Fill(ushort Color)
 {
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-	((ushort*)ddsd.lpSurface)[Y * (ddsd.lPitch >> 1) + X] = Color;
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-}
 
-ushort bitmap::GetPixel(ushort X, ushort Y) const
+	for(ulong c = 0; c < XSize * YSize; ++c)
+		Data[0][c] = Color;
+}*/
+
+void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-	ushort Color = ((ushort*)ddsd.lpSurface)[Y * (ddsd.lPitch >> 1) + X];
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-	return Color;
-}
-
-void bitmap::Lock()
-{
-	TempDDSD = new DDSURFACEDESC2;
-	ZeroMemory(TempDDSD,sizeof(*TempDDSD));
-	TempDDSD->dwSize = sizeof(*TempDDSD);
-	DXSurface->GetDDrawSurface()->Lock(NULL, TempDDSD, DDLOCK_WAIT, NULL);
-}
-
-void bitmap::Release()
-{
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-	delete TempDDSD;
-}
-
-void bitmap::FastPutPixel(ushort X, ushort Y, ushort Color)
-{
-	((ushort*)TempDDSD->lpSurface)[Y * (TempDDSD->lPitch >> 1) + X] = Color;
-}
-
-ushort bitmap::FastGetPixel(ushort X, ushort Y) const
-{
-	return ((ushort*)TempDDSD->lpSurface)[Y * (TempDDSD->lPitch >> 1) + X];
-}
-
-void bitmap::ClearToColor(ushort Color)
-{
-	DDBLTFX ddbltfx;
-	ZeroMemory(&ddbltfx, sizeof(ddbltfx));
-	ddbltfx.dwSize      = sizeof(ddbltfx);
-	ddbltfx.dwFillColor = Color;
-
-	DXSurface->GetDDrawSurface()->Blt( NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);	
-}
-
-void bitmap::ClearToColor(ushort DestX, ushort DestY, ushort SizeX, ushort SizeY, ushort Color)
-{
-	bitmap Temp(SizeX, SizeY);
+	/*bitmap Temp(SizeX, SizeY);
 	Temp.ClearToColor(Color);
-	Temp.Blit(this, 0,0, DestX, DestY, SizeX, SizeY);
+	Temp.Blit(this, 0,0, DestX, DestY, SizeX, SizeY);*/
+
+	ulong TrueOffset = ulong(&Data[Y][X]);
+	ulong TrueXMove = (XSize - Width) << 1;
+
+	__asm
+	{
+		pushad
+		push es
+		mov ax, ds
+		mov edi, TrueOffset
+		mov es, ax
+		xor ecx, ecx
+		mov dx, Width
+		mov bx, Height
+		mov ax, Color
+		cld
+	MaskedLoop3:
+		mov cx, dx
+		rep stosw
+		add edi, TrueXMove
+		dec bx
+		jnz MaskedLoop3
+		pop es
+		popad
+	}
 }
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
 {
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
+
 	Flags &= 0x7;
 
-	if(!Flags)
-	{
-		RECT RDest = { DestX, DestY, DestX + Width, DestY + Height }, RSource = { SourceX, SourceY, SourceX + Width, SourceY + Height };
-		Bitmap->GetDXSurface()->GetDDrawSurface()->Blt(&RDest, DXSurface->GetDDrawSurface(), &RSource, DDBLT_WAIT, NULL); 
-		return;
-	}
-
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
-
-	DDSURFACEDESC2 destddsd;
-
-	if(Bitmap != this)
-	{
-		ZeroMemory(&destddsd,sizeof(destddsd));
-		destddsd.dwSize = sizeof(destddsd);
-		Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
-	}
-	else
-		destddsd = srcddsd;
-
-	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
-	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
+	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+	ulong TrueSourceXMove = (XSize - Width) << 1;
 
 	switch(Flags)
 	{
+		case 0:
+		{
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
+
+			__asm
+			{
+				pushad
+				push es
+				mov ax, ds
+				mov esi, TrueSourceOffset
+				mov edi, TrueDestOffset
+				mov es, ax
+				xor ecx, ecx
+				mov dx, Width
+				mov bx, Height
+				shr dx, 0x01
+				cld
+			MaskedLoop3:
+				mov cx, dx
+				rep movsd
+				add esi, TrueSourceXMove
+				add edi, TrueDestXMove
+				dec bx
+				jnz MaskedLoop3
+				pop es
+				popad
+			}
+
+			break;
+		}
+
 		case MIRROR:
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch + (Width << 1);
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
 			__asm
 			{
@@ -339,8 +247,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 		case FLIP:
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1));
-			ulong TrueDestXMove = destddsd.lPitch + (Width << 1);
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
 			__asm
 			{
@@ -355,13 +263,13 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				mov bx, Height
 				shr dx, 0x01
 				cld
-			MaskedLoop3:
+			MaskedLoop32:
 				mov cx, dx
 				rep movsd
 				add esi, TrueSourceXMove
 				sub edi, TrueDestXMove
 				dec bx
-				jnz MaskedLoop3
+				jnz MaskedLoop32
 				pop es
 				popad
 			}
@@ -371,8 +279,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 		case (MIRROR | FLIP):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch - (Width << 1);
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
 			__asm
 			{
@@ -408,9 +316,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 		case ROTATE_90:
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch + 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
 			__asm
 			{
@@ -445,9 +353,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 		case (MIRROR | ROTATE_90):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch - 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
 			__asm
 			{
@@ -482,9 +390,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 		case (FLIP | ROTATE_90):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch - 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
 			__asm
 			{
@@ -519,9 +427,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 		case (MIRROR | FLIP | ROTATE_90):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1));
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch + 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
 			__asm
 			{
@@ -552,41 +460,23 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			}
 		}
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(Bitmap != this)
-		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
+
 	if(Luminance == 256)
 	{
 		Blit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
 		return;
 	}
 
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
-
-	DDSURFACEDESC2 destddsd;
-
-	if(Bitmap != this)
-	{
-		ZeroMemory(&destddsd,sizeof(destddsd));
-		destddsd.dwSize = sizeof(destddsd);
-		Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
-	}
-	else
-		destddsd = srcddsd;
-
-	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
-	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
-	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
-	ulong TrueDestXMove = destddsd.lPitch - (Width << 1);
+	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueSourceXMove = (XSize - Width) << 1;
+	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
 	__asm
 	{
@@ -663,48 +553,74 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 		pop es
 		popad
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(Bitmap != this)
-		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
 {
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
+
 	Flags &= 0x7;
 
-	if(!Flags)
-	{
-		RECT RDest = { DestX, DestY, DestX + Width, DestY + Height }, RSource = { SourceX, SourceY, SourceX + Width, SourceY + Height };
-		Bitmap->GetDXSurface()->GetDDrawSurface()->Blt(&RDest, DXSurface->GetDDrawSurface(), &RSource, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
-	}
-
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
-
-	DDSURFACEDESC2 destddsd;
-
-	if(Bitmap != this)
-	{
-		ZeroMemory(&destddsd,sizeof(destddsd));
-		destddsd.dwSize = sizeof(destddsd);
-		Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
-	}
-	else
-		destddsd = srcddsd;
-
-	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
-	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
+	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+	ulong TrueSourceXMove = (XSize - Width) << 1;
 
 	switch(Flags)
 	{
+		case 0:
+		{
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
+
+			if(short(Height) < 0)
+				int esko = 2;
+
+			__asm
+			{
+				pushad
+				push es
+				mov ax, ds
+				mov esi, TrueSourceOffset
+				mov edi, TrueDestOffset
+				mov es, ax
+				xor ecx, ecx
+				mov ebx, TrueSourceXMove
+				mov edx, TrueDestXMove
+				cld
+			MaskedLoop3:
+				mov cx, Width
+			MaskedLoop55:
+				lodsw
+				cmp ax, 0xF81F
+				je MaskSkip2
+				stosw
+				dec cx
+				jnz MaskedLoop55
+				add esi, ebx
+				add edi, edx
+				dec Height
+				jnz MaskedLoop3
+				jmp MaskedNextLine2
+			MaskSkip2:
+				add edi, 0x02
+				dec cx
+				jnz MaskedLoop55
+				add esi, ebx
+				add edi, edx
+				dec Height
+				jnz MaskedLoop3
+			MaskedNextLine2:
+				pop es
+				popad
+			}
+
+			break;
+		}
+
 		case MIRROR:
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch + (Width << 1);
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
 			__asm
 			{
@@ -752,8 +668,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 		case FLIP:
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1));
-			ulong TrueDestXMove = destddsd.lPitch + (Width << 1);
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
 			__asm
 			{
@@ -767,29 +683,29 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov ebx, TrueSourceXMove
 				mov edx, TrueDestXMove
 				cld
-			MaskedLoop3:
+			MaskedLoop37:
 				mov cx, Width
-			MaskedLoop55:
+			MaskedLoop557:
 				lodsw
 				cmp ax, 0xF81F
-				je MaskSkip2
+				je MaskSkip27
 				stosw
 				dec cx
-				jnz MaskedLoop55
+				jnz MaskedLoop557
 				add esi, ebx
 				sub edi, edx
 				dec Height
-				jnz MaskedLoop3
-				jmp MaskedNextLine2
-			MaskSkip2:
+				jnz MaskedLoop37
+				jmp MaskedNextLine27
+			MaskSkip27:
 				add edi, 0x02
 				dec cx
-				jnz MaskedLoop55
+				jnz MaskedLoop557
 				add esi, ebx
 				sub edi, edx
 				dec Height
-				jnz MaskedLoop3
-			MaskedNextLine2:
+				jnz MaskedLoop37
+			MaskedNextLine27:
 				pop es
 				popad
 			}
@@ -799,8 +715,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 		case (MIRROR | FLIP):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch - (Width << 1);
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
 			__asm
 			{
@@ -848,9 +764,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 		case ROTATE_90:
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch + 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
 			__asm
 			{
@@ -888,9 +804,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 		case (MIRROR | ROTATE_90):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch - 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
 			__asm
 			{
@@ -928,9 +844,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 		case (FLIP | ROTATE_90):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1) + (Width << 1) - 2);
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch - 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
 			__asm
 			{
@@ -968,9 +884,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 		case (MIRROR | FLIP | ROTATE_90):
 		{
-			ulong TrueDestOffset = ulong(destddsd.lpSurface) + ((DestY + Height - 1) * destddsd.lPitch + (DestX << 1));
-			ulong TrueDestXMove = destddsd.lPitch;
-			ulong TrueDestYMove = Height * destddsd.lPitch + 2;
+			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+			ulong TrueDestXMove = Bitmap->XSize << 1;
+			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
 			__asm
 			{
@@ -1004,41 +920,23 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			}
 		}
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(Bitmap != this)
-		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
+
 	if(Luminance == 256)
 	{
 		MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
 		return;
 	}
 
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
-
-	DDSURFACEDESC2 destddsd;
-
-	if(Bitmap != this)
-	{
-		ZeroMemory(&destddsd,sizeof(destddsd));
-		destddsd.dwSize = sizeof(destddsd);
-		Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
-	}
-	else
-		destddsd = srcddsd;
-
-	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
-	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
-	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
-	ulong TrueDestXMove = destddsd.lPitch - (Width << 1);
+	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueSourceXMove = (XSize - Width) << 1;
+	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
 	__asm
 	{
@@ -1127,35 +1025,17 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		pop es
 		popad
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(Bitmap != this)
-		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha) const
 {
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
 
-	DDSURFACEDESC2 destddsd;
-
-	if(Bitmap != this)
-	{
-		ZeroMemory(&destddsd,sizeof(destddsd));
-		destddsd.dwSize = sizeof(destddsd);
-		Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
-	}
-	else
-		destddsd = srcddsd;
-
-	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
-	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
-	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
-	ulong TrueDestXMove = destddsd.lPitch - (Width << 1);
+	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueSourceXMove = (XSize - Width) << 1;
+	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
 	ushort SColor, DColor;
 
@@ -1248,11 +1128,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		pop es
 		popad
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(Bitmap != this)
-		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY) const
@@ -1260,26 +1135,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY) const
 	if(!AlphaMap)
 		ABORT("AlphaMap not available!");
 
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
-
-	DDSURFACEDESC2 destddsd;
-
-	if(Bitmap != this)
-	{
-		ZeroMemory(&destddsd,sizeof(destddsd));
-		destddsd.dwSize = sizeof(destddsd);
-		Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
-	}
-	else
-		destddsd = srcddsd;
-
-	ulong TrueSourceOffset = ulong(srcddsd.lpSurface);
-	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
-	ulong TrueSourceXMove = srcddsd.lPitch - (XSize << 1);
-	ulong TrueDestXMove = destddsd.lPitch - (XSize << 1);
+	ulong TrueSourceOffset = ulong(Data[0]);
+	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueDestXMove = (Bitmap->XSize - XSize) << 1;
 	ulong AlphaMapOffset = ulong(AlphaMap[0]);
 
 	ushort SColor, DColor, Width = XSize, Height = YSize;
@@ -1366,7 +1224,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY) const
 		dec cx
 		jnz MaskedLoop2
 	MaskedNextLine:
-		add esi, TrueSourceXMove
 		add edi, TrueDestXMove
 		dec Height
 		jnz MaskedLoop1
@@ -1374,33 +1231,13 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY) const
 		pop es
 		popad
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(Bitmap != this)
-		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
-}
-
-void bitmap::FastBlit(bitmap* Bitmap) const
-{
-	Bitmap->GetDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT);
-}
-
-void bitmap::FastMaskedBlit(bitmap* Bitmap) const
-{
-	Bitmap->GetDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT | DDBLTFAST_SRCCOLORKEY);
 }
 
 void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort OrigToY, ushort Color, bool Wide)
 {
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
 	ushort ThisXSize = XSize, ThisYSize = YSize, DistaX, DistaY, BTemp;
 
-	ulong Pitch = ddsd.lPitch, Surface = ulong(ddsd.lpSurface);
+	ulong Pitch = XSize << 1, Surface = ulong(Data[0]);
 
 	static vector2d Point[] = {vector2d(0, 0), vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1)};
 
@@ -1596,78 +1433,6 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 		End:
 		}
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-}
-
-void bitmap::Backup()
-{
-	BackupBuffer = new ushort[XSize * YSize];
-
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-	ulong SrcBuffer = ulong(ddsd.lpSurface);
-	ulong DestBuffer = ulong(BackupBuffer);
-
-	for(ushort y = 0; y < YSize; ++y)
-	{
-		memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
-
-		SrcBuffer += ddsd.lPitch;
-		DestBuffer += XSize << 1;
-	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(!DoubleBuffer)
-		delete DXSurface;
-}
-
-void bitmap::Restore()
-{
-	if(!DoubleBuffer)
-	{
-		graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
-		DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
-		DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
-	}
-
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-	ulong SrcBuffer = ulong(BackupBuffer);
-	ulong DestBuffer = ulong(ddsd.lpSurface);
-
-	for(ushort y = 0; y < YSize; ++y)
-	{
-		memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
-
-		SrcBuffer += XSize << 1;
-		DestBuffer += ddsd.lPitch;
-	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	delete [] BackupBuffer;
-
-	BackupBuffer = 0;
-}
-
-void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface, ushort NewXSize, ushort NewYSize)
-{
-	DXSurface->Create(DDSurface);
-
-	DDSURFACEDESC2 ddsd;
-
-	DDSurface->GetSurfaceDesc(&ddsd);
-
-	XSize = NewXSize;
-	YSize = NewYSize;
 }
 
 void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawDiameters, double Rotation)
@@ -1676,7 +1441,7 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 	
 	for(ushort c = 0; c < NumberOfSides; ++c)
 	{
-		double PosX =  sin((2 * 3.1415926535 / NumberOfSides) * c + Rotation) * Radius, PosY = cos((2 * 3.1415926535 / NumberOfSides) * c + Rotation) * Radius;
+		double PosX =  sin((2 * 3.1415926535897932384626433832795 / NumberOfSides) * c + Rotation) * Radius, PosY = cos((2 * 3.1415926535897932384626433832795 / NumberOfSides) * c + Rotation) * Radius;
 		Points.push_back(vector2d(PosX, PosY) + Center);
 	}
 
@@ -1684,7 +1449,8 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 		for(c = 0; c < Points.size(); ++c)
 			for(ushort a = 0; a < Points.size(); ++a)
 			{
-				if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1)) DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
+				if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1))
+					DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
 			}
 	else
 		for(c = 0; c < NumberOfSides; ++c)
@@ -1696,65 +1462,7 @@ void bitmap::CreateAlphaMap(uchar InitialValue)
 	if(AlphaMap)
 		ABORT("Alpha leak detected!");
 
-	Alloc2D<uchar>(AlphaMap, XSize, YSize, InitialValue);
-}
-
-void bitmap::Outline(ushort Color)
-{
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory(&ddsd,sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-	ulong Buffer;
-
-	ushort LastColor, NextColor;
-
-	for(ushort x = 0; x < XSize; ++x)
-	{
-		Buffer = ulong(ddsd.lpSurface) + (x << 1);
-
-		LastColor = *(ushort*)Buffer;
-
-		for(ushort y = 0; y < YSize - 1; ++y)
-		{
-			NextColor = *(ushort*)(Buffer + ddsd.lPitch);
-
-			if((LastColor == 0xF81F || !y) && NextColor != 0xF81F)
-				*(ushort*)Buffer = Color;
-
-			Buffer += ddsd.lPitch;
-
-			if(LastColor != 0xF81F && (NextColor == 0xF81F || y == YSize - 2))
-				*(ushort*)Buffer = Color;
-
-			LastColor = NextColor;
-		}
-	}
-
-	for(ushort y = 0; y < YSize; ++y)
-	{
-		Buffer = ulong(ddsd.lpSurface) + y * ddsd.lPitch;
-
-		LastColor = *(ushort*)Buffer;
-
-		for(ushort x = 0; x < XSize - 1; ++x)
-		{
-			NextColor = *(ushort*)(Buffer + 2);
-
-			if((LastColor == 0xF81F || !x) && NextColor != 0xF81F)
-				*(ushort*)Buffer = Color;
-
-			Buffer += 2;
-
-			if(LastColor != 0xF81F && (NextColor == 0xF81F || x == XSize - 2))
-				*(ushort*)Buffer = Color;
-
-			LastColor = NextColor;
-		}
-	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
+	Alloc2D<uchar>(AlphaMap, YSize, XSize, InitialValue);
 }
 
 bool bitmap::FadeAlpha(uchar Amount)
@@ -1780,36 +1488,77 @@ bool bitmap::FadeAlpha(uchar Amount)
 	return Changes;
 }
 
-void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
+void bitmap::Outline(ushort Color)
 {
-	Bitmap->ClearToColor(0xF81F);
+	ulong Buffer;
 
-	DDSURFACEDESC2 srcddsd;
-	ZeroMemory(&srcddsd,sizeof(srcddsd));
-	srcddsd.dwSize = sizeof(srcddsd);
-	DXSurface->GetDDrawSurface()->Lock(NULL, &srcddsd, DDLOCK_WAIT, NULL);
-
-	DDSURFACEDESC2 destddsd;
-	ZeroMemory(&destddsd,sizeof(destddsd));
-	destddsd.dwSize = sizeof(destddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock(NULL, &destddsd, DDLOCK_WAIT, NULL);
+	ushort LastColor, NextColor;
 
 	for(ushort x = 0; x < XSize; ++x)
 	{
-		ulong SrcBuffer = ulong(srcddsd.lpSurface) + (x << 1);
-		ulong DestBuffer = ulong(destddsd.lpSurface) + (x << 1);
+		Buffer = ulong(&Data[0][x]);
+
+		LastColor = *(ushort*)Buffer;
+
+		for(ushort y = 0; y < YSize - 1; ++y)
+		{
+			NextColor = *(ushort*)(Buffer + (XSize << 1));
+
+			if((LastColor == 0xF81F || !y) && NextColor != 0xF81F)
+				*(ushort*)Buffer = Color;
+
+			Buffer += XSize << 1;
+
+			if(LastColor != 0xF81F && (NextColor == 0xF81F || y == YSize - 2))
+				*(ushort*)Buffer = Color;
+
+			LastColor = NextColor;
+		}
+	}
+
+	for(ushort y = 0; y < YSize; ++y)
+	{
+		Buffer = ulong(Data[y]);
+
+		LastColor = *(ushort*)Buffer;
+
+		for(ushort x = 0; x < XSize - 1; ++x)
+		{
+			NextColor = *(ushort*)(Buffer + 2);
+
+			if((LastColor == 0xF81F || !x) && NextColor != 0xF81F)
+				*(ushort*)Buffer = Color;
+
+			Buffer += 2;
+
+			if(LastColor != 0xF81F && (NextColor == 0xF81F || x == XSize - 2))
+				*(ushort*)Buffer = Color;
+
+			LastColor = NextColor;
+		}
+	}
+}
+
+void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
+{
+	Bitmap->Fill(0xF81F);
+
+	for(ushort x = 0; x < XSize; ++x)
+	{
+		ulong SrcBuffer = ulong(&Data[0][x]);
+		ulong DestBuffer = ulong(&Bitmap->Data[0][x]);
 
 		ushort LastColor = *(ushort*)SrcBuffer;
 
 		for(ushort y = 0; y < YSize - 1; ++y)
 		{
-			ushort NextColor = *(ushort*)(SrcBuffer + srcddsd.lPitch);
+			ushort NextColor = *(ushort*)(SrcBuffer + (XSize << 1));
 
 			if((LastColor == 0xF81F || !y) && NextColor != 0xF81F)
 				*(ushort*)DestBuffer = Color;
 
-			SrcBuffer += srcddsd.lPitch;
-			DestBuffer += destddsd.lPitch;
+			SrcBuffer += XSize << 1;
+			DestBuffer += Bitmap->XSize << 1;
 
 			if(LastColor != 0xF81F && (NextColor == 0xF81F || y == YSize - 2))
 				*(ushort*)DestBuffer = Color;
@@ -1820,8 +1569,8 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 
 	for(ushort y = 0; y < YSize; ++y)
 	{
-		ulong SrcBuffer = ulong(srcddsd.lpSurface) + y * srcddsd.lPitch;
-		ulong DestBuffer = ulong(destddsd.lpSurface) + y * destddsd.lPitch;
+		ulong SrcBuffer = ulong(Data[y]);
+		ulong DestBuffer = ulong(Bitmap->Data[y]);
 
 		ushort LastSrcColor = *(ushort*)SrcBuffer;
 		ushort LastDestColor = *(ushort*)DestBuffer;
@@ -1844,7 +1593,4 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 			LastDestColor = NextDestColor;
 		}
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }

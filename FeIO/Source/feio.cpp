@@ -12,7 +12,7 @@
 
 void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
 {
-	DOUBLEBUFFER->ClearToColor(0);
+	DOUBLEBUFFER->Fill(0);
 
 	ushort c, LineNumber = 0;
 
@@ -74,7 +74,7 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 		if(Rotation > 2 * 3.1415926535897932384626433832795f)
 			Rotation -= 2 * 3.1415926535897932384626433832795f;
 
-		DOUBLEBUFFER->ClearToColor(0);
+		DOUBLEBUFFER->Fill(0);
 
 		for(int x = 0; x < 10; ++x)
 			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
@@ -232,7 +232,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 
 	if(hFile == -1L)
 	{
-		DOUBLEBUFFER->ClearToColor(0);
+		DOUBLEBUFFER->Fill(0);
 		FONT->Printf(DOUBLEBUFFER, 260, 200, TopicColor, "You don't have any previous saves.");
 		graphics::BlitDBToScreen();
 		GETKEY();
@@ -249,7 +249,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 
 	while(Check > 0xFFFD)
 	{
-		DOUBLEBUFFER->ClearToColor(0);
+		DOUBLEBUFFER->Fill(0);
 		Check = Buffer.Draw(false);
 	}
 

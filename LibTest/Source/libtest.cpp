@@ -15,7 +15,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false);
 	graphics::LoadDefaultFont("Graphics/Font.pcx");
 
-	DOUBLEBUFFER->ClearToColor(0xF81F);
+	DOUBLEBUFFER->Fill(0xF81F);
 
 	colorizablebitmap Pertti("Graphics/Char.pcx");
 
@@ -67,7 +67,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	CharBlue->CreateAlphaMap(220);
 
 	for(ushort p = 0; p < 1024; ++p)
-		CharBlue->SetAlpha(0, p, p / 4);
+		CharBlue->SetAlpha(p, 0, p / 4);
 
 	CharRed->AlphaBlit(DOUBLEBUFFER, 352, 356);
 	CharGreen->AlphaBlit(DOUBLEBUFFER, 384, 356);
@@ -100,8 +100,6 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	for(ushort y = 0; y < 600; ++y)
 	{
-		DOUBLEBUFFER->Lock();
-
 		for(ushort x = 0; x < 800; ++x)
 		{
 			std::complex<double> C(-2.0f + double(y) / 230, -1.25f + double(x) / 320);
@@ -118,10 +116,8 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 			Depth <<= 3;
 
-			DOUBLEBUFFER->FastPutPixel(x, y, MAKE_RGB(255 - Depth, 255 - Depth, 255 - Depth));
+			DOUBLEBUFFER->PutPixel(x, y, MAKE_RGB(255 - Depth, 255 - Depth, 255 - Depth));
 		}
-
-		DOUBLEBUFFER->Release();
 
 		Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, 800, 600);
 		graphics::BlitDBToScreen();

@@ -22,6 +22,7 @@ public:
 	static int ReadKey();
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
 	static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
+	static void SetInitialized(bool What) { Initialized = What; }
 private:
 	static dynarray<int> KeyBuffer;
 	static char KeyboardLayoutName[KL_NAMELENGTH];

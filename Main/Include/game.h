@@ -62,7 +62,8 @@ public:
 	static vector2d GetCamera() { return Camera; }
 	static void UpdateCameraX();
 	static void UpdateCameraY();
-	static bool Flag;
+	static bool GetIsLoading() { return IsLoading; }
+	static void SetIsLoading(bool What) { IsLoading = What; }
 	static level* GetLevel(ushort);
 	static void InitLuxTable();
 	static void DeInitLuxTable();
@@ -191,6 +192,7 @@ private:
 	static bool LOSUpdateRequested;
 	static petrus* Petrus;
 	static bool InGetCommand;
+	static bool IsLoading;
 };
 
 #endif

@@ -96,7 +96,7 @@ void area::SendNewDrawRequest()
 		for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			Map[x][y]->SendNewDrawRequest();
 
-	DOUBLEBUFFER->ClearToColor(0, 32, 800, 480, 0);
+	DOUBLEBUFFER->Fill(0, 32, 800, 480, 0);
 }
 
 void area::MoveCharacter(vector2d From, vector2d To)
