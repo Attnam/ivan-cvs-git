@@ -1,5 +1,9 @@
 March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* bitmap.cpp: Added bool DrawSides parameter for bitmap::DrawPolygon
+
+March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Material colors added to humanoid bodyparts. All humanoids are now very ugly.
 	  * Modified files:
 	    * Human.pcx: renamed as Humanoid.pcx and converted to material colors by Kahvi

@@ -106,7 +106,7 @@ int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ush
 	  uchar x;
 
 	  for(x = 0; x < 10; ++x)
-	    Buffer.DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
+	    Buffer.DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), false, true, Rotation + double(x) / 50);
 
 	  for(x = 0; x < 4; ++x)
 	    Buffer.DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));

@@ -394,8 +394,11 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
     }
 }
 
-void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawDiameters, double Rotation)
+void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawSides, bool DrawDiameters, double Rotation)
 {
+  if(!DrawSides && !DrawDiameters)
+    return;
+
   std::vector<vector2d> Points;
 
   ushort c;
@@ -407,14 +410,19 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
       Points.push_back(vector2d(short(PosX), short(PosY)) + Center);
     }
 
-  if(DrawDiameters)
+  if(DrawDiameters && DrawSides)
     for(c = 0; c < Points.size(); ++c)
       for(ushort a = 0; a < Points.size(); ++a)
-	{
-	  if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1))
-	    DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
-	}
-  else
+	if(c != a)
+	  DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
+
+  if(DrawDiameters && !DrawSides)
+    for(c = 0; c < Points.size(); ++c)
+      for(ushort a = 0; a < Points.size(); ++a)
+	if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1))
+	  DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
+
+  if(!DrawDiameters)
     for(c = 0; c < NumberOfSides; ++c)
       DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color, true);
 }

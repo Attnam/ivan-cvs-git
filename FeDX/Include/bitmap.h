@@ -45,7 +45,7 @@ class bitmap
   void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF, bool = false);
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
-  void DrawPolygon(vector2d, ushort, ushort, ushort, bool = false, double = 0);
+  void DrawPolygon(vector2d, ushort, ushort, ushort, bool = true, bool = false, double = 0);
   void CreateAlphaMap(uchar);
   bool ChangeAlpha(char);
   void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[Y][X] = Alpha; }
