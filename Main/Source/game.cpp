@@ -208,7 +208,7 @@ void game::Init(std::string Name)
 
       CreateTeams();
 
-      SetPlayer(new human);
+      SetPlayer(new genie);
 
       Player->SetTeam(GetTeam(0));
       GetTeam(0)->SetLeader(Player);

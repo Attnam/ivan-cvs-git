@@ -98,7 +98,12 @@ void square::KickAnyoneStandingHereAway()
 {
   if(Character)
     {
-      GetAreaUnder()->AddCharacter(GetAreaUnder()->GetNearestFreeSquare(GetPos()), Character);
+      GetAreaUnder()->AddCharacter(GetAreaUnder()->GetNearestFreeSquare(Character, GetPos()), Character);
       RemoveCharacter();
     }
+}
+
+bool square::GetIsWalkable(character* Char) const
+{
+  return GetOverTerrain()->GetIsWalkable() && GetGroundTerrain()->GetIsWalkable(Char);
 }

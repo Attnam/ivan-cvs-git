@@ -409,6 +409,7 @@ class GROUNDLEVELTERRAIN
   },
  public:
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+  virtual bool GetIsWalkable(character*) const;
  protected:
   virtual std::string NameSingular() const { return "pool"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 224); }

@@ -54,6 +54,7 @@ class square
   virtual void StepOn(character*, square*) {}
   virtual void KickAnyoneStandingHereAway();
   virtual void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
+  virtual bool GetIsWalkable(character*) const;
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

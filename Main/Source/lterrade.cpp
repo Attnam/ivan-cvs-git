@@ -125,7 +125,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetDownStairs()), *c);
+	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetDownStairs()), *c);
 
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();
@@ -191,7 +191,7 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
       game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetUpStairs()), *c);
+	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetUpStairs()), *c);
 
       game::GetCurrentLevel()->Luxify();
       game::ShowLevelMessage();
@@ -625,3 +625,7 @@ void altar::SitOn(character*)
       }
 }
 
+bool pool::GetIsWalkable(character* ByWho) const
+{
+  return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
+}

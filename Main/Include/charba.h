@@ -275,6 +275,9 @@ class character : public object
   virtual void CreateInitialEquipment() {}
   virtual void DisplayInfo();
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
+  virtual bool CanWalk() const { return true; }
+  virtual bool CanSwim() const { return false; }
+  virtual bool CanFly() const { return false; }
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();

@@ -18,7 +18,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
+      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
       game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();
@@ -71,7 +71,7 @@ bool overlevelterrain::GoDown(character* Who) const // Try to go down
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
+      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
       game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();

@@ -213,6 +213,10 @@ SOURCE=.\Main\Source\team.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\terra.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\typeable.cpp
 # End Source File
 # Begin Source File

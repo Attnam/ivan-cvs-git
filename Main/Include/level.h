@@ -32,13 +32,13 @@ class level : public area
   level() : Room(1, (room*)0) {}
   virtual ~level() {}
   virtual void Generate(levelscript*);
-  virtual vector2d RandomSquare(bool, bool = false) const;
+  virtual vector2d RandomSquare(character*, bool, bool = false) const;
   virtual void FastAddCharacter(vector2d, character*);
   virtual void HandleCharacters();
   virtual levelsquare* GetLevelSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   virtual levelsquare* GetLevelSquare(ushort x, ushort y) const { return Map[x][y]; }
-  virtual void PutPlayer(bool);
-  virtual void PutPlayerAround(vector2d Pos);
+  //virtual void PutPlayer(bool);
+  //virtual void PutPlayerAround(vector2d Pos);
   virtual void GenerateTunnel(vector2d, vector2d, bool);
   virtual void ExpandPossibleRoute(vector2d, vector2d, bool);
   virtual void ExpandStillPossibleRoute(vector2d, vector2d, bool);

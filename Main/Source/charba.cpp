@@ -744,7 +744,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	      else
 		return false;
 	else
-	  if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->GetIsWalkable() || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
+	  if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetIsWalkable(this) || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
 	    {
 	      Move(MoveTo);
 	      return true;
@@ -821,7 +821,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
       }
   else
     if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
-      if(game::GetCurrentArea()->GetSquare(MoveTo)->GetGroundTerrain()->GetIsWalkable() || game::GetGoThroughWallsCheat())
+      if(game::GetCurrentArea()->GetSquare(MoveTo)->GetIsWalkable(this) || game::GetGoThroughWallsCheat())
 	{
 	  Move(MoveTo);
 	  return true;
@@ -3126,7 +3126,7 @@ bool character::Go()
 
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
       {
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetIsWalkable(this))
 	  OKDirectionsCounter++;	
       });
 
@@ -3154,7 +3154,7 @@ void character::GoHandler()
 
       levelsquare* MoveToSquare = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
 
-      if(!MoveToSquare->GetOverTerrain()->GetIsWalkable() || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam()))
+      if(!MoveToSquare->GetIsWalkable(this) || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam()))
 	{
 	  EndGoing();
 	  return;
@@ -3164,7 +3164,7 @@ void character::GoHandler()
 
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
       {
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetIsWalkable(this))
 	  OKDirectionsCounter++;	
       });
 

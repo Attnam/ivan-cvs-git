@@ -152,9 +152,11 @@ bool scrollofcreatemonster::Read(character* Reader)
     {
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+      character* Monster = protosystem::CreateMonster();
+
+      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetIsWalkable(Monster) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::CreateMonster());
+	  game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Monster);
 
 	  if(Reader->GetIsPlayer())
 	    ADD_MESSAGE("As you read the scroll a monster appears.");
@@ -164,6 +166,8 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 	  return true;
 	}
+      else
+	delete Monster;
     }
 
   ADD_MESSAGE("You feel a lost soul fly by you.");
@@ -178,7 +182,7 @@ bool scrollofteleport::Read(character* Reader)
     if(Reader->GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("The %s reads %s and disappears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 
-  Reader->Move(game::GetCurrentLevel()->RandomSquare(true), true);
+  Reader->Move(game::GetCurrentLevel()->RandomSquare(Reader, true), true);
   return true;
 }
 

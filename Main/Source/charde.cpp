@@ -1884,7 +1884,7 @@ bool unicorn::SpecialEnemySightedReaction(character* Enemy)
     if(GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s disappears!", CNAME(DEFINITE));
 
-    Move(GetLevelSquareUnder()->GetLevelUnder()->RandomSquare(true), true);
+    Move(GetLevelSquareUnder()->GetLevelUnder()->RandomSquare(this, true), true);
 
     if(GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("Suddenly %s appears from nothing!", CNAME(INDEFINITE));

@@ -274,6 +274,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
   virtual void BeTalkedTo(character*);
+  virtual bool CanSwim() const { return true; }
  protected:
   virtual std::string NameSingular() const { return "priest"; }
 );
@@ -447,6 +448,7 @@ class CHARACTER
   virtual bool HasInfraVision() const { return true; }
   virtual std::string StandVerb() const { return "floating"; }
   virtual ushort Frequency() const { return 100; }
+  virtual bool CanFly() const { return true; }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(48,0); }
   virtual std::string NameSingular() const { return "pure mass of Bill's will"; }
@@ -818,10 +820,12 @@ class CHARACTER
  public:
   virtual bool CanBeGenerated() const { return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 150000; else return 0; }
-  virtual void GetAICommand() {}
   virtual std::string StandVerb() const { return "swimming"; }
   virtual bool CanBeDisplaced() const { return false; }
   virtual bool CanOpenDoors() const { return false; }
+  virtual bool CanWalk() const { return false; }
+  virtual bool CanSwim() const { return true; }
+  virtual bool Polymorph() { return false; }
  protected:
   virtual std::string NameSingular() const { return "female dolphin in season"; }
   virtual float GetMeleeStrength() const { return 1000; }
@@ -845,6 +849,7 @@ class CHARACTER
   virtual bool CanBeGenerated() const { return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
+  virtual bool CanSwim() const { return true; }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(80,0); }
   virtual std::string NameSingular() const { return "light frog"; }
@@ -1089,7 +1094,6 @@ class CHARACTER
   virtual std::string NameSingular() const { return "zombie"; }
 );
 
-
 class CHARACTER
 (
   imp,
@@ -1127,6 +1131,7 @@ class CHARACTER
   virtual std::string StandVerb() const { return "flying"; }
   virtual bool CanOpenDoors() const { return false; }
   virtual bool HasInfraVision() const { return true; }
+  virtual bool CanFly() const { return true; }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(464,0); }
   virtual std::string NameSingular() const { return "bat"; }
@@ -1305,6 +1310,7 @@ class CHARACTER
   virtual void SetMaster(uchar);
   virtual uchar GetMaster() const { return Master; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "an") + OwnerGodDescription(Master); }
+  virtual bool CanFly() const { return true; }
  protected:
   virtual std::string DeathMessage() { return Name(DEFINITE) + " leaves this mortal plane behind."; }
   virtual vector2d GetBitmapPos() const { return vector2d(432,0); }
@@ -1429,6 +1435,7 @@ class CHARACTER
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 200000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual std::string StandVerb() const { return "floating"; }
+  virtual bool CanFly() const { return true; }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(416,0); }
   virtual std::string NameSingular() const { return "genie"; }

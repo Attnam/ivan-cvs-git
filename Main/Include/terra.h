@@ -20,6 +20,8 @@ class terrain
 
 class groundterrain : public terrain
 {
+ public:
+  virtual bool GetIsWalkable(character*) const;
 };
 
 class overterrain : public terrain
@@ -30,6 +32,3 @@ class overterrain : public terrain
 };
 
 #endif
-
-
-

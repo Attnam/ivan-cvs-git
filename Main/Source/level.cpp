@@ -307,13 +307,13 @@ void level::Generate(levelscript* GenLevelScript)
 	  if(Square->GetPosScript()->GetRandom())
 	    {
 	      if(Square->GetPosScript()->GetIsInRoom(false))
-		for(Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable()))
+		for(Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable()))
 		  {
 		    if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
 		      break;
 		  }
 	      else
-		Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
+		Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());
 	    }
 	  else
 	    Pos = *Square->GetPosScript()->GetVector();
@@ -358,7 +358,7 @@ void level::CreateItems(ushort Amount)
 {
   for(uchar x = 0; x < Amount; ++x)
     {
-      vector2d Pos = RandomSquare(true);
+      vector2d Pos = RandomSquare(0, true);
 
       Map[Pos.X][Pos.Y]->Stack->FastAddItem(protosystem::BalancedCreateItem());
     }
@@ -699,18 +699,18 @@ void level::HandleCharacters()
       GenerateNewMonsters(1);
 }
 
-void level::PutPlayer(bool)
+/*void level::PutPlayer(bool)
 {
   vector2d Pos = RandomSquare(true);
   Map[Pos.X][Pos.Y]->FastAddCharacter(game::GetPlayer());
   game::GetPlayer()->SetSquareUnder(Map[Pos.X][Pos.Y]);
-}
+}*/
 
-void level::PutPlayerAround(vector2d Pos)
+/*void level::PutPlayerAround(vector2d Pos)
 {
   DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable() && !Map[DoX][DoY]->GetCharacter()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
   ABORT("Petrus is too popular!");
-}
+}*/
 
 void level::Save(outputfile& SaveFile) const
 {
@@ -806,24 +806,26 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
     {
       Pos = vector2d(0,0);
 
+      character* Char = protosystem::BalancedCreateMonster();
+
       for(uchar cc = 0; cc < 30; ++c)
 	{
-	  Pos = RandomSquare(true);
+	  Pos = RandomSquare(Char, true);
 			
 	  if(!ConsiderPlayer || (abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6))
 	    break;
 	}
 
       if(!(Pos.X == 0 && Pos.Y == 0))
-	Map[Pos.X][Pos.Y]->AddCharacter(protosystem::BalancedCreateMonster());
+	Map[Pos.X][Pos.Y]->AddCharacter(Char);
     }
 }
 
-vector2d level::RandomSquare(bool Walkablility, bool HasCharacter) const
+vector2d level::RandomSquare(character* Char, bool Walkablility, bool HasCharacter) const
 {
   vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-  for(ushort c = 0; (Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
+  for(ushort c = 0; (Map[Pos.X][Pos.Y]->GetIsWalkable(Char) != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
     {
       Pos.X = 1 + RAND() % (XSize - 2);
       Pos.Y = 1 + RAND() % (YSize - 2);

@@ -19,10 +19,8 @@ bool attnam::GoDown(character* Who) const
   game::SetInWilderness(false);
   game::SetCurrentDungeon(1);
   game::SetCurrent(0);
-
   std::vector<character*> Temp;
   game::GetWorldMap()->GetPlayerGroup().swap(Temp);
-
   game::SaveWorldMap(game::SaveName(), true);
   game::SetWorldMap(0);
   game::GetDungeon(1)->PrepareLevel(0);
@@ -30,7 +28,7 @@ bool attnam::GoDown(character* Who) const
   game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	
   for(uchar c = 0; c < Temp.size(); ++c)
-    game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
+    game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
@@ -57,10 +55,8 @@ bool elpuricave::GoDown(character* Who) const
   game::SetInWilderness(false);
   game::SetCurrentDungeon(0);
   game::SetCurrent(0);
-
   std::vector<character*> Temp;
   game::GetWorldMap()->GetPlayerGroup().swap(Temp);
-	
   game::SaveWorldMap(game::SaveName(), true);
   game::SetWorldMap(0);
   game::GetDungeon(0)->PrepareLevel(0);
@@ -68,7 +64,7 @@ bool elpuricave::GoDown(character* Who) const
   game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 
   for(uchar c = 0; c < Temp.size(); ++c)
-    game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
+    game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
@@ -78,4 +74,9 @@ bool elpuricave::GoDown(character* Who) const
     game::Save(game::GetAutoSaveFileName().c_str());
 
   return true;
+}
+
+bool ocean::GetIsWalkable(character* ByWho) const
+{
+  return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }

@@ -40,8 +40,8 @@ class area
   virtual void SendNewDrawRequest();
   virtual void Initialize(ushort, ushort);
   virtual void MoveCharacter(vector2d, vector2d);
-  virtual vector2d GetNearestFreeSquare(vector2d);
-  virtual vector2d FreeSquareSeeker(vector2d, vector2d, uchar);
+  virtual vector2d GetNearestFreeSquare(character*, vector2d);
+  virtual vector2d FreeSquareSeeker(character*, vector2d, vector2d, uchar);
   virtual ushort GetLOSModifier() const { return 16; }
  protected:
   square*** Map;

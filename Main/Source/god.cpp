@@ -142,7 +142,7 @@ void consummo::PrayGoodEffect()
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
   ADD_MESSAGE("You teleport away!");
 
-  game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(true), true);
+  game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true), true);
 }
 
 void consummo::PrayBadEffect()
@@ -346,14 +346,14 @@ void silva::PrayGoodEffect()
       uchar c, Tunnels = 2 + RAND() % 3;
 
       for(c = 0; c < Tunnels; ++c)
-	game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->RandomSquare(false));
+	game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->RandomSquare(0, false));
 
       uchar ToEmpty = 10 + RAND() % 11;
 
       for(c = 0; c < ToEmpty; ++c)
 	for(ushort i = 0; i < 50; ++i)
 	  {
-	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(false);
+	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, false);
 	    bool Correct = false;
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
@@ -381,7 +381,7 @@ void silva::PrayGoodEffect()
       for(c = 0; c < ToGround; ++c)
 	for(ushort i = 0; i < 50; ++i)
 	  {
-	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(true, RAND() % 2 ? true : false);
+	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, true, RAND() % 2 ? true : false);
 
 	    character* Char = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter();
 
@@ -430,13 +430,16 @@ void silva::PrayGoodEffect()
 
       DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
       {
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable() && !game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	wolf* Wolf = new wolf;
+
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetIsWalkable(Wolf) && !game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	  {
-	    wolf* Wolf = new wolf;
 	    Wolf->SetTeam(game::GetPlayer()->GetTeam());
 	    game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->AddCharacter(Wolf);
 	    ++Created;
 	  }
+	else
+	  delete Wolf;
       });
 
       if(!Created)
@@ -647,7 +650,7 @@ void pestifer::PrayBadEffect()
 {
   character* EnnerBeast = new ennerbeast;
   EnnerBeast->SetTeam(game::GetTeam(4));
-  game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(true))->AddCharacter(EnnerBeast);
+  game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(EnnerBeast, true))->AddCharacter(EnnerBeast);
   ADD_MESSAGE("You hear the roaring of a new enner beast!");
 }
 
@@ -1055,10 +1058,10 @@ character* god::CreateAngel()
     {
       TryToCreate = game::GetPlayer()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
-	{
-	  angel* Angel = new angel;
+      angel* Angel = new angel;
 
+      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetIsWalkable(Angel) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+	{
 	  /* This is a most unitelligent gum solution, but... */
 
 	  for(uchar c = 1; game::GetGod(c); ++c)
@@ -1069,6 +1072,8 @@ character* god::CreateAngel()
 	  ADD_MESSAGE("Suddenly %s appears!", Angel->CNAME(INDEFINITE));
 	  return Angel;
 	}
+      else
+	delete Angel;
     }
 
   return 0;
