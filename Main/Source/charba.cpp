@@ -1608,24 +1608,20 @@ void character::NeutralAICommand()
 	});
 
 	for(ushort c = 0; c < SeenCharacters.Length(); ++c)
-	{
 		if(!SeenCharacters.Access(c)->GetRelations() && SeenCharacters.Access(c)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
 		{
 			Charge(SeenCharacters.Access(c));
 			return;
 		}
-	}
 
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
-		{
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
 			else
 				ADD_MESSAGE("Something opens the door.");
-		}
 
 		return;
 	})
@@ -1702,29 +1698,23 @@ void character::HostileAICommand()
 		return;
 	}
 	else
-	{
 		for(ushort c = 0; c < SeenCharacters.Length(); ++c)
-		{
 			if(SeenCharacters.Access(c)->GetRelations() > 0 && SeenCharacters.Access(c)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
 			{
 				Charge(SeenCharacters.Access(c));
 				return;
 			}
-		}
-	}
 
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
-		{
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
 			else
 				ADD_MESSAGE("Something opens the door.");
-		}
 
-	return;
+		return;
 	})
 
 	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)

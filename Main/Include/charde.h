@@ -3,8 +3,7 @@
 
 #include "charba.h"
 #include "graphics.h"
-
-class gweaponskill;
+#include "wskill.h"
 
 class ABSTRACT_CHARACTER
 (
@@ -37,9 +36,14 @@ public:
 	virtual ushort GetSpeed() const;
 	virtual float GetAttackStrength() const;
 	virtual bool Hit(character*);
-	virtual gweaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
+	virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
 	virtual void CharacterSpeciality();
 	virtual bool ShowWeaponSkills();
+	virtual void SetWielded(item*);
+	virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
+	virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
+	virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
+	virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
 	virtual void ReceiveSound(char*, short, float);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
@@ -53,7 +57,9 @@ protected:
 		item* Head;
 		item* Feet;
 	} Armor;
-	gweaponskill** WeaponSkill;
+	gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
+	std::vector<sweaponskill*> SingleWeaponSkill;
+	sweaponskill* CurrentSingleWeaponSkill;
 	uchar ArmType;
 	uchar HeadType;
 	uchar LegType;

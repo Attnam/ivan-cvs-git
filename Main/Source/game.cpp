@@ -34,6 +34,7 @@ std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
 //ushort game::PolymorphCounter = 0xFFFF;
 uchar game::CurrentDungeon;
+ulong game::NextObjectID = 0;
 
 gamescript game::GameScript;
 
@@ -534,7 +535,7 @@ bool game::Save(std::string SaveName)
 
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat << Gamma;
-	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness;// << PolymorphCounter;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;// << PolymorphCounter;
 
 	time_t Time = time(0);
 	srand(Time);
@@ -566,7 +567,7 @@ bool game::Load(std::string SaveName)
 
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat >> Gamma;
-	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness;// >> PolymorphCounter;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;// >> PolymorphCounter;
 
 	time_t Time;
 	SaveFile >> Time;
@@ -915,4 +916,12 @@ void game::LoadWorldMap(std::string SaveName)
 	inputfile SaveFile(SaveName + ".wm");
 
 	SaveFile >> WorldMap;
+}
+
+ulong game::CreateNewObjectID()
+{
+	if(NextObjectID == 0xFFFFFFFF)
+		ABORT("Suddenly the Universe ends!");
+
+	return NextObjectID++;
 }

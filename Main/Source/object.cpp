@@ -4,6 +4,7 @@
 #include "materba.h"
 #include "pool.h"
 #include "save.h"
+#include "game.h"
 
 object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0)
 {
@@ -15,6 +16,7 @@ object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0)
 	if(AddToPool)
 	{
 		SetPoolIterator(objectpool::Add(this));
+		ID = game::CreateNewObjectID();
 	}
 }
 
@@ -32,14 +34,16 @@ void object::Save(outputfile& SaveFile) const
 {
 	typeable::Save(SaveFile);
 
-	SaveFile << Material << Size << GraphicId;
+	SaveFile << Material << Size << GraphicId << ID;
 }
 
 void object::Load(inputfile& SaveFile)
 {
 	typeable::Load(SaveFile);
 
-	SaveFile >> Material >> Size >> GraphicId;
+	game::PopObjectID(ID);
+
+	SaveFile >> Material >> Size >> GraphicId >> ID;
 
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }

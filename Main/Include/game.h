@@ -140,6 +140,8 @@ public:
 	static void SaveWorldMap(std::string = SaveName(), bool = false);
 	static void LoadWorldMap(std::string = SaveName());
 	static void UpdateCamera() { UpdateCameraX(); UpdateCameraY(); }
+	static ulong CreateNewObjectID();
+	static void PopObjectID(ulong ID) { if(NextObjectID == ID + 1) NextObjectID--; }
 private:
 	static std::string Alignment[];
 	static god* God[];
@@ -171,6 +173,7 @@ private:
 	//static ushort PolymorphCounter;
 	static std::vector<dungeon*> Dungeon;
 	static gamescript GameScript;
+	static ulong NextObjectID;
 };
 
 #endif

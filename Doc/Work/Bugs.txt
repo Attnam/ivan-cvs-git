@@ -17,3 +17,5 @@ Messagesystem may show an empty [Y/N] boolquestion, if many messages are display
 Various graphics have become buggy after the Material Color Change.
 "You can't apply something that you wield!"
 Game crashes when a brokable item hits a monster.
+Felist crashes when an empty list ougth to be drawn.
+Dark frog effect is far too high.

@@ -38,8 +38,8 @@ public:
 	virtual ushort GetLevelMap(ushort Index) const = 0;
 	virtual ushort GetUnuseTurnMap(ushort Index) const = 0;
 	virtual ushort GetUnusePenaltyMap(ushort Index) const = 0;
-	void Save(outputfile&) const;
-	void Load(inputfile&);
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
 	void SetHitMultiplier(float What) { HitMultiplier = What; }
 	float GetHitMultiplier() const { return HitMultiplier; }
 	virtual void AddLevelUpMessage() const = 0;
@@ -53,7 +53,7 @@ protected:
 class gweaponskill : public weaponskill
 {
 public:
-	gweaponskill(uchar);
+	gweaponskill(uchar Index) : Index(Index) {}
 	ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
 	ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
 	ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
@@ -86,17 +86,25 @@ inline inputfile& operator>>(inputfile& SaveFile, gweaponskill* WeaponSkill)
 class sweaponskill : public weaponskill
 {
 public:
-	void Turn(bool = false);
+	sweaponskill() {}
+	sweaponskill(std::string WeaponName) : WeaponName(WeaponName) {}
 	ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
 	ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
 	ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
 	float GetBonus() const { return Level ? 1.2f + 0.05f * (Level - 1) : 1.0f; }
 	void AddLevelUpMessage() const;
 	void AddLevelDownMessage() const;
+	void Save(outputfile&) const;
+	void Load(inputfile&);
+	void SetID(ulong What) { ID = What; }
+	ulong GetID() const { return ID; }
+	std::string Name() const { return WeaponName; }
 private:
 	static ushort LevelMap[];
 	static ushort UnuseTurnMap[];
 	static ushort UnusePenaltyMap[];
+	std::string WeaponName;
+	ulong ID;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, sweaponskill* WeaponSkill)
@@ -106,7 +114,7 @@ inline outputfile& operator<<(outputfile& SaveFile, sweaponskill* WeaponSkill)
 	return SaveFile;
 }
 
-inline inputfile& operator>>(inputfile& SaveFile, sweaponskill* WeaponSkill)
+inline inputfile& operator>>(inputfile& SaveFile, sweaponskill*& WeaponSkill)
 {
 	WeaponSkill = new sweaponskill;
 	WeaponSkill->Load(SaveFile);

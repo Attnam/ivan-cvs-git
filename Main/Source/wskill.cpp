@@ -99,10 +99,6 @@ void weaponskill::SubHit(ulong SubHits, bool AddMsg)
 		AddLevelDownMessage();
 }
 
-gweaponskill::gweaponskill(uchar Index) : Index(Index)
-{
-}
-
 void gweaponskill::AddLevelUpMessage() const
 {
 	ADD_MESSAGE("You advance to skill level %d with %s!", Level, SkillName[Index].c_str());
@@ -110,13 +106,29 @@ void gweaponskill::AddLevelUpMessage() const
 
 void gweaponskill::AddLevelDownMessage() const
 {
-	ADD_MESSAGE("You have not practised enough with %s and your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
+	ADD_MESSAGE("You have not practised enough with %s lately and your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
 }
 
 void sweaponskill::AddLevelUpMessage() const
 {
+	ADD_MESSAGE("You advance to skill level %d with your %s!", Level, WeaponName.c_str());
 }
 
 void sweaponskill::AddLevelDownMessage() const
 {
+	ADD_MESSAGE("You have not practised enough with your %s lately and your skill level is reduced to %d!", WeaponName.c_str(), Level);
+}
+
+void sweaponskill::Save(outputfile& SaveFile) const
+{
+	weaponskill::Save(SaveFile);
+
+	SaveFile << WeaponName << ID;
+}
+
+void sweaponskill::Load(inputfile& SaveFile)
+{
+	weaponskill::Load(SaveFile);
+
+	SaveFile >> WeaponName >> ID;
 }

@@ -19,18 +19,16 @@
 
 void humanoid::VirtualConstructor()
 {
-	WeaponSkill = new gweaponskill*[WEAPON_SKILL_GATEGORIES];
-
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		WeaponSkill[c] = new gweaponskill(c);
+		CategoryWeaponSkill[c] = new gweaponskill(c);
+
+	CurrentSingleWeaponSkill = 0;
 }
 
 humanoid::~humanoid()
 {
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		delete WeaponSkill[c];
-
-	delete [] WeaponSkill;
+		delete CategoryWeaponSkill[c];
 }
 
 void perttu::CreateInitialEquipment()
@@ -287,10 +285,10 @@ void humanoid::Save(outputfile& SaveFile) const
 
 	ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
 
-	SaveFile << Index << ArmType << HeadType << LegType << TorsoType;
+	SaveFile << Index << ArmType << HeadType << LegType << TorsoType << SingleWeaponSkill;
 
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		SaveFile << GetWeaponSkill(c);
+		SaveFile << GetCategoryWeaponSkill(c);
 }
 
 void humanoid::Load(inputfile& SaveFile)
@@ -299,12 +297,20 @@ void humanoid::Load(inputfile& SaveFile)
 
 	ushort Index;
 
-	SaveFile >> Index >> ArmType >> HeadType >> LegType >> TorsoType;
+	SaveFile >> Index >> ArmType >> HeadType >> LegType >> TorsoType >> SingleWeaponSkill;
 
 	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
 
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		SaveFile >> GetWeaponSkill(c);
+		SaveFile >> GetCategoryWeaponSkill(c);
+
+	if(GetWielded())
+		for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+			if((*i)->GetID() == Wielded->GetID())
+			{
+				SetCurrentSingleWeaponSkill(*i);
+				break;
+			}
 }
 
 float golem::GetMeleeStrength() const
@@ -518,12 +524,12 @@ bool humanoid::Apply()
 
 float humanoid::GetAttackStrength() const
 {
-	return GetWielded() ? GetWielded()->GetWeaponStrength() * GetWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() : GetMeleeStrength() * GetWeaponSkill(UNARMED)->GetBonus();
+	return GetWielded() ? GetWielded()->GetWeaponStrength() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() : GetMeleeStrength() * GetCategoryWeaponSkill(UNARMED)->GetBonus();
 }
 
 ushort humanoid::GetSpeed() const
 {
-	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / GetWielded()->GetWeight()) * GetWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus()) : ushort(((GetAgility() << 2) + GetStrength()) * GetWeaponSkill(UNARMED)->GetBonus());
+	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / GetWielded()->GetWeight()) * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus()) : ushort(((GetAgility() << 2) + GetStrength()) * GetCategoryWeaponSkill(UNARMED)->GetBonus());
 }
 
 bool humanoid::Hit(character* Enemy)
@@ -543,7 +549,9 @@ bool humanoid::Hit(character* Enemy)
 			GetWielded()->ReceiveHitEffect(Enemy, this);
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
-		GetWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit(GetIsPlayer());
+		GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit(GetIsPlayer());
+		if(GetWielded())
+			GetCurrentSingleWeaponSkill()->AddHit(GetIsPlayer());
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
 	}
@@ -555,46 +563,121 @@ bool humanoid::Hit(character* Enemy)
 
 void humanoid::CharacterSpeciality()
 {
+	{
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		GetWeaponSkill(c)->Turn(GetIsPlayer());
+		GetCategoryWeaponSkill(c)->Turn(GetIsPlayer());
+	}
+
+	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+	{
+		(*i)->Turn(GetIsPlayer());
+
+		if(!(*i)->GetHits() && *i != GetCurrentSingleWeaponSkill())
+		{
+			SingleWeaponSkill.erase(i);
+			i = SingleWeaponSkill.begin();
+			continue;
+		}
+	}
 }
 
 bool humanoid::ShowWeaponSkills()
 {
-	felist List("Current Weapon Skills");
-
-	List.AddDescription("");
-	List.AddDescription("Skill Name          Level     Points    To Next Level");
-
-	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
 	{
-		std::string Buffer;
+		felist List("Your experience in weapon categories");
 
-		Buffer += GetWeaponSkill(c)->Name();
-		Buffer.resize(20, ' ');
+		List.AddDescription("");
+		List.AddDescription("Category name       Level     Points    To next level");
 
-		Buffer += GetWeaponSkill(c)->GetLevel();
-		Buffer.resize(30, ' ');
+		for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		{
+			std::string Buffer;
 
-		Buffer += int(GetWeaponSkill(c)->GetHits());
-		Buffer.resize(40, ' ');
+			Buffer += GetCategoryWeaponSkill(c)->Name();
+			Buffer.resize(20, ' ');
 
-		if(GetWeaponSkill(c)->GetLevel() != 10)
-			List.AddString(Buffer + (GetWeaponSkill(c)->GetLevelMap(GetWeaponSkill(c)->GetLevel() + 1) - GetWeaponSkill(c)->GetHits()));
-		else
-			List.AddString(Buffer + '-');
+			Buffer += GetCategoryWeaponSkill(c)->GetLevel();
+			Buffer.resize(30, ' ');
+
+			Buffer += int(GetCategoryWeaponSkill(c)->GetHits());
+			Buffer.resize(40, ' ');
+
+			if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
+				List.AddString(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()));
+			else
+				List.AddString(Buffer + '-');
+		}
+
+		List.Draw(FONTW, FONTR, false);
 	}
 
-	List.Draw(FONTW, FONTR, false);
+	if(SingleWeaponSkill.size())
+	{
+		felist List("Your experience in single weapons");
+
+		List.AddDescription("");
+		List.AddDescription("Weapon name         Level     Points    To next level");
+
+		for(uchar c = 0; c < SingleWeaponSkill.size(); ++c)
+		{
+			std::string Buffer;
+
+			Buffer += GetSingleWeaponSkill(c)->Name();
+			Buffer.resize(20, ' ');
+
+			Buffer += GetSingleWeaponSkill(c)->GetLevel();
+			Buffer.resize(30, ' ');
+
+			Buffer += int(GetSingleWeaponSkill(c)->GetHits());
+			Buffer.resize(40, ' ');
+
+			if(GetSingleWeaponSkill(c)->GetLevel() != 10)
+				List.AddString(Buffer + (GetSingleWeaponSkill(c)->GetLevelMap(GetSingleWeaponSkill(c)->GetLevel() + 1) - GetSingleWeaponSkill(c)->GetHits()));
+			else
+				List.AddString(Buffer + '-');
+		}
+
+		List.Draw(FONTW, FONTR, false);
+	}
 
 	return false;
 }
 
+void humanoid::SetWielded(item* Something)
+{
+	if(GetWielded() && !GetCurrentSingleWeaponSkill()->GetHits())
+		for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+			if(*i == GetCurrentSingleWeaponSkill())
+			{
+				delete *i;
+				SingleWeaponSkill.erase(i);
+				break;
+			}
+
+	SetCurrentSingleWeaponSkill(0);
+
+	if(Wielded = Something)
+	{
+		for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+			if((*i)->GetID() == Wielded->GetID())
+			{
+				SetCurrentSingleWeaponSkill(*i);
+				break;
+			}
+
+		if(!GetCurrentSingleWeaponSkill())
+		{
+			SetCurrentSingleWeaponSkill(new sweaponskill(Wielded->Name(UNARTICLED)));
+			GetCurrentSingleWeaponSkill()->SetID(Wielded->GetID());
+			SingleWeaponSkill.push_back(GetCurrentSingleWeaponSkill());
+		}
+	}
+}
 
 void humanoid::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 {
 	character::ReceiveSound(Pointer, Success, ScreamStrength);
+
 	if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
 		SetTorsoArmor(0);
 }
-
