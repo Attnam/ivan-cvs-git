@@ -1,0 +1,52 @@
+The 10 main weapon skill categories are:
+
+Daggers
+Small Swords
+Large Swords
+Clubs
+Hammers
+Maces
+Flails
+Axes
+Halberds
+Spears
+
+Category experience chart:
+
+Level	Succesful hits	Unuse penalty	Idle Turns for
+	needed				level minus
+						
+0	0		0		-
+1	50		10/10000	50000
+2	100		25/5000		30000
+3	250		40/4000		25000
+4	500		75/3000		20000
+5	1000		150/1500	15000
+6	2500		200/1000	12500
+7	5000		400/800		10000
+8	10000		800/400		7500
+9	25000		1000/200	5000
+10	50000		1000/100
+
+Hit limit is 65535. Skill level confers a bonus of 15% per level to damage
+and speed.
+
+Single weapon experience chart:
+
+Level	Succesful hits	Unuse penalty	Idle Turns for
+	needed				level minus
+						
+0	0		0		-
+1	50		5/500		5000
+2	100		10/300		3000
+3	250		20/200		2500
+4	500		25/100		2000
+5	1000		100/100		1500
+6	2500		200/100		1250
+7	5000		250/50		1000
+8	10000		500/25		750
+9	25000		500/10		500
+10	50000		500/5
+
+Hit limit is 65535. Skill level confers a bonus of 5% per level to damage
+and speed.

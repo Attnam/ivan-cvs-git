@@ -1,0 +1,24 @@
+All characters are divided into teams. Teams may have a leader,
+in which case all team members will follow and oby him/her/it.
+Teams are related to each other as follows:
+
+HOSTILE
+
+	Team 1 will attack team 2 members in sigth.
+
+	If a member of team 2 is attacked by a member of
+	team 3, team 1 will not care.
+
+NEUTRAL
+
+	Team 1 will not attack team 2.
+
+	If a member of team 2 is attacked by a member of
+	team 3, team 1 will not care.
+
+FRIEND
+
+	Team 1 will not attack team 2.
+
+	If a member of team 2 is attacked by a member of
+	team 3, team 1 will attack team 3.
