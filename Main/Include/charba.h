@@ -22,8 +22,8 @@
 #define STATES			5
 
 #define FAINTED		0
-#define CONSUMING	1
-#define POLYMORPHED	2
+#define CONSUMING		1
+#define POLYMORPHED		2
 #define RESTING		3
 #define DIGGING		4
 

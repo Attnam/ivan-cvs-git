@@ -748,6 +748,8 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 						if(Char->GetTeam() == GetTeam())
 						{
+							if(Char->StateIsActivated(CONSUMING)) 
+								Char->EndConsuming();
 							TempPlayerGroup.push_back(Char);
 							game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 						}

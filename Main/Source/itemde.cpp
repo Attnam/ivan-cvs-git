@@ -352,7 +352,7 @@ bool scrollofwishing::Read(character* Reader)
 {
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 256);
+	std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
 
 	item* TempItem = protosystem::CreateItem(Temp, Reader->GetIsPlayer());
 
@@ -441,7 +441,7 @@ bool scrollofchangematerial::Read(character* Reader)
 
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(7,7), WHITE, 0, 256);
+	std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
 
 	material* TempMaterial = protosystem::CreateMaterial(Temp, Reader->GetStack()->GetItem(Index)->GetMaterial(0)->GetVolume());
 	

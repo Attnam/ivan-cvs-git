@@ -106,6 +106,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 
 			if(Char)
 			{
+				if(Char->StateIsActivated(CONSUMING)) 
+					Char->EndConsuming();				
 				MonsterList.push_back(Char);
 				game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 			}
@@ -191,6 +193,8 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 
 			if(Char)
 			{
+				if(Char->StateIsActivated(CONSUMING)) 
+					Char->EndConsuming();
 				MonsterList.push_back(Char);
 				game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 			}
