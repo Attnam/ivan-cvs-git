@@ -168,6 +168,7 @@
 #define STGROIN 3 << 3
 #define STRIGHTLEG 4 << 3
 #define STLEFTLEG 5 << 3
+#define STFLAME 64 
 
 #define SILHOUETTE_X_SIZE 64
 #define SILHOUETTE_Y_SIZE 64

@@ -165,6 +165,7 @@ void object::UpdatePictures()
       GraphicId[c].BitmapPos = GetBitmapPos(c);
       GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
       GraphicId[c].SpecialFlags = (GetVisualEffects() & 0x7)|GetSpecialFlags(c);
+      GraphicId[c].Frame = c;
       Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
     }
 }

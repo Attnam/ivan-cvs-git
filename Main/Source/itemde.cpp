@@ -3166,6 +3166,23 @@ void bodypart::CalculateAttackInfo()
   CalculateAPCost();
 }
 
+void flamingsword::ReceiveHitEffect(character* Enemy, character* Hitter)
+{
+  if(RAND() & 1)
+    {
+      if(Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s burns %s.", CHARNAME(DEFINITE), Enemy->CHARNAME(DEFINITE));
+      
+      Enemy->ReceiveDamage(Hitter, 2 + (RAND() & 1), PHYSICALDAMAGE, ALL);
+    }
+}
+
+void flamingsword::VirtualConstructor(bool Load)
+{
+  meleeweapon::VirtualConstructor(Load);
+  SetAnimationFrames(16);
+}
+
 bool arm::DualWieldIsActive() const
 {
   if(GetWielded()->IsTwoHanded())
@@ -3176,3 +3193,4 @@ bool arm::DualWieldIsActive() const
   else
     return false;
 }
+

@@ -151,6 +151,7 @@ class bitmap
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen(void (*)(bitmap*) = 0);
   void ClipParameters(bitmap*, ushort&, ushort&, ushort&, ushort&, ushort&, ushort&) const;
+  void DrawFlames(ushort, ushort = PINK);
  protected:
   ushort XSize, YSize;
   bool IsIndependent;

@@ -1350,3 +1350,26 @@ stethoscope
 	MainMaterialConfig == UNICORNHORN;
 	OfferModifier = 4000;
 }
+
+flamingsword
+{
+	Category = WEAPON;
+	ContainedMaterialConfig == 0;
+	DefaultSize = 150;
+	Possibility = 25;
+	InHandsPic = 160, 16;
+	WeaponCategory = LARGE_SWORDS;
+	DefaultMainVolume = 2400;
+	DefaultSecondaryVolume = 100;
+	BitmapPos = 16, 336;
+	FormModifier = 150;
+	StrengthModifier = 150;
+	OfferModifier = 10000;
+	NameSingular = "sword";
+	Adjective = "flaming";
+	MainMaterialConfig =  { 3, BRONZE, IRON, MITHRIL; }
+	SecondaryMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
+	MaterialConfigChances = { 3, 150, 50, 10; }
+	Roundness = 10;
+	BaseEmitation = 320;
+}

@@ -29,6 +29,7 @@ struct graphic_id
   uchar Alpha[4];
   uchar FileIndex;
   uchar SpecialFlags;
+  ushort Frame;
 };
 
 inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
@@ -71,6 +72,8 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 
   if(GI1.Alpha[3] != GI2.Alpha[3])
     return GI1.Alpha[3] < GI2.Alpha[3];
+  if(GI1.Frame != GI2.Frame)
+    return GI1.Frame < GI2.Frame;
 
   return false;
 }

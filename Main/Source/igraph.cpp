@@ -173,6 +173,11 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
 	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
+      if(GI.SpecialFlags & STFLAME)
+	{
+	  Bitmap->DrawFlames(GI.Frame, TRANSPARENTCOL);
+	}
+
 
       tile Tile(Bitmap);
       TileMap[GI] = Tile;
@@ -194,7 +199,7 @@ void igraph::RemoveUser(graphic_id GI)
 
 outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
 {
-  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialFlags << GI.BaseAlpha;
+  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialFlags << GI.BaseAlpha << GI.Frame;
   SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
   SaveFile << GI.Alpha[0] << GI.Alpha[1] << GI.Alpha[2] << GI.Alpha[3];
   return SaveFile;
@@ -202,7 +207,7 @@ outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
 
 inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
 {
-  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialFlags >> GI.BaseAlpha;
+  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialFlags >> GI.BaseAlpha >> GI.Frame;
   SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
   SaveFile >> GI.Alpha[0] >> GI.Alpha[1] >> GI.Alpha[2] >> GI.Alpha[3];
   return SaveFile;

@@ -61,5 +61,6 @@
 #define FLIP 2
 #define ROTATE_90 4
 
+#define NOFLAME 0xFFFF
 #endif
 

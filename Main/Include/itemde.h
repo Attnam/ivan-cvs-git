@@ -55,6 +55,7 @@ class ITEM
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
   virtual void GenerateLeftOvers(character*);
+  virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual ushort GetMaterialColorA(ushort) const;
@@ -1194,6 +1195,16 @@ class ITEM
  virtual bool Apply(character*);
  virtual bool IsAppliable(const character*) const { return true; };
  virtual bool ListenTo(lsquare*,character*);
+);
+
+class ITEM
+(
+ flamingsword,
+ meleeweapon,
+ public:
+ virtual void ReceiveHitEffect(character*, character*);
+ virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
+ virtual void VirtualConstructor(bool);
 );
 #endif
 

@@ -1101,3 +1101,46 @@ void bitmap::ClipParameters(bitmap* Bitmap, ushort& SourceX, ushort& SourceY, us
   if(short(DestY) + Height > Bitmap->YSize)
     Height = Bitmap->YSize - DestY;
 }
+
+void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
+{
+  ushort* FlameLowestPoint = new ushort[XSize];
+  ushort x,y, Top, MaxDist, RelPos;
+  ++Frame; /* 0 doesn't seem to be a good seed */
+  femath::SetSeed(Frame); /* Because we want flame animation loops to be same in every session */
+
+  for(x = 0; x < XSize; ++x)
+    {
+      FlameLowestPoint[x] = NOFLAME;
+      if(GetPixel(x, 0) != MaskColor)
+	FlameLowestPoint[x] = 0;
+      else
+	{
+	  for(ushort y = 1; y < YSize; ++y)
+	    {
+	      if(GetPixel(x,y - 1) == MaskColor && GetPixel(x,y) != MaskColor && (FlameLowestPoint[x] == NOFLAME && FlameLowestPoint[x] > y))
+		FlameLowestPoint[x] = y;
+	    }
+	}
+    }
+  
+  for(x = 0; x < 16; ++x)
+    {
+      if(FlameLowestPoint[x] != NOFLAME)
+	{
+	  if(FlameLowestPoint[x] != 0)
+	    {
+	      Top = RAND() % FlameLowestPoint[x];
+	      for(y = Top; y <= FlameLowestPoint[x]; ++y)
+		{
+		  MaxDist = FlameLowestPoint[x] - Top;
+		  RelPos = y - Top;
+		  PutPixel(x,y, MAKE_RGB((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
+		}
+	    }
+	  else if(RAND() & 1)
+	    PutPixel(x,0, MAKE_RGB(0,255,0));
+	}
+    }
+  femath::SetSeed(time(0));
+}
