@@ -78,7 +78,7 @@ int Main(int argc, char **argv)
   globalwindowhandler::InstallControlLoop(game::AnimationController);
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, std::string("IVAN ") + std::string(VERSION)))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, std::string("IVAN v. ") + VERSION + "\rBuild " + __DATE__ + "\r"))
       {
       case 0:
 	game::Init();

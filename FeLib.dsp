@@ -186,10 +186,6 @@ SOURCE=.\FeLib\Include\dxutil.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\dynarray.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\FeLib\Include\error.h
 # End Source File
 # Begin Source File

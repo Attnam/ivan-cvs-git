@@ -54,12 +54,13 @@ ulong globalwindowhandler::GetTick()
 
 #else
 
+#include <algorithm>
 #include <ctime>
 
 #include "error.h"
 #include "bitmap.h"
 
-dynarray<int> globalwindowhandler::KeyBuffer;
+std::vector<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
 
@@ -147,23 +148,16 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = 0x14F;
 	if(wParam == VK_NUMPAD5) Key = '.';
 
-	if(Key)
-	  {
-	    ushort Index = KeyBuffer.Search(Key);
-
-	    if(Index == 0xFFFF)
-	      KeyBuffer.Add(Key);
-	  }
+	if(Key && std::find(KeyBuffer.begin(), KeyBuffer.end(), Key) == KeyBuffer.end())
+	  KeyBuffer.push_back(Key);
 
 	return 0;
       }
 
     case WM_CHAR:
       {
-	ushort Index = KeyBuffer.Search(wParam);
-
-	if(Index == 0xFFFF)
-	  KeyBuffer.Add(wParam);
+	if(std::find(KeyBuffer.begin(), KeyBuffer.end(), wParam) == KeyBuffer.end())
+	  KeyBuffer.push_back(wParam);
 
 	return 0;
       }
@@ -195,14 +189,16 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
   if(EmptyBuffer)
     {
       CheckMessages();
-
-      while(KeyBuffer.Length())
-	KeyBuffer.Remove(0);
+      KeyBuffer.clear();
     }
 
   while(true)
-    if(Active && KeyBuffer.Length())
-      return KeyBuffer.Remove(0);
+    if(Active && KeyBuffer.size())
+      {
+	int Key = KeyBuffer[0];
+	KeyBuffer.erase(KeyBuffer.begin());
+	return Key;
+      }
     else
       if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
 	if(msg.message == WM_QUIT)
@@ -274,7 +270,7 @@ int globalwindowhandler::ReadKey()
 	WaitMessage();
     }
 
-  if(KeyBuffer.Length())
+  if(KeyBuffer.size())
     return GetKey(false);
   else
     return 0;
@@ -312,13 +308,15 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
       while(SDL_PollEvent(&event))
 	ProcessMessage(event);	     
 
-      while(KeyBuffer.Length())
-	KeyBuffer.Remove(0);
+      KeyBuffer.clear();
     }
 
   while(true)
     if(KeyBuffer.Length())
       {
+	int Key = KeyBuffer[0];
+	KeyBuffer.erase(KeyBuffer.begin());
+
 	int Key =  KeyBuffer.Remove(0);
 
 	if(Key > 0xE000) 
@@ -370,7 +368,7 @@ int globalwindowhandler::ReadKey()
 	ProcessMessage(event);
     }
 
-  if(KeyBuffer.Length())
+  if(KeyBuffer.size())
     return GetKey(false);
   else
     return 0;
@@ -433,10 +431,9 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
 	  KeyPressed = event.key.keysym.unicode;
 	}
 
-      Index = KeyBuffer.Search(KeyPressed);
-
-      if(Index == 0xFFFF)
-	KeyBuffer.Add(KeyPressed);	  
+      if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end())
+	KeyBuffer.push_back(KeyPressed);
+	  
       break;
 
     case SDL_KEYUP:

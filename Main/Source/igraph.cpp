@@ -103,7 +103,7 @@ tile igraph::AddUser(graphic_id GI)
     }
   else
     {
-      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.Alpha);
+      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
 
       if(GI.SpecialType == STRIGHTARM)
 	{

@@ -544,7 +544,7 @@ bool humanoid::ShowWeaponSkills()
     if(GetLeftArm())
       GetLeftArm()->AddCurrentSingleWeaponSkillInfo(List);
 
-    List.Draw(vector2d(26, 42), 652, 20, false);
+    List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), false);
   }
 
   return false;

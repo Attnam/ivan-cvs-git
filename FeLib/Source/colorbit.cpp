@@ -115,7 +115,7 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
     }
 }
 
-bitmap* colorizablebitmap::Colorize(ushort* Color, uchar* Alpha) const
+bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha) const
 {
   bitmap* Bitmap = new bitmap(XSize, YSize);
   uchar* Buffer = PaletteBuffer;
@@ -123,9 +123,9 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar* Alpha) const
   ulong AlphaMap;
   bool UseAlpha;
 
-  if(Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255))
+  if(BaseAlpha != 255 || (Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255)))
     {
-      Bitmap->CreateAlphaMap(255);
+      Bitmap->CreateAlphaMap(BaseAlpha);
       AlphaMap = ulong(Bitmap->GetAlphaMap()[0]);
       UseAlpha = true;
     }
@@ -160,7 +160,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar* Alpha) const
   return Bitmap;
 }
 
-bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, uchar* Alpha) const
+bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, uchar BaseAlpha, uchar* Alpha) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
@@ -168,9 +168,9 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
   ulong AlphaMap;
   bool UseAlpha;
 
-  if(Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255))
+  if(BaseAlpha != 255 || (Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255)))
     {
-      Bitmap->CreateAlphaMap(255);
+      Bitmap->CreateAlphaMap(BaseAlpha);
       AlphaMap = ulong(Bitmap->GetAlphaMap()[0]);
       UseAlpha = true;
     }

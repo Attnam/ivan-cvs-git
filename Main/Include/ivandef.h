@@ -22,6 +22,35 @@
 #define DATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return GetDataBase()->data; }
 #define DATABASEBOOL(data) virtual bool data() const { return GetDataBase()->data; }
 
+#define DATAVALUE(type, data)\
+ public:\
+  type Get##data() const { return data; }\
+  void Set##data(type What) { data = What; }\
+ protected:\
+  type data;
+
+#define COMPLEXDATAVALUE(type, data)\
+ public:\
+  const type& Get##data() const { return data; }\
+  void Set##data(const type& What) { data = What; }\
+ protected:\
+  type data;
+
+#define EDITABLEDATAVALUE(type, data)\
+ public:\
+  type Get##data() const { return data; }\
+  void Set##data(type What) { data = What; }\
+  void Edit##data(type What) { data += What; }\
+ protected:\
+  type data;
+
+#define DATABOOL(data)\
+ public:\
+  bool data() const { return data##Bool; }\
+  void Set##data(bool What) { data##Bool = What; }\
+ protected:\
+  type data##Bool;
+
 #if defined WIN32 || defined __DJGPP__
 #define GAME_DIR std::string("")
 #define SAVE_DIR std::string("Save/")

@@ -110,7 +110,6 @@ void square::SetLastSeen(ulong What)
 
   UpdateMemorized();
   UpdateMemorizedDescription();
-
   LastSeen = What;
 }
 

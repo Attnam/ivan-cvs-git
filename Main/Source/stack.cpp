@@ -434,7 +434,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::strin
 
   AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, SorterFunction);
 
-  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, SelectItem, false);
+  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, MAKE_RGB(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;

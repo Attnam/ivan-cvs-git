@@ -10,6 +10,7 @@
 
 #include "typedef.h"
 #include "vector2d.h"
+#include "felibdef.h"
 
 class colorizablebitmap;
 class inputfile;
@@ -52,7 +53,7 @@ class felist
   void AddEntryToPos(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
   void RemoveEntryFromPos(ushort);
   void AddDescription(const std::string&, ushort = 0xFFFF);
-  ushort Draw(vector2d, ushort, ushort = 20, bool = true, bool = true, bool = true, bool = false);
+  ushort Draw(vector2d, ushort, ushort = 20, ushort = MAKE_RGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false);
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();
   std::string GetEntry(ushort Index) const { return Entry[Index].String; }

@@ -413,8 +413,8 @@ void level::CreateStairs(bool Up)
 
 bool level::MakeRoom(roomscript* RoomScript)
 {
+  game::BusyAnimation();
   ushort XPos = RoomScript->GetPos()->X, YPos = RoomScript->GetPos()->Y, Width = RoomScript->GetSize()->X, Height = RoomScript->GetSize()->Y;
-
   ushort BXPos = XPos, BYPos = YPos;
 
   if(XPos + Width > XSize - 2)
@@ -539,10 +539,10 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  Map[x][y]->SetDivineMaster(Owner);
     }
 
-  if(*RoomScript->GetGenerateTunnel() && Door.Length())
+  if(*RoomScript->GetGenerateTunnel() && Door.size())
     {
       game::BusyAnimation();
-      vector2d LPos = Door.Access(RAND() % Door.Length());
+      vector2d LPos = Door[RAND() % Door.size()];
       ushort LXPos = LPos.X, LYPos = LPos.Y;
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
@@ -588,6 +588,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  Door->Lock();
 	}
+
       Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[XPos][YPos]->Clean();
 
@@ -621,7 +622,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	    XPos += Width - 1;
 	}
 
-      Door.Add(vector2d(XPos, YPos));
+      Door.push_back(vector2d(XPos, YPos));
 
       if(!*RoomScript->GetGenerateTunnel())
 	{
@@ -651,66 +652,78 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetCharacterMap(false))
     {
-      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetCharacterMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetCharacterMap()->GetPos()->Y;
       const contentscript<character>* CharacterScript;
 
       for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
-	for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
-	  if((CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y)))
-	    {
-	      character* Char = CharacterScript->Instantiate();
+	{
+	  game::BusyAnimation();
 
-	      if(!Char->GetTeam())
-		Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
+	  for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
+	    if((CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y)))
+	      {
+		character* Char = CharacterScript->Instantiate();
 
-	      Map[XPos + x][YPos + y]->FastAddCharacter(Char);
-	      RoomClass->HandleInstantiatedCharacter(Char);
-	    }
+		if(!Char->GetTeam())
+		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
+
+		Map[XPos + x][YPos + y]->FastAddCharacter(Char);
+		RoomClass->HandleInstantiatedCharacter(Char);
+	      }
+	}
     }
 
   if(RoomScript->GetItemMap(false))
     {
-      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetItemMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetItemMap()->GetPos()->Y;
       const contentscript<item>* ItemScript;
 
       for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
-	for(ushort y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
-	  if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
-	    Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
+	{
+	  game::BusyAnimation();
+
+	  for(ushort y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
+	    if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
+	      Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
+	}
     }
 
   if(RoomScript->GetGTerrainMap(false))
     {
-      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetGTerrainMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetGTerrainMap()->GetPos()->Y;
       const contentscript<glterrain>* GTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetGTerrainMap()->GetSize()->X; ++x)
-	for(ushort y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
-	  if((GTerrainScript = RoomScript->GetGTerrainMap()->GetContentScript(x, y)))
-	    Map[XPos + x][YPos + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
+	{
+	  game::BusyAnimation();
+
+	  for(ushort y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
+	    if((GTerrainScript = RoomScript->GetGTerrainMap()->GetContentScript(x, y)))
+	      Map[XPos + x][YPos + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
+	}
     }
 
   if(RoomScript->GetOTerrainMap(false))
     {
-      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetOTerrainMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetOTerrainMap()->GetPos()->Y;
       const contentscript<olterrain>* OTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetOTerrainMap()->GetSize()->X; ++x)
-	for(ushort y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
-	  if((OTerrainScript = RoomScript->GetOTerrainMap()->GetContentScript(x, y)))
-	    {
-	      olterrain* Terrain = OTerrainScript->Instantiate();
-	      Map[XPos + x][YPos + y]->ChangeOLTerrain(Terrain);
-	      RoomClass->HandleInstantiatedOLTerrain(Terrain);
-	    }
+	{
+	  game::BusyAnimation();
+
+	  for(ushort y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
+	    if((OTerrainScript = RoomScript->GetOTerrainMap()->GetContentScript(x, y)))
+	      {
+		olterrain* Terrain = OTerrainScript->Instantiate();
+		Map[XPos + x][YPos + y]->ChangeOLTerrain(Terrain);
+		RoomClass->HandleInstantiatedOLTerrain(Terrain);
+	      }
+	}
     }
 
   return true;
@@ -736,39 +749,18 @@ void level::GenerateMonsters()
 void level::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
-
   SaveFile << Room;
 
-  {
-    for(ulong c = 0; c < XSizeTimesYSize; ++c)
-      Map[0][c]->Save(SaveFile);
-  }
+  for(ulong c = 0; c < XSizeTimesYSize; ++c)
+    Map[0][c]->Save(SaveFile);
 
-  ushort Length = KeyPoint.Length();
-
-  SaveFile << Length;
-
-  ushort c;
-
-  for(c = 0; c < Length; ++c)
-    SaveFile << KeyPoint.Access(c);
-
-  Length = Door.Length();
-
-  SaveFile << Length;
-
-  for(c = 0; c < Length; ++c)
-    SaveFile << Door.Access(c);
-
-  SaveFile << UpStairs << DownStairs << WorldMapEntry << LevelMessage;
+  SaveFile << Door << UpStairs << DownStairs << WorldMapEntry << LevelMessage;
 }
 
 void level::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
-
   Map = (lsquare***)area::Map;
-
   SaveFile >> Room;
 
   for(ushort x = 0; x < XSize; ++x)
@@ -778,33 +770,7 @@ void level::Load(inputfile& SaveFile)
 	Map[x][y]->Load(SaveFile);
       }
 
-  ushort Length;
-
-  SaveFile >> Length;
-
-  ushort c;
-
-  for(c = 0; c < Length; ++c)
-    {
-      vector2d Pos;
-
-      SaveFile >> Pos;
-
-      KeyPoint.Add(Pos);
-    }
-
-  SaveFile >> Length;
-
-  for(c = 0; c < Length; ++c)
-    {
-      vector2d Pos;
-
-      SaveFile >> Pos;
-
-      Door.Add(Pos);
-    }
-
-  SaveFile >> UpStairs >> DownStairs >> WorldMapEntry >> LevelMessage;
+  SaveFile >> Door >> UpStairs >> DownStairs >> WorldMapEntry >> LevelMessage;
 }
 
 void level::Luxify()

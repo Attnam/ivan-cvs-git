@@ -117,14 +117,22 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	  else
 	    FONT->Printf(&Buffer, Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	}
-      FONT->Printf(&Buffer, 5, RES.Y - 8, MAKE_RGB(100,100,100), "%s", SmallText.c_str());
+
+      sCopyOfMS = SmallText;
+
+      for(i = 0; i < CountChars('\r', SmallText); ++i)
+	{
+	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
+	  FONT->Printf(&Buffer, 2, RES.Y - CountChars('\r', SmallText) * 10 + i * 10, ColorNotSelected, "%s", HYVINEPAGURUPRINTF.c_str());
+	}
+
       int k;
 
       if(c < 5)
 	{
 	  Backup.MaskedBlit(DOUBLEBUFFER, ushort(255 - c * 50), 0);
-	  Buffer.SimpleAlphaBlit(DOUBLEBUFFER, c * 50, 0);
-	  ++c;
+	  Buffer.SimpleAlphaBlit(DOUBLEBUFFER, c++ * 50, 0);
 	  graphics::BlitDBToScreen();
 	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
 	  k = READKEY();
@@ -296,7 +304,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
       Check = _findnext(hFile, &Found);
     }
 
-  Check = Buffer.Draw(vector2d(10, 10), 780, 30, true, false, false, true);
+  Check = Buffer.Draw(vector2d(10, 10), 780, 30, BLACK, true, false, false, true);
 
   if(Check == 0xFFFF)
     return "";
@@ -327,7 +335,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
 	}
       else
 	{
-	  int Check = List.Draw(vector2d(10, 10), 780, 30, true, false, false, true);
+	  int Check = List.Draw(vector2d(10, 10), 780, 30, BLACK, true, false, false, true);
 
 	  if(Check == 0xFFFF)
 	    return "";
@@ -356,7 +364,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
       Check = findnext(&Found);
     }
 
-  Check = Buffer.Draw(vector2d(10, 10), 780, 30, true, false, false, true);
+  Check = Buffer.Draw(vector2d(10, 10), 780, 30, BLACK, true, false, false, true);
 
   if(Check == 0xFFFF)
     return "";

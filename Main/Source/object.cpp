@@ -124,6 +124,7 @@ void object::UpdatePictures()
       GraphicId[c].Color[1] = GetMaterialColor1(c);
       GraphicId[c].Color[2] = GetMaterialColor2(c);
       GraphicId[c].Color[3] = GetMaterialColor3(c);
+      GraphicId[c].BaseAlpha = GetBaseAlpha(c);
       GraphicId[c].Alpha[0] = GetAlpha0(c);
       GraphicId[c].Alpha[1] = GetAlpha1(c);
       GraphicId[c].Alpha[2] = GetAlpha2(c);

@@ -5,7 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "dynarray.h"
+#include <vector>
+
 #include "typedef.h"
 #include "vector2d.h"
 #include "square.h"
@@ -24,6 +25,17 @@ class outputfile;
 class inputfile;
 class room;
 class fluid;
+
+struct emitter
+{
+  emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
+  emitter() { }
+  vector2d Pos;
+  ushort DilatedEmitation;
+};
+
+outputfile& operator<<(outputfile&, const emitter&);
+inputfile& operator>>(inputfile&, emitter&);
 
 /* Presentation of the lsquare class */
 
@@ -104,7 +116,6 @@ class lsquare : public square
   virtual void RemoveFluid();
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual void TeleportEverything(character*);
-  //virtual bool ReceiveApply(item*, character*);
   virtual bool DipInto(item*, character*);
   virtual void DrawCharacterSymbols(vector2d, ushort);
   virtual bool LockEverything(character*);
@@ -114,17 +125,9 @@ class lsquare : public square
   glterrain* GLTerrain;
   olterrain* OLTerrain;
   ushort CalculateEmitation() const;
-  struct emitter
-  {
-    emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
-    emitter() { }
-    bool operator==(const emitter& AE) const { if(Pos == AE.Pos) return true; else return false; }
-    emitter& operator=(const emitter& AE) { Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
-    vector2d Pos;
-    ushort DilatedEmitation;
-  };
-  dynarray<emitter> Emitter;
-  stack* Stack, * SideStack[4];
+  std::vector<emitter> Emitter;
+  stack* Stack;
+  stack* SideStack[4];
   ushort Emitation;
   std::string Engraved;
   uchar DivineMaster;
@@ -134,5 +137,3 @@ class lsquare : public square
 };
 
 #endif
-
-

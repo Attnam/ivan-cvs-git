@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 
-#include "dynarray.h"
 #include "typedef.h"
 #include "vector2d.h"
 #include "area.h"
@@ -76,7 +75,7 @@ class level : public area
   lsquare*** Map;
   levelscript* LevelScript;
   std::string LevelMessage;
-  dynarray<vector2d, uchar> KeyPoint, Door;
+  std::vector<vector2d> Door;
   vector2d UpStairs, DownStairs, WorldMapEntry;
   std::vector<room*> Room;
 };

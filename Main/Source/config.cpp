@@ -153,7 +153,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHTGRAY);
 #endif
 
-      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
+      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, game::IsRunning() ? MAKE_RGB(0, 0, 16) : BLACK, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
 
       switch(Chosen)
 	{

@@ -24,7 +24,7 @@ felist::~felist()
   Empty();
 }
 
-ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, bool DrawSelectable, bool BlitAfterwards, bool DrawBackroundAfterwards, bool Fade)
+ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, ushort DrawBackColor, bool DrawSelectable, bool BlitAfterwards, bool DrawBackroundAfterwards, bool Fade)
 {
   if(!Entry.size())
     return 0xFFFF;
@@ -33,7 +33,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, b
   Width = DrawWidth;
   PageLength = DrawPageLength;
   Selectable = DrawSelectable;
-  BackColor = MAKE_RGB(0, 0, 16);
+  BackColor = DrawBackColor;
 
   FelistCurrentlyDrawn = this;
   globalwindowhandler::InstallControlLoop(FelistDrawController);

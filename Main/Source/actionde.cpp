@@ -80,7 +80,11 @@ void consume::Handle()
 
   SetHasEaten(true);
 
-  if(Consuming->Consume(GetActor(), 500))
+  character* Actor = GetActor();
+
+  /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
+
+  if(Consuming->Consume(Actor, 500) && Actor->IsEnabled())
     Terminate(true);
 }
 
@@ -206,7 +210,14 @@ void dig::Handle()
       if(Square->CanBeSeen())
 	ADD_MESSAGE("%s", Square->GetOLTerrain()->DigMessage().c_str());
 
+      character* Actor = GetActor();
       Square->GetOLTerrain()->Break();
+
+      /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
+
+      if(!Actor->IsEnabled())
+	return;
+
       GetActor()->GetMainWielded()->MoveTo(GetActor()->GetStack());
       GetActor()->SetRightWielded(GetRightBackup());
       SetRightBackup(0);

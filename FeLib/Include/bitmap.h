@@ -92,10 +92,6 @@ class bitmap
   void SimpleAlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Alpha, ushort MaskColor = DEFAULTTRANSPARENT) const  { SimpleAlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Alpha, MaskColor); }
   void SimpleAlphaBlit(bitmap* Bitmap, uchar Alpha, ushort MaskColor = DEFAULTTRANSPARENT) const { SimpleAlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Alpha, MaskColor); }
 
-  /*void AlphaBlit(bitmap*, ushort, ushort, ushort = DEFAULTTRANSPARENT) const;
-  void AlphaBlit(bitmap* Bitmap, vector2d Dest, ushort MaskColor = DEFAULTTRANSPARENT) const  { AlphaBlit(Bitmap, Dest.X, Dest.Y, MaskColor); }
-  void AlphaBlit(bitmap* Bitmap, ushort MaskColor = DEFAULTTRANSPARENT) const { AlphaBlit(Bitmap, 0, 0, MaskColor); }*/
-
   void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0, ushort = DEFAULTTRANSPARENT) const;
   void AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags = 0, ushort MaskColor = DEFAULTTRANSPARENT) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags, MaskColor); }
   void AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, uchar Flags = 0, ushort MaskColor = DEFAULTTRANSPARENT) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }

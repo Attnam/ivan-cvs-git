@@ -333,6 +333,10 @@ SOURCE=.\Main\Include\area.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\attrib.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\charba.h
 # End Source File
 # Begin Source File

@@ -1,3 +1,11 @@
+May 31 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Menu version description looks now better and is more informative
+	* Fade optimization
+	* DynArray finally eliminated
+	* Fixed a bug that crashed the game if one died of a food effect or an explosion of a digged door
+	* Attribute class added but not used yet
+
 May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Datafilezation checking
@@ -10,7 +18,7 @@ May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Color tweaks
 	* Added an alpha blend transparency effect for glass and liquids,
 	  although it's hard to see when objects are so small :(
-	  But if you lay a bottle over a flickering banana, you'll certainly notice it.
+	  But if you lay a bottle over a flickering banana, you'll certainly notice it
 
 May 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

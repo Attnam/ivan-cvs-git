@@ -32,8 +32,6 @@ void MaskedBlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, u
 void MaskedBlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void MaskedBlitLuminated(ulong, ulong, ulong, ulong, ushort, ushort, ushort, ushort);
 void SimpleAlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, uchar, ushort);
-//void AlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-
 void AlphaBlitNoFlags(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void AlphaBlitMirror(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void AlphaBlitFlip(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
@@ -42,7 +40,6 @@ void AlphaBlitRotate90(ulong, ulong, ulong, ulong, ulong, ulong, ushort, ushort,
 void AlphaBlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void AlphaBlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void AlphaBlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-
 void DrawLine(ulong, ulong, ushort, ushort, ushort, ushort, ushort, ushort, ushort);
 
 #endif

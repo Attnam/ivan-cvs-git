@@ -41,7 +41,6 @@ class globalwindowhandler
 #endif
 
 #include "typedef.h"
-#include "dynarray.h"
 
 class bitmap;
 
@@ -59,15 +58,13 @@ class globalwindowhandler
 #endif
   static int GetKey(bool = true);
   static int ReadKey();
-  static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
   static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
   static void SetInitialized(bool What) { Initialized = What; }
-  static bool KeyIsDown(int Key) { return KeyBuffer.Search(Key) != 0xFFFF; }
   static ulong GetTick();
  private:
-  static dynarray<int> KeyBuffer;
+  static std::vector<int> KeyBuffer;
   static bool Initialized;
   static bool (*QuitMessageHandler)();
   static controlvector ControlLoop;

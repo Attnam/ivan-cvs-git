@@ -1333,7 +1333,7 @@ void game::BusyAnimation(bitmap* Buffer)
       ElpuriLoaded = true;
     }
 
-  if(clock() - LastTime > 0.03f * CLOCKS_PER_SEC)
+  if(clock() - LastTime > CLOCKS_PER_SEC >> 5)
     {
       vector2d Pos(RES.X / 2, RES.Y * 2 / 3);
       Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);

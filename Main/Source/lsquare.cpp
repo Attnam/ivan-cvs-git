@@ -335,30 +335,27 @@ void lsquare::Noxify()
 
 void lsquare::ForceEmitterNoxify()
 {
-  for(ushort c = 0; c < Emitter.Length(); ++c)
-    game::GetCurrentLevel()->GetLSquare(Emitter.Access(c).Pos)->Noxify();
+  for(ushort c = 0; c < Emitter.size(); ++c)
+    game::GetCurrentLevel()->GetLSquare(Emitter[c].Pos)->Noxify();
 }
 
 void lsquare::ForceEmitterEmitation()
 {
-  for(ushort c = 0; c < Emitter.Length(); ++c)
-    game::GetCurrentLevel()->GetLSquare(Emitter.Access(c).Pos)->Emitate();
+  for(ushort c = 0; c < Emitter.size(); ++c)
+    game::GetCurrentLevel()->GetLSquare(Emitter[c].Pos)->Emitate();
 }
 
 void lsquare::NoxifyEmitter(vector2d Dir)
 {
-  emitter DirEmitter(Dir, 0);
-
-  ushort Index = Emitter.Search(DirEmitter);
-
-  if(Index != 0xFFFF)
-    {
-      Emitter.Access(Index) = DirEmitter;
-
-      NewDrawRequested = true;
-      MemorizedUpdateRequested = true;
-      DescriptionChanged = true;
-    }
+  for(ushort c = 0; c < Emitter.size(); ++c)
+    if(Emitter[c].Pos == Dir)
+      {
+	Emitter[c].DilatedEmitation = 0;
+	NewDrawRequested = true;
+	MemorizedUpdateRequested = true;
+	DescriptionChanged = true;
+	return;
+      }
 }
 
 uchar lsquare::CalculateBitMask(vector2d Dir) const
@@ -422,75 +419,72 @@ uchar lsquare::CalculateBitMask(vector2d Dir) const
   return BitMask;
 }
 
-void lsquare::AlterLuminance(vector2d Dir, ushort AiL)
-{                                 // What does AL mean? Comments r0x0r
+void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
+{
+  bool Found = false;
 
-  /* 
-   * Answer from the wise: Former AL was an acronym
-   * for "Altering Luminance". Current AiL, however,
-   * is completely meaningless (since AL is a reserved
-   * definition for "Alignment Lawful", it cannot be
-   * used here anymore).
-   */
-
-  ushort Index;
-
-  emitter DirEmitter(Dir, AiL);
-
-  if((Index = Emitter.Search(DirEmitter)) == 0xFFFF)
-    {
-      if(AiL >= LIGHT_BORDER)
-	{
-	  if(!GetRawLuminance())
-	    {
-	      DescriptionChanged = true;
-	      MemorizedUpdateRequested = true;
-	    }
-
-	  Emitter << DirEmitter;
-	}
-    }
-  else
-    if(AiL >= LIGHT_BORDER)
+  for(std::vector<emitter>::iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+    if(i->Pos == Dir)
       {
-	if(Emitter.Access(Index).DilatedEmitation == AiL)
-	  return;
-
-	if(!GetRawLuminance())
+	if(NewLuminance >= LIGHT_BORDER)
 	  {
-	    DescriptionChanged = true;
-	    MemorizedUpdateRequested = true;
-	  }
-
-	Emitter.Access(Index) = DirEmitter;
-      }
-    else
-      {
-	ushort RawLum = GetRawLuminance();
-
-	if(RawLum && RawLum == Emitter.Access(Index).DilatedEmitation)
-	  {
-	    Emitter.Remove(Index);
+	    if(i->DilatedEmitation == NewLuminance)
+	      return;
 
 	    if(!GetRawLuminance())
 	      {
 		DescriptionChanged = true;
 		MemorizedUpdateRequested = true;
+
+		if(GetLastSeen() == game::GetLOSTurns())
+		  game::SendLOSUpdateRequest();
 	      }
+
+	    i->DilatedEmitation = NewLuminance;
 	  }
 	else
-	  Emitter.Remove(Index);
+	  {
+	    ushort RawLum = GetRawLuminance();
+
+	    if(RawLum && RawLum == i->DilatedEmitation)
+	      {
+		Emitter.erase(i);
+
+		if(!GetRawLuminance())
+		  {
+		    DescriptionChanged = true;
+		    MemorizedUpdateRequested = true;
+
+		    if(GetLastSeen() == game::GetLOSTurns())
+		      game::SendLOSUpdateRequest();
+		  }
+	      }
+	    else
+	      Emitter.erase(i);
+	  }
+
+	Found = true;
+	break;
       }
 
+  if(!Found)
+    {
+      if(NewLuminance >= LIGHT_BORDER)
+	{
+	  if(!GetRawLuminance())
+	    {
+	      DescriptionChanged = true;
+	      MemorizedUpdateRequested = true;
+
+	      if(GetLastSeen() == game::GetLOSTurns())
+		game::SendLOSUpdateRequest();
+	    }
+
+	  Emitter.push_back(emitter(Dir, NewLuminance));
+	}
+    }
+
   NewDrawRequested = true;
-
-  /*
-   * This seems to be a completely useless piece of conditional code.
-   * It is, however, extremely important, although I don't remember why.
-   */
-
-  if(GetLastSeen() == game::GetLOSTurns())
-    game::SendLOSUpdateRequest();
 }
 
 bool lsquare::Open(character* Opener)
@@ -519,59 +513,26 @@ bool lsquare::Close(character* Closer)
 void lsquare::Save(outputfile& SaveFile) const
 {
   GetStack()->Save(SaveFile); // This must be before square::Save!
-
   square::Save(SaveFile);
-
   SaveFile << GLTerrain << OLTerrain;
 
-  {
-    for(ushort c = 0; c < 4; ++c)
-      SideStack[c]->Save(SaveFile);
-  }
+  for(ushort c = 0; c < 4; ++c)
+    SideStack[c]->Save(SaveFile);
 
-  ushort EmitterLength = Emitter.Length();
-
-  SaveFile << EmitterLength;
-
-  for(ushort c = 0; c < Emitter.Length(); ++c)
-    SaveFile << Emitter.Access(c).Pos << Emitter.Access(c).DilatedEmitation;
-
-  SaveFile << Fluid;
-  SaveFile << Emitation << DivineMaster;
-  SaveFile << Engraved << Room;
+  SaveFile << Emitter << Fluid << Emitation << DivineMaster << Engraved << Room;
 }
 
 void lsquare::Load(inputfile& SaveFile)
 {
   game::SetSquareInLoad(this);
-
   GetStack()->Load(SaveFile); // This must be before square::Load!
-
   square::Load(SaveFile);
-
   SaveFile >> GLTerrain >> OLTerrain;
 
-  {
-    for(ushort c = 0; c < 4; ++c)
-      SideStack[c]->Load(SaveFile);
-  }
+  for(ushort c = 0; c < 4; ++c)
+    SideStack[c]->Load(SaveFile);
 
-  ushort EmitterLength;
-
-  SaveFile >> EmitterLength;
-
-  for(ushort c = 0; c < EmitterLength; ++c)
-    {
-      vector2d EPos;
-      ushort DilatedEmitation;
-      SaveFile >> EPos >> DilatedEmitation;
-      emitter E(EPos, DilatedEmitation);
-      Emitter.Add(E);
-    }
-
-  SaveFile >> Fluid;
-  SaveFile >> Emitation >> DivineMaster;
-  SaveFile >> Engraved >> Room;
+  SaveFile >> Emitter >> Fluid >> Emitation >> DivineMaster >> Engraved >> Room;
 }
 
 void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
@@ -597,15 +558,15 @@ ushort lsquare::GetLuminance() const
 
   if(GetOLTerrain()->IsWalkable())
     {
-      for(ushort c = 0; c < Emitter.Length(); ++c)
-	if(Emitter.Access(c).DilatedEmitation > Luminance)
-	  Luminance = Emitter.Access(c).DilatedEmitation;
+      for(ushort c = 0; c < Emitter.size(); ++c)
+	if(Emitter[c].DilatedEmitation > Luminance)
+	  Luminance = Emitter[c].DilatedEmitation;
     }
   else
-    for(ushort c = 0; c < Emitter.Length(); ++c)
-      if(CalculateBitMask(Emitter.Access(c).Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
-	if(Emitter.Access(c).DilatedEmitation > Luminance)
-	  Luminance = Emitter.Access(c).DilatedEmitation;
+    for(ushort c = 0; c < Emitter.size(); ++c)
+      if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
+	if(Emitter[c].DilatedEmitation > Luminance)
+	  Luminance = Emitter[c].DilatedEmitation;
 
   return Luminance > 511 ? 511 : Luminance;
 }
@@ -614,9 +575,9 @@ ushort lsquare::GetRawLuminance() const
 {
   ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
-  for(ushort c = 0; c < Emitter.Length(); ++c)
-    if(Emitter.Access(c).DilatedEmitation > Luminance)
-      Luminance = Emitter.Access(c).DilatedEmitation;
+  for(ushort c = 0; c < Emitter.size(); ++c)
+    if(Emitter[c].DilatedEmitation > Luminance)
+      Luminance = Emitter[c].DilatedEmitation;
 
   return Luminance > 511 ? 511 : Luminance;
 }
@@ -1163,20 +1124,6 @@ void lsquare::TeleportEverything(character* Teleporter)
   Teleporter->EditNP(-50);
 }
 
-/*bool lsquare::ReceiveApply(item* Thingy, character* Applier)
-{
-  if(GetGLTerrain()->ReceiveApply(Thingy, Applier) || GetOLTerrain()->ReceiveApply(Thingy,Applier) || GetStack()->ReceiveApply(Thingy, Applier))
-    {
-      return true;
-    }
-  else
-    {
-      if(Applier->IsPlayer()) 
-	ADD_MESSAGE("You cannot apply that on this!");
-      return false;
-    }
-}*/
-
 bool lsquare::DipInto(item* Thingy, character* Dipper)
 {
   if(GetGLTerrain()->IsDipDestination() || GetOLTerrain()->IsDipDestination())
@@ -1247,4 +1194,16 @@ bool lsquare::TryKey(item* Key, character* Applier)
 
       return false;
     }
+}
+
+outputfile& operator<<(outputfile& SaveFile, const emitter& EmitterElement)
+{
+  SaveFile << EmitterElement.Pos << EmitterElement.DilatedEmitation;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, emitter& EmitterElement)
+{
+  SaveFile >> EmitterElement.Pos >> EmitterElement.DilatedEmitation;
+  return SaveFile;
 }

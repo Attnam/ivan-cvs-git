@@ -9,7 +9,7 @@ Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
 Damage estimate kuntoon. (timo)
 Werewolfit kuntoon. (timo)
 Paneeli kuntoon:
-* Uusi siluetti. (kahvi)
+//* Uusi siluetti. (kahvi)
 * Itemit sen ymp‰rille.
 * Attribuutit ja status alle.
 Efektien l‰pik‰yminen. (timo)
@@ -31,7 +31,7 @@ Ring of see invisible. (hex)
 Ring of teleportation. (hex)
 Potion of invisibility. (hex)
 //Magic whistlen kuva. (kahvi)
-Magic whistle. (hex)
+/Magic whistle. (hex)
 Inhandspicit kuntoon. (timo)
 Ruumiinosien hoitotavat:
 * Temppelit rahaa vastaan - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
@@ -55,4 +55,4 @@ OfferModifiers. (timo)
 NPModifiers. (timo)
 1-2 spesiaali helmetti‰, cloakkia, gauntlettia, beltti‰ ja boottia.
 Dipping to corpses, containers etc.
-Aliases.
+Aliases!!!!!!!!!!!!!! (timo)

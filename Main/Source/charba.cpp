@@ -1499,7 +1499,7 @@ bool character::ShowKeyLayout()
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
       }
 
-  List.Draw(vector2d(26, 42), 652, 30, false);
+  List.Draw(vector2d(26, 42), 652, 30, MAKE_RGB(0, 0, 16), false);
 
   return false;
 }
@@ -1758,7 +1758,6 @@ bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
 	AddScoreEntry(Msg);
 
       Die(ForceMsg);
-
       return true;
     }
   else
@@ -1841,7 +1840,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, float Speed)
     ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 
   SpillBlood(1 + RAND() % 1);
-  CheckDeath("died by a flying " + Thingy->GetName(UNARTICLED));
+  CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED));
 }
 
 bool character::DodgesFlyingItem(item*, float Speed)
@@ -3487,7 +3486,7 @@ bool character::EqupmentScreen()
 	  List.AddEntry(Entry, LIGHTGRAY);
 	}
 
-      Chosen = List.Draw(vector2d(26, 42), 652, 20, true, false);
+      Chosen = List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), true, false);
 
       if(Chosen >= EquipmentSlots())
 	break;
@@ -3654,7 +3653,7 @@ void character::PrintInfo() const
     }
 
   AddInfo(Info);
-  Info.Draw(vector2d(26, 42), 652, 30, false);
+  Info.Draw(vector2d(26, 42), 652, 30, MAKE_RGB(0, 0, 16), false);
 }
 
 void character::AddInfo(felist& Info) const

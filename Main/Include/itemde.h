@@ -766,7 +766,7 @@ class ABSTRACT_ITEM
   virtual std::vector<ushort>& GetColor2Vector() { return Color2; }
   virtual std::vector<ushort>& GetColor3Vector() { return Color3; }
  protected:
-  //virtual void GenerateMaterials() { }
+  virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
   virtual ushort GetAnimationFrames() const { return AnimationFrames; }
   virtual std::string GetPostFix() const { return GetOwnerDescription(); }
