@@ -358,4 +358,5 @@ Floods. (from JM)
 Wand's explosive effect strength should depend on its charges.
 Alpha halos to some other items, too.
 Arm m-color 3 should be allocated for gauntlets.
+Engraved messages should be shown in the lookmode.
 The starting puppy dies in every game. It should be named Kenny.

@@ -20,3 +20,4 @@ ommel cerumen				-||-
 ommel snot				-||-
 emerald (green)				tough
 opal (light blue)			tough
+uranium					slowly causes mutations
