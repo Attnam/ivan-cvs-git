@@ -136,6 +136,8 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
+#include "confdef.h"
+
 bool game::Init(const festring& Name)
 {
   festring PlayerName;
@@ -1593,6 +1595,18 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
       Player->PutToOrNear(Pos);
+      ushort c;
+
+      for(c = 0; c < Group.size(); ++c)
+	{
+	  vector2d NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
+
+	  if(NPCPos == ERROR_VECTOR)
+	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
+
+	  Group[c]->PutTo(NPCPos);
+	}
+
       GetCurrentLevel()->FiatLux();
       const bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
 
@@ -1605,16 +1619,9 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       GetCurrentArea()->UpdateLOS();
       Player->SignalStepFrom(0);
 
-      for(ushort c = 0; c < Group.size(); ++c)
-	{
-	  vector2d NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
-
-	  if(NPCPos == ERROR_VECTOR)
-	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
-
-	  Group[c]->PutTo(NPCPos);
+      for(c = 0; c < Group.size(); ++c)
+	if(Group[c]->IsEnabled())
 	  Group[c]->SignalStepFrom(0);
-	}
 
       if(configuration::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
@@ -2115,7 +2122,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(!WizardModeIsActive() && !IsInWilderness() && RAND() & 3 && GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
     {
       ushort BoneIndex;
       festring BoneName;
@@ -2151,7 +2158,7 @@ bool game::PrepareRandomBone(ushort LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen() && !(RAND() & 7))
+      if(BoneFile.IsOpen()/* && !(RAND() & 7)*/)
 	{
 	  if(ReadType<ushort>(BoneFile) != BONE_FILE_VERSION)
 	    {

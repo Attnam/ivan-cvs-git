@@ -1553,7 +1553,7 @@ powder
 		IsExplosive = true;
 		PriceModifier = 1000;
 		NameStem = "gunpowder";
-		ExplosivePower = 10000;
+		ExplosivePower = 15000;
 		Flexibility = 35;
 		AttachedGod = CRUENTUS;
 	}

@@ -3,7 +3,7 @@
 #include "error.h"
 
 char** festring::IntegerMap = 0;
-char* festring::Emptyfestring = "";
+char* festring::EmptyString = "";
 const festring::sizetype festring::NPos = festring::sizetype(-1);
 
 festring& festring::Append(const char* CStr, sizetype N)

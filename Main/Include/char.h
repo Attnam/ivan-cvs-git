@@ -752,7 +752,7 @@ class character : public entity, public id
 #endif
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
-  bool PreProcessForBone();
+  virtual bool PreProcessForBone();
   bool PostProcessForBone(float&, ushort&);
   bool PostProcessForBone();
   bool HasRepairableBodyParts() const;
@@ -804,7 +804,7 @@ class character : public entity, public id
   virtual void SignalNaturalGeneration() { }
   virtual bool IsBunny() const { return false; }
   void SetConfig(ushort, ushort = 0);
-  characterslot* GetBodyPartSlot(ushort c) { return &BodyPartSlot[c]; }
+  bodypartslot* GetBodyPartSlot(ushort c) { return &BodyPartSlot[c]; }
   virtual bool CheckConsume(const festring&) const;
   virtual ushort GetTameSymbolSquareIndex() const { return 0; }
   virtual ushort GetFlySymbolSquareIndex() const { return 0; }
@@ -871,7 +871,7 @@ class character : public entity, public id
   vector2d GoingTo;
   ulong Money;
   std::list<character*>::iterator TeamIterator;
-  characterslot* BodyPartSlot;
+  bodypartslot* BodyPartSlot;
   festring AssignedName;
   action* Action;
   const database* DataBase;

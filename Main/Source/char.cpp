@@ -270,7 +270,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
       BaseExperience[c] = Char.BaseExperience[c];
     }
 
-  BodyPartSlot = new characterslot[BodyParts];
+  BodyPartSlot = new bodypartslot[BodyParts];
   OriginalBodyPartID = new std::list<ulong>[BodyParts];
   CWeaponSkill = new cweaponskill*[AllowedWeaponSkillCategories];
   SquareUnder = new square*[SquaresUnder];
@@ -984,8 +984,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
 			else if(Important)
 			  {
 			    Illegal.insert(MoveTo);
-			    CreateRoute();
-			    return true;
+			    return CreateRoute();
 			  }
 		      }
 		  }
@@ -2140,7 +2139,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
 
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, !(GetMoveType() & WALK_THROUGH_WALLS)))
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, IsGoingSomeWhere()))
 	      {
 		NearestChar = *i;
 		NearestDistance = ThisDistance;
@@ -2224,7 +2223,7 @@ bool character::CheckForDoors()
 
 bool character::CheckForUsefulItemsOnGround()
 {
-  if(StateIsActivated(PANIC))
+  if(IsRetreating())
     return false;
 
   itemvector ItemVector;
@@ -2313,7 +2312,7 @@ bool character::Displace(character* Who, bool Forced)
     }
 
   //CHECK!
-  if(IsSmall() && Who->IsSmall() && (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.0f)) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->TryDisplace()) && Who->CanMoveOn(GetLSquareUnder()))
+  if(IsSmall() && Who->IsSmall() && (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.0f)) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->TryDisplace()) && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHAR_DESCRIPTION(DEFINITE));
@@ -2730,29 +2729,42 @@ void character::TeleportRandomly()
   StuckTo = 0;
   SetStuckToBodyPart(NONE_INDEX);
 
-  if(StateIsActivated(TELEPORT_CONTROL) && IsPlayer())
+  if(StateIsActivated(TELEPORT_CONTROL))
     {
-      vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
-      lsquare* Square = GetNearLSquare(PlayersInput);
-
-      if(CanMoveOn(Square) || game::GoThroughWallsCheatIsActive())
+      if(IsPlayer())
 	{
-	  if(Square->GetPos() == GetPos())
-	    {
-	      ADD_MESSAGE("You disappear and reappear.");
-	      return;
-	    }
+	  vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
+	  lsquare* Square = GetNearLSquare(PlayersInput);
 
-	  if(IsFreeForMe(Square))
+	  if(CanMoveOn(Square) || game::GoThroughWallsCheatIsActive())
 	    {
-	      Move(PlayersInput, true);
-	      return;
+	      if(Square->GetPos() == GetPos())
+		{
+		  ADD_MESSAGE("You disappear and reappear.");
+		  return;
+		}
+
+	      if(IsFreeForMe(Square))
+		{
+		  Move(PlayersInput, true);
+		  return;
+		}
+	      else
+		ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
 	    }
 	  else
-	    ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
+	    ADD_MESSAGE("You feel like having been hit by something really hard from the inside.");
 	}
-      else
-	ADD_MESSAGE("You feel like having been hit by something really hard from the inside.");
+      else if(IsGoingSomeWhere())
+	{
+	  vector2d Where = GetLevel()->GetNearestFreeSquare(this, GoingTo);
+
+	  if(Where != ERROR_VECTOR)
+	    {
+	      Move(Where, true);
+	      return;
+	    }
+	}
     }
 
   Move(GetLevel()->GetRandomSquare(this), true);
@@ -3390,7 +3402,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
   CalculateBodyParts();
   CalculateAllowedWeaponSkillCategories();
   CalculateSquaresUnder();
-  BodyPartSlot = new characterslot[BodyParts];
+  BodyPartSlot = new bodypartslot[BodyParts];
   OriginalBodyPartID = new std::list<ulong>[BodyParts];
   CWeaponSkill = new cweaponskill*[AllowedWeaponSkillCategories];
   SquareUnder = new square*[SquaresUnder];

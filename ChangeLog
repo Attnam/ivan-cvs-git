@@ -7,6 +7,17 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a fatal bug in the bonefile code
+	* The holy banana's big explosion damage reduced to half
+	* Added some magic resistance to powerful named monsters
+	* The AI is now able to use teleport control
+	* The AI now uses ESP more efficiently
+	* Sherarax and Ischaldirh are again several times more insane
+	* Plants etc. again can't follow or be displaced
+	* Corrected a minor outlook bug in the explosion code
+
 August 2 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
 	* Fly symbols are again displayed correctly

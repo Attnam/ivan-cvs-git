@@ -26,7 +26,7 @@ void stackslot::Empty()
   GetMotherStack()->RemoveItem(this);
 }
 
-void characterslot::Empty()
+void bodypartslot::Empty()
 {
   ulong Emitation = Item->GetEmitation();
   static_cast<bodypart*>(Item)->SetMaster(0);
@@ -63,7 +63,7 @@ void stackslot::AddFriendItem(item* Item) const
   GetMotherStack()->AddItem(Item);
 }
 
-void characterslot::AddFriendItem(item* Item) const
+void bodypartslot::AddFriendItem(item* Item) const
 {
   Item->RemoveFromSlot();
 
@@ -93,7 +93,7 @@ void stackslot::SignalVolumeAndWeightChange()
   GetMotherStack()->SignalVolumeAndWeightChange();
 }
 
-void characterslot::SignalVolumeAndWeightChange()
+void bodypartslot::SignalVolumeAndWeightChange()
 {
   GetMaster()->SignalVolumeAndWeightChange();
 }
@@ -127,7 +127,7 @@ void stackslot::PutInItem(item* What)
     }
 }
 
-void characterslot::PutInItem(item* What)
+void bodypartslot::PutInItem(item* What)
 {
   Item = What;
 
@@ -165,7 +165,7 @@ square* stackslot::GetSquareUnder(ushort) const
   return GetMotherStack()->GetSquareUnder();
 }
 
-square* characterslot::GetSquareUnder(ushort Index) const
+square* bodypartslot::GetSquareUnder(ushort Index) const
 {
   return GetMaster()->GetSquareUnder(Index);
 }
@@ -180,7 +180,7 @@ void stackslot::SignalEmitationIncrease(ulong Emitation)
   GetMotherStack()->SignalEmitationIncrease(Emitation);
 }
 
-void characterslot::SignalEmitationIncrease(ulong Emitation)
+void bodypartslot::SignalEmitationIncrease(ulong Emitation)
 {
   GetMaster()->SignalEmitationIncrease(Emitation);
 }
@@ -195,7 +195,7 @@ void stackslot::SignalEmitationDecrease(ulong Emitation)
   GetMotherStack()->SignalEmitationDecrease(Emitation);
 }
 
-void characterslot::SignalEmitationDecrease(ulong Emitation)
+void bodypartslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetMaster()->SignalEmitationDecrease(Emitation);
 }
@@ -205,7 +205,7 @@ void gearslot::SignalEmitationDecrease(ulong Emitation)
   GetBodyPart()->SignalEmitationDecrease(Emitation);
 }
 
-void characterslot::Load(inputfile& SaveFile)
+void bodypartslot::Load(inputfile& SaveFile)
 {
   slot::Load(SaveFile);
 
@@ -230,7 +230,7 @@ bool stackslot::CanBeSeenBy(const character* Viewer) const
   return GetMotherStack()->CanBeSeenBy(Viewer);
 }
 
-bool characterslot::CanBeSeenBy(const character* Viewer) const
+bool bodypartslot::CanBeSeenBy(const character* Viewer) const
 {
   return GetMaster()->CanBeSeenBy(Viewer);
 }

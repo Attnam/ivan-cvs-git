@@ -1141,7 +1141,7 @@ wand
 
 	Config WAND_OF_STRIKING;
 	{
-		Possibility = 40;
+		Possibility = 30;
 		Price = 500;
 		PostFix = "of striking";
 		MainMaterialConfig == IRON;

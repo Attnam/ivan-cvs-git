@@ -2360,7 +2360,7 @@ bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), (6 - TimesUsed) * 100);
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), (6 - TimesUsed) * 50);
       return true;
     }
 

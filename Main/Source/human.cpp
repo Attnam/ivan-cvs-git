@@ -3107,8 +3107,20 @@ void darkmage::GetAICommand()
 	return;
     }
 
-  if(NearestEnemy && NearestEnemy->IsSmall() && NearestEnemy->GetPos().IsAdjacent(Pos) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
-    return;
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
+    {
+      if(NearestEnemy->IsSmall() && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
+	return;
+      else if((GetConfig() == ARCH_MAGE && RAND() & 1) || (GetConfig() == ELDER && !(RAND() & 3)))
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
+
+	  TeleportRandomly();
+	  EditAP(-4000 / GetConfig());
+	  return;
+	}
+    }
 
   if(Friend.size() && !(RAND() & 3))
     {
@@ -3121,7 +3133,7 @@ void darkmage::GetAICommand()
   if(NearestEnemy)
     {
       lsquare* Square = NearestEnemy->GetLSquareUnder();
-      EditAP(-3000);
+      EditAP(-4000 / GetConfig());
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
@@ -3178,7 +3190,7 @@ void darkmage::GetAICommand()
 	    case 9: Square->DrawParticles(RED); Square->LowerEnchantment(this, DeathMsg, YOURSELF); break;
 	    case 10:
 	      {
-		golem* Golem = new golem(ARCANITE);
+		golem* Golem = new golem(RAND() % 3 ? ARCANITE : OCTIRON);
 		vector2d Where = GetLevel()->GetNearestFreeSquare(Golem, Square->GetPos());
 
 		if(Where == ERROR_VECTOR)
@@ -3218,7 +3230,7 @@ void darkmage::GetAICommand()
   if(RandomFriend)
     {
       lsquare* Square = RandomFriend->GetLSquareUnder();
-      EditAP(-3000);
+      EditAP(-4000 / GetConfig());
       Square->DrawParticles(RED);
 
       switch(GetConfig())
@@ -3663,13 +3675,21 @@ bool communist::MustBeRemovedFromBone() const
   return !IsEnabled() || GetTeam()->GetID() != IVAN_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE|| GetLevel()->GetIndex() != IVAN_LEVEL;
 }
 
+bool humanoid::PreProcessForBone()
+{
+  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+    (*i)->PreProcessForBone();
+
+  return character::PreProcessForBone();
+}
+
 void humanoid::FinalProcessForBone()
 {
   character::FinalProcessForBone();
 
   for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end();)
     {
-      boneidmap::iterator BI = game::GetBoneItemIDMap().find((*i)->GetID());
+      boneidmap::iterator BI = game::GetBoneItemIDMap().find(-(*i)->GetID());
 
       if(BI == game::GetBoneItemIDMap().end())
 	{

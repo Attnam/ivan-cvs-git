@@ -66,7 +66,7 @@ class stackslot : public slot
   stackslot* Next;
 };
 
-class characterslot : public slot
+class bodypartslot : public slot
 {
  public:
   virtual void Empty();

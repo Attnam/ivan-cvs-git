@@ -1340,7 +1340,7 @@ bool lsquare::FireBall(character* Who, const festring& DeathMsg, uchar)
 { 
   if(!IsFlyable() || GetCharacter())
     {
-      GetLevel()->Explosion(Who, DeathMsg, Pos, 70 + RAND() % 21 - RAND() % 21);
+      GetLevel()->Explosion(Who, DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
       return true;
     }
 

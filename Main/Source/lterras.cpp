@@ -379,7 +379,7 @@ bool fountain::Drink(character* Drinker)
 	      if(RAND() & 7)
 		{
 		  ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
-		  Drinker->ActivateRandomState(SRC_FOUNTAIN, 2000 + RAND() % 3000);
+		  Drinker->ActivateRandomState(SRC_FOUNTAIN, 10000 + RAND() % 20000);
 		}
 	      else
 		{
@@ -407,7 +407,7 @@ bool fountain::Drink(character* Drinker)
 		    Monster = new spider;
 		    break;
 		  case 3:
-		    Monster = new frog(RAND() % 5 ? DARK : GREATER_DARK);
+		    Monster = new frog(RAND() % 5 ? DARK : RAND() % 5 ? GREATER_DARK : GIANT_DARK);
 		    break;
 		  }
 

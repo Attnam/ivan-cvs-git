@@ -3,6 +3,7 @@
 
 #ifdef VC
 #pragma warning(disable : 4786)
+#pragma warning(disable : 4146)
 #endif
 
 #include "typedef.h"
@@ -78,6 +79,7 @@ class sweaponskill : public weaponskill
   bool IsSkillOfCloneMother(const item*, ulong) const;
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
+  void PreProcessForBone() { ID = -ID; }
  private:
   ulong ID;
   ulong Weight;

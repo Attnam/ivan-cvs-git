@@ -72,7 +72,7 @@ class festring
   void SlowAppend(char);
   void SlowAppend(const char*, sizetype);
   static char** IntegerMap;
-  static char* Emptyfestring;
+  static char* EmptyString;
   char* Data;
   sizetype Size;
   sizetype Reserved;
@@ -182,7 +182,7 @@ inline const char* festring::CStr() const
       return Ptr;
     }
   else
-    return Emptyfestring;
+    return EmptyString;
 }
 
 inline void festring::Empty()

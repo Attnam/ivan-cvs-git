@@ -134,11 +134,12 @@ class ABSTRACT_CHARACTER
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
   virtual ushort GetRandomApplyBodyPart() const;
-  virtual void FinalProcessForBone();
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
   virtual ulong GetSumOfAttributes() const;
   virtual bool CheckConsume(const festring&) const;
   virtual bool CanConsume(material*) const;
+  virtual bool PreProcessForBone();
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;

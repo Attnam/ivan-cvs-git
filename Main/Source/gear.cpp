@@ -257,7 +257,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, ucha
       else
         DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
 
-      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, HitPos, 70 + RAND() % 20 - RAND() % 20);
+      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, HitPos, 10 + RAND() % 100);
       return true;
     }
   else

@@ -878,8 +878,6 @@ ushort level::TriggerExplosions(ushort MinIndex)
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
-      GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(0);
-
       if(DrawExplosion(ExplosionQueue[c]))
 	Drawn = true;
     }
@@ -920,6 +918,9 @@ ushort level::TriggerExplosions(ushort MinIndex)
 	GetLSquare(Explosion->Pos)->AddSmoke(new gas(SMOKE, 1000));
     }
 
+  for(c = MinIndex; c < LastExplosion; ++c)
+    GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(0);
+
   return LastExplosion;
 }
 
@@ -949,7 +950,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && *i != Leader && (TakeAll || (Leader->CanBeSeenBy(*i) && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())))
+	if((*i)->IsEnabled() && *i != Leader && (TakeAll || (Leader->CanBeSeenBy(*i) && Leader->SquareUnderCanBeSeenBy(*i, true))) && (*i)->CanFollow())
 	  {
 	    if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
 	      (*i)->GetAction()->Terminate(false);

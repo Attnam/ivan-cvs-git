@@ -46,3 +46,7 @@ Mistresses like shields more than their whips.
 //Dying + being resurrected doesn't eliminate poison.
 //Teleport control can be used to detect walls.
 //RED ommel urine ALERT!
+Displacing plants is again allowed.
+Trying to resurrect a headless player of a bonefile when his ghost is the only light source doesn't
+ give the right message since the soul is temporarily sucked into the corpse and everything is dark.
+ Should this be so?

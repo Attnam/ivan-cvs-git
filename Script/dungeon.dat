@@ -1587,6 +1587,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			FloorSquare = solidterrain(GROUND), 0;
 			GenerateDoor = false;
 			GenerateLanterns = false;
+			AltarPossible = false;
 
 			OTerrainMap
 			{
