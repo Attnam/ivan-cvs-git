@@ -3126,7 +3126,7 @@ void character::GoHandler()
 bool character::ShowConfigScreen()
 {
 	configuration::ShowConfigScreen();
-	return true;
+	return false;
 }
 
 void character::SetTeam(team* What)

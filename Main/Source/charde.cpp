@@ -683,8 +683,10 @@ void petrus::BeTalkedTo(character* Talker)
 
 	if(Talker->HasMaakotkaShirt())
 	{
-		ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Valpuri shall bless thee for the rest of thine life!");
-		ADD_MESSAGE("And thou possess the Maakotka Shirt, the symbol of my Überpriestial power! Return it now, please.\"");
+		ADD_MESSAGE("Petrus smiles.");
+		ADD_MESSAGE("\"Thou hast defeated Oree! Valpuri shall bless thee for the rest of thine life!");
+		ADD_MESSAGE("And thou possess the Maakotka Shirt, the symbol of my Überpriestial power!");
+		ADD_MESSAGE("Return it now, please.\"");
 
 		if(game::BoolQuestion("Will you give the Maakotka Shirt to Petrus? [Y/n]", 'y'))
 		{
@@ -705,7 +707,7 @@ void petrus::BeTalkedTo(character* Talker)
 		{
 			ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
 			ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpuri bless him who is better.\"");
-			GetTeam()->Hostility(Talker->GetTeam());
+			Talker->GetTeam()->Hostility(GetTeam());
 			return;
 		}
 	}
