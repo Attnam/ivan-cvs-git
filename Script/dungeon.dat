@@ -256,7 +256,7 @@ Dungeon 1;
 		OnGround=true;
 		TeamDefault=2;
 		AmbientLight=225;
-		LOSModifier=64;
+		LOSModifier=32;
 		
 		RoomDefault
 		{

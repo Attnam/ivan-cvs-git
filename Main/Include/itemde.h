@@ -823,7 +823,7 @@ class ITEM
 public:
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, valpurium::StaticType()))
 	virtual ushort Possibility() const RET(0)
-	virtual std::string NameSingular() const RET("avatar of Valpuri")
+	virtual std::string NameSingular() const RET("Avatar of Valpuri")
 	virtual vector2d GetBitmapPos() const RETV(0,320)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }

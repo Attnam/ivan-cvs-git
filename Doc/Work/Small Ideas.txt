@@ -57,19 +57,21 @@ Lookmode should show player's name as char description, not "a human".
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor
  but the strongest player-obtainable weapon/armor ever generated?
-
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 Cannibalism and navastating should have relation effect limits.
-
-
-
-
-
-
-
-
-
-
-
-
+InHandsPic to bow.
+Valpuri's Avatar should not look like a sword.
+Some artifacts should resist change material methods.
+A manual that would contain description of basic rules. (like why you can't hit dark frogs with two-handed swords etc.)
+You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
+There shouldn't be any one square minimum in throw distance. (Elpuri's corpse can be moved limitless distances with that rule)
+"Your big bone changes into a big bone." message could be tweaked a bit.
+Reading in a too low luminance (<224 or so) should decrease perception experience.
+Savefiles should be deleted when the window is closed from the corner X.
+When wishing a forbidden item the game shouldn't say "There is no such item." but something else.
+A golem workshop. You carry raw materials there, and once enough is collected, the shopkeeper creates a golem to do your bidding.
+Altar's owner could change when it's hit by a polymorph ray.
+Vomiting on an altar should cause a special effect.
+Kicking an altar should anger its owner.
+A bank where you can store money.

@@ -13,7 +13,7 @@
 #include "script.h"
 #include "charba.h"
 #include "team.h"
-
+#include "femath.h"
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0)
 {
@@ -262,11 +262,18 @@ void levelsquare::Emitate()
 	if(GetEmitation() < LIGHT_BORDER)
 		return;
 
-	ushort Radius = game::GetLuxTableSize()[Emitation] >> 1;
+	ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(Emitation);
+
+	if(!Radius)
+		return;
+
 	ulong RadiusSquare = Radius * Radius;
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
-			    game::DoLine(GetPos().X, GetPos().Y, XPointer,	YPointer,      RadiusSquare,	game::EmitationHandler);)
+	{
+		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
+			game::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
+	})
 }
 
 void levelsquare::ReEmitate()
@@ -277,20 +284,34 @@ void levelsquare::ReEmitate()
 	if(OldEmitation < LIGHT_BORDER)
 		return;
 
-	ushort Radius = game::GetLuxTableSize()[OldEmitation] >> 1;
+	ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(OldEmitation);
+
+	if(!Radius)
+		return;
+
 	ulong RadiusSquare = Radius * Radius;
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
-			    game::DoLine(GetPos().X, GetPos().Y, XPointer,	YPointer,      RadiusSquare,	game::EmitationHandler);)
+	{
+		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
+			game::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
+	})
 }
 
 void levelsquare::Noxify()
 {
-	ushort Radius = game::GetLuxTableSize()[Emitation] >> 1;
+	ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(Emitation);
+
+	if(!Radius)
+		return;
+
 	ulong RadiusSquare = Radius * Radius;
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
-			    game::DoLine(GetPos().X, GetPos().Y, XPointer,	YPointer,      RadiusSquare,	game::NoxifyHandler);)
+	{
+		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
+			game::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::NoxifyHandler);
+	})
 }
 
 void levelsquare::ForceEmitterNoxify()

@@ -129,12 +129,14 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 	}
 	else
 	{
-		std::vector<character*> TempPlayerGroup;
 		if(Who == game::GetPlayer())
 		{
+			std::vector<character*> TempPlayerGroup;
+
 			DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
 			{
 				character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+
 				if(Char)
 				{
 					if(Char->GetTeam()->GetRelation(Who->GetTeam()) == HOSTILE)
@@ -144,7 +146,6 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 					}
 
 					TempPlayerGroup.push_back(Char);
-					Char->SetExists(false);
 					game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
 				}
 			})
@@ -152,11 +153,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 			game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
 			game::GetCurrentDungeon()->SaveLevel();
 			game::LoadWorldMap();
-			
-			game::GetWorldMap()->GetPlayerGroup()->clear();
-			
-			for(uchar c = 0; c < TempPlayerGroup.size(); c++)
-				game::GetWorldMap()->GetPlayerGroup()->push_back(TempPlayerGroup[c]);
+
+			game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
 
 			game::SetInWilderness(true);
 			game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);

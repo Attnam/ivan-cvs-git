@@ -39,6 +39,9 @@ worldmap::~worldmap()
 
 	for(uchar c = 1; c < Continent.size(); ++c)
 		delete Continent[c];
+
+	for(c = 0; c < PlayerGroup.size(); ++c)
+		delete PlayerGroup[c];
 }
 
 void worldmap::Save(outputfile& SaveFile) const
@@ -52,7 +55,7 @@ void worldmap::Save(outputfile& SaveFile) const
 	SaveFile.GetBuffer().write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
 	SaveFile.GetBuffer().write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
-	SaveFile << Continent;	 
+	SaveFile << Continent << PlayerGroup;
 }
 
 void worldmap::Load(inputfile& SaveFile)
@@ -80,7 +83,7 @@ void worldmap::Load(inputfile& SaveFile)
 	continent::AltitudeBuffer = AltitudeBuffer;
 	continent::ContinentBuffer = ContinentBuffer;
 
-	SaveFile >> Continent;
+	SaveFile >> Continent >> PlayerGroup;
 }
 
 void worldmap::Draw() const

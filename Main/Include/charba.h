@@ -231,6 +231,7 @@ public:
 	virtual float GetDodgeValue() const;
 	virtual bool RaiseGodRelations();
 	virtual bool LowerGodRelations();
+	virtual bool GainDivineKnowledge();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

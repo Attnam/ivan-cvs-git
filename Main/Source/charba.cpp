@@ -202,7 +202,7 @@ void character::Be()
 			if(GetHP() < GetMaxHP() / 3)
 				SpillBlood(rand() % 2);
 
-			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED))
+			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(EATING))
 				Faint();
 
 			switch(GetBurdenState())
@@ -244,7 +244,7 @@ void character::Be()
 			else
 			{
 				StateAutoDeactivation();
-				if(CanMove())
+				if(CanMove() && !game::GetInWilderness())
 					GetAICommand();
 				Regenerate();
 			}
@@ -695,9 +695,31 @@ bool character::TryMove(vector2d MoveTo)
 		{
 			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround())
 			{
+				std::vector<character*> TempPlayerGroup;
+
+				DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+				{
+					character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+
+					if(Char)
+					{
+						if(Char->GetTeam()->GetRelation(GetTeam()) == HOSTILE)
+						{
+							ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
+							return false;
+						}
+
+						TempPlayerGroup.push_back(Char);
+						game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+					}
+				})
+
 				game::GetCurrentArea()->RemoveCharacter(GetPos());
 				game::GetCurrentDungeon()->SaveLevel();
 				game::LoadWorldMap();
+
+				game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
+
 				game::SetInWilderness(true);
 				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
 				game::SendLOSUpdateRequest();
@@ -2633,19 +2655,28 @@ ulong character::Danger() const
 
 bool character::RaiseGodRelations()
 {
-	for(ushort c = 1; game::GetGod(c); ++c)
-		game::GetGod(c)->AdjustRelation(50);
+	if(game::GetWizardMode())
+	{
+		for(ushort c = 1; game::GetGod(c); ++c)
+			game::GetGod(c)->AdjustRelation(50);
+	}
+	else
+		ADD_MESSAGE("Activate wizardmode to use this function.");
 
 	return false;
 }
 
 bool character::LowerGodRelations()
 {
-	for(ushort c = 1; game::GetGod(c); ++c)
-		game::GetGod(c)->AdjustRelation(-50);
+	if(game::GetWizardMode())
+	{
+		for(ushort c = 1; game::GetGod(c); ++c)
+			game::GetGod(c)->AdjustRelation(-50);
+	}
+	else
+		ADD_MESSAGE("Activate wizardmode to use this function.");
 
 	return false;
-
 }
 
 ushort character::LOSRange() const
@@ -2658,4 +2689,17 @@ ushort character::LOSRangeSquare() const
 	ulong LOSModifier = game::GetCurrentArea()->GetLOSModifier();
 
 	return GetPerception() * GetPerception() * LOSModifier * LOSModifier / 2304;
+}
+
+bool character::GainDivineKnowledge()
+{
+	if(game::GetWizardMode())
+	{
+		for(ushort c = 1; game::GetGod(c); ++c)
+			game::GetGod(c)->SetKnown(true);
+	}
+	else
+		ADD_MESSAGE("Activate wizardmode to use this function.");
+
+	return false;
 }

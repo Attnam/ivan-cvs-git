@@ -37,7 +37,7 @@ public:
 	virtual continent* GetContinent(ushort Index) const { return Continent[Index]; }
 	virtual void RemoveEmptyContinents();
 	virtual short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
-	virtual std::vector<character*>* GetPlayerGroup() { return &PlayerGroup; }
+	virtual std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
 	virtual character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
 protected:
 	worldmapsquare*** Map;

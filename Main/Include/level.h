@@ -63,6 +63,7 @@ public:
 	virtual levelscript* GetLevelScript() const { return LevelScript; }
 	virtual void MoveCharacter(vector2d, vector2d);
 	virtual ushort GetLOSModifier() const;
+	virtual ushort CalculateMinimumEmitationRadius(ushort) const;
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

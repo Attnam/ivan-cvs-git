@@ -9,6 +9,7 @@
 #include "graphics.h"
 #include "terra.h"
 #include "error.h"
+#include "femath.h"
 
 area::area(ushort InitXSize, ushort InitYSize)
 {
@@ -73,8 +74,14 @@ void area::UpdateLOS()
 {
 	game::LOSTurn();
 
-	DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, game::GetPlayer()->LOSRange(),
-			    game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);)
+	ushort Radius = game::GetPlayer()->LOSRange();
+	ulong RadiusSquare = Radius * Radius;
+
+	DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
+	{
+		if(GetHypotSquare(long(game::GetPlayer()->GetPos().X) - XPointer, long(game::GetPlayer()->GetPos().Y) - YPointer) <= RadiusSquare)
+			game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, RadiusSquare, game::LOSHandler);
+	})
 }
 
 void area::SendNewDrawRequest()

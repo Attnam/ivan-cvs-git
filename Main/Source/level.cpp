@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "level.h"
 #include "charba.h"
 #include "error.h"
@@ -798,4 +800,10 @@ ushort level::GetIdealPopulation() const
 ushort level::GetLOSModifier() const
 {
 	return *LevelScript->GetLOSModifier();
+}
+
+ushort level::CalculateMinimumEmitationRadius(ushort Emitation) const
+{
+	ushort Ambient = *LevelScript->GetAmbientLight();
+	return sqrt(float(Emitation << 7) / (Ambient < LIGHT_BORDER ? LIGHT_BORDER : Ambient) - 128);
 }

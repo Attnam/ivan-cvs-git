@@ -446,7 +446,7 @@ bool scrollofchangematerial::Read(character* Reader)
 void avatarofvalpuri::CheckPickUpEffect(character* Picker)
 {
 	if(Picker->GetIsPlayer())
-		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1 , game::GetCurrentLevel()->GetYSize() - 1, 30, 
+		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1 , game::GetCurrentLevel()->GetYSize() - 1, 30,
 		{
 			character* Temp;
 			if((Temp = game::GetCurrentLevel()->GetSquare(XPointer, YPointer)->GetCharacter()) && !Temp->GetIsPlayer())

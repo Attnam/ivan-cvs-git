@@ -57,6 +57,7 @@ command* game::Command[] = {	0,
 				new command(&character::Drop, "drop", 'd', false),
 				new command(&character::WhatToEngrave, "engrave", 'E', false),
 				new command(&character::GainAllItems, "give all items cheat", 'A', true),
+				new command(&character::GainDivineKnowledge, "gain knowledge of all gods", 'G', true),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
 				new command(&character::IncreaseSoftGamma, "increase software gamma", 'f', true),
@@ -642,7 +643,7 @@ bool game::EmitationHandler(vector2d Pos, vector2d Origo)
 
 	ushort Emit = GetLevel(Current)->GetLevelSquare(Origo)->GetEmitation();
 
-	ushort MaxSize = (game::GetLuxTableSize()[Emit] >> 1);
+	ushort MaxSize = game::GetLuxTableSize()[Emit] >> 1;
 
 	if(long(Pos.X) - long(Origo.X) > MaxSize || long(Origo.X) - long(Pos.X) > MaxSize || long(Pos.Y) - long(Origo.Y) > MaxSize || long(Origo.Y) - long(Pos.Y) > MaxSize)
 		Emit = 0;

@@ -18,22 +18,18 @@ bool attnam::GoDown(character* Who) const
 	game::SetInWilderness(false);
 	game::SetCurrentDungeon(1);
 	game::SetCurrent(0);
+
 	std::vector<character*> Temp;
-	uchar c;
-	
-	for(c = 0; c < game::GetWorldMap()->GetPlayerGroup()->size(); ++c)
-		Temp.push_back((*game::GetWorldMap()->GetPlayerGroup())[c]);
+	game::GetWorldMap()->GetPlayerGroup().swap(Temp);
+
 	game::SaveWorldMap(game::SaveName(), true);
 	game::SetWorldMap(0);
 	game::GetDungeon(1)->PrepareLevel(0);
 	game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
 	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	
-	for(c = 0; c < Temp.size(); ++c)
-	{
+	for(uchar c = 0; c < Temp.size(); ++c)
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
-		Temp[c]->SetExists(true);
-	}
 
 	game::GetCurrentLevel()->Luxify();
 	game::SendLOSUpdateRequest();
@@ -49,11 +45,9 @@ bool elpuricave::GoDown(character* Who) const
 	game::SetInWilderness(false);
 	game::SetCurrentDungeon(0);
 	game::SetCurrent(0);
+
 	std::vector<character*> Temp;
-	uchar c;
-	
-	for(c = 0; c < game::GetWorldMap()->GetPlayerGroup()->size(); ++c)
-		Temp.push_back(game::GetWorldMap()->GetPlayerGroupMember(c));
+	game::GetWorldMap()->GetPlayerGroup().swap(Temp);
 	
 	game::SaveWorldMap(game::SaveName(), true);
 	game::SetWorldMap(0);
@@ -61,11 +55,8 @@ bool elpuricave::GoDown(character* Who) const
 	game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
 	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 
-	for(c = 0; c < Temp.size(); ++c)
-	{
+	for(uchar c = 0; c < Temp.size(); ++c)
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
-		Temp[c]->SetExists(true);
-	}
 
 	game::GetCurrentLevel()->Luxify();
 	game::SendLOSUpdateRequest();
