@@ -32,7 +32,7 @@ public:
 	virtual uchar Alignment() const				{ return GOOD; }
 	virtual ushort GetEmitation() const { return 320; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ushort GetColor() const { return MAKE_RGB(192, 192, 192); }
 	virtual bool CanBeWished() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "valpurium"; }

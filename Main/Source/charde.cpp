@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "charde.h"
 #include "stack.h"
 #include "itemde.h"
@@ -11,8 +13,23 @@
 #include "save.h"
 #include "god.h"
 #include "feio.h"
+#include "wskill.h"
 
-ushort* weaponskill::LevelMap = 0;
+void humanoid::VirtualConstructor()
+{
+	WeaponSkill = new weaponskill*[WEAPON_SKILL_GATEGORIES];
+
+	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		WeaponSkill[c] = new weaponskill(c);
+}
+
+humanoid::~humanoid()
+{
+	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		delete WeaponSkill[c];
+
+	delete [] WeaponSkill;
+}
 
 void perttu::CreateInitialEquipment()
 {
@@ -487,6 +504,43 @@ bool humanoid::Apply()
 	}
 	else
 		return false;
+
+	return true;
+}
+
+float humanoid::GetAttackStrength() const
+{
+	return GetWielded() ? GetWielded()->GetWeaponStrength() * GetWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() : GetMeleeStrength() * GetWeaponSkill(UNARMED)->GetBonus();
+}
+
+ushort humanoid::GetSpeed() const
+{
+	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / GetWielded()->GetWeight()) * GetWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus()) : ushort(((GetAgility() << 2) + GetStrength()) * GetWeaponSkill(UNARMED)->GetBonus());
+}
+
+bool humanoid::Hit(character* Enemy)
+{
+	if(Enemy->GetRelations())
+		if(GetIsPlayer())
+			if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+				return false;
+
+	short Success = rand() % 26 - rand() % 26;
+
+	switch(Enemy->TakeHit(GetSpeed(), Success, GetAttackStrength(), this)) //there's no breaks and there shouldn't be any
+	{
+	case HAS_HIT:
+	case HAS_BLOCKED:
+		if(GetWielded())
+			GetWielded()->ReceiveHitEffect(Enemy, this);
+	case HAS_DIED:
+		SetStrengthExperience(GetStrengthExperience() + 50);
+		GetWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit();
+	case HAS_DODGED:
+		SetAgilityExperience(GetAgilityExperience() + 25);
+	}
+
+	SetNP(GetNP() - 4);
 
 	return true;
 }

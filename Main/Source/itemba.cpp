@@ -11,6 +11,7 @@
 #include "lsquare.h"
 #include "lterraba.h"
 #include "message.h"
+#include "wskill.h"
 
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
 {
@@ -207,4 +208,9 @@ void item::CheckPickUpEffect(character* Picker)
 		
 		
 		game::BoolQuestion("This, char DefaultAnswer, int OtherKeyForTrue)*/
+}
+
+uchar item::GetWeaponCategory() const
+{
+	return UNCATEGORIZED;
 }

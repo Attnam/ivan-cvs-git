@@ -3,6 +3,7 @@
 
 #include "itemba.h"
 #include "materde.h"
+#include "wskill.h"
 
 class ABSTRACT_ITEM
 (
@@ -33,6 +34,7 @@ public:
 	virtual std::string NamePlural() const RET("bananas")
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(0,112)
+	virtual uchar GetWeaponCategory() const { return CLUBS; }
 protected:
 	virtual ushort GetFormModifier() const RET(25)
 );
@@ -53,6 +55,7 @@ public:
 	virtual float OfferModifier() const RET(40)
 	virtual long Score() const RET(250)
 	virtual vector2d GetBitmapPos() const RETV(0,112)
+	virtual uchar GetWeaponCategory() const { return CLUBS; }
 protected:
 	virtual ushort GetFormModifier() const RET(35)
 );
@@ -145,6 +148,7 @@ public:
 	virtual std::string NamePlural() const RET("swords")
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(0,0)
+	virtual uchar GetWeaponCategory() const { return SMALL_SWORDS; }
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -163,6 +167,7 @@ public:
 	virtual std::string NamePlural() const RET("two-handed swords")
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float OfferModifier() const RET(0.25)
+	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
 protected:
 	virtual ushort GetFormModifier() const RET(125)
 );
@@ -202,6 +207,7 @@ public:
 	virtual long Score() const RET(1000)
 	virtual vector2d GetBitmapPos() const RETV(0,64)
 	virtual bool CanBeWished() const RET(false)
+	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
 protected:
 	virtual ushort GetFormModifier() const RET(400)
 );
@@ -221,6 +227,7 @@ public:
 	virtual std::string NamePlural() const RET("axes")
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(16,256)
+	virtual uchar GetWeaponCategory() const { return AXES; }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -261,6 +268,7 @@ public:
 	virtual std::string NamePlural() const RET("spears")
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(16,144)
+	virtual uchar GetWeaponCategory() const { return SPEARS; }
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -379,6 +387,7 @@ public:
 	virtual float OfferModifier() const RET(0.1f)
 	virtual vector2d GetBitmapPos() const RETV(0,144)
 	virtual bool ReceiveSound(float, bool, stack*);
+	virtual uchar GetWeaponCategory() const { return CLUBS; }
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );
@@ -562,6 +571,7 @@ public:
 	virtual bool DogWillCatchAndConsume() const RET(true);
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType());
 	virtual vector2d GetBitmapPos() const RETV(16,240)
+	virtual uchar GetWeaponCategory() const { return CLUBS; }
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
@@ -599,6 +609,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 0))
 	virtual float OfferModifier() const RET(0.125)
 	virtual vector2d GetBitmapPos() const RETV(0,32)
+	virtual uchar GetWeaponCategory() const { return MACES; }
 protected:
 	virtual ushort GetFormModifier() const RET(75)
 );
@@ -642,6 +653,7 @@ public:
 	virtual bool Consume(character*, float = 100);
 	virtual float OfferModifier() const RET(0.125)
 	virtual vector2d GetBitmapPos() const RETV(0,272)
+	virtual uchar GetWeaponCategory() const { return CLUBS; }
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 );

@@ -70,6 +70,7 @@ public:
 	virtual bool IsMaterialChangeable() const { return true; }
 	virtual void ChangeMainMaterial(material*);
 	virtual void CheckPickUpEffect(character*);
+	virtual uchar GetWeaponCategory() const;
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

@@ -210,6 +210,10 @@ SOURCE=.\Main\Source\worldmap.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\wskill.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\wsquare.cpp
 # End Source File
 # Begin Source File
@@ -331,6 +335,10 @@ SOURCE=.\Main\Include\typeable.h
 # Begin Source File
 
 SOURCE=.\Main\Include\worldmap.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\wskill.h
 # End Source File
 # Begin Source File
 

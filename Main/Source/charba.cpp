@@ -83,18 +83,14 @@ void character::Hunger(ushort Turns)
 
 bool character::Hit(character* Enemy)
 {
-	if(Enemy->GetRelations() != 0)
-	{
-	if(GetIsPlayer())
-		if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
-			return false;
-	}
-	
-	ushort Speed = GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / Wielded->GetWeight())) : ulong(GetAgility() << 2) + GetStrength();
-	short Success = rand() % 26 - rand() % 26;
-	float WeaponStrength = GetWielded() ? GetWielded()->GetWeaponStrength() : GetMeleeStrength();
+	if(Enemy->GetRelations())
+		if(GetIsPlayer())
+			if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+				return false;
 
-	switch(Enemy->TakeHit(Speed, Success, WeaponStrength, this)) //there's no breaks and there shouldn't be any
+	short Success = rand() % 26 - rand() % 26;
+
+	switch(Enemy->TakeHit(GetSpeed(), Success, GetAttackStrength(), this)) //there's no breaks and there shouldn't be any
 	{
 	case HAS_HIT:
 	case HAS_BLOCKED:
@@ -2287,4 +2283,9 @@ void character::SoldierAICommand()
 		else if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() == HOSTILE)
 			Hit(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter());
 	})
+}
+
+ushort character::GetSpeed() const
+{
+	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / Wielded->GetWeight())) : ulong(GetAgility() << 2) + GetStrength();
 }

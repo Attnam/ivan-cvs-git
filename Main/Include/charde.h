@@ -4,30 +4,15 @@
 #include "charba.h"
 #include "graphics.h"
 
-class weaponskill
-{
-public:
-	weaponskill() : Hits(0), LastHit(0) {}
-	void Turn() {}
-	uchar GetLevel();
-	ulong GetHits();
-	ulong GetLastHit();
-	void AddHit() { if(Hits != 0xFFFF) Hits++; }
-	void AddHit(ulong AddHits) { if(Hits <= 0xFFFF - AddHits) Hits += AddHits; else Hits = 0xFFFF; }
-	void SubHit() { if(Hits) Hits--; }
-	void SubHit(ulong SubHits) { if(Hits >= SubHits) Hits -= SubHits; else Hits = 0; }
-private:
-	static ushort* LevelMap;
-	uchar Level;
-	ulong Hits;
-	ulong LastHit;
-};
+class weaponskill;
 
 class ABSTRACT_CHARACTER
 (
 	humanoid,
 	character,
 public:
+	virtual ~humanoid();
+	virtual void VirtualConstructor();
 	virtual void Load(inputfile&);
 	virtual void DrawToTileBuffer() const;
 	virtual bool WearArmor();
@@ -49,6 +34,10 @@ public:
 	virtual void SetLegType(uchar Value) { LegType = Value; }
 	virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
 	virtual bool CanKick() const RET(true)
+	virtual ushort GetSpeed() const;
+	virtual float GetAttackStrength() const;
+	virtual bool Hit(character*);
+	virtual weaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(2000)
@@ -61,13 +50,7 @@ protected:
 		item* Head;
 		item* Feet;
 	} Armor;
-	struct weaponskills
-	{
-		weaponskill LargeSwords;
-		weaponskill Maces;
-		weaponskill Axes;
-		weaponskill Spears;
-	} WeaponSkills;
+	weaponskill** WeaponSkill;
 	uchar ArmType;
 	uchar HeadType;
 	uchar LegType;

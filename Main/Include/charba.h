@@ -200,6 +200,8 @@ public:
 	virtual bool CheckCannibalism(ushort);
 	virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
 	virtual void SoldierAICommand();
+	virtual void VirtualConstructor() {}
+	virtual ushort GetSpeed() const;
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
@@ -272,7 +274,7 @@ name : public base\
 {\
 public:\
 	name(bool = true, bool = true, bool = true, bool = true);\
-	name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+	name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); VirtualConstructor(); }\
 	virtual character* Clone(bool = true, bool = true, bool = true) const;\
 	virtual typeable* CloneAndLoad(inputfile&) const;\
 	static ushort StaticType();\
@@ -289,7 +291,7 @@ protected:\
 name : public base\
 {\
 public:\
-	name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool = true) : base(CreateMaterials, SetStats, CreateEquipment, AddToPool) {}\
+	name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool = true) : base(CreateMaterials, SetStats, CreateEquipment, AddToPool) { VirtualConstructor(); }\
 	data\
 };
 

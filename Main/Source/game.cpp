@@ -381,7 +381,7 @@ void game::panel::Draw() const
         if(Player->GetTorsoArmor())
 		FONTW->Printf(DOUBLEBUFFER, 160, 584, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
 
-	FONTW->Printf(DOUBLEBUFFER, 320, 534, "Speed: %d", Player->GetWielded() ? ushort(sqrt((ulong(Player->GetAgility() << 2) + Player->GetStrength()) * 20000 / Player->GetWielded()->GetWeight())) : ulong(Player->GetAgility() << 2) + Player->GetStrength());
+	FONTW->Printf(DOUBLEBUFFER, 320, 534, "Speed: %d", Player->GetSpeed());
 	FONTW->Printf(DOUBLEBUFFER, 320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
 	FONTW->Printf(DOUBLEBUFFER, 320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
 	FONTW->Printf(DOUBLEBUFFER, 320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
