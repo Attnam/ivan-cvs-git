@@ -7,11 +7,11 @@
 
 class bitmap;
 
-class list
+class felist
 {
 public:
-	list(ushort Maximum = 0) : Maximum(Maximum) {}
-	list(std::string Topic, ushort Maximum = 0) : Maximum(Maximum) { Description.Add(Topic); }
+	felist(ushort Maximum = 0) : Maximum(Maximum) {}
+	felist(std::string Topic, ushort Maximum = 0) : Maximum(Maximum) { Description.Add(Topic); }
 	void AddString(std::string S);
 	void AddDescription(std::string S) { Description.Add(S); }
 	void DrawDescription(bitmap*) const;
@@ -27,3 +27,4 @@ protected:
 };
 
 #endif
+

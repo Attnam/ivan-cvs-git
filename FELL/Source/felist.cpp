@@ -1,9 +1,9 @@
-#include "list.h"
+#include "felist.h"
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
 
-ushort list::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) const
+ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) const
 {
 	bitmap BackGround(XRES, YRES);
 
@@ -77,7 +77,7 @@ ushort list::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) con
 	}
 }
 
-void list::DrawDescription(bitmap* TopicFont) const
+void felist::DrawDescription(bitmap* TopicFont) const
 {
 	DOUBLEBUFFER->ClearToColor(20, 36, 758, 20, 128);
 
@@ -90,16 +90,17 @@ void list::DrawDescription(bitmap* TopicFont) const
 	DOUBLEBUFFER->ClearToColor(20, 46 + Description.Length() * 10, 758, 10, 128);
 }
 
-void list::Empty()
+void felist::Empty()
 {
 	while(String.Length())
 		String.Remove(0);
 }
 
-void list::AddString(std::string S)
+void felist::AddString(std::string S)
 {
 	String.Add(S);
 
 	if(Maximum && String.Length() > Maximum)
 		String.Remove(0);
 }
+
