@@ -1,11 +1,11 @@
---------------------------------
+/------------------------------\
 |Iter Vehemens ad Necem credits|
---------------------------------
+\------------------------------/
 
 
----------
+/-------\
 |IvanDev|
----------
+\-------/
 
 Master Programmer
 (implemented most of the bugs)
@@ -29,9 +29,9 @@ Head Graphics Designer
 Tuukka Virtaperko
 
 
-------------------------------
+/----------------------------\
 |Other people who have helped|
-------------------------------
+\----------------------------/
 
 Additional coders
 -----------------
@@ -66,7 +66,8 @@ Makoto Matsumoto
 Author of the font we use
 -------------------------
 
-Shawn Hargreaves's Allegro, a game programming library
+Shawn Hargreaves's Allegro
+ - A game programming library
 
 Idea providers and bug hunters
 -------------------------------
@@ -78,6 +79,7 @@ Chris Allcock
 Brian Angeletti
 Laurent Birtz
 Christian Harms
+Matt Howe
 Ilari Kaartinen
 Wojciech Kaczmarek
 Henri Kiviluoto

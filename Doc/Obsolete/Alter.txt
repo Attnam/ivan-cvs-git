@@ -1,3 +1,6 @@
+The longest if sentence ever written in IVAN
+--------------------------------------------
+
 void square::AlterLuminance(vector Dir, USI AL)
 {
 	#define WMACRO(X, Y) if(!game::CCurrentArea()->CSquare(vector(X, Y))->COverTerrain()->CIsWalkable()) return;
