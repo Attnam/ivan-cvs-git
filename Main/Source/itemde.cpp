@@ -76,9 +76,9 @@ void scrollofcreatemonster::FinishReading(character* Reader)
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Monster) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+      if(game::IsValidPos(TryToCreate) && GetLevelUnder()->GetLSquare(TryToCreate)->IsWalkable(Monster) && GetLevelUnder()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Monster);
+	  GetLevelUnder()->GetLSquare(TryToCreate)->AddCharacter(Monster);
 
 	  if(Reader->IsPlayer())
 	    {
@@ -171,7 +171,7 @@ bool pickaxe::Apply(character* User)
   if(Dir == DIR_ERROR || !game::IsValidPos(User->GetPos() + Temp))
     return false;
 
-  lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
+  lsquare* Square = GetLevelUnder()->GetLSquare(User->GetPos() + Temp);
 
   if(Square->GetCharacter())
     if(User->Hit(Square->GetCharacter()))
@@ -218,7 +218,7 @@ bool wand::Apply(character* Terrorist)
   else
     DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
-  Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
+  Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
   Terrorist->DexterityAction(5);
   return true;
 }
@@ -542,7 +542,7 @@ bool backpack::Apply(character* Terrorist)
 	DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
       Terrorist->DexterityAction(5);
-      Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
   else
@@ -666,10 +666,10 @@ void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction,
   if(Direction != YOURSELF)
     for(ushort Length = 0; Length < Range; ++Length)
       {
-	if(!game::GetCurrentLevel()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
+	if(!GetLevelUnder()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
 	  break;
 
-	lsquare* CurrentSquare = game::GetCurrentLevel()->GetLSquare(CurrentPos + game::GetMoveVector(Direction));
+	lsquare* CurrentSquare = GetLevelUnder()->GetLSquare(CurrentPos + game::GetMoveVector(Direction));
 
 	if(!(CurrentSquare->GetOLTerrain()->IsWalkable()))
 	  {
@@ -740,9 +740,9 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Genie) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+	  if(game::IsValidPos(TryToCreate) && GetLevelUnder()->GetLSquare(TryToCreate)->IsWalkable(Genie) && GetLevelUnder()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	    {
-	      game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Genie);
+	      GetLevelUnder()->GetLSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
 	      SetInhabitedByGenie(false);
 	      break;
@@ -782,7 +782,7 @@ bool oillamp::Apply(character* Applier)
 			    }
 			}
 
-		      game::GetCurrentLevel()->RemoveCharacter(TryToCreate);
+		      GetLevelUnder()->RemoveCharacter(TryToCreate);
 		      delete Genie;
 		      return true;
 		    }
@@ -949,7 +949,7 @@ void scrolloftaming::FinishReading(character* Reader)
 
       if(game::IsValidPos(Test))
 	{
-	  character* CharacterInSquare = game::GetCurrentLevel()->GetLSquare(Test)->GetCharacter();
+	  character* CharacterInSquare = GetLevelUnder()->GetLSquare(Test)->GetCharacter();
 
 	  if(CharacterInSquare && CharacterInSquare->IsCharmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
 	    CharactersNearBy.push_back(CharacterInSquare);
@@ -1371,7 +1371,7 @@ bool key::Apply(character* User)
 
       if(game::IsValidPos(ApplyPos))
 	{
-	  game::GetCurrentLevel()->GetLSquare(ApplyPos)->TryKey(this, User);
+	  GetLevelUnder()->GetLSquare(ApplyPos)->TryKey(this, User);
 	  User->DexterityAction(5);
 	}
       else
@@ -2557,7 +2557,7 @@ bool chest::TakeSomethingFrom(character* Opener)
   item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
   uchar RoomNumber = GetLSquareUnder()->GetRoom();
 
-  if(ToBeTaken && (!RoomNumber || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
+  if(ToBeTaken && (!RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
     {
       ToBeTaken->MoveTo(Opener->GetStack());
       Opener->DexterityAction(Opener->OpenMultiplier() * 5);
@@ -2582,7 +2582,7 @@ bool chest::PutSomethingIn(character* Opener)
     {
       uchar RoomNumber = GetLSquareUnder()->GetRoom();
 
-      if((RoomNumber == 0 || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, this)))
+      if((RoomNumber == 0 || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, this)))
 	{
 	  if(FitsIn(ToBePut))
 	    {
@@ -2880,7 +2880,7 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
   for(ushort c = 0; c < 3; ++c)
     if(game::IsValidPos(Zapper->GetPos() + Pos[c]))
       {
-	lsquare* Square = GetLSquareUnder()->GetLevelUnder()->GetLSquare(Zapper->GetPos() + Pos[c]);
+	lsquare* Square = GetLevelUnder()->GetLSquare(Zapper->GetPos() + Pos[c]);
 
 	if(Square->GetOLTerrain()->IsSafeToDestroy() && !Square->GetCharacter())
 	  {
@@ -3041,3 +3041,33 @@ void bodypart::GetPostFix(std::string& String) const
   String << " " << OwnerDescription;
 }
 
+bool stethoscope::Apply(character* Doctor) 
+{
+  if(!Doctor->IsPlayer())
+    ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
+
+  uchar Dir = game::DirectionQuestion("What do you want to inspect? [press a direction key]", false,true);  
+  if(Dir == DIR_ERROR)
+    return false;
+
+  return ListenTo(GetLevelUnder()->GetLSquare(GetPos() + game::GetMoveVector(Dir)), Doctor);
+} 
+
+/* Returns true if successful else false */
+bool stethoscope::ListenTo(lsquare* Square, character* Listener)
+{
+  if(!Listener->CanUseStethoscope(true))
+    return false;
+
+  character* Char = Square->GetCharacter();
+  if(!Char)
+    {
+      if(Listener->IsPlayer())
+	ADD_MESSAGE("There's no-one here.");
+      return false;
+    }
+
+
+  Char->DisplayStethoscopeInfo(Listener);
+  return true;
+}

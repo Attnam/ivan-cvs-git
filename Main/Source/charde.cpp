@@ -120,9 +120,9 @@ void guard::CreateInitialEquipment()
 
 bool ennerbeast::Hit(character*)
 {
-  DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
+  DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, 30,
   {
-    character* Char = game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetCharacter();
+    character* Char = GetLevelUnder()->GetLSquare(XPointer, YPointer)->GetCharacter();
     ushort ScreamStrength = ushort(1000000 / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
 
     if(Char && Char != this)
@@ -137,10 +137,10 @@ bool ennerbeast::Hit(character*)
 	Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
       }
 
-    game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
+    GetLevelUnder()->GetLSquare(XPointer, YPointer)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
 
     for(ushort x = 0; x < 4; ++x)
-      game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
+      GetLevelUnder()->GetLSquare(XPointer, YPointer)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
   });
 
   EditNP(-100);
@@ -622,7 +622,7 @@ void petrus::BeTalkedTo(character* Talker)
 				"Oree the Blood Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
 				"the Shirt of the Golden Eagle! Return with it and immortal glory shall be thine!");
 
-	      game::GetCurrentArea()->SendNewDrawRequest();
+	      GetAreaUnder()->SendNewDrawRequest();
 	      game::TriggerQuestForGoldenEagleShirt();
 	      StoryState = 2;
 	      return;
@@ -642,7 +642,7 @@ void petrus::BeTalkedTo(character* Talker)
 				"Valpurus hast told that this vile beast can be found in a nearby cave.\n"
 				"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
 
-	game::GetCurrentArea()->SendNewDrawRequest();
+	GetAreaUnder()->SendNewDrawRequest();
 	ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
 	StoryState = 1;
       }
@@ -692,25 +692,25 @@ void guard::BeTalkedTo(character* Talker)
   switch(RandomizeReply(5, Said))
     {
     case 0:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", CHARDESCRIPTION(DEFINITE));
       else
 	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 1:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", CHARDESCRIPTION(DEFINITE));
       else
 	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CHARDESCRIPTION(DEFINITE));
       else
 	ADD_MESSAGE("\"Yes, this is a dangerous place to work, but our boss pays us well.\"");
       break;
     case 3:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
       else
         {
@@ -718,7 +718,7 @@ void guard::BeTalkedTo(character* Talker)
         }
       break;
     case 4:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"Attnam, shit, I'm still only in Attnam. Every time I think I'm gonna wake up back in the dungeon.\"");
       else
 	ADD_MESSAGE("\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"");
@@ -739,7 +739,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
   switch(RandomizeReply(4, Said))
     {
     case 0:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CHARDESCRIPTION(DEFINITE));
       else
 	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", CHARDESCRIPTION(DEFINITE));
@@ -748,13 +748,13 @@ void shopkeeper::BeTalkedTo(character* Talker)
       ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an enner beast. It must be all Elpuri's doings!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"You truly can't find better prices in this city! Indeed, you can't find ANY prices, since my store is a monopoly.\"");
       else
 	ADD_MESSAGE("\"The topmost reason why I work here is that monsters devour tax collectors.\"");
       break;
     case 3:
-      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"Don't try anything. The High Priest is a friend of mine.\"");
       else
 	ADD_MESSAGE("\"The monsters don't attack me, because of our mutually profitable contract.\"");
@@ -829,7 +829,7 @@ void priest::BeTalkedTo(character* Talker)
   if(!HomeRoom)
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
-    ADD_MESSAGE("%s talks to you: %s", CHARDESCRIPTION(DEFINITE), game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GetPriestMessage().c_str());
+    ADD_MESSAGE("%s talks to you: %s", CHARDESCRIPTION(DEFINITE), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GetPriestMessage().c_str());
 }
 
 void oree::BeTalkedTo(character*)
@@ -1035,7 +1035,7 @@ void slave::BeTalkedTo(character* Talker)
 
   character* Master;
 
-  if(HomeRoom && (Master = GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster()))
+  if(HomeRoom && (Master = GetLevelUnder()->GetRoom(HomeRoom)->GetMaster()))
     {
       if(Talker->GetMoney() >= 50)
 	{
@@ -1109,7 +1109,7 @@ void slave::GetAICommand()
   if(CheckForDoors())
     return;
 
-  if(!HomeRoom || !GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
+  if(!HomeRoom || !GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
     {
       HomeRoom = 0;
       MoveRandomly();
@@ -1387,10 +1387,10 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 
   if(!game::IsInWilderness()) 
     {
-      game::GetCurrentLevel()->GetLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+      GetLevelUnder()->GetLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 
       if(!(RAND() % 10)) 
-	game::GetCurrentLevel()->GetLSquare(GetPos)->GetStack()->AddItem(new lump(MAKE_MATERIAL(HUMANFLESH, 1000)));
+	GetLevelUnder()->GetLSquare(GetPos)->GetStack()->AddItem(new lump(MAKE_MATERIAL(HUMANFLESH, 1000)));
     }
 }
 
@@ -1596,7 +1596,7 @@ bool unicorn::SpecialEnemySightedReaction(character*)
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
 
-    Move(GetLSquareUnder()->GetLevelUnder()->RandomSquare(this, true), true);
+    Move(GetLevelUnder()->RandomSquare(this, true), true);
 
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("Suddenly %s appears from nothing!", CHARNAME(INDEFINITE));
@@ -3535,56 +3535,22 @@ void spider::SpecialBiteEffect(character* Char)
   Char->BeginTemporaryState(POISONED, 50);
 }
 
-/*float humanoid::CalculateArmStrength() const
+bool humanoid::CanUseStethoscope(bool PrintReason) const
 {
-  return CalculateRightAttackStrength() + CalculateLeftAttackStrength();
+  if(GetArms() == 0)
+    {
+      if(PrintReason)
+	ADD_MESSAGE("You need an arm to use a stethoscope.");
+      return false;
+    }
+  if(GetHead() == 0)
+    {
+      if(PrintReason)
+	ADD_MESSAGE("You need a head to use stethoscope.");
+      return false;
+    }
+  return true;
 }
-
-float humanoid::CalculateArmToHitValue() const
-{
-  return (CalculateRightToHitValue() + CalculateLeftToHitValue()) / 2;
-}
-
-long humanoid::CalculateArmAPCost() const
-{
-  return Min(CalculateRightAPCost(), CalculateLeftAPCost());
-}
-
-float humanoid::CalculateKickStrength() const
-{
-  return Max(GetRightLeg()->CalculateKickStrength(), GetLeftLeg()->CalculateKickStrength());
-}
-
-float humanoid::CalculateKickToHitValue() const
-{
-  if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
-    return GetRightLeg()->CalculateKickToHitValue();
-  else
-    return GetLeftLeg()->CalculateKickToHitValue();
-}
-
-long humanoid::CalculateKickAPCost() const
-{
-  if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
-    return GetRightLeg()->CalculateKickAPCost();
-  else
-    return GetLeftLeg()->CalculateKickAPCost();
-}
-
-float humanoid::CalculateBiteStrength() const
-{
-  return GetHead()->CalculateBiteStrength();
-}
-
-float humanoid::CalculateBiteToHitValue() const
-{
-  return GetHead()->CalculateBiteToHitValue();
-}
-
-long humanoid::CalculateBiteAPCost() const
-{
-  return GetHead()->CalculateBiteAPCost();
-}*/
 
 bool humanoid::IsUsingArms() const
 {

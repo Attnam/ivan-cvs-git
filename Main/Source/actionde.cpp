@@ -211,7 +211,7 @@ void dig::Handle()
       return;
     }
 
-  lsquare* Square = GetActor()->GetLSquareUnder()->GetLevelUnder()->GetLSquare(SquareDug);
+  lsquare* Square = GetActor()->GetLevelUnder()->GetLSquare(SquareDug);
   Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARMSTRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
 
   if(Square->GetOLTerrain()->GetHP() <= 0)

@@ -1462,4 +1462,5 @@ snake
 	AttackStyle = USE_HEAD;
 	BiteStrength = 5000;
 	CanKick = false;
+	StandVerb = "lying";
 }

@@ -63,7 +63,7 @@ ushort lsquare::CalculateEmitation() const
     if(NE(vector2d(-1, 0), 1) > Emitation)
       Emitation = NE(vector2d(-1, 0), 1);
 
-  if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
+  if(GetPos().X < GetLevelUnder()->GetXSize() - 1)
     if(NE(vector2d(1, 0), 3) > Emitation)
       Emitation = NE(vector2d(1, 0), 3);
 
@@ -71,7 +71,7 @@ ushort lsquare::CalculateEmitation() const
     if(NE(vector2d(0, -1), 2) > Emitation)
       Emitation = NE(vector2d(0, -1), 2);
 
-  if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
+  if(GetPos().Y < GetLevelUnder()->GetYSize() - 1)
     if(NE(vector2d(0, 1), 0) > Emitation)
       Emitation = NE(vector2d(0, 1), 0);
 
@@ -119,18 +119,18 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance,
     {
       Stack->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
-      #define NS(D, S) game::GetCurrentLevel()->GetLSquare(GetPos() + D)->GetSideStack(S)
+      #define NS(D, S) GetLevelUnder()->GetLSquare(GetPos() + D)->GetSideStack(S)
 
       if(GetPos().X)
 	NS(vector2d(-1, 0), 1)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
-      if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
+      if(GetPos().X < GetLevelUnder()->GetXSize() - 1)
 	NS(vector2d(1, 0), 3)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
       if(GetPos().Y)
 	NS(vector2d(0, -1), 2)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
-      if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
+      if(GetPos().Y < GetLevelUnder()->GetYSize() - 1)
 	NS(vector2d(0, 1), 0)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
     }
 }
@@ -177,7 +177,7 @@ void lsquare::Emitate()
   game::SetCurrentEmitterEmitation(GetEmitation());
   game::SetCurrentEmitterPos(GetPos());
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
+  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer)) <= RadiusSquare)
       femath::DoLine(Pos.X, Pos.Y, XPointer, YPointer, game::EmitationHandler);
@@ -201,7 +201,7 @@ void lsquare::ReEmitate()
   game::SetCurrentEmitterEmitation(GetEmitation());
   game::SetCurrentEmitterPos(GetPos());
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
+  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer)) <= RadiusSquare)
       femath::DoLine(Pos.X, Pos.Y, XPointer, YPointer, game::EmitationHandler);
@@ -218,7 +218,7 @@ void lsquare::Noxify()
   ulong RadiusSquare = Radius * Radius;
   game::SetCurrentEmitterPos(GetPos());
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
+  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer)) <= RadiusSquare)
       femath::DoLine(Pos.X, Pos.Y, XPointer, YPointer, game::NoxifyHandler);
@@ -228,13 +228,13 @@ void lsquare::Noxify()
 void lsquare::ForceEmitterNoxify()
 {
   for(ushort c = 0; c < Emitter.size(); ++c)
-    game::GetCurrentLevel()->GetLSquare(Emitter[c].Pos)->Noxify();
+    GetLevelUnder()->GetLSquare(Emitter[c].Pos)->Noxify();
 }
 
 void lsquare::ForceEmitterEmitation()
 {
   for(ushort c = 0; c < Emitter.size(); ++c)
-    game::GetCurrentLevel()->GetLSquare(Emitter[c].Pos)->Emitate();
+    GetLevelUnder()->GetLSquare(Emitter[c].Pos)->Emitate();
 }
 
 void lsquare::NoxifyEmitter(vector2d Dir)
@@ -281,7 +281,7 @@ uchar lsquare::CalculateBitMask(vector2d Dir) const
 {
   uchar BitMask = 0;
 
-#define IW(X, Y) game::GetCurrentLevel()->GetLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsWalkable()
+#define IW(X, Y) GetLevelUnder()->GetLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsWalkable()
 
   if(Dir.X < Pos.X)
     {
@@ -687,7 +687,7 @@ void lsquare::BeKicked(character* Kicker, float KickStrength, float KickToHitVal
 
 bool lsquare::CanBeDug() const
 {
-  if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
+  if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == GetLevelUnder()->GetXSize() - 1 || GetPos().Y == GetLevelUnder()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
     {
       ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
       return false;

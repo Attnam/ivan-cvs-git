@@ -17,13 +17,13 @@ bool olterrain::GoUp(character* Who) const // Try to go up
 {
   if(game::GetCurrent() && game::GetCurrent() != 9 && game::WizardModeActivated())
     {
-      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+      GetLevelUnder()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
-      game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
-      game::GetCurrentLevel()->Luxify();
+      vector2d Pos = GetLevelUnder()->RandomSquare(Who, true);
+      GetLevelUnder()->FastAddCharacter(Pos, Who);
+      GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -38,7 +38,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
 	  {
 	    std::vector<character*> TempPlayerGroup;
 
-	    if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
+	    if(!GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
 	      return false;
 
 	    game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
@@ -72,13 +72,13 @@ bool olterrain::GoDown(character* Who) const // Try to go down
 {
   if(game::GetCurrent() < game::GetLevels() - 2 && game::WizardModeActivated())
     {
-      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+      GetLevelUnder()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
-      game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
-      game::GetCurrentLevel()->Luxify();
+      vector2d Pos = GetLevelUnder()->RandomSquare(Who, true);
+      GetLevelUnder()->FastAddCharacter(Pos, Who);
+      GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -223,4 +223,9 @@ void olterrain::ShowRestMessage(character*) const
 lsquare* lterrain::GetLSquareUnder() const
 {
   return static_cast<lsquare*>(SquareUnder);
+}
+
+level* lterrain::GetLevelUnder() const
+{ 
+  return GetLSquareUnder()->GetLevelUnder(); 
 }

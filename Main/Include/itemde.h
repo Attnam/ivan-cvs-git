@@ -1139,5 +1139,14 @@ class ITEM
   virtual bool IsHelmet(const character*) const { return true; }
 );
 
+class ITEM
+(
+ stethoscope,
+ item,
+ public:
+ virtual bool Apply(character*);
+ virtual bool IsAppliable(const character*) const { return true; };
+ virtual bool ListenTo(lsquare*,character*);
+);
 #endif
 

@@ -38,6 +38,8 @@ class go;
 class gweaponskill;
 class stackslot;
 class god;
+class level;
+class area;
 typedef std::list<stackslot*>::iterator stackiterator;
 template <class type> class database;
 
@@ -608,6 +610,10 @@ class character : public entity, public id
   void PolymorphHandler();
   void PrintEndPolymorphMessage() const;
   void PrintBeginPolymorphMessage() const;
+  void DisplayStethoscopeInfo(character*) const;
+  level* GetLevelUnder() const;
+  area* GetAreaUnder() const;
+  virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const { return GetAttackStyle() & USE_ARMS ? true : false; }
   virtual bool IsUsingLegs() const { return GetAttackStyle() & USE_LEGS ? true : false; }
   virtual bool IsUsingHead() const { return GetAttackStyle() & USE_HEAD ? true : false; }

@@ -21,6 +21,7 @@ class inputfile;
 class glterrain;
 class olterrain;
 class item;
+class level;
 template <class type> class database;
 
 struct terraindatabase
@@ -75,6 +76,7 @@ class lterrain : public object
   virtual square* GetSquareUnder() const { return SquareUnder; }
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const;
+  level* GetLevelUnder() const;
  protected:
   void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }

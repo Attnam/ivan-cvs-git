@@ -1333,3 +1333,19 @@ helmet
 	MaterialConfigChances = { 9, 	30,	10,	10,	2,	4,	20,	5,	3,	30; }
 	Roundness = 50;
 }
+
+stethoscope
+{
+	DefaultSize = 40;
+	Possibility = 30;
+	Category = TOOL;
+	DefaultMainVolume = 200;
+	StrengthModifier = 50;	
+	BitmapPos = 0, 0; /* Needs pic */
+	FormModifier = 50;
+	Roundness = 20;
+        NameSingular = "stethoscope";
+	Price = 250;
+	MainMaterialConfig == UNICORNHORN;
+	OfferModifier = 4000;
+}

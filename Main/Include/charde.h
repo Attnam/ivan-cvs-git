@@ -137,6 +137,7 @@ class ABSTRACT_CHARACTER
   virtual void SignalEquipmentRemoval(ushort);
   virtual uchar GetBodyParts() const { return HUMANOID_BODYPARTS; }
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;

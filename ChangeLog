@@ -1,3 +1,12 @@
+July 15 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* added LevelUnder() to item, character and lterrain
+	* Replaced code in item, character and lterrain and their derives to use LevelUnder().
+	* Added GetPos() function to item 
+	* Added stethoscope 
+	* Snake is now "lying" not "standin"
+	* You can no longer engrave when you cannot read.
+
 July 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Compiles again under gcc 3.04

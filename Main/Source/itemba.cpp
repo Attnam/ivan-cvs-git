@@ -54,8 +54,8 @@ short item::CalculateOfferValue(char GodAlignment) const
 
 bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
-  vector2d StartingPos = GetSquareUnder()->GetPos();
-  vector2d Pos = GetSquareUnder()->GetPos();
+  vector2d StartingPos = GetPos();
+  vector2d Pos = StartingPos;
   bool Breaks = false;
   float Speed = float(Force) / GetWeight() * 1500;
 
@@ -64,7 +64,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
       if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
 	break;
 
-      lsquare* JustHit = game::GetCurrentLevel()->GetLSquare(Pos + game::GetMoveVector(Direction));
+      lsquare* JustHit = GetLevelUnder()->GetLSquare(Pos + game::GetMoveVector(Direction));
 
       if(!(JustHit->GetOLTerrain()->IsWalkable()))
 	{
@@ -82,12 +82,12 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 	  if(Speed < 0.5)
 	    break;
 
-	  MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
+	  MoveTo(GetLevelUnder()->GetLSquare(Pos)->GetStack());
 	  game::DrawEverything();
 
-	  if(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter())
+	  if(GetLevelUnder()->GetLSquare(Pos)->GetCharacter())
 	    {
-	      if(HitCharacter(Thrower, game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter(), Speed))
+	      if(HitCharacter(Thrower, GetLevelUnder()->GetLSquare(Pos)->GetCharacter(), Speed))
 		{
 		  Breaks = true;
 		  break;
@@ -98,7 +98,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 	}
     }
 
-  MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
+  MoveTo(GetLevelUnder()->GetLSquare(Pos)->GetStack());
 
   if(Breaks)
     ReceiveDamage(Thrower, short(Speed), PHYSICALDAMAGE);
@@ -217,7 +217,7 @@ void item::TeleportRandomly()
 {
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
 
-  MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(0, true, false))->GetStack());
+  MoveTo(GetLevelUnder()->GetLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
 }
 
 ushort item::GetStrengthValue() const
@@ -463,4 +463,14 @@ square* item::GetSquareUnder() const
 lsquare* item::GetLSquareUnder() const
 {
   return static_cast<lsquare*>(Slot->GetSquareUnder());
+}
+
+level* item::GetLevelUnder() const
+{ 
+  return GetLSquareUnder()->GetLevelUnder(); 
+}
+
+vector2d item::GetPos() const
+{
+  return GetSquareUnder()->GetPos();
 }

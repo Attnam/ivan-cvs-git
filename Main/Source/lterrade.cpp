@@ -117,20 +117,20 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 
       std::vector<character*> MonsterList;
 
-      if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
+      if(!GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
 	return false;
 
-      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+      GetLevelUnder()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
-      game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
+      GetLevelUnder()->GetSquare(GetLevelUnder()->GetDownStairs())->KickAnyoneStandingHereAway();
+      GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetDownStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetDownStairs()), *c);
+	GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetDownStairs()), *c);
 
-      game::GetCurrentLevel()->Luxify();
+      GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -144,7 +144,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 	{
 	  std::vector<character*> TempPlayerGroup;
 
-	  if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, false))
+	  if(!GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, false))
 	    return false;
 
 	  game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
@@ -182,23 +182,23 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
 
       std::vector<character*> MonsterList;
 
-      if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
+      if(!GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
 	return false;
 
       if(game::GetCurrent() == 8)
 	Who->GetLSquareUnder()->ChangeLTerrain(new solidterrain(PARQUET), new empty);
 
-      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+      GetLevelUnder()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
-      game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
+      GetLevelUnder()->GetSquare(GetLevelUnder()->GetUpStairs())->KickAnyoneStandingHereAway();
+      GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetUpStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetUpStairs()), *c);
+	GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetUpStairs()), *c);
 
-      game::GetCurrentLevel()->Luxify();
+      GetLevelUnder()->Luxify();
       game::ShowLevelMessage();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
@@ -414,9 +414,9 @@ bool fountain::Drink(character* Drinker)
     {
       if(GetContainedMaterial()->GetConfig() == WATER) 
 	{
-	  if(GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->HasDrinkHandler())
+	  if(GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->HasDrinkHandler())
 	    {
-	      if(!GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->Drink(Drinker))
+	      if(!GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->Drink(Drinker))
 		return false;
 	    }
 	  else
@@ -747,7 +747,7 @@ void door::ActivateBoobyTrap()
 	ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
 
       BoobyTrap = 0;
-      GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
+      GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
       break;
     case 0:
       break;

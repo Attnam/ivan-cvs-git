@@ -19,6 +19,7 @@ class outputfile;
 class inputfile;
 class slot;
 class item;
+class level;
 template <class type> class database;
 
 struct itemdatabase
@@ -279,6 +280,8 @@ class item : public object
   virtual void SetIsVisible(bool) { }
   virtual square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const;
+  level* GetLevelUnder() const;
+  vector2d GetPos() const;
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
