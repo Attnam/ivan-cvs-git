@@ -32,11 +32,13 @@ public:
 	virtual void SetMaster(character* What) { Master = What; }
 	virtual bool PickupItem(character*, item*) { return true; }
 	virtual bool DropItem(character*, item*) { return true; }
+	virtual uchar GetDivineOwner() const { return DivineOwner; }
+	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
 protected:
 	std::vector<vector2d> Door;
 	vector2d Pos, Size;
 	character* Master;
-	uchar Index;
+	uchar Index, DivineOwner;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

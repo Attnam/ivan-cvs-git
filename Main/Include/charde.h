@@ -194,7 +194,7 @@ class CHARACTER
 		SetEndurance(30);
 		SetPerception(30);
 		SetArmType(6);
-		SetHeadType(9);
+		SetHeadType(4);
 		SetLegType(2);
 		SetTorsoType(8);
 	},
@@ -206,6 +206,32 @@ public:
 protected:
 	virtual std::string NameSingular() const RET("shopkeeper")
 	virtual float GetMeleeStrength() const RET(2000)
+);
+
+class CHARACTER
+(
+	priest,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(18);
+		SetArmType(6);
+		SetHeadType(9);
+		SetLegType(2);
+		SetTorsoType(0);
+	},
+public:
+	virtual void GetAICommand();
+	virtual void CreateInitialEquipment();
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
+protected:
+	virtual std::string NameSingular() const RET("priest")
+	virtual float GetMeleeStrength() const RET(1000)
 );
 
 class CHARACTER

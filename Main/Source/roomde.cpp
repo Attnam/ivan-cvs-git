@@ -3,6 +3,8 @@
 #include "square.h"
 #include "message.h"
 #include "itemba.h"
+#include "lterrade.h"
+#include "god.h"
 
 void shop::HandleInstantiatedCharacter(character* Character)
 {
@@ -69,4 +71,31 @@ bool shop::DropItem(character* Customer, item* ForSale)
 	}
 	else
 		return true;
+}
+
+void temple::HandleInstantiatedCharacter(character* Character)
+{
+	Master = Character;
+	Character->SetHomeRoom(Index);
+}
+
+void temple::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
+{
+	if(Terrain->GetType() == altar::StaticType())
+		((altar*)Terrain)->SetOwnerGod(DivineOwner);
+}
+
+void temple::Enter(character* Pilgrim)
+{
+	if(Pilgrim->GetIsPlayer())
+		if(Master)
+		{
+			if(Pilgrim->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+				if(Master->GetSquareUnder()->CanBeSeenFrom(Pilgrim->GetSquareUnder()->GetPos(), Pilgrim->LOSRangeSquare()))
+					ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CNAME(DEFINITE), game::PossessivePronoun(Master->GetSex()), game::GetGod(DivineOwner)->Name().c_str());
+				else
+					ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineOwner)->Name().c_str());
+		}
+		else
+			ADD_MESSAGE("The temple appears to be deserted.");
 }

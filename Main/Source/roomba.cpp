@@ -6,14 +6,14 @@ void room::Save(outputfile& SaveFile) const
 {
 	typeable::Save(SaveFile);
 
-	SaveFile << Pos << Size << Door << Index;
+	SaveFile << Pos << Size << Door << Index << DivineOwner;
 }
 
 void room::Load(inputfile& SaveFile)
 {
 	typeable::Load(SaveFile);
 
-	SaveFile >> Pos >> Size >> Door >> Index;
+	SaveFile >> Pos >> Size >> Door >> Index >> DivineOwner;
 }
 
 void room::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)

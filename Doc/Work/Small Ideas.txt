@@ -66,3 +66,4 @@ Thrown items should also increase weaponskills, or they they should have own wea
 Kicking should increase Unarmed weapon skill.
 Bow shots should be far more powerful.
 "You displace the dog." !!!
+Indices should be shown in CW.

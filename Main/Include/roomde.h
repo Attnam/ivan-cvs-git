@@ -21,4 +21,14 @@ public:
 	virtual bool DropItem(character*, item*);
 );
 
+class ROOM
+(
+	temple,
+	room,
+public:
+	virtual void HandleInstantiatedCharacter(character*);
+	virtual void HandleInstantiatedOverLevelTerrain(overlevelterrain*);
+	virtual void Enter(character*);
+);
+
 #endif

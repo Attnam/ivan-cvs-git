@@ -206,6 +206,11 @@ Dungeon 0;
 
 			/* Altar of Erado should be added once gods are prototyped */
 
+			Square, Pos 3,1;
+			{
+				OverTerrain = altar;
+			}
+
 			Square, Pos 3,3;
 			{
 				IsUpStairs=true;
@@ -532,26 +537,6 @@ Dungeon 1;
 
 			
 		}
-		Room 2;
-		{
-			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
-		}
-		Room 3;
-		{
-			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
-		}
-		Room 4;
-		{
-			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
-		}
-		Room 5;
-		{
-			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
-		}
 
 		Room 1;
 		{
@@ -567,6 +552,7 @@ Dungeon 1;
 			
 			Square, Pos 5, 0;
 			{
+				GroundTerrain = parquet;
 				OverTerrain = door;
 			}
 
@@ -597,7 +583,124 @@ Dungeon 1;
 			    blLcl
 			    tbbbL		
 			}
+		}
 
+		Room 2;
+		{
+			Size=5,5;
+			WallSquare=floor,gold wall;
+			GenerateDoor=false;
+			DivineOwner=2;
+			Type=temple;
+
+			Square, Pos 2, 0;
+			{
+				GroundTerrain = parquet;
+				OverTerrain = gold door;
+			}
+
+			Square, Pos 2, 2;
+			{
+				OverTerrain = gold altar;
+			}
+
+			Square, Pos 2, 3;
+			{
+				Character = priest;
+			}
+		}
+
+		Room 3;
+		{
+			Size=5,5;
+			WallSquare=floor,marble wall;
+			GenerateDoor=false;
+			DivineOwner=4;
+			Type=temple;
+
+			Square, Pos 4, 2;
+			{
+				GroundTerrain = parquet;
+				OverTerrain = marble door;
+			}
+
+			Square, Pos 2, 2;
+			{
+				OverTerrain = marble altar;
+			}
+
+			Square, Pos 1, 2;
+			{
+				Character = priest;
+			}
+		}
+
+		Room 4;
+		{
+			Size=5,5;
+			WallSquare=floor,bananaflesh wall;
+			GenerateDoor=false;
+			DivineOwner=6;
+			Type=temple;
+
+			Square, Pos 0, 2;
+			{
+				GroundTerrain = parquet;
+				OverTerrain = bananaflesh door;
+			}
+
+			Square, Pos 2, 2;
+			{
+				OverTerrain = bananaflesh altar;
+			}
+
+			Square, Pos 3, 2;
+			{
+				Character = priest;
+			}
+		}
+
+		Room 5;
+		{
+			Size=5,5;
+			WallSquare=floor,parchment wall;
+			GenerateDoor=false;
+			DivineOwner=7;
+			Type=temple;
+
+			Square, Pos 2, 4;
+			{
+				GroundTerrain = parquet;
+				OverTerrain = parchment door;
+			}
+
+			Square, Pos 2, 2;
+			{
+				OverTerrain = parchment altar;
+			}
+
+			Square, Pos 2, 1;
+			{
+				Character = priest;
+			}
+		}
+
+		Room 7;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
+		}
+
+		Room 8;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
+		}
+
+		Room 9;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
 		}
 	}
 }

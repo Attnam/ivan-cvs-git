@@ -35,7 +35,13 @@ humanoid::~humanoid()
 void perttu::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new valpurijustifier)));
-	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail(new valpurium(4000)))));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail(new valpurium))));
+}
+
+void priest::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
 }
 
 void oree::CreateInitialEquipment()
@@ -768,6 +774,17 @@ void perttu::AddHitMessage(character* Enemy, const bool Critical) const
 }
 
 void shopkeeper::GetAICommand()
+{
+	if(CheckForEnemies())
+		return;
+
+	if(CheckForDoors())
+		return;
+
+	CheckForUsefulItemsOnGround();
+}
+
+void priest::GetAICommand()
 {
 	if(CheckForEnemies())
 		return;

@@ -398,6 +398,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	AddRoom(RoomClass);
 
+	RoomClass->SetDivineOwner(*RoomScript->GetDivineOwner());
+
 	{
 	for(ushort x = XPos; x < XPos + Width; ++x)
 	{
