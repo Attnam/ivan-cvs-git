@@ -1,6 +1,8 @@
 #ifndef __WHANDLER_H__
 #define __WHANDLER_H__
 
+#pragma warning(disable : 4786)
+
 #define GETKEY globalwindowhandler::GetKey
 
 #include <windows.h>

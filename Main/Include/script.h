@@ -1,6 +1,8 @@
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
+#pragma warning(disable : 4786)
+
 #define SCRIPT_RETURN(member)\
 {\
 	if(member)\

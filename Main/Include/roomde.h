@@ -1,6 +1,8 @@
 #ifndef __ROOMDE_H__
 #define __ROOMDE_H__
 
+#pragma warning(disable : 4786)
+
 #include "roomba.h"
 
 class ROOM

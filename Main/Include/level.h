@@ -1,6 +1,8 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
+#pragma warning(disable : 4786)
+
 #include <string>
 #include <vector>
 

@@ -1,6 +1,8 @@
 #ifndef __GOD_H__
 #define __GOD_H__
 
+#pragma warning(disable : 4786)
+
 #define GOD_NAME Name().c_str()
 
 #define ALPP	0   // A = Alignment

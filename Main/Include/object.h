@@ -1,6 +1,8 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
+#pragma warning(disable : 4786)
+
 #define CNAME(Case) Name(Case).c_str()
 
 #define	UNARTICLED		0	//0000000

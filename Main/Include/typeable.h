@@ -1,6 +1,8 @@
 #ifndef __TYPEABLE_H__
 #define __TYPEABLE_H__
 
+#pragma warning(disable : 4786)
+
 #include <string>
 
 #include "typedef.h"

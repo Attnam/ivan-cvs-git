@@ -1,6 +1,8 @@
 #ifndef __HSCORE_H__
 #define __HSCORE_H__
 
+#pragma warning(disable : 4786)
+
 #include <string>
 #include <vector>
 

@@ -1,6 +1,8 @@
 #ifndef __COLORBIT_H__
 #define __COLORBIT_H__
 
+#pragma warning(disable : 4786)
+
 #include <string>
 
 #include "typedef.h"

@@ -1,6 +1,8 @@
 #ifndef __CHARDE_H__
 #define __CHARDE_H__
 
+#pragma warning(disable : 4786)
+
 #include "charba.h"
 #include "graphics.h"
 #include "wskill.h"

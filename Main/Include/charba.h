@@ -1,6 +1,8 @@
 #ifndef __CHARBA_H__
 #define __CHARBA_H__
 
+#pragma warning(disable : 4786)
+
 #define HAS_HIT 0
 #define HAS_BLOCKED 1
 #define HAS_DODGED 2

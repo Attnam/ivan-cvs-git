@@ -1,6 +1,8 @@
 #ifndef __MATERDE_H__
 #define __MATERDE_H__
 
+#pragma warning(disable : 4786)
+
 #include "materba.h"
 #include "graphics.h"
 

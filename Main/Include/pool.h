@@ -1,6 +1,8 @@
 #ifndef __POOL_H__
 #define __POOL_H__
 
+#pragma warning(disable : 4786)
+
 #include <list>
 
 class object;

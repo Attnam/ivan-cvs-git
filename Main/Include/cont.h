@@ -1,6 +1,8 @@
 #ifndef __CONT_H__
 #define __CONT_H__
 
+#pragma warning(disable : 4786)
+
 #include <vector>
 #include <string>
 

@@ -1,6 +1,8 @@
 #ifndef __ITEMDE_H__
 #define __ITEMDE_H__
 
+#pragma warning(disable : 4786)
+
 #include "itemba.h"
 #include "materde.h"
 #include "wskill.h"

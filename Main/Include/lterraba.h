@@ -1,6 +1,8 @@
 #ifndef __LTERRABA_H__
 #define __LTERRABA_H__
 
+#pragma warning(disable : 4786)
+
 #include "bitmap.h"
 #include "object.h"
 #include "terra.h"

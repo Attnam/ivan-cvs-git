@@ -1,6 +1,8 @@
 #ifndef __STROVER_H__
 #define __STROVER_H__
 
+#pragma warning(disable : 4786)
+
 #include <cstdio>
 #include <string>
 

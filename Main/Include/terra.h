@@ -1,6 +1,8 @@
 #ifndef __TERRAIN_H__
 #define __TERRAIN_H__
 
+#pragma warning(disable : 4786)
+
 #include "typeable.h"
 
 class outputfile;

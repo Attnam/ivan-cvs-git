@@ -1,6 +1,8 @@
 #ifndef __LSQUARE_H__
 #define __LSQUARE_H__
 
+#pragma warning(disable : 4786)
+
 #include <string>
 
 #include "dynarray.h"

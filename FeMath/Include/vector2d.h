@@ -1,6 +1,8 @@
 #ifndef __VECTOR2D_H__
 #define __VECTOR2D_H__
 
+#pragma warning(disable : 4786)
+
 #include "typedef.h"
 
 class vector2d

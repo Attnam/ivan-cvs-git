@@ -1,6 +1,8 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
+#pragma warning(disable : 4786)
+
 #define DIRECTION_COMMAND_KEYS	8
 
 #define UNDEFINED		0

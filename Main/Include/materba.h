@@ -1,6 +1,8 @@
 #ifndef __MATERBA_H__
 #define __MATERBA_H__
 
+#pragma warning(disable : 4786)
+
 #define GOOD 0
 #define NEUTRAL 1
 #define EVIL 2

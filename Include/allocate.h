@@ -1,6 +1,8 @@
 #ifndef __ALLOCATE_H__
 #define __ALLOCATE_H__
 
+#pragma warning(disable : 4786)
+
 #include "typedef.h"
 
 template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize)

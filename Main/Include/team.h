@@ -1,6 +1,8 @@
 #ifndef __TEAM_H__
 #define __TEAM_H__
 
+#pragma warning(disable : 4786)
+
 #define HOSTILE 0
 #define NEUTRAL 1
 #define FRIEND 2

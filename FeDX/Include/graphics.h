@@ -1,6 +1,8 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
+#pragma warning(disable : 4786)
+
 #define DOUBLEBUFFER	graphics::GetDoubleBuffer()
 #define XRES		graphics::GetXRes()
 #define YRES		graphics::GetYRes()

@@ -1,6 +1,8 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
+#pragma warning(disable : 4786)
+
 #define ABORT globalerrorhandler::Abort
 
 #include <windows.h>

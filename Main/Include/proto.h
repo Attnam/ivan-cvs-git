@@ -1,6 +1,8 @@
 #ifndef __PROTO_H__
 #define __PROTO_H__
 
+#pragma warning(disable : 4786)
+
 #include <vector>
 #include <map>
 #include <string>

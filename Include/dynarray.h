@@ -1,6 +1,8 @@
 #ifndef __DYNARRAY_H__
 #define __DYNARRAY_H__
 
+#pragma warning(disable : 4786)
+
 #include "typedef.h"
 
 template <class Type, class SizeType = ushort> class dynarray

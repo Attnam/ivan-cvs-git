@@ -1,6 +1,8 @@
 #ifndef __RAND_H__
 #define __RAND_H__
 
+#pragma warning(disable : 4786)
+
 #define RAND() femath::Rand()
 
 /* Period parameters */  

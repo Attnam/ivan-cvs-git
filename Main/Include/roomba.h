@@ -1,6 +1,8 @@
 #ifndef __ROOMBA_H__
 #define __ROOMBA_H__
 
+#pragma warning(disable : 4786)
+
 #include <vector>
 
 #include "vector2d.h"

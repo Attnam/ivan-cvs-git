@@ -1,6 +1,8 @@
 #ifndef __AREA_H__
 #define __AREA_H__
 
+#pragma warning(disable : 4786)
+
 #define FORBIDDEN		1
 #define ON_POSSIBLE_ROUTE	2
 #define STILL_ON_POSSIBLE_ROUTE	4

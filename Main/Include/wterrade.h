@@ -1,6 +1,8 @@
 #ifndef __WTERRADE_H__
 #define __WTERRADE_H__
 
+#pragma warning(disable : 4786)
+
 #include "wterraba.h"
 
 class GROUNDWORLDMAPTERRAIN

@@ -1,6 +1,8 @@
 #ifndef __ITEMBA_H__
 #define __ITEMBA_H__
 
+#pragma warning(disable : 4786)
+
 #define ITEM_OUTLINE_COLOR	GREEN
 
 #include "typedef.h"

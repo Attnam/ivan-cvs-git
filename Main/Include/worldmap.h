@@ -1,6 +1,8 @@
 #ifndef __WORLDMAP_H__
 #define __WORLDMAP_H__
 
+#pragma warning(disable : 4786)
+
 #include <deque>
 #include <string>
 

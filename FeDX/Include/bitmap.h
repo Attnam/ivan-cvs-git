@@ -1,6 +1,8 @@
 #ifndef __BITMAP_H__
 #define __BITMAP_H__
 
+#pragma warning(disable : 4786)
+
 #define MIRROR 1
 #define FLIP 2
 #define ROTATE_90 4

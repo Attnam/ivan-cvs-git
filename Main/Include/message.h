@@ -1,6 +1,8 @@
 #ifndef __MESSAGE_H__
 #define __MESSAGE_H__
 
+#pragma warning(disable : 4786)
+
 #define ADD_MESSAGE globalmessagingsystem::AddMessage
 #define DRAW_MESSAGES globalmessagingsystem::Draw
 #define EMPTY_MESSAGES globalmessagingsystem::Empty

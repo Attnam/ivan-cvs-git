@@ -1,6 +1,8 @@
 #ifndef __WSKILL_H__
 #define __WSKILL_H__
 
+#pragma warning(disable : 4786)
+
 #define WEAPON_SKILL_GATEGORIES	13
 
 #define UNCATEGORIZED	0

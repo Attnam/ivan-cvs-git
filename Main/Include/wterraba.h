@@ -1,6 +1,8 @@
 #ifndef __WTERRABA_H__
 #define __WTERRABA_H__
 
+#pragma warning(disable : 4786)
+
 #include "vector2d.h"
 #include "terra.h"
 #include "proto.h"

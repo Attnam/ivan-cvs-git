@@ -1,6 +1,8 @@
 #ifndef __IGRAPH_H__
 #define __IGRAPH_H__
 
+#pragma warning(disable : 4786)
+
 #define RAW_TYPES	3
 
 #define GLTERRAIN	0

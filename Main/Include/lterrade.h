@@ -1,6 +1,8 @@
 #ifndef __LTERRADE_H__
 #define __LTERRADE_H__
 
+#pragma warning(disable : 4786)
+
 #include "lterraba.h"
 
 class GROUNDLEVELTERRAIN

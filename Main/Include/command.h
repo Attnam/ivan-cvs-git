@@ -1,6 +1,8 @@
 #ifndef __COMMAND_H__
 #define __COMMAND_H__
 
+#pragma warning(disable : 4786)
+
 #include <string>
 
 #include "typedef.h"
