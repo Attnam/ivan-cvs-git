@@ -7,6 +7,21 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Divided wood to the following materials: balsa, pine, fir, birch, oak, teak
+	  and ebony
+	* All walls in New Attnam and in the underwater tunnel are now made of balsa,
+	  and fir dominates the northern architecture
+	* Arcanite's density reduced from 4000 to 800 g/cm^3 to make it suitable for
+	  staffs
+	* Added octiron, which is a light but extremely hard staff material
+	* Added staff of wondrous smells
+	* The dark archmage is no longer burdened
+	* Added cloaks of fire and electricity resistances
+	* Corrected a bug that allowed bonefiles to to be generated in levels where
+	  the player had already been
+
 May 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a truly horrible bug in the sparkle position randomization code

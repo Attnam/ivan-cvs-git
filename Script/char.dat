@@ -1491,7 +1491,7 @@ hunter
 	Helmet = HARDENED_LEATHER helmet;
 	Cloak = LEATHER cloak;
 	BodyArmor = TROLL_HIDE bodyarmor(PLATE_MAIL);
-	RightWielded = meleeweapon(SPEAR);
+	RightWielded = IRON meleeweapon(SPEAR);
 	RightGauntlet = LEATHER gauntlet;
 	LeftGauntlet = 0;
 	RightBoot = HARDENED_LEATHER boot;
@@ -1676,6 +1676,7 @@ petrusswife
 	{
 		DefaultIntelligence = 4; /* she's blond */
 		DefaultWisdom = 8;
+		DefaultCharisma = 85;
 		HairColor = rgb16(200, 96, 0);
 		HeadBitmapPos = 112, 32;
 		PostFix = "number 4";
@@ -2164,7 +2165,7 @@ kobold
 	NameSingular = "kobold";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
-	RightWielded = WOOD meleeweapon(SPEAR);
+	RightWielded = BALSA_WOOD BALSA_WOOD meleeweapon(SPEAR);
 	KnownCWeaponSkills == POLE_ARMS;
 	CWeaponSkillHits == 5;
 	RightSWeaponSkillHits = 0;
@@ -2995,7 +2996,7 @@ smith
 	NameSingular = "smith";
 	Helmet = STEEL helmet { Enchantment = 1; }
 	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
+	RightWielded = MITHRIL meleeweapon(WAR_HAMMER) { Enchantment = 2; }
 	RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
 	RightRing = ring(RING_OF_FIRE_RESISTANCE);
 	LeftRing = ring(RING_OF_FIRE_RESISTANCE);
@@ -3361,6 +3362,7 @@ darkmage
 	AttachedGod = INFUSCOR;
 	IsAbstract = true;
 	Inventory == Random { Category = WAND|SCROLL; }
+	KnownCWeaponSkills == BLUNT_WEAPONS;
 
 	Config APPRENTICE;
 	{
@@ -3382,17 +3384,20 @@ darkmage
 		ClothColor = rgb16(80, 80, 80);
 		BeltColor = rgb16(80, 80, 80);
 		Cloak = LEATHER cloak { Enchantment = 2; }
-		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
+		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
 		HPRequirementForGeneration = 100;
 		Frequency = 1500;
 		PanicLevel = 75;
 		Inventory == lantern;
+		CWeaponSkillHits == 50;
+		RightSWeaponSkillHits = 20;
+		LeftSWeaponSkillHits = 20;
 	}
 
 	Config BATTLE_MAGE;
 	{
-		DefaultArmStrength = 12;
-		DefaultLegStrength = 12;
+		DefaultArmStrength = 13;
+		DefaultLegStrength = 13;
 		DefaultDexterity = 20;
 		DefaultAgility = 18;
 		DefaultEndurance = 15;
@@ -3408,16 +3413,19 @@ darkmage
 		HairColor = rgb16(180, 40, 40);
 		CapColor = rgb16(180, 40, 40);
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
-		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
+		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 200;
 		Frequency = 1000;
 		PanicLevel = 25;
+		CWeaponSkillHits == 100;
+		RightSWeaponSkillHits = 50;
+		LeftSWeaponSkillHits = 50;
 	}
 
 	Config ELDER;
 	{
-		DefaultArmStrength = 9;
-		DefaultLegStrength = 9;
+		DefaultArmStrength = 11;
+		DefaultLegStrength = 11;
 		DefaultDexterity = 25;
 		DefaultAgility = 15;
 		DefaultEndurance = 15;
@@ -3435,16 +3443,19 @@ darkmage
 		HairColor = rgb16(140, 140, 140);
 		CapColor = rgb16(80, 80, 160);
 		Cloak = OMMEL_HAIR cloak { Enchantment = 4; }
-		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 5; MainMaterial = ARCANITE { Volume = 100; } SecondaryMaterial = ARCANITE { Volume = 400; } }
+		RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 5; }
 		HPRequirementForGeneration = 300;
 		Frequency = 500;
 		PanicLevel = 10;
+		CWeaponSkillHits == 200;
+		RightSWeaponSkillHits = 100;
+		LeftSWeaponSkillHits = 100;
 	}
 
 	Config ARCH_MAGE;
 	{
-		DefaultArmStrength = 6;
-		DefaultLegStrength = 6;
+		DefaultArmStrength = 9;
+		DefaultLegStrength = 9;
 		DefaultDexterity = 30;
 		DefaultAgility = 12;
 		DefaultEndurance = 15;
@@ -3456,7 +3467,7 @@ darkmage
 		Adjective = "dark";
 		NameSingular = "archmage";
 		DefaultName = "Ischaldirh";
-		ClassStates = INFRA_VISION|ESP;
+		ClassStates = INVISIBLE|INFRA_VISION|ESP;
 		TotalVolume = 100000;
 		TotalSize = 150;
 		IsUnique = true;
@@ -3470,14 +3481,17 @@ darkmage
 		ClothColor = rgb16(30, 30, 30);
 		CapColor = rgb16(50, 50, 50);
 		BodyArmor = ARCANITE bodyarmor(CHAIN_MAIL) { Enchantment = 5; }
-		Cloak = DRAGON_HIDE cloak { Enchantment = 5; }
+		Cloak = PHOENIX_FEATHER cloak { Enchantment = 5; }
 		Belt = ANGEL_HAIR belt { Enchantment = 5; }
 		RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
-		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 6; MainMaterial = RUBY { Volume = 100; } SecondaryMaterial = RUBY { Volume = 400; } }
+		RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
 		Inventory = { 8, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR); }
 		HPRequirementForGeneration = 400;
 		PanicLevel = 0;
 		CanBeConfused = false;
+		CWeaponSkillHits == 500;
+		RightSWeaponSkillHits = 200;
+		LeftSWeaponSkillHits = 200;
 	}
 }
 

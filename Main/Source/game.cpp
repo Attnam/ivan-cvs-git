@@ -2145,9 +2145,9 @@ void game::CreateBone()
 
 bool game::PrepareRandomBone(ushort LevelIndex)
 {
-  /* Don't load a bone over a shop, etc. */
+  /* Don't load a bone over a level already generated, or over a shop, vault, etc. */
 
-  if(!*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
+  if(GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
     return false;
 
   ushort BoneIndex;
@@ -2178,7 +2178,7 @@ bool game::PrepareRandomBone(ushort LevelIndex)
 	  CurrentArea = NewLevel;
 	  CurrentLevel = NewLevel;
 	  CurrentLSquareMap = NewLevel->GetMap();
-	  GetCurrentDungeon()->SetGenerated(LevelIndex, true);
+	  GetCurrentDungeon()->SetIsGenerated(LevelIndex, true);
 
 	  if(PlayerName == PLAYER->GetAssignedName())
 	    ADD_MESSAGE("This place is oddly familiar. Like you had been here in one of your past lives.");

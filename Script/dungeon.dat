@@ -1142,21 +1142,21 @@ Dungeon ATTNAM;
 		Room
 		{
 			FloorSquare = solidterrain(FLOOR), 0;
-			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room
 		{
 			FloorSquare = solidterrain(FLOOR), 0;
-			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room
 		{
 			FloorSquare = solidterrain(FLOOR), 0;
-			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 	}
@@ -1189,9 +1189,9 @@ Dungeon NEW_ATTNAM;
 			Pos = 2:36,2:36;
 			Size = 4:6,4:6;
 			AltarPossible = false;
-			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_PRIMITIVE);
+			WallSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD wall(BRICK_PRIMITIVE);
 			FloorSquare = solidterrain(GRASS_TERRAIN), 0;
-			DoorSquare = solidterrain(GRASS_TERRAIN), door;
+			DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
 			GenerateDoor = true;
 			DivineMaster = 0;
 			GenerateTunnel = false;
@@ -1207,7 +1207,7 @@ Dungeon NEW_ATTNAM;
 		{
 			Pos = 4,4;
 			Size = 17,19;
-			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD wall(BRICK_FINE);
 			FloorSquare = solidterrain(FLOOR), 0;
 			GenerateDoor = false;
 			DivineMaster = SILVA;
@@ -1321,7 +1321,7 @@ Dungeon NEW_ATTNAM;
 		Square, Pos 12, 22; /* odd place? */
 		{
 			GTerrain = solidterrain(FLOOR);
-			OTerrain = door;
+			OTerrain = BALSA_WOOD door;
 		}
 
 		Square, Pos 0, 33;
@@ -1434,9 +1434,9 @@ Dungeon UNDER_WATER_TUNNEL;
 			Pos = 2:XSize-5,2:YSize-5;
 			Size = 4:11,4:11;
 			AltarPossible = true;
-			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
-			FloorSquare = solidterrain(PARQUET), 0;
-			DoorSquare = solidterrain(PARQUET),door;
+			WallSquare = solidterrain(GROUND), BALSA_WOOD wall(BRICK_OLD);
+			FloorSquare = BALSA_WOOD solidterrain(PARQUET), 0;
+			DoorSquare = BALSA_WOOD solidterrain(PARQUET), BALSA_WOOD door;
 			GenerateDoor = true;
 			DivineMaster = 0;
 			GenerateTunnel = true;

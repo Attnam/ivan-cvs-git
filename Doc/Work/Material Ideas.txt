@@ -3,7 +3,7 @@
 //arcanite (orange)			between meteoric steel and mithril
 //illithium (white)			between mithril and sapphire/ruby
 //adamant (adj: adamantine) (white)	between diamond and valpurium
-octiron (black)				very magical
+//octiron (black)			very magical
 sapient pearwood			used to create items that magically follow their owner
 ommel flesh				beneficial effect
 ommel bone				-||-

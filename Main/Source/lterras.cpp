@@ -343,7 +343,7 @@ bool fountain::Drink(character* Drinker)
 	      break;
 
 	    case 2:
-	      if(!(RAND() % 10))
+	      if(!(RAND() % 12))
 		{
 		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
 
@@ -372,7 +372,7 @@ bool fountain::Drink(character* Drinker)
 	      break;
 
 	    case 4:
-	      if(RAND() % 10)
+	      if(RAND() & 7)
 		{
 		  ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
 		  Drinker->ActivateRandomState(SRC_FOUNTAIN, 2000 + RAND() % 3000);

@@ -10,7 +10,7 @@
 #define STONE (MATERIAL_ID + 3)
 #define GRAVEL (MATERIAL_ID + 4)
 #define MORAINE (MATERIAL_ID + 5)
-#define WOOD (MATERIAL_ID + 6)
+#define OCTIRON (MATERIAL_ID + 6)
 #define GLASS (MATERIAL_ID + 7)
 #define PARCHMENT (MATERIAL_ID + 8)
 #define CLOTH (MATERIAL_ID + 9)
@@ -47,7 +47,13 @@
 #define ARCANITE (MATERIAL_ID + 40)
 #define ILLITHIUM (MATERIAL_ID + 41)
 #define ADAMANT (MATERIAL_ID + 42)
-#define SWAMP (MATERIAL_ID + 43)
+#define BALSA_WOOD (MATERIAL_ID + 43)
+#define PINE_WOOD (MATERIAL_ID + 44)
+#define FIR_WOOD (MATERIAL_ID + 45)
+#define BIRCH_WOOD (MATERIAL_ID + 46)
+#define OAK_WOOD (MATERIAL_ID + 47)
+#define TEAK_WOOD (MATERIAL_ID + 48)
+#define EBONY_WOOD (MATERIAL_ID + 49)
 
 #define ORGANIC_SUBSTANCE_ID (4096 << 1)
 
@@ -70,6 +76,8 @@
 #define SKUNK_SMELL (GAS_ID + 4)
 #define GHOST (GAS_ID + 5)
 #define MAGIC_VAPOUR (GAS_ID + 6)
+#define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
+#define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
 
 #define LIQUID_ID (4096 << 2)
 
@@ -84,7 +92,6 @@
 #define ANTITODE_LIQUID (LIQUID_ID + 9)
 #define VODKA (LIQUID_ID + 10)
 #define TROLL_BLOOD (LIQUID_ID + 11)
-#define LAVA (LIQUID_ID + 12)
 
 #define FLESH_ID (4096 * 5)
 
@@ -139,7 +146,7 @@
 #define AXE 5
 #define HALBERD 6
 #define MACE 7
-#define HAMMER 8
+#define WAR_HAMMER 8
 #define SICKLE 9
 #define DAGGER 10
 #define SHORT_SWORD 11
@@ -167,6 +174,8 @@
 #define RUNED_WHIP 1
 
 #define CLOAK_OF_INVISIBILITY 1
+#define CLOAK_OF_FIRE_RESISTANCE 2
+#define CLOAK_OF_ELECTRICITY_RESISTANCE 3
 
 #define BOOT_OF_STRENGTH 1
 #define BOOT_OF_AGILITY 2
@@ -258,7 +267,6 @@
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
 #define SNOW_TERRAIN 6
-#define SWAMP_TERRAIN 7
 
 #define POOL 1
 
@@ -270,17 +278,16 @@
 
 #define PINE 1
 #define FIR 2
-#define LINDEN 3
-#define HOLY_TREE 4
-#define CARPET 5
-#define COUCH 6
-#define DOUBLE_BED 7
-#define POOL_BORDER 8
-#define POOL_CORNER 9
-#define PALM 10
-#define SNOW_PINE 11
-#define SNOW_FIR 12
-#define ANVIL 13
+#define HOLY_TREE 3
+#define CARPET 4
+#define COUCH 5
+#define DOUBLE_BED 6
+#define POOL_BORDER 7
+#define POOL_CORNER 8
+#define PALM 9
+#define SNOW_PINE 10
+#define SNOW_FIR 11
+#define ANVIL 12
 
 #define DOOR_PRISON 1
 

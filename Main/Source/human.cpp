@@ -908,12 +908,12 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       Equipment->InitMaterials(MAKE_MATERIAL(ANGEL_HAIR), !(SpecialFlags & NO_PIC_UPDATE));
       Equipment->SetEnchantment(1);
       SetCloak(Equipment);
-      Weapon = new meleeweapon(HAMMER, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon = new meleeweapon(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetRightWielded(Weapon);
-      Weapon = new meleeweapon(HAMMER, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon = new meleeweapon(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetLeftWielded(Weapon);
       GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500);
@@ -923,7 +923,7 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       break;
     case EVIL:
       Weapon = new meleeweapon(HALBERD, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(EBONY_WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetRightWielded(Weapon);
       Equipment = new gauntlet(0, SpecialFlags|NO_MATERIALS);

@@ -41,7 +41,7 @@ solidterrain /* glterrain-> */
 
 	Config PARQUET;
 	{
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == FIR_WOOD;
 		NameSingular = "floor";
 		BitmapPos = 32, 0;
 	}
@@ -84,14 +84,6 @@ solidterrain /* glterrain-> */
 	{
 		OKVisualEffects = MIRROR|FLIP|ROTATE;
 		MainMaterialConfig == SNOW;
-		NameSingular = "ground";
-		BitmapPos = 16, 16;
-	}
-
-	Config SWAMP_TERRAIN;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == SWAMP;
 		NameSingular = "ground";
 		BitmapPos = 16, 16;
 	}

@@ -4,7 +4,8 @@
 (r) rejected
 (s) suspended
 
-Shields may be a little too weak.
+//Shields may be a little too weak.
 //Lanterns are too heavy.
 Turox's price is too high.
 Dagger is "somewhat difficult to use" if one has 9 strength.
+Horn of bravery is useless.

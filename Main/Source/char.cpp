@@ -33,7 +33,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Hasted",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_EVIL,
     &character::PrintBeginHasteMessage,
     &character::PrintEndHasteMessage,
     0,
@@ -42,7 +42,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Slowed",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_GOOD,
     &character::PrintBeginSlowMessage,
     &character::PrintEndSlowMessage,
     0,
@@ -51,7 +51,7 @@ statedata StateData[STATES] =
     0
   }, {
     "PolyControl",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_EVIL,
     &character::PrintBeginPolymorphControlMessage,
     &character::PrintEndPolymorphControlMessage,
     0,
@@ -78,7 +78,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Invisible",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_EVIL,
     &character::PrintBeginInvisibilityMessage,
     &character::PrintEndInvisibilityMessage,
     &character::BeginInvisibility,  &character::EndInvisibility,
@@ -86,7 +86,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Infravision",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_EVIL,
     &character::PrintBeginInfraVisionMessage,
     &character::PrintEndInfraVisionMessage,
     &character::BeginInfraVision,
@@ -95,7 +95,7 @@ statedata StateData[STATES] =
     0
   }, {
     "ESP",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_EVIL,
     &character::PrintBeginESPMessage,
     &character::PrintEndESPMessage,
     &character::BeginESP,
@@ -113,7 +113,7 @@ statedata StateData[STATES] =
     &character::CanBePoisoned
   }, {
     "Teleporting",
-    SECRET|RANDOMIZABLE,
+    SECRET|RANDOMIZABLE&~SRC_GOOD,
     &character::PrintBeginTeleportMessage,
     &character::PrintEndTeleportMessage,
     0,
@@ -122,7 +122,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Polymorphing",
-    SECRET|RANDOMIZABLE,
+    SECRET|RANDOMIZABLE&~SRC_GOOD,
     &character::PrintBeginPolymorphMessage,
     &character::PrintEndPolymorphMessage,
     0,
@@ -131,7 +131,7 @@ statedata StateData[STATES] =
     0
   }, {
     "TeleControl",
-    RANDOMIZABLE,
+    RANDOMIZABLE&~SRC_EVIL,
     &character::PrintBeginTeleportControlMessage,
     &character::PrintEndTeleportControlMessage,
     0,
@@ -149,7 +149,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Confused",
-    RANDOMIZABLE&~DUR_PERMANENT,
+    RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD),
     &character::PrintBeginConfuseMessage,
     &character::PrintEndConfuseMessage,
     0,
@@ -176,7 +176,7 @@ statedata StateData[STATES] =
     0
   }, {
     "GasImmunity",
-    SECRET|RANDOMIZABLE,
+    SECRET|RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL),
     &character::PrintBeginGasImmunityMessage,
     &character::PrintEndGasImmunityMessage,
     0,

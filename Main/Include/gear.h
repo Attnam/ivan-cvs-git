@@ -346,6 +346,20 @@ class ITEM
   virtual bool HitEffect(character*, character*, uchar, uchar, bool); 
  protected: 
   virtual bool ScabiesHelps(const character*, const character*) const; 
-); 
+);
+
+class ITEM
+(
+  wondersmellstaff,
+  meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool AllowAlphaEverywhere() const { return true; }
+ protected:
+  virtual ushort GetClassAnimationFrames() const;
+  virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
+);
 
 #endif

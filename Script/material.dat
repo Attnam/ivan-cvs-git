@@ -108,19 +108,6 @@ material
 		AttachedGod = TERRA;
 	}
 
-	Config WOOD;
-	{
-		StrengthValue = 35;
-		ConsumeType = CT_MISC_ORGANIC;
-		Density = 500;
-		IsGolemMaterial = true;
-		Color = rgb16(140, 96, 48);
-		NameStem = "wood";
-		AdjectiveStem = "wooden";
-		DigProductMaterial = 0;
-		AttachedGod = SILVA;
-	}
-
 	Config GLASS;
 	{
 		StrengthValue = 40;
@@ -174,7 +161,7 @@ material
 		CanBeWished = false;
 		AttachedGod = LORICATUS;
 	}
-		
+
 	Config MARBLE;
 	{
 		StrengthValue = 50;
@@ -564,7 +551,7 @@ material
 	{
 		StrengthValue = 180;
 		ConsumeType = CT_METAL;
-		Density = 4000;
+		Density = 800;
 		Color = rgb16(224, 224, 160);
 		IsGolemMaterial = true;
 		PriceModifier = 2500;
@@ -606,6 +593,109 @@ material
 		AttachedGod = LORICATUS;
 		IsSparkling = true;
 		CanBeWished = false;
+	}
+
+	Config BALSA_WOOD;
+	{
+		StrengthValue = 20;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 250;
+		IsGolemMaterial = true;
+		Color = rgb16(160, 108, 50);
+		NameStem = "balsa";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+		Flexibility = 2;
+	}
+
+	Config PINE_WOOD;
+	{
+		StrengthValue = 25;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 400;
+		IsGolemMaterial = true;
+		Color = rgb16(208, 108, 42);
+		NameStem = "pine";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+	}
+
+	Config FIR_WOOD;
+	{
+		StrengthValue = 30;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 500;
+		IsGolemMaterial = true;
+		Color = rgb16(140, 96, 48);
+		NameStem = "fir";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+	}
+
+	Config BIRCH_WOOD;
+	{
+		StrengthValue = 35;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 600;
+		IsGolemMaterial = true;
+		Color = rgb16(130, 70, 32);
+		NameStem = "birch";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+	}
+
+	Config OAK_WOOD;
+	{
+		StrengthValue = 45;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 700;
+		IsGolemMaterial = true;
+		Color = rgb16(124, 50, 16);
+		Article = "an";
+		NameStem = "oak";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+	}
+
+	Config TEAK_WOOD;
+	{
+		StrengthValue = 50;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 750;
+		IsGolemMaterial = true;
+		Color = rgb16(80, 40, 30);
+		NameStem = "teak";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+	}
+
+	Config EBONY_WOOD;
+	{
+		StrengthValue = 65;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 1000;
+		IsGolemMaterial = true;
+		Color = rgb16(48, 48, 48);
+		Article = "an";
+		NameStem = "ebony";
+		DigProductMaterial = 0;
+		AttachedGod = SILVA;
+	}
+
+	Config OCTIRON;
+	{
+		StrengthValue = 275;
+		ConsumeType = CT_METAL;
+		Density = 900;
+		Color = rgb16(36, 36, 36);
+		IsGolemMaterial = true;
+		PriceModifier = 10000;
+		Article = "an";
+		NameStem = "octiron";
+		IsMetal = true;
+		AttachedGod = SOPHOS;
+		CanBeWished = false;
+		Flexibility = 2;
 	}
 }
 
@@ -843,6 +933,26 @@ gas
 		AttachedGod = SOPHOS;
 		Effect = EFFECT_MAGIC_VAPOUR;
 		BreatheMessage = "The air is filled with tiny magical bubbles.";
+	}
+
+	Config EVIL_WONDER_STAFF_VAPOUR;
+	{
+		Color = rgb16(200, 0, 0);
+		NameStem = "mysterious red gas";
+		Alpha = 200;
+		AttachedGod = INFUSCOR;
+		Effect = EFFECT_EVIL_WONDER_STAFF_VAPOUR;
+		BreatheMessage = "A sinister stench surrounds you.";
+	}
+
+	Config GOOD_WONDER_STAFF_VAPOUR;
+	{
+		Color = rgb16(100, 100, 200);
+		NameStem = "mysterious blue gas";
+		Alpha = 200;
+		AttachedGod = SOPHOS;
+		Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
+		BreatheMessage = "It smells oddly intelligent here.";
 	}
 }
 

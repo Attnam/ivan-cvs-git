@@ -78,6 +78,18 @@ bool material::Effect(character* Eater, ulong Amount)
       }
     case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount); return true;
     case EFFECT_HOLY_BANANA: Eater->ReceiveHolyBanana(Amount); return true;
+    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
+      {
+	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+        Eater->ActivateRandomState(SRC_EVIL, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+	return true;
+      }
+    case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
+      {
+	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+        Eater->ActivateRandomState(SRC_GOOD, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+	return true;
+      }
     default: return false;
     }
 }

@@ -110,7 +110,7 @@ decoration
 		OKVisualEffects = MIRROR;
 		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == PINE_WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 100, 32);
 		NameSingular = "pine";
@@ -123,7 +123,7 @@ decoration
 		OKVisualEffects = MIRROR;
 		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == FIR_WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 100, 32);
 		NameSingular = "fir";
@@ -136,25 +136,11 @@ decoration
 		OKVisualEffects = MIRROR;
 		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == BALSA_WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 80, 32);
 		NameSingular = "palm";
 		BitmapPos = 16, 368;
-		HPModifier = 25;
-	}
-
-	Config LINDEN;
-	{
-		OKVisualEffects = MIRROR;
-		CanBeDestroyed = true;
-		DigMessage = "You chop the tree down.";
-		MainMaterialConfig == WOOD;
-		ShowMaterial = false;
-		MaterialColorB = rgb16(32, 144, 32);
-		Adjective = "lovely";
-		NameSingular = "linden";
-		BitmapPos = 32, 336;
 		HPModifier = 25;
 	}
 
@@ -234,7 +220,7 @@ decoration
 		OKVisualEffects = MIRROR;
 		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == PINE_WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(220, 220, 220);
 		NameSingular = "pine";
@@ -248,7 +234,7 @@ decoration
 		OKVisualEffects = MIRROR;
 		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == FIR_WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(220, 220, 220);
 		NameSingular = "fir";
@@ -273,7 +259,7 @@ door /* olterrain-> */
 {
 	DigMessage = "You break the door.";
 	CanBeDestroyed = true;
-	MainMaterialConfig == WOOD;
+	MainMaterialConfig == FIR_WOOD;
 	NameSingular = "door";
 	BitmapPos = 0, 176;
 	OpenBitmapPos = 0, 48;
@@ -362,7 +348,7 @@ olterraincontainer /* olterrain->decoration-> */
 	{
 		CanBeDestroyed = true;
 		DigMessage = "You smash the bookcase into pieces.";
-		MainMaterialConfig == WOOD;
+		MainMaterialConfig == FIR_WOOD;
 		NameSingular = "bookcase";
 		BitmapPos = 16, 272;
 		SitMessage = "The bookcase is very unconfortable to sit on.";
@@ -424,7 +410,7 @@ boulder /* olterrain-> */
 sign
 {
 	DigMessage = "You smash the sign to tiny bits.";
-	MainMaterialConfig == WOOD;
+	MainMaterialConfig == BALSA_WOOD;
 	DefaultMainVolume = 5000; 
 	MaterialColorB = rgb16(200,200,200);
 	/* Uses own postfix */

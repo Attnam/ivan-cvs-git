@@ -56,6 +56,8 @@ bool helmet::IsInCorrectSlot(ushort Index) const { return Index == HELMET_INDEX;
 ushort helmet::GetMaterialColorB(ushort) const { return GetConfig() != GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(140, 70, 70) : MakeRGB16(0, 40, 0); }
 ushort helmet::GetMaterialColorC(ushort) const { return MakeRGB16(180, 200, 180); }
 
+ushort wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
+
 bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
 {
   if(!BlockedByArmour && GetContainedMaterial())
@@ -455,7 +457,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       festring DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
-      GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 3);
+      GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 4);
       return true;
     }
   else
@@ -649,4 +651,60 @@ uchar goldeneagleshirt::GetOutlineAlpha(ushort Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+uchar wondersmellstaff::GetOutlineAlpha(ushort Frame) const
+{
+  if(!IsBroken())
+    {
+      Frame &= 31;
+      return Frame * (31 - Frame) >> 1;
+    }
+  else
+    return 255;
+}
+
+ushort wondersmellstaff::GetOutlineColor(ushort Frame) const
+{
+  if(!IsBroken())
+    switch((Frame&127) >> 5)
+      {
+      case 0: return BLUE;
+      case 1: return GREEN;
+      case 2: return RED;
+      case 3: return YELLOW;
+      }
+
+  return TRANSPARENT_COLOR;
+}
+
+bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+{
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
+    {
+      if(RAND() & 1)
+	{
+	  lsquare* Square = Enemy->GetLSquareUnder();
+
+	  if(Square->CanBeSeenByPlayer())
+	    ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+
+	  Square->AddSmoke(new gas(EVIL_WONDER_STAFF_VAPOUR, 500));
+	}
+      else
+	{
+	  lsquare* Square = Hitter->GetLSquareUnder();
+
+	  if(Square->CanBeSeenByPlayer())
+	    ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+
+	  Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 500));
+	}
+
+      return true;
+    }
+  else
+    return BaseSuccess;
 }

@@ -27,7 +27,8 @@ Vomiting in a shop should have a special effect.
 *Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Highscores should be crypted somehow.
-Wood and stone types. (wood is a _bit_ generic)
+//Wood types. (wood is a _bit_ generic)
+Stone types.
 Script should be crypted or precompiled.
 Golems should be able to eat things made of their material to increase size and stats.
 Prepare bug-report function that would make bug-reporting easier.
