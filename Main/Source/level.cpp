@@ -600,9 +600,10 @@ void level::Load(inputfile& SaveFile)
   area::Load(SaveFile);
   Map = reinterpret_cast<lsquare***>(area::Map);
   SaveFile >> Room;
+  ushort x, y;
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	game::SetSquareInLoad(Map[x][y]);
@@ -610,6 +611,15 @@ void level::Load(inputfile& SaveFile)
       }
 
   SaveFile >> Door >> LevelMessage >> IdealPopulation >> MonsterGenerationInterval >> Difficulty;
+  Alloc2D(NodeMap, XSize, YSize);
+  Alloc2D(WalkabilityMap, XSize, YSize);
+
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      {
+	NodeMap[x][y] = new node(x,y, Map[x][y]);
+	WalkabilityMap[x][y] = Map[x][y]->GetWalkability();
+      }
 }
 
 void level::FiatLux()
