@@ -12,6 +12,7 @@ colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
+bitmap* igraph::FlagBuffer;
 const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
 const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
 tilemap igraph::TileMap;
@@ -51,6 +52,8 @@ void igraph::Init()
       TileBuffer = new bitmap(16, 16);
       TileBuffer->CreatePriorityMap(0);
       OutlineBuffer = new bitmap(16, 16);
+      FlagBuffer = new bitmap(16, 16);
+      FlagBuffer->CreateAlphaMap(0);
     }
 }
 
@@ -66,6 +69,7 @@ void igraph::DeInit()
 
   delete TileBuffer;
   delete OutlineBuffer;
+  delete FlagBuffer;
 }
 
 void igraph::DrawCursor(vector2d Pos)
@@ -85,19 +89,14 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     }
   else
     {
-      if(GI.Position != vector2d(0, 0))
-	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, 16, 16, GI.Position, RollBuffer);
+      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha);
+      const uchar SpecialFlags = GI.SpecialFlags;
 
-      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
-
-      if(GI.Position != vector2d(0, 0))
-	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, 16, 16, -GI.Position, RollBuffer);
-
-      if((GI.SpecialFlags & 0x38) == ST_RIGHT_ARM)
+      if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
 	Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
-      else if((GI.SpecialFlags & 0x38) == ST_LEFT_ARM)
+      else if((SpecialFlags & 0x38) == ST_LEFT_ARM)
 	Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
-      else if((GI.SpecialFlags & 0x38) == ST_GROIN)
+      else if((SpecialFlags & 0x38) == ST_GROIN)
 	{
 	  ushort Pixel[9], y, i;
 
@@ -111,7 +110,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 	    for(ushort x = y - 5; x < 20 - y; ++x)
 	      Bitmap->PutPixel(x, y, Pixel[i++]);
 	}
-      else if((GI.SpecialFlags & 0x38) == ST_RIGHT_LEG)
+      else if((SpecialFlags & 0x38) == ST_RIGHT_LEG)
 	{
 	  /* Right leg from the character's, NOT the player's point of view */
 
@@ -124,7 +123,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
-      else if((GI.SpecialFlags & 0x38) == ST_LEFT_LEG)
+      else if((SpecialFlags & 0x38) == ST_LEFT_LEG)
 	{
 	  /* Left leg from the character's, NOT the player's point of view */
 
@@ -140,30 +139,37 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 
       vector2d SparklePos = GI.SparklePos;
 
-      if(GI.SpecialFlags & 0x7) /* Do we need rotating/flipping? */
+      if(SpecialFlags & 0x7) /* Do we need rotating/flipping? */
 	{
-	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
-	  delete Bitmap;
-	  Bitmap = Temp;
+	  if(Bitmap->GetAlphaMap())
+	    {
+	      Bitmap->BlitAndCopyAlpha(FlagBuffer, SpecialFlags);
+	      FlagBuffer->FastBlitAndCopyAlpha(Bitmap);
+	    }
+	  else
+	    {
+	      Bitmap->Blit(FlagBuffer, SpecialFlags);
+	      FlagBuffer->FastBlit(Bitmap);
+	    }
 
 	  if(SparklePos != ERROR_VECTOR)
 	    {
-	      if(GI.SpecialFlags & ROTATE)
+	      if(SpecialFlags & ROTATE)
 		{
-		  short T = SparklePos.X;
+		  const short T = SparklePos.X;
 		  SparklePos.X = 15 - SparklePos.Y;
 		  SparklePos.Y = T;
 		}
 
-	      if(GI.SpecialFlags & MIRROR)
+	      if(SpecialFlags & MIRROR)
 		SparklePos.X = 15 - SparklePos.X;
 
-	      if(GI.SpecialFlags & FLIP)
+	      if(SpecialFlags & FLIP)
 		SparklePos.Y = 15 - SparklePos.Y;
 	    }
 	}
 
-      if(GI.SpecialFlags & 0x38)
+      if(SpecialFlags & 0x38)
 	Bitmap->CreatePriorityMap(0);
 
       if(SparklePos != ERROR_VECTOR)
@@ -172,10 +178,10 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       if(GI.FlyAmount)
 	Bitmap->CreateFlies(GI.Seed, GI.Frame, GI.FlyAmount);
 
-      if(GI.SpecialFlags & ST_FLAME)
+      if(SpecialFlags & ST_FLAME)
 	Bitmap->CreateFlames(GI.Frame);
 
-      if(GI.SpecialFlags & ST_LIGHTNING && !((GI.Frame + 1) & 7))
+      if(SpecialFlags & ST_LIGHTNING && !((GI.Frame + 1) & 7))
 	Bitmap->CreateLightning(GI.Seed + GI.Frame, WHITE);
 
       return TileMap.insert(std::pair<graphicid, tile>(GI, tile(Bitmap))).first;

@@ -9,6 +9,15 @@ is also provided AS IS and is probably completely unreadable.
 
 May 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Fixed a few bugs added in the last commit
+	* Squashed a minor bug that caused messages to be concatenated oddly for some
+	  turns after the player has died and started immediately a new game
+	* Deleted a fatal bug that allowed polymorphed monsters to crash during the
+	  creation of bone files
+	* Object graphic creation system optimized yet more
+
+May 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* colorbit.cpp and allocate.h are now cleaner
 	* Inline functions inside the material colorization routines have been
 	  expanded to increase non-optimized binary speed
@@ -24,7 +33,7 @@ May 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Corrected a shameful bug in festring's loading routine
 	* Configuration indices are now stored in databases instead of objects
 	* Reload datafiles WMode command works again
-	* Fixed the Notorious Mirage Puppy Spawning Bug
+	* Fixed the Notorious Mirage Puppy Spawning Error
 	* Some graphic routine optimization
 	* Resurrected creatures no longer change team if they aren't charmable
 	* Invisible stalkers are now tougher

@@ -121,6 +121,7 @@ void msgsystem::Format()
   MessageHistory.Empty();
   LastMessage.Empty();
   MessagesChanged = true;
+  BigMessageMode = false;
 }
 
 void msgsystem::Save(outputfile& SaveFile)

@@ -226,18 +226,48 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
   return Bitmap;
 }
 
-bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
+bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
+  vector2d TargetPos(0, 0);
+
+  if(Move.X != 0 || Move.Y != 0)
+    {
+      Bitmap->ClearToColor(TRANSPARENT_COLOR);
+
+      if(Move.X < 0)
+	{
+	  Pos.X -= Move.X;
+	  Size.X += Move.X;
+	}
+      else if(Move.X > 0)
+	{
+	  TargetPos.X = Move.X;
+	  Size.X -= Move.X;
+	}
+
+      if(Move.Y < 0)
+	{
+	  Pos.Y -= Move.Y;
+	  Size.Y += Move.Y;
+	}
+      else if(Move.Y > 0)
+	{
+	  TargetPos.Y = Move.Y;
+	  Size.Y -= Move.Y;
+	}
+    }
+
   uchar* Buffer = PaletteBuffer + Pos.Y * XSize + Pos.X;
-  ushort* DestBuffer = Bitmap->GetImage()[0];
+  ushort* DestBuffer = &Bitmap->GetImage()[TargetPos.Y][TargetPos.X];
+  ushort BitmapXSize = Bitmap->GetXSize();
   uchar* AlphaMap;
   bool UseAlpha;
 
   if(BaseAlpha != 255 || (Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255)))
     {
       Bitmap->CreateAlphaMap(BaseAlpha);
-      AlphaMap = Bitmap->GetAlphaMap()[0];
+      AlphaMap = &Bitmap->GetAlphaMap()[TargetPos.Y][TargetPos.X];
       UseAlpha = true;
     }
   else
@@ -245,8 +275,6 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, const ushort* C
       AlphaMap = 0;
       UseAlpha = false;
     }
-
-  ushort BitmapXSize = Bitmap->GetXSize();
 
   for(ushort y = 0; y < Size.Y; ++y)
     {
@@ -292,6 +320,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, const ushort* C
       AlphaMap += BitmapXSize;
       Buffer += XSize;
     }
+
   return Bitmap;
 }
 

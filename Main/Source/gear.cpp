@@ -170,18 +170,12 @@ material* meleeweapon::GetMaterial(ushort Index) const
 
 ushort meleeweapon::GetMaterialColorB(ushort) const
 {
-  if(GetSecondaryMaterial())
-    return GetSecondaryMaterial()->GetColor();
-  else
-    return 0;
+  return SecondaryMaterial->GetColor();
 }
 
 uchar meleeweapon::GetAlphaB(ushort) const
 {
-  if(GetSecondaryMaterial())
-    return GetSecondaryMaterial()->GetAlpha();
-  else
-    return 0;
+  return SecondaryMaterial->GetAlpha();
 }
 
 bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
@@ -455,7 +449,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 6))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));

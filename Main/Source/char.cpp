@@ -5686,8 +5686,6 @@ void character::GetHitByExplosion(const explosion* Explosion, ushort Damage)
       ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
       CheckDeath(Explosion->DeathMsg, Explosion->Terrorist);
     }
-  else
-    int esko = 2;
 }
 
 void character::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
@@ -5988,7 +5986,12 @@ bool character::PreProcessForBone()
     GetAction()->Terminate(false);
 
   if(TemporaryStateIsActivated(POLYMORPHED))
-    EndPolymorph();
+    {
+      character* PolymorphBackup = GetPolymorphBackup();
+      EndPolymorph();
+      PolymorphBackup->PreProcessForBone();
+      return true;
+    }
 
   if(MustBeRemovedFromBone())
     return false;

@@ -1432,7 +1432,7 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
 
       for(ushort c = 1; c < Size; ++c)
 	{
-	  uchar Lightness = 191 + ((Size - c) << 6) / Size;
+	  ushort Lightness = 191 + ((Size - c) << 6) / Size;
 	  ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
 	  PowerPutPixel(SparklePos.X + c, SparklePos.Y, RGB, 255, 10);
 	  PowerPutPixel(SparklePos.X - c, SparklePos.Y, RGB, 255, 10);
@@ -1881,4 +1881,16 @@ void bitmap::CreatePriorityMap(uchar InitialValue)
 void bitmap::FillPriority(uchar Priority)
 {
   memset(PriorityMap[0], Priority, XSizeTimesYSize);
+}
+
+void bitmap::FastBlitAndCopyAlpha(bitmap* Bitmap) const
+{
+  if(!AlphaMap || !Bitmap->AlphaMap)
+    ABORT("Attempt to fast blit and copy alpha without an alpha map detected!");
+
+  if(XSize != Bitmap->XSize || YSize != Bitmap->YSize)
+    ABORT("Fast blit and copy alpha attempt of noncongruent bitmaps detected!");
+
+  memcpy(Bitmap->Image[0], Image[0], XSizeTimesYSize << 1);
+  memcpy(Bitmap->AlphaMap[0], AlphaMap[0], XSizeTimesYSize);
 }

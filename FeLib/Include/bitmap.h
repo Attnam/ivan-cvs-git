@@ -150,6 +150,8 @@ class bitmap
   void AlphaPriorityBlit(bitmap*, vector2d, vector2d, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
   void AlphaPriorityBlit(bitmap*, ulong, ushort = TRANSPARENT_COLOR) const;
 
+  void FastBlitAndCopyAlpha(bitmap*) const;
+
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }

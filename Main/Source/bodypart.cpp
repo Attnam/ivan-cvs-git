@@ -1379,10 +1379,11 @@ bool arm::TwoHandWieldIsActive() const
 float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, float DodgeValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
   float Durability;
-  short TrueDamage = (19 * (Max((Damage * 3 >> 2) - GetTotalResistance(PHYSICAL_DAMAGE), 0)
-			 +  Max((Damage * 5 >> 2) + 1 - (GetTotalResistance(PHYSICAL_DAMAGE) >> 1), 0))
-			 + (Max((Damage * 3 >> 1) - GetTotalResistance(PHYSICAL_DAMAGE), 0)
-			 +  Max((Damage * 5 >> 1) + 3 - (GetTotalResistance(PHYSICAL_DAMAGE) >> 1), 0))) / 40;
+  ushort TotalResistance = GetTotalResistance(PHYSICAL_DAMAGE);
+  short TrueDamage = (19 * (Max((Damage * 3 >> 2) - TotalResistance, 0)
+			 +  Max((Damage * 5 >> 2) + 1 - (TotalResistance >> 1), 0))
+			 + (Max((Damage * 3 >> 1) - TotalResistance, 0)
+			 +  Max((Damage * 5 >> 1) + 3 - (TotalResistance >> 1), 0))) / 40;
 
   short HP = UseMaxHP ? GetMaxHP() : GetHP();
 
@@ -1636,14 +1637,14 @@ void bodypart::Be()
 
       if(Master->IsEnabled())
 	{
-	  if(IsInBadCondition())// && !(RAND() & 0xF))
+	  if(IsInBadCondition() && !(RAND() & 0xF))
 	    SpillBlood(1);
 
 	  return;
 	}
     }
 
-  if(HP < MaxHP)// && !(RAND() & 0xF))
+  if(HP < MaxHP && !(RAND() & 0xF))
     {
       SpillBlood(1);
       HP += Max(((MaxHP - HP) >> 2), 1);

@@ -397,3 +397,4 @@ The smith should repair pet golems.
 Golems should pick up and read scrolls of repair.
 *Blindfold.
 "Walk through walls" state.
+Being confused should decrease chance to hit.

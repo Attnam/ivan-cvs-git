@@ -88,6 +88,7 @@ class igraph
   static tilemap TileMap;
   static bitmap* OutlineBuffer;
   static uchar RollBuffer[256];
+  static bitmap* FlagBuffer;
 };
 
 #endif

@@ -37,7 +37,7 @@ class colorizablebitmap
   void Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   void PrintfShade(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   bitmap* Colorize(const ushort*, uchar = 255, const uchar* = 0) const;
-  bitmap* Colorize(vector2d, vector2d, const ushort*, uchar = 255, const uchar* = 0) const;
+  bitmap* Colorize(vector2d, vector2d, vector2d, const ushort*, uchar = 255, const uchar* = 0) const;
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }
