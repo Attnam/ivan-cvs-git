@@ -228,6 +228,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(IgnoreDanger);
   ANALYZE_DATA(HPRequirementForGeneration);
   ANALYZE_DATA(IsExtraCoward);
+  ANALYZE_DATA(SpillsBlood);
 
   return Found;
 }

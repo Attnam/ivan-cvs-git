@@ -82,6 +82,7 @@ character
 	IgnoreDanger = false;
 	HPRequirementForGeneration = 0;
 	IsExtraCoward = false;
+	SpillsBlood = true;
 }
 
 humanoid
@@ -865,6 +866,7 @@ billswill
 	HasFeet = false;
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
+	SpillsBlood = false;
 }
 
 skeleton
@@ -2372,6 +2374,7 @@ genie
 	Belt = SPIDER_SILK belt;
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
+	SpillsBlood = false;
 }
 
 lion
@@ -2432,6 +2435,7 @@ carnivorousplant
 	HasFeet = false;
 	FleshMaterial = PLANT_FIBER;
 	DeathMessage = "@Dd is destroyed.";
+	SpillsBlood = false;
 
 	Config GREATER;
 	{

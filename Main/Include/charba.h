@@ -159,6 +159,7 @@ struct characterdatabase
   bool IgnoreDanger;
   ushort HPRequirementForGeneration;
   bool IsExtraCoward;
+  bool SpillsBlood;
 };
 
 class characterprototype
@@ -744,6 +745,7 @@ class character : public entity, public id
   virtual void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
   virtual bool CanFollow() const;
+  DATA_BASE_BOOL(SpillsBlood);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

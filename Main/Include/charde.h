@@ -308,6 +308,7 @@ class CHARACTER
   shopkeeper,
   humanoid,
  public:
+  virtual bool CanFollow() const { return false; }
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand() { StandIdleAI(); }
 );

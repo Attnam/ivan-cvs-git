@@ -96,7 +96,7 @@ Carnivorous plants spill blood.
 //Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
 (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
-Bear trap + level change crashes.
+//Bear trap + level change crashes.
 //Polymorphing while wearing a ring of infravision crashes.
 //Message history may crash if many many very long messages are successively printed.
 Unicorns kicking items in shop.

@@ -389,6 +389,11 @@ void character::Be()
 
 bool character::GoUp()
 {
+  if(IsStuck())
+    {
+      ADD_MESSAGE("You unable to go up with %s stuck to you.", StuckTo->CHAR_NAME(INDEFINITE));
+      return false;
+    }
   if(GetSquareUnder()->GetOTerrain()->Enter(true))
     {
       EditExperience(LEG_STRENGTH, 50);
@@ -402,6 +407,11 @@ bool character::GoUp()
 
 bool character::GoDown()
 {
+  if(IsStuck())
+    {
+      ADD_MESSAGE("You unable to go down with %s stuck to you.", StuckTo->CHAR_NAME(INDEFINITE));
+      return false;
+    }
   if(GetSquareUnder()->GetOTerrain()->Enter(false))
     {
       EditExperience(AGILITY, 25);
@@ -774,7 +784,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	}
       else
 	{
-	  if(IsPlayer() && GetLevelUnder()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
+	  if(IsPlayer() && !IsStuck() && GetLevelUnder()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
 	    {
 	      if(HasPetrussNut() && !HasGoldenEagleShirt())
 		{
@@ -3303,7 +3313,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	return 0;
       }
 
-  if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness())
+  if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness() && SpillsBlood())
     {
       BodyPart->SpillBlood(3 + RAND() % 3);
 
@@ -6429,5 +6439,5 @@ void character::ParasitizedHandler()
 
 bool character::CanFollow() const
 {
-  return !StateIsActivated(PANIC);
+  return CanWalk() && !StateIsActivated(PANIC);
 }

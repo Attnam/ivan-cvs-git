@@ -78,8 +78,8 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
       BaseDamage = sqrt(5e-6f * GetWeaponStrength() * Force / Range);
       BaseToHitValue = 10 * GetBonus() / (500 + GetWeight()) / Range;
     }
-
-  for(ushort RangeLeft = Range; RangeLeft != 0; --RangeLeft)
+  ushort RangeLeft;
+  for(RangeLeft = Range; RangeLeft != 0; --RangeLeft)
     {
       if(!GetLevelUnder()->IsValidPos(Pos + DirVector))
 	break;

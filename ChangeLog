@@ -1,3 +1,10 @@
+December 8 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Not walking (eg carnivorous plants) can't follow player to world map
+	* shopkeepers can no longer follow from level to level
+	* carnivorous plants, genies and bill's wills no longer spill blood 
+	* Bear trap + level change crashes corrected
+
 December 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Confused people no longer tries to move against walls; there is no message and
