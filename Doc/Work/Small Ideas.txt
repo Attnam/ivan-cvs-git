@@ -427,4 +427,4 @@ Breaking a staff of wondrous smells should result in a lot of erupting gas.
 Leather should have several possible colors. For instance mistress should wear black leather.
 Polymorphing from nonhumanoid back to humanoid should autoequip items.
 Potion of ommel spit which would increase random attribute.
-If Vesana is slowed, plants should be created at half speed.
+//If Vesana is slowed, plants should be created at half speed.

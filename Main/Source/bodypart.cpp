@@ -766,11 +766,12 @@ bool corpse::RaiseTheDead(character* Summoner)
   if(Summoner && Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
+  GetDeceased()->Enable();
+
   if(GetDeceased()->TryToRiseFromTheDead())
     {
       vector2d Pos = GetPos();
       RemoveFromSlot();
-      GetDeceased()->Enable();
       GetDeceased()->SetMotherEntity(0);
       GetDeceased()->PutToOrNear(Pos);
 
@@ -783,7 +784,10 @@ bool corpse::RaiseTheDead(character* Summoner)
       return true;
     }
   else
-    return false;;
+    {
+      GetDeceased()->Disable();
+      return false;
+    }
 }
 
 void bodypart::VirtualConstructor(bool Load)

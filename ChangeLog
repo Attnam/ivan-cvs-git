@@ -9,6 +9,11 @@ is also provided AS IS and is probably completely unreadable.
 
 August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
+	* Corrected a bug in the bone player resurrection code
+	* More test removals
+
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
 	* Some frequency and danger modifier changes
 	* Test removals
 
