@@ -96,10 +96,12 @@ void felist::Empty()
 		String.Remove(0);
 }
 
-void felist::AddString(std::string S)
+void felist::AddString(std::string S, bool WriteToEnd)
 {
-	String.Add(S);
-
+	if(WriteToEnd)
+		String.Add(S);
+	else
+		String.Put(S, 0);
 	if(Maximum && String.Length() > Maximum)
 		String.Remove(0);
 }

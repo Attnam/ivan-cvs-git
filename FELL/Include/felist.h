@@ -12,7 +12,7 @@ class felist
 public:
 	felist(ushort Maximum = 0) : Maximum(Maximum) {}
 	felist(std::string Topic, ushort Maximum = 0) : Maximum(Maximum) { Description.Add(Topic); }
-	void AddString(std::string S);
+	void AddString(std::string S, bool = true);
 	void AddDescription(std::string S) { Description.Add(S); }
 	void DrawDescription(bitmap*) const;
 	ushort Draw(bitmap*, bitmap*, bool = true) const;

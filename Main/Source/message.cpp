@@ -57,7 +57,7 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
 
 	sprintf(Buffer, "%d - %s", int(game::GetTurns()), Message);
 
-	MessageHistory.AddString(Buffer);
+	MessageHistory.AddString(Buffer, false);
 }
 
 void globalmessagingsystem::Draw()
