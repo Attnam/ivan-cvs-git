@@ -5,7 +5,10 @@
 #pragma warning(disable : 4786)
 #endif
 
+#ifndef VERSION
 #define VERSION			"0.40d"
+#endif
+
 #define SAVEFILE_VERSION	110	// Increment this if changes make savefiles incompatible
 
 #define DIRECTION_COMMAND_KEYS	8

@@ -5,19 +5,19 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define RAW_TYPES	3
+#define RAW_TYPES	4
 
 #define GRLTERRAIN	0
 #define GRITEM		1
 #define GRCHARACTER	2
+#define GRHUMANOID	3
 
-#define GRAPHIC_TYPES	5
+#define GRAPHIC_TYPES	4
 
-#define GRHUMAN		0
-#define GRWTERRAIN	1
-#define GRFOW		2
-#define GRCURSOR	3
-#define GRSYMBOL	4
+#define GRWTERRAIN	0
+#define GRFOW		1
+#define GRCURSOR	2
+#define GRSYMBOL	3
 
 #ifdef WIN32
 #include <windows.h>
@@ -72,7 +72,7 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 struct tile
 {
   tile() { }
-  tile(bitmap* Bitmap, ulong Users) : Bitmap(Bitmap), Users(Users) { }
+  tile(bitmap* Bitmap, ulong Users = 1) : Bitmap(Bitmap), Users(Users) { }
   bitmap* Bitmap;
   ulong Users;
 };
@@ -91,7 +91,7 @@ class igraph
   static bitmap* GetWTerrainGraphic() { return Graphic[GRWTERRAIN]; }
   static bitmap* GetFOWGraphic() { return Graphic[GRFOW]; }
   static bitmap* GetCursorGraphic() { return Graphic[GRCURSOR]; }
-  static bitmap* GetHumanGraphic() { return Graphic[GRHUMAN]; }
+  //static bitmap* GetHumanGraphic() { return Graphic[GRHUMAN]; }
   static bitmap* GetSymbolGraphic() { return Graphic[GRSYMBOL]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);

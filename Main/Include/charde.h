@@ -9,6 +9,7 @@
 #include "graphics.h"
 #include "wskill.h"
 #include "materde.h"
+#include "femath.h"
 
 class head;
 class arm;
@@ -62,10 +63,40 @@ class ABSTRACT_CHARACTER
   virtual void SetLeftLeg(leg* What);
   virtual void SetSize(ushort);
 
+  virtual void DrawToTileBuffer() const;
+
  protected:
+
+  virtual uchar GetHeadType() const { return 0; } // = 0;
+  virtual uchar GetTorsoType() const { return 0; } // = 0;
+  virtual uchar GetRightArmType() const { return GetArmType(); }
+  virtual uchar GetLeftArmType() const { return GetArmType(); }
+  virtual uchar GetArmType() const { return 0; } // = 0;
+  virtual uchar GetRightLegType() const { return GetLegType(); }
+  virtual uchar GetLeftLegType() const { return GetLegType(); }
+  virtual uchar GetLegType() const { return 0; } // = 0;
+
+  virtual ushort SkinColor() const { return MAKE_RGB(180, 120, 90); }
+
+  virtual ushort CapColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort HairColor() const { return MAKE_RGB(64, 48, 24); }
+  virtual ushort HeadSpecialColor() const { return MAKE_RGB(0, 0, 0); }
+
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort BeltColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 0, 0); }
+
+  virtual ushort ArmMainColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort ArmSpecialColor() const { return MAKE_RGB(0, 0, 0); }
+
+  virtual ushort LegMainColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort LegSpecialColor() const { return MAKE_RGB(0, 0, 0); }
+  
+  //virtual ushort ShieldColor() const { return MAKE_RGB(56, 56, 56); }
 
   virtual void CreateBodyParts();
   virtual void CreateHead();
+  virtual void CreateTorso();
   virtual void CreateRightArm();
   virtual void CreateLeftArm();
   virtual void CreateRightLeg();
@@ -123,7 +154,7 @@ class ABSTRACT_CHARACTER
 
 inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ { }
 
-class ABSTRACT_CHARACTER
+/*class ABSTRACT_CHARACTER
 (
   complexhumanoid,
   humanoid,
@@ -153,27 +184,31 @@ class ABSTRACT_CHARACTER
   uchar ArmType;
   uchar HeadType;
   uchar ShieldType;
-);
+);*/
 
 class CHARACTER
 (
   human,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(150 + RAND() % 51);
     SetAgility(15 + RAND() % 11);
     SetStrength(10 + RAND() % 6);
     SetEndurance(10 + RAND() % 6);
     SetPerception(10 + RAND() % 6);
-    SetLegType(RAND() % 3);
+    /*SetLegType(RAND() % 3);
     SetTorsoType(0);
     SetArmType(RAND() % 5);
     SetHeadType(RAND() % 15);
-    SetShieldType(0);
+    SetShieldType(0);*/
     SetMoney(200 + RAND() % 101);
   },
  public:
  protected:
+  virtual uchar GetHeadType() const { return 0; }
+  virtual uchar GetTorsoType() const { return 0; }
+  virtual uchar GetArmType() const { return 0; }
+  virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "human"; }
 );
@@ -181,18 +216,18 @@ class CHARACTER
 class CHARACTER
 (
   petrus,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(225);
     SetAgility(75);
     SetStrength(75);
     SetEndurance(75);
     SetPerception(75);
-    SetLegType(1);
+    /*SetLegType(1);
     SetTorsoType(5);
     SetArmType(3);
     SetHeadType(9);
-    SetShieldType(0);
+    SetShieldType(0);*/
     SetHealTimer(100);
     SetStoryState(0);
     game::SetPetrus(this);
@@ -217,6 +252,10 @@ class CHARACTER
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
  protected:
+  virtual uchar GetHeadType() const { return 9; }
+  virtual uchar GetTorsoType() const { return 5; }
+  virtual uchar GetArmType() const { return 2; }
+  virtual uchar GetLegType() const { return 1; }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "Petrus, the High Priest of the Great Frog"; }
   virtual void CreateCorpse();
@@ -230,24 +269,28 @@ class CHARACTER
 class CHARACTER
 (
   farmer,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(170);
     SetAgility(10);
     SetStrength(15);
     SetEndurance(20);
     SetPerception(18);
-    SetLegType(RAND() % 3);
+    /*SetLegType(RAND() % 3);
     SetTorsoType(2 + RAND() % 2);
     SetArmType(RAND() % 5);
     SetHeadType(5 + RAND() % 2);
-    SetShieldType(0);
+    SetShieldType(0);*/
     SetMoney(20);
   },
  public:
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual uchar GetHeadType() const { return 4 + RAND() % 2; }
+  virtual uchar GetTorsoType() const { return 2; }
+  virtual uchar GetArmType() const { return RAND() % 2; }
+  virtual uchar GetLegType() const { return RAND() % 3; }
   virtual ulong TotalVolume() const { return 30000; }
   virtual std::string NameSingular() const { return "farmer"; }
 );
@@ -255,24 +298,29 @@ class CHARACTER
 class CHARACTER
 (
   guard,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(180);
     SetAgility(15);
     SetStrength(20);
     SetEndurance(20);
     SetPerception(24);
-    SetLegType(4);
+    /*SetLegType(4);
     SetTorsoType(8);
     SetArmType(5);
     SetHeadType(7);
-    SetShieldType(1);
+    SetShieldType(1);*/
   },
  public:
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual uchar GetHeadType() const { return 7; }
+  virtual uchar GetTorsoType() const { return 8; }
+  virtual uchar GetArmType() const { return 5; }
+  virtual uchar GetLegType() const { return 4; }
+  //virtual uchar GetShieldType() const { return 2; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "guard"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -281,18 +329,18 @@ class CHARACTER
 class CHARACTER
 (
   shopkeeper,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(160);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(25);
     SetPerception(30);
-    SetLegType(2);
+    /*SetLegType(2);
     SetTorsoType(7);
     SetArmType(6);
     SetHeadType(4);
-    SetShieldType(0);
+    SetShieldType(0);*/
     SetMoney(3000 + RAND() % 2001);
   },
  public:
@@ -301,6 +349,10 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
+  virtual uchar GetHeadType() const { return 4; }
+  virtual uchar GetTorsoType() const { return 2; }
+  virtual uchar GetArmType() const { return 1; }
+  virtual uchar GetLegType() const { return 2; }
   virtual ulong TotalVolume() const { return 100000; }
   virtual std::string NameSingular() const { return "shopkeeper"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -309,18 +361,18 @@ class CHARACTER
 class CHARACTER
 (
   priest,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(180);
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
     SetPerception(18);
-    SetLegType(2);
+    /*SetLegType(2);
     SetTorsoType(7);
     SetArmType(6);
     SetHeadType(8);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void GetAICommand() { StandIdleAI(); }
@@ -328,6 +380,10 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool CanSwim() const { return true; }
  protected:
+  virtual uchar GetHeadType() const { return 8; }
+  virtual uchar GetTorsoType() const { return 2; }
+  virtual uchar GetArmType() const { return 1; }
+  virtual uchar GetLegType() const { return 2; }
   virtual ulong TotalVolume() const { return 100000; }
   virtual std::string NameSingular() const { return "priest"; }
 );
@@ -774,18 +830,18 @@ class CHARACTER
 class CHARACTER
 (
   ivan,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(230);
     SetAgility(20);
     SetStrength(50);
     SetEndurance(50);
     SetPerception(18);
-    SetLegType(5);
+    /*SetLegType(5);
     SetTorsoType(9);
     SetArmType(7);
     SetHeadType(11);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual bool MoveRandomly();
@@ -795,6 +851,10 @@ class CHARACTER
   virtual bool HasInfraVision() const { return true; }
   virtual uchar CriticalModifier() const { return 4; }
  protected:
+  virtual uchar GetHeadType() const { return 11; }
+  virtual uchar GetTorsoType() const { return 9; }
+  virtual uchar GetArmType() const { return 7; }
+  virtual uchar GetLegType() const { return 1; }
   virtual ulong TotalVolume() const { return 120000; }
   virtual std::string DeathMessage() { return "Ivan falls groaning bravely: \"Party revenges Ivan!\""; }
   virtual std::string NameSingular() const { return "Ivan"; }
@@ -804,23 +864,27 @@ class CHARACTER
 class CHARACTER
 (
   hunter,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(180);
     SetAgility(20);
     SetStrength(15);
     SetEndurance(15);
     SetPerception(24);
-    SetLegType(6);
+    /*SetLegType(6);
     SetTorsoType(12);
     SetArmType(8);
     SetHeadType(12);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual uchar GetHeadType() const { return 12; }
+  virtual uchar GetTorsoType() const { return 12; }
+  virtual uchar GetArmType() const { return 8; }
+  virtual uchar GetLegType() const { return 6; }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "hunter"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -902,23 +966,27 @@ class CHARACTER
 class CHARACTER
 (
   slave,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(160);
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
     SetPerception(15);
-    SetLegType(6);
+    /*SetLegType(6);
     SetTorsoType(0);
     SetArmType(9);
     SetHeadType(13);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
   virtual void GetAICommand();
  protected:
+  virtual uchar GetHeadType() const { return 0; }
+  virtual uchar GetTorsoType() const { return 0; }
+  virtual uchar GetArmType() const { return 0; }
+  virtual uchar GetLegType() const { return 6; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "slave"; }
 );
@@ -926,18 +994,18 @@ class CHARACTER
 class CHARACTER
 (
   petrusswife,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(170);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(21);
-    SetLegType(7);
+    /*SetLegType(7);
     SetTorsoType(10);
     SetArmType(10);
     SetHeadType(16 + RAND() % 6);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
@@ -945,6 +1013,10 @@ class CHARACTER
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
+  virtual uchar GetHeadType() const { return 16; }
+  virtual uchar GetTorsoType() const { return 10; }
+  virtual uchar GetArmType() const { return 10; }
+  virtual uchar GetLegType() const { return 7; }
   virtual ulong TotalVolume() const { return 50000; }
   virtual std::string NameSingular() const { return "Petrus's wife"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -956,9 +1028,10 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    SetHeadType(16);
+    //SetHeadType(16);
   },
  protected:
+  virtual uchar GetHeadType() const { return 16; }
   virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
 );
 
@@ -968,9 +1041,10 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    SetHeadType(17);
+    //SetHeadType(17);
   },
  protected:
+  virtual uchar GetHeadType() const { return 17; }
   virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
 );
 
@@ -980,9 +1054,10 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    SetHeadType(18);
+    //SetHeadType(18);
   },
  protected:
+  virtual uchar GetHeadType() const { return 16; }
   virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
 );
 
@@ -992,9 +1067,10 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    SetHeadType(19);
+    //SetHeadType(19);
   },
  protected:
+  virtual uchar GetHeadType() const { return 19; }
   virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
 );
 
@@ -1004,9 +1080,10 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    SetHeadType(20);
+    //SetHeadType(20);
   },
  protected:
+  virtual uchar GetHeadType() const { return 20; }
   virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
 );
 
@@ -1016,32 +1093,37 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    SetHeadType(21);
+    //SetHeadType(21);
   },
  protected:
+  virtual uchar GetHeadType() const { return 21; }
   virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
 );
 
 class CHARACTER
 (
   housewife,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(160);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
     SetPerception(24);
-    SetLegType(8);
+    /*SetLegType(8);
     SetTorsoType(11);
     SetArmType(11);
     SetHeadType(16 + RAND() % 6);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
  protected:
+  virtual uchar GetHeadType() const { return 16 + RAND() % 6; } //may produce headless housewife...
+  virtual uchar GetTorsoType() const { return 10; }
+  virtual uchar GetArmType() const { return 10; }
+  virtual uchar GetLegType() const { return 7; }
   virtual ulong TotalVolume() const { return 70000; }
   virtual std::string NameSingular() const { return "housewife"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1050,24 +1132,28 @@ class CHARACTER
 class CHARACTER
 (
   femaleslave,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(170);
     SetAgility(10);
     SetStrength(10);
     SetEndurance(15);
     SetPerception(18);
-    SetLegType(9);
+    /*SetLegType(9);
     SetTorsoType(13);
     SetArmType(13);
     SetHeadType(22);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
   virtual void CreateInitialEquipment();
  protected:
+  virtual uchar GetHeadType() const { return 22; }
+  virtual uchar GetTorsoType() const { return 13; }
+  virtual uchar GetArmType() const { return 13; }
+  virtual uchar GetLegType() const { return 9; }
   virtual ulong TotalVolume() const { return 40000; }
   virtual std::string NameSingular() const { return "female slave"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1077,22 +1163,26 @@ class CHARACTER
 class CHARACTER
 (
   librarian,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(170);
     SetAgility(5);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(12);
-    SetLegType(1);
+    /*SetLegType(1);
     SetTorsoType(5);
     SetArmType(12);
     SetHeadType(14);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
  protected:
+  virtual uchar GetHeadType() const { return 14; }
+  virtual uchar GetTorsoType() const { return 5; }
+  virtual uchar GetArmType() const { return 2; }
+  virtual uchar GetLegType() const { return 1; }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "librarian"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1102,18 +1192,18 @@ class CHARACTER
 class CHARACTER
 (
   zombie,
-  complexhumanoid,
+  humanoid,
   {
     SetSize(160);
     SetAgility(5);
     SetStrength(10);
     SetEndurance(5);
     SetPerception(12);
-    SetLegType(10);
+    /*SetLegType(10);
     SetTorsoType(14);
     SetArmType(14);
     SetHeadType(23);
-    SetShieldType(0);
+    SetShieldType(0);*/
   },
  public:
   virtual bool CanBeGenerated() const { return true; }
@@ -1121,6 +1211,10 @@ class CHARACTER
   virtual void SpillBlood(uchar, vector2d);
   virtual float GetMeleeStrength() const { return 1500; }
  protected:
+  virtual uchar GetHeadType() const { return 23; }
+  virtual uchar GetTorsoType() const { return 14; }
+  virtual uchar GetArmType() const { return 14; }
+  virtual uchar GetLegType() const { return 10; }
   virtual ulong TotalVolume() const { return 50000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " is slain (again)."; }
   virtual std::string NameSingular() const { return "zombie"; }
@@ -1188,6 +1282,10 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 5000; }
   virtual void CreateInitialEquipment();
  protected:
+  virtual uchar GetHeadType() const { return 31; }
+  virtual uchar GetTorsoType() const { return 22; }
+  virtual uchar GetArmType() const { return 21; }
+  virtual uchar GetLegType() const { return 18; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual vector2d GetBitmapPos() const { return vector2d(352,0); }
   virtual std::string NameSingular() const { return "mistress"; }
@@ -1196,7 +1294,7 @@ class CHARACTER
 class CHARACTER
 (
   werewolf,
-  complexhumanoid,
+  humanoid,
   {
     SetChangeCounter(RAND() % 2500);
 
@@ -1351,10 +1449,10 @@ class CHARACTER
 class ABSTRACT_CHARACTER
 (
   dwarf,
-  complexhumanoid,
+  humanoid,
  public:
-  virtual void DrawLegs(vector2d) const;
-  virtual void DrawHead(vector2d) const;
+  /*virtual void DrawLegs(vector2d) const;
+  virtual void DrawHead(vector2d) const;*/
  protected:
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new dwarfflesh(Volume); }
 );
@@ -1369,11 +1467,11 @@ class CHARACTER
     SetStrength(20);
     SetEndurance(20);
     SetPerception(24);
-    SetLegType(13);
+    /*SetLegType(13);
     SetTorsoType(17);
     SetArmType(16);
     SetHeadType(26);
-    SetShieldType(0);
+    SetShieldType(0);*/
     SetMaster(1 + RAND() % (game::GetGods() - 1));
   },
  public:
@@ -1392,6 +1490,10 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual ushort Frequency() const { return 1000; }
  protected:
+  virtual uchar GetHeadType() const { return 26; }
+  virtual uchar GetTorsoType() const { return 17; }
+  virtual uchar GetArmType() const { return 16; }
+  virtual uchar GetLegType() const { return 13; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies smiling."; }
   virtual vector2d GetBitmapPos() const { return vector2d(400,0); }
@@ -1477,5 +1579,3 @@ class CHARACTER
 );
 
 #endif
-
-

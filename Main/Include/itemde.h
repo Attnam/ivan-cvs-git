@@ -434,7 +434,7 @@ class ITEM
   virtual uchar GetWeaponCategory() const { return CLUBS; }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; case 1: return 1500; default: return 0; } }
   virtual vector2d GetInHandsPic() const { return vector2d(160,128); }
-  virtual void ColorChangeSpeciality(uchar, bool);
+  //virtual void ColorChangeSpeciality(uchar, bool);
   virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
   virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
   virtual uchar GetConsumeMaterial() const { return 1; }
@@ -1187,10 +1187,16 @@ class ABSTRACT_ITEM
   virtual ushort Possibility() const { return 0; }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 0; default: return 0; } }
   virtual void SetBitmapPos(vector2d What) { BitmapPos = What; }
-  virtual uchar GetGraphicsContainerIndex() const { return GRHUMAN; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
+  virtual void SetColor(ushort Index, ushort What) { Color[Index] = What; }
  protected:
+  virtual ushort GetMaterialColor0() const { return Color[0]; }
+  virtual ushort GetMaterialColor1() const { return Color[1]; }
+  virtual ushort GetMaterialColor2() const { return Color[2]; }
+  virtual ushort GetMaterialColor3() const { return Color[3]; }
   virtual vector2d GetBitmapPos() const { return BitmapPos; }
   vector2d BitmapPos;
+  ushort Color[4];
 );
 
 /*class ITEM
@@ -1221,20 +1227,37 @@ class ITEM
   virtual ushort GetFormModifier() const { return 20; }
 );
 
-class ITEM
+class ABSTRACT_ITEM
 (
   torso,
   bodypart,
+ public:
+ protected:
+  virtual std::string NameSingular() const { return "torso"; }
+);
+
+class ITEM
+(
+  normaltorso,
+  torso,
   ;,
   ;,
  public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual uchar GetGraphicsContainerIndex() const { return GraphicsContainerIndex; }
-  virtual void SetGraphicsContainerIndex(uchar What) { GraphicsContainerIndex = What; }
- protected:
-  virtual std::string NameSingular() const { return "torso"; }
-  uchar GraphicsContainerIndex;
+  virtual ushort GetMaterialColor0() const { return item::GetMaterialColor0(); }
+  virtual ushort GetMaterialColor1() const { return item::GetMaterialColor1(); }
+  virtual ushort GetMaterialColor2() const { return item::GetMaterialColor2(); }
+  virtual ushort GetMaterialColor3() const { return item::GetMaterialColor3(); }
+  virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
+);
+
+class ITEM
+(
+  humanoidtorso,
+  torso,
+  ;,
+  ;,
+ public:
+  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
 );
 
 class ITEM

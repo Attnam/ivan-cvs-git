@@ -151,7 +151,7 @@ bool ennerbeast::Hit(character*)
   return true;
 }
 
-void complexhumanoid::DrawToTileBuffer() const
+/*void complexhumanoid::DrawToTileBuffer() const
 {	
   vector2d InHandsPic, LegPos, TorsoPos, ArmPos, HeadPos, ShieldPos;
 
@@ -223,14 +223,14 @@ void complexhumanoid::DrawToTileBuffer() const
       if(InHandsPic.X != 0 || InHandsPic.Y != 0)
 	DrawInHandsPic(InHandsPic);
     }
-}
+}*/
 
-void complexhumanoid::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+/*void complexhumanoid::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
 void complexhumanoid::DrawTorso(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
 void complexhumanoid::DrawArms(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
 void complexhumanoid::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
 void complexhumanoid::DrawShield(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
-void complexhumanoid::DrawInHandsPic(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+void complexhumanoid::DrawInHandsPic(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }*/
 
 void skeleton::CreateCorpse()
 {
@@ -326,7 +326,7 @@ void humanoid::Load(inputfile& SaveFile)
 	}
 }
 
-void complexhumanoid::Save(outputfile& SaveFile) const
+/*void complexhumanoid::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
 
@@ -338,7 +338,7 @@ void complexhumanoid::Load(inputfile& SaveFile)
   humanoid::Load(SaveFile);
 
   SaveFile >> ArmType >> HeadType >> LegType >> TorsoType >> ShieldType;
-}
+}*/
 
 float golem::GetMeleeStrength() const
 {
@@ -424,14 +424,14 @@ void petrus::HealFully(character* ToBeHealed)
 
 void petrus::Save(outputfile& SaveFile) const
 {
-  complexhumanoid::Save(SaveFile);
+  humanoid::Save(SaveFile);
 
   SaveFile << HealTimer << StoryState;
 }
 
 void petrus::Load(inputfile& SaveFile)
 {
-  complexhumanoid::Load(SaveFile);
+  humanoid::Load(SaveFile);
 
   SaveFile >> HealTimer >> StoryState;
 
@@ -1541,11 +1541,11 @@ void werewolf::ChangeIntoHuman()
   SetStrength(15);
   SetEndurance(15);
   SetPerception(15);
-  SetLegType(11);
+  /*SetLegType(11);
   SetTorsoType(15);
   SetArmType(0);
   SetHeadType(24);
-  SetShieldType(0);
+  SetShieldType(0);*/
   SetIsWolf(false);
   SetStrengthExperience(0);
   SetEnduranceExperience(0);
@@ -1564,11 +1564,11 @@ void werewolf::ChangeIntoWolf()
   SetStrength(25);
   SetEndurance(25);
   SetPerception(24);
-  SetLegType(12);
+  /*SetLegType(12);
   SetTorsoType(16);
   SetArmType(15);
   SetHeadType(25);
-  SetShieldType(0);
+  SetShieldType(0);*/
   SetIsWolf(true);
   SetWielded(0);
   SetStrengthExperience(0);
@@ -1619,9 +1619,9 @@ ulong werewolf::MaxDanger()
   /* This should perhaps be made more elegant... */
 
   ChangeIntoWolf();
-  ulong AsWolf = complexhumanoid::MaxDanger();
+  ulong AsWolf = humanoid::MaxDanger();
   ChangeIntoHuman();
-  ulong AsHuman = complexhumanoid::MaxDanger();
+  ulong AsHuman = humanoid::MaxDanger();
 
   if(BeforeThis)
     ChangeIntoWolf();
@@ -1639,14 +1639,14 @@ float werewolf::GetMeleeStrength() const
 
 void werewolf::Save(outputfile& SaveFile) const
 {
-  complexhumanoid::Save(SaveFile);
+  humanoid::Save(SaveFile);
 
   SaveFile << IsWolf << ChangeCounter;
 }
 
 void werewolf::Load(inputfile& SaveFile)
 {
-  complexhumanoid::Load(SaveFile);
+  humanoid::Load(SaveFile);
 
   SaveFile >> IsWolf >> ChangeCounter;
 }
@@ -1778,14 +1778,14 @@ bool kamikazedwarf::Hit(character* Enemy)
 
 void kamikazedwarf::Save(outputfile& SaveFile) const
 {
-  complexhumanoid::Save(SaveFile);
+  humanoid::Save(SaveFile);
 
   SaveFile << Master;
 }
 
 void kamikazedwarf::Load(inputfile& SaveFile)
 {
-  complexhumanoid::Load(SaveFile);
+  humanoid::Load(SaveFile);
 
   SaveFile >> Master;
 }
@@ -1825,8 +1825,8 @@ bool largecat::Catches(item* Thingy, float)
     return false;
 }
 
-void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
-void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }
+/*void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
+void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }*/
 
 void unicorn::RandomizeFleshMaterial()
 {
@@ -1953,9 +1953,8 @@ ulong humanoid::LegVolume() const
 
 void humanoid::CreateBodyParts()
 {
-  BodyPart = new bodypart*[BodyParts()];
   CreateHead();
-  CreateTorso(true);
+  CreateTorso();
   CreateRightArm();
   CreateLeftArm();
   CreateRightLeg();
@@ -1965,35 +1964,62 @@ void humanoid::CreateBodyParts()
 void humanoid::CreateHead()
 {
   SetHead(new head(false, false));
-  GetHead()->SetBitmapPos(vector2d(0,0));
+  GetHead()->SetBitmapPos(vector2d(96 + (GetHeadType() / 16) * 16, (GetHeadType() % 16) * 16));
+  GetHead()->SetColor(0, SkinColor());
+  GetHead()->SetColor(1, CapColor());
+  GetHead()->SetColor(3, HairColor());
+  GetHead()->SetColor(2, HeadSpecialColor());
   GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+}
+
+void humanoid::CreateTorso()
+{
+  SetTorso(new humanoidtorso(false, false));
+  GetTorso()->SetBitmapPos(vector2d(32 + (GetTorsoType() / 16) * 16, (GetTorsoType() % 16) * 16));
+  GetTorso()->SetColor(0, SkinColor());
+  GetTorso()->SetColor(1, TorsoMainColor());
+  GetTorso()->SetColor(2, BeltColor());
+  GetTorso()->SetColor(3, TorsoSpecialColor());
+  GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
 }
 
 void humanoid::CreateRightArm()
 {
   SetRightArm(new arm(false, false));
-  GetRightArm()->SetBitmapPos(vector2d(0,0));
+  GetRightArm()->SetBitmapPos(vector2d(64 + (GetRightArmType() / 16) * 16, (GetRightArmType() % 16) * 16));
+  GetRightArm()->SetColor(0, SkinColor());
+  GetRightArm()->SetColor(1, ArmMainColor());
+  GetRightArm()->SetColor(3, ArmSpecialColor());
   GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
 }
 
 void humanoid::CreateLeftArm()
 {
   SetLeftArm(new arm(false, false));
-  GetLeftArm()->SetBitmapPos(vector2d(0,0));
+  GetLeftArm()->SetBitmapPos(vector2d(64 + (GetLeftArmType() / 16) * 16, (GetLeftArmType() % 16) * 16));
+  GetLeftArm()->SetColor(0, SkinColor());
+  GetLeftArm()->SetColor(1, ArmMainColor());
+  GetLeftArm()->SetColor(3, ArmSpecialColor());
   GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
 }
 
 void humanoid::CreateRightLeg()
 {
   SetRightLeg(new leg(false, false));
-  GetRightLeg()->SetBitmapPos(vector2d(0,0));
+  GetRightLeg()->SetBitmapPos(vector2d((GetRightLegType() / 16) * 16, (GetRightLegType() % 16) * 16));
+  GetRightLeg()->SetColor(0, SkinColor());
+  GetRightLeg()->SetColor(1, LegMainColor());
+  GetRightLeg()->SetColor(3, LegSpecialColor());
   GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
 }
 
 void humanoid::CreateLeftLeg()
 {
   SetLeftLeg(new leg(false, false));
-  GetLeftLeg()->SetBitmapPos(vector2d(0,0));
+  GetLeftLeg()->SetBitmapPos(vector2d((GetLeftLegType() / 16) * 16, (GetLeftLegType() % 16) * 16));
+  GetLeftLeg()->SetColor(0, SkinColor());
+  GetLeftLeg()->SetColor(1, LegMainColor());
+  GetLeftLeg()->SetColor(3, LegSpecialColor());
   GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
 }
 
@@ -2008,3 +2034,12 @@ void humanoid::SetRightLeg(leg* What) { SetBodyPart(4, What); }
 leg* humanoid::GetLeftLeg() const { return (leg*)GetBodyPart(5); }
 void humanoid::SetLeftLeg(leg* What) { SetBodyPart(5, What); }
 
+void humanoid::DrawToTileBuffer() const
+{
+  GetRightLeg()->DrawToTileBuffer();
+  GetLeftLeg()->DrawToTileBuffer();
+  GetTorso()->DrawToTileBuffer();
+  GetRightArm()->DrawToTileBuffer();
+  GetLeftArm()->DrawToTileBuffer();
+  GetHead()->DrawToTileBuffer();
+}

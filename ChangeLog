@@ -1,3 +1,74 @@
+March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Material colors added to humanoid bodyparts. All humanoids are now very ugly.
+	  * Modified files:
+	    * Human.pcx: renamed as Humanoid.pcx and converted to material colors by Kahvi
+	    * object.cpp:
+	      * ushort object::GetMaterialColor0() const added
+	      * ushort object::GetMaterialColor1() const added
+	      * ushort object::GetMaterialColor2() const added
+	      * ushort object::GetMaterialColor3() const added
+	      * Added argument for void object::UpdatePicture(bool RemoveOld), which determines whether old pic will be removed. The func now updates GraphicId based on the preceding functions.
+	    * object.h:
+	      * void object::ColorChangeSpeciality(uchar, bool) removed
+	    * lterrain.h:
+	      * void stairsdown::ColorChangeSpeciality(uchar, bool) removed
+	      * ushort stairsdown::GetMaterialColor1() const added
+	      * void stairsup::ColorChangeSpeciality(uchar, bool) removed
+	      * ushort stairsup::GetMaterialColor1() const added
+	    * itemde.cpp:
+	      * void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial) removed
+	      * void bodypart::Save(outputfile& SaveFile) const modified so that Colors are saved
+	      * void bodypart::Load(inputfile& SaveFile) const modified so that Colors are loaded
+	      * void torso::Save(outputfile& SaveFile) const removed
+	      * void torso::Load(inputfile& SaveFile) const removed
+	    * itemde.h:
+	      * torso divided into two childs classes: normaltorso and humanoidtorso
+	      * void bodypart::SetColor(ushort Index, ushort What) added
+	      * ushort xxx::GetMaterialColorxxx() const funcs added here and there
+	    * igraph.h:
+	      * humanoid is now raw type
+	    * charde.cpp:
+	      * All references to complexhumanoid removed
+	      * void humanoid::CreateTorso() added
+	      * All void humanoid::Create<some bodypart>() functions modified to init bodypart colors
+	      * void humanoid::DrawToTileBuffer() const added
+	    * charde.h:
+	      * All references to complexhumanoid removed
+	      * All SetLegType(xxx) and similiar function calls removed from SetDefaultStatses
+	      * uchar xxx::GetHeadType() const added to humanoid and all children
+	      * uchar xxx::GetTorsoType() const added to humanoid and all children
+	      * uchar humanoid::GetRightArmType() const added
+	      * uchar humanoid::GetLeftArmType() const added
+	      * uchar xxx::GetArmType() const added to humanoid and all children
+	      * uchar humanoid::GetRightLegType() added
+	      * uchar humanoid::GetLeftLegType() added
+	      * uchar xxx::GetLegType() const added to humanoid and all children
+	      * ushort humanoid::SkinColor() const added
+	      * ushort humanoid::CapColor() const added
+	      * ushort humanoid::HairColor() const  added
+	      * ushort humanoid::HeadSpecialColor() const added
+	      * ushort humanoid::TorsoMainColor() const added
+	      * ushort humanoid::BeltColor() const added
+	      * ushort humanoid::TorsoSpecialColor() const added
+	      * ushort humanoid::ArmMainColor() const added
+	      * ushort humanoid::ArmSpecialColor() const added
+	      * ushort humanoid::LegMainColor() const added
+	      * ushort humanoid::LegSpecialColor() const added
+	    * charba.cpp:
+	      * Removed argument from void character::CreateTorso(bool Humanoid) and modified it to init torso color
+	    * charba.h:
+	      * AllocBodyParts added as the fourth character constructor parameter
+	      * void character::AllocateBodyPartArray() added
+	* Ergonomic FeFile modifications:
+	  * save.cpp:
+	    * Fast-to-use long inputfile::ReadNumber() added (affect also config.cpp)
+	  * save.h:
+	    * typedef std::map<std::string, long> valuemap added (affects also script.h)
+	* godba.cpp: Fatal bug in god::Save and god::Load corrected
+	* IvanEdit removed from CVS
+	* LTerrain.pcx: desert, swamp, snow base terrains, three stunt trees, two rocks and boghole added by Kahvi
+
 March 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* gccblit.s: added alternative gcc asm func names with only one lowline

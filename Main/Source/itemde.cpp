@@ -567,7 +567,7 @@ material* corpse::BeDippedInto()
   return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
 }
 
-void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
+/*void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
 {
   if(!Index)
     {
@@ -578,7 +578,7 @@ void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
   else
     if(EmptyMaterial)
       GraphicId.Color[Index] = GraphicId.Color[0];
-}
+}*/
 
 ulong meleeweapon::Price() const
 {
@@ -615,9 +615,9 @@ void lantern::Load(inputfile& SaveFile)
 
 void corpse::SetBloodColor(ushort Color)
 {
-  igraph::RemoveUser(GraphicId);
+  /*igraph::RemoveUser(GraphicId);
   GraphicId.Color[1] = Color;
-  Picture = igraph::AddUser(GraphicId).Bitmap;
+  Picture = igraph::AddUser(GraphicId).Bitmap;*/
 }
 
 item* potion::BetterVersion() const
@@ -1190,25 +1190,13 @@ bool scrolloftaming::Read(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << BitmapPos;
+  SaveFile << BitmapPos << Color[0] << Color[1] << Color[2] << Color[3];
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> BitmapPos;
-}
-
-void torso::Save(outputfile& SaveFile) const
-{
-  bodypart::Save(SaveFile);
-  SaveFile << GraphicsContainerIndex;
-}
-
-void torso::Load(inputfile& SaveFile)
-{
-  bodypart::Load(SaveFile);
-  SaveFile >> GraphicsContainerIndex;
+  SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3];
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)

@@ -64,7 +64,7 @@ int Main(int argc, char **argv)
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 #endif
 
-  elpuri Elpuri(true, false, false, false);
+  elpuri Elpuri(true, false, false, true, false);
 
   while(true)
     switch(iosystem::Menu(Elpuri.GetTorso()->GetPicture(), "Iter Vehemens ad Necem\rMain Menu\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))

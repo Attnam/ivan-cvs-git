@@ -21,9 +21,9 @@
 #include "femath.h"
 #include "strover.h"
 
-character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AddToPool) : entity(AddToPool, true), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
+character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool) : entity(AddToPool, true), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
 {
-  if(MakeBodyParts || SetStats || CreateEquipment)
+  if(MakeBodyParts || SetStats || CreateEquipment || AllocBodyParts)
     ABORT("BOOO!");
 
   StateHandler[FAINTED] = &character::FaintHandler;
@@ -3515,8 +3515,7 @@ void character::TestWalkability()
 
 void character::CreateBodyParts()
 {
-  BodyPart = new bodypart*[BodyParts()];
-  CreateTorso(false);
+  CreateTorso();
 }
 
 material* character::CreateTorsoBone(ulong Volume) const
@@ -3534,15 +3533,10 @@ ushort character::GetSize() const
   return GetTorso()->GetSize();
 }
 
-void character::CreateTorso(bool Humanoid)
+void character::CreateTorso()
 {
-  SetTorso(new torso(false, false));
-
-  /* Temporary */
-
+  SetTorso(new normaltorso(false, false));
   GetTorso()->SetBitmapPos(GetBitmapPos());
-  GetTorso()->SetGraphicsContainerIndex(Humanoid ? GRHUMAN : GRCHARACTER);
-
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
 }
 

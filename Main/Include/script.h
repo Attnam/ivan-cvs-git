@@ -41,6 +41,7 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "error.h"
+#include "save.h"
 
 class inputfile;
 class glterrain;
@@ -51,10 +52,10 @@ class item;
 class script
 {
  public:
-  std::map<std::string, long>& GetValueMap() { return ValueMap; }
-  void SetValueMap(const std::map<std::string, long>& What) { ValueMap = What; }
+  valuemap& GetValueMap() { return ValueMap; }
+  void SetValueMap(const valuemap& What) { ValueMap = What; }
  protected:
-  std::map<std::string, long> ValueMap;
+  valuemap ValueMap;
 };
 
 class posscript : public script

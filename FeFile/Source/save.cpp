@@ -226,7 +226,12 @@ char inputfile::ReadLetter(bool AbortOnEOF)
     }
 }
 
-long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel)
+/*
+ * Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+rand%4" etc.
+ * ValueMap contains keyword pairs that attach a certain numeric value to a word.
+ */
+
+long inputfile::ReadNumber(valuemap ValueMap, uchar CallLevel)
 {
   long Value = 0;
 
@@ -248,23 +253,23 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 	  return Value;
 	}
 
-#define CHECK_OP(op, cl)\
-		\
-		if(Word == #op)\
-			if(cl < CallLevel)\
-			{\
-				Value op##= ReadNumber(ValueMap, cl);\
-				continue;\
-			}\
-			else\
-			{\
-				SeekPosCur(-1);\
-				return Value;\
-			}
+	#define CHECK_OP(op, cl)\
+	\
+	if(Word == #op)\
+		if(cl < CallLevel)\
+		{\
+			Value op##= ReadNumber(ValueMap, cl);\
+			continue;\
+		}\
+		else\
+		{\
+			SeekPosCur(-1);\
+			return Value;\
+		}
 
       CHECK_OP(&, 1) CHECK_OP(|, 1) CHECK_OP(^, 1)
-	CHECK_OP(*, 2) CHECK_OP(/, 2) CHECK_OP(%, 2)
-	CHECK_OP(+, 3) CHECK_OP(-, 3)
+      CHECK_OP(*, 2) CHECK_OP(/, 2) CHECK_OP(%, 2)
+      CHECK_OP(+, 3) CHECK_OP(-, 3)
 
 	if(Word == "(")
 	  {
@@ -281,7 +286,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 	  continue;
 	}
 
-      std::map<std::string, long>::iterator Iterator = ValueMap.find(Word);
+      valuemap::iterator Iterator = ValueMap.find(Word);
 
       if(Iterator != ValueMap.end())
 	{
@@ -296,7 +301,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
     }
 }
 
-vector2d inputfile::ReadVector2d(std::map<std::string, long> ValueMap)
+vector2d inputfile::ReadVector2d(valuemap ValueMap)
 {
   vector2d Vector;
 
@@ -357,4 +362,11 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
     String = "";
 
   return SaveFile;
+}
+
+/* Little easier-to-call version of the ReadNumber routine */
+
+long inputfile::ReadNumber()
+{
+  return ReadNumber(valuemap());
 }

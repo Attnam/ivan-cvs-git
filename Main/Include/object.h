@@ -33,10 +33,14 @@ class object : public type, public unit
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual void SetMaterial(uchar, material*);
   virtual void ChangeMaterial(uchar, material*);
-  virtual void UpdatePicture();
+  virtual void UpdatePicture(bool = true);
   virtual ulong GetDefaultVolume(ushort Index) const = 0;
-  virtual void ColorChangeSpeciality(uchar, bool) { }
+  //virtual void ColorChangeSpeciality(uchar, bool) { }
  protected:
+  virtual ushort GetMaterialColor0() const;
+  virtual ushort GetMaterialColor1() const;
+  virtual ushort GetMaterialColor2() const;
+  virtual ushort GetMaterialColor3() const;
   virtual std::string NameArtifact(uchar, uchar) const;
   virtual std::string NameWithMaterial(uchar, uchar = 0) const;
   virtual std::string NameHandleDefaultMaterial(uchar, std::string, uchar) const;

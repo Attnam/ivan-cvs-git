@@ -14,8 +14,8 @@ colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
-char* igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx" };
-char* igraph::GraphicFileName[] = { "Graphics/Human.pcx", "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx"};
+char* igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
+char* igraph::GraphicFileName[] = { "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx"};
 tilemap igraph::TileMap;
 
 #ifdef WIN32
@@ -96,16 +96,17 @@ tile igraph::AddUser(graphic_id GI)
   tilemap::iterator Iterator = TileMap.find(GI);
 
   if(Iterator != TileMap.end())
-    ++Iterator->second.Users;
+    {
+      ++Iterator->second.Users;
+      return Iterator->second;
+    }
   else
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
-      tile Tile(Bitmap, 1);
+      tile Tile(Bitmap);
       TileMap[GI] = Tile;
       return Tile;
     }
-
-  return Iterator->second;
 }
 
 void igraph::RemoveUser(graphic_id GI)

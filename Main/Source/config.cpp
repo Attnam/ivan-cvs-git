@@ -57,8 +57,6 @@ void configuration::Load()
   if(!SaveFile.IsOpen())
     return;
 
-  std::map<std::string, long> ValueMap;
-
   for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
     {
       if(Word == "DefaultName")
@@ -68,10 +66,10 @@ void configuration::Load()
 	}
 
       if(Word == "AutosaveInterval")
-	SetAutosaveInterval(SaveFile.ReadNumber(ValueMap));
+	SetAutosaveInterval(SaveFile.ReadNumber());
 
       if(Word == "Contrast")
-	SetContrast(SaveFile.ReadNumber(ValueMap));
+	SetContrast(SaveFile.ReadNumber());
 
       if(Word == "AutodropLeftOvers")
 	SetAutodropLeftOvers(SaveFile.ReadBool());
@@ -84,18 +82,18 @@ void configuration::Load()
 
       if(Word == "CharacterOutlineColor")
 	{
-	  uchar Red = SaveFile.ReadNumber(ValueMap);
-	  uchar Green = SaveFile.ReadNumber(ValueMap);
-	  uchar Blue = SaveFile.ReadNumber(ValueMap);
+	  uchar Red = SaveFile.ReadNumber();
+	  uchar Green = SaveFile.ReadNumber();
+	  uchar Blue = SaveFile.ReadNumber();
 
 	  SetCharacterOutlineColor(MAKE_RGB(Red, Green, Blue));
 	}
 
       if(Word == "ItemOutlineColor")
 	{
-	  uchar Red = SaveFile.ReadNumber(ValueMap);
-	  uchar Green = SaveFile.ReadNumber(ValueMap);
-	  uchar Blue = SaveFile.ReadNumber(ValueMap);
+	  uchar Red = SaveFile.ReadNumber();
+	  uchar Green = SaveFile.ReadNumber();
+	  uchar Blue = SaveFile.ReadNumber();
 
 	  SetItemOutlineColor(MAKE_RGB(Red, Green, Blue));
 	}

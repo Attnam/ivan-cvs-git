@@ -13,6 +13,10 @@
 #include "typedef.h"
 #include "vector2d.h"
 
+typedef std::map<std::string, long> valuemap;
+
+/* fstream seems to bug at least with our DJGPP's gcc port, so we use FILE* here */
+
 class outputfile
 {
  public:
@@ -31,8 +35,9 @@ class inputfile
   inputfile(std::string, bool = true);
   std::string ReadWord(bool = true);
   char ReadLetter(bool = true);
-  long ReadNumber(std::map<std::string, long>, uchar = 0xFF);
-  vector2d ReadVector2d(std::map<std::string, long>);
+  long ReadNumber(valuemap, uchar = 0xFF);
+  long ReadNumber();
+  vector2d ReadVector2d(valuemap);
   bool ReadBool();
   ~inputfile() { if(Buffer) fclose(Buffer); }
   int Get() { return fgetc(Buffer); }

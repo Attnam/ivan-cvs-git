@@ -250,11 +250,13 @@ bool god::ReceiveOffer(item* Sacrifice)
 
 void god::Save(outputfile& SaveFile) const
 {
+  type::Save(SaveFile);
   SaveFile << Relation << Timer << Known;
 }
 
 void god::Load(inputfile& SaveFile)
 {
+  type::Load(SaveFile);
   SaveFile >> Relation >> Timer >> Known;
 }
 

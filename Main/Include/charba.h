@@ -59,7 +59,7 @@ class torso;
 class character : public type, public entity
 {
  public:
-  character(bool, bool, bool, bool = true);
+  character(bool, bool, bool, bool = true, bool = true);
   virtual ~character();
   virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
   virtual void Save(outputfile&) const;
@@ -301,7 +301,7 @@ class character : public type, public entity
  protected:
 
   virtual void CreateBodyParts();
-  virtual void CreateTorso(bool);
+  virtual void CreateTorso();
   virtual material* CreateTorsoFlesh(ulong) const = 0;
   virtual material* CreateTorsoBone(ulong) const;
   virtual uchar TorsoBonePercentile() const { return 20; }
@@ -311,6 +311,8 @@ class character : public type, public entity
   virtual uchar BodyParts() const { return 1; }
 
   virtual vector2d GetBitmapPos() const = 0; /* Temporary */
+
+  virtual void AllocateBodyPartArray() { BodyPart = new bodypart*[BodyParts()]; }
 
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -383,16 +385,23 @@ class character : public type, public entity
   static class name##_protoinstaller\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false))) { }\
+    name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false, false))) { }\
     ushort GetIndex() const { return Index; }\
    private:\
     ushort Index;\
   } name##_ProtoInstaller;\
   \
-  name::name(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool)\
+  name::name(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool) : base(false, false, false, false, AddToPool)\
   {\
+    if(AllocBodyParts)\
+      {\
+	AllocateBodyPartArray();\
+      }\
+    \
     if(MakeBodyParts)\
-      CreateBodyParts();\
+      {\
+	CreateBodyParts();\
+      }\
     \
     if(SetStats)\
       {\
@@ -404,8 +413,9 @@ class character : public type, public entity
       CreateInitialEquipment();\
   }\
   \
-  name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false)\
+  name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false, false)\
   {\
+    AllocateBodyPartArray();\
     CreateBodyParts();\
     SetMaterial(0, FirstMaterial);\
     \
@@ -447,7 +457,7 @@ class character : public type, public entity
 name : public base\
 {\
  public:\
-  name(bool = true, bool = true, bool = true, bool = true);\
+  name(bool = true, bool = true, bool = true, bool = true, bool = true);\
   name(material*, bool = true, bool = true);\
   virtual character* Clone(bool = true, bool = true, bool = true) const;\
   virtual type* CloneAndLoad(inputfile&) const;\
@@ -465,7 +475,7 @@ name : public base\
 name : public base\
 {\
  public:\
-  name(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AddToPool = true) : base(MakeBodyParts, SetStats, CreateEquipment, AddToPool) { VirtualConstructor(); }\
+  name(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool = true) : base(MakeBodyParts, SetStats, CreateEquipment, AllocBodyParts, AddToPool) { VirtualConstructor(); }\
   data\
 };
 
