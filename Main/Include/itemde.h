@@ -89,7 +89,7 @@ class ITEM
 (
 	can,
 	item,
-	InitMaterials(2, new iron, RAND() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
+	InitMaterials(2, new iron, RAND() % 5 ? (material*)new bananaflesh : (material*)new schoolfood),
 	{
 		SetSize(10);
 	},
@@ -116,7 +116,7 @@ class ITEM
 (
 	lump,
 	item,
-	InitMaterials(RAND() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
+	InitMaterials(RAND() % 5 ? (material*)new bananaflesh : (material*)new schoolfood),
 	{
 		SetSize(10);
 	},

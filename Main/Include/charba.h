@@ -273,7 +273,7 @@ protected:
 	virtual bool FollowLeader();
 	virtual void StandIdleAI();
 	virtual void CreateCorpse();
-	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
+	virtual std::string DeathMessage() { return Name(DEFINITE) + " is slain."; }
 	virtual void CreateInitialEquipment() {}
 	virtual void SetDefaultStats() = 0;
 	virtual void GetPlayerCommand();

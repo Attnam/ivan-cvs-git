@@ -1569,6 +1569,14 @@ void kobold::CreateInitialEquipment()
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
 }
 
+void mistress::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+		ADD_MESSAGE("\"Come closer, little boy, I'll teach you something...\"");
+	else
+		ADD_MESSAGE("\"Just wait for the night, darling.\"");
+}
+
 void angel::Save(outputfile& SaveFile) const
 {
 	humanoid::Save(SaveFile);
@@ -1594,6 +1602,7 @@ void angel::SetMaster(uchar NewMaster)
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new valpurium))));
 		SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new valpurium))));
 		SetMaterial(1, new goodleather);
+		SetHP(GetMaxHP());
 		break;
 	case NEUTRAL:
 		SetAgility(25);
@@ -1614,6 +1623,7 @@ void angel::SetMaster(uchar NewMaster)
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(SpikedMace)));
 		SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new brokenplatemail(new mithril))));
 		SetMaterial(1, new evilleather);
+		SetHP(GetMaxHP());
 		break;
 	}
 	}

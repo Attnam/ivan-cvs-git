@@ -766,7 +766,7 @@ class MATERIAL
 	leather,
 public:
 	virtual bool IsSolid() const { return false; }
-	virtual ushort GetColor() const;
+	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
 	virtual uchar Alignment() const { return GOOD; }
 	virtual bool CanBeWished() const { return false; }
 protected:
@@ -779,7 +779,7 @@ class MATERIAL
 	leather,
 public:
 	virtual bool IsSolid() const { return false; }
-	virtual ushort GetColor() const;
+	virtual ushort GetColor() const { return MAKE_RGB(20, 120, 200); }
 	virtual uchar Alignment() const { return NEUTRAL; }
 	virtual bool CanBeWished() const { return false; }
 protected:
@@ -792,7 +792,7 @@ class MATERIAL
 	leather,
 public:
 	virtual bool IsSolid() const { return false; }
-	virtual ushort GetColor() const;
+	virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
 	virtual uchar Alignment() const { return EVIL; }
 	virtual bool CanBeWished() const { return false; }
 protected:

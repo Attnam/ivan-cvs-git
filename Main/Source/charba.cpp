@@ -220,7 +220,10 @@ void character::Be()
 				SpillBlood(RAND() % 2);
 
 			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+			{
+				DeActivateVoluntaryStates();
 				Faint();
+			}
 		}
 		else
 			game::Flag = false;
@@ -2413,7 +2416,7 @@ bool character::ShowWeaponSkills()
 
 void character::Faint()
 {
-	DeActivateVoluntaryStates();
+	//DeActivateVoluntaryStates();
 
 	if(GetIsPlayer())
 		ADD_MESSAGE("You faint.");
@@ -3143,13 +3146,13 @@ void character::ChangeTeam(team* What)
 
 void character::ReceiveKoboldFleshEffect(long SizeOfEffect)
 {
-/*	if(RAND() % 5)
+	if(!(RAND() % 5))
 	{
 		if(GetIsPlayer())
-			ADD_MESSAGE("You lose control of your legs and you fall down.");
+			ADD_MESSAGE("You lose control of your legs and fall down.");
 
 		Faint();
 	}
-	else*/
+	else
 		ADD_MESSAGE("This stuff tastes really funny.");
 }
