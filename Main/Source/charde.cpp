@@ -59,7 +59,7 @@ bool ennerbeast::Hit(character*)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
 	character* Char = GetNearSquare(x, y)->GetCharacter();
-	ushort ScreamStrength = 50 / (hypot(GetPos().X - x, GetPos().Y - y) + 1);
+	ushort ScreamStrength = ushort(50 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(Char && Char != this)
 	  {
@@ -1561,7 +1561,7 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
   for(c = 0; c < ChooseFrom.size(); ++c)
     TotalVolume += GetBodyPart(ChooseFrom[c])->GetBodyPartVolume();
 
-  bool Affected;
+  bool Affected = false;
 
   if(Divide)
     {

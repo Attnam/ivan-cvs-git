@@ -142,6 +142,9 @@ void character::Hunger()
       EditExperience(LEGSTRENGTH, -1);
     }
 
+  if(GetHungerState() == SATIATED || GetHungerState() == BLOATED)
+    EditExperience(AGILITY, -1);
+
   CheckStarvationDeath("starved to death");
 }
 
@@ -245,7 +248,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 struct svpriorityelement
 {
   svpriorityelement(uchar BodyPart, uchar StrengthValue) : BodyPart(BodyPart), StrengthValue(StrengthValue) { }
-  bool operator < (const svpriorityelement& AnotherPair) const { return StrengthValue > AnotherPair.StrengthValue; }
+  bool operator<(const svpriorityelement& AnotherPair) const { return StrengthValue > AnotherPair.StrengthValue; }
   uchar BodyPart;
   ushort StrengthValue;
 };
@@ -332,7 +335,9 @@ void character::Be()
 
   if(AP >= 1000)
     {
-      ApplyExperience();
+      if(!GetAction())
+	ApplyExperience();
+
       SpecialTurnHandler();
 
       if(IsPlayer())
@@ -3022,7 +3027,7 @@ bool character::SecretKnowledge()
   List.AddEntry("Character danger values", LIGHTGRAY);
   List.AddEntry("Miscellaneous item info", LIGHTGRAY);
   ushort Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB(0, 0, 16));
-  ushort c, PageLength;
+  ushort c, PageLength = 20;
 
   if(Chosen & 0x8000)
     return false;
@@ -3395,7 +3400,7 @@ bool character::EquipmentScreen()
 
 	  if(GetEquipment(c))
 	    {
-	      GetEquipment(c)->AddName(Entry, INDEFINITE);
+	      GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
 	      AddSpecialEquipmentInfo(Entry, c);
 	      List.AddEntry(Entry, LIGHTGRAY, 20, GetEquipment(c)->GetPicture());
 	    }
@@ -3571,7 +3576,7 @@ void character::Regenerate()
 
       GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncHP();
       ++HP;
-      EditExperience(ENDURANCE, 100);
+      EditExperience(ENDURANCE, 200);
       RegenerationCounter -= 100000;
     }
 }
@@ -3937,24 +3942,38 @@ void character::ReceiveHeal(long Amount)
 {
   ushort c;
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < Amount / 50; ++c)
     {
-      if(!GetBodyPart(c) && Amount >= 500)
+      uchar NeedHeal = 0, NeedHealIndex[MAX_BODYPARTS];
+
+      for(ushort b = 0; b < BodyParts; ++b)
 	{
-	  GenerateRandomBodyPart()->SetHP(1);
-	  Amount -= 500;
+	  bodypart* BodyPart = GetBodyPart(b);
+
+	  if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
+	    NeedHealIndex[NeedHeal++] = b;
 	}
+
+      if(!NeedHeal)
+	break;
+
+      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncHP();
+      ++HP;
     }
 
-  if(Amount)
-    for(c = 0; c < GetBodyParts(); ++c)
-      if(GetBodyPart(c))
-	{
-	  if(GetBodyPart(c)->GetHP() + Amount / GetBodyParts() > GetBodyPart(c)->GetMaxHP())
-	    GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
-	  else
-	    GetBodyPart(c)->EditHP(Amount / GetBodyParts());
-	}
+  Amount -= c * 50;
+
+  for(c = 0; c < GetBodyParts(); ++c)
+    if(!GetBodyPart(c) && RAND() & 1 && Amount >= 500)
+      {
+	if(IsPlayer())
+	  ADD_MESSAGE("You grow a new %s!", GetBodyPartName(c).c_str());
+	else if(CanBeSeenByPlayer())
+	  ADD_MESSAGE("%s grows a new %s!", CHARNAME(DEFINITE), GetBodyPartName(c).c_str());
+
+	GenerateRandomBodyPart()->SetHP(1);
+	Amount -= 500;
+      }
 }
 
 void character::AddHealingLiquidConsumeEndMessage() const
@@ -4008,8 +4027,8 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
 void character::ReceiveOmleUrine(long Amount)
 {
-  EditExperience(ARMSTRENGTH, Amount * 4);
-  EditExperience(LEGSTRENGTH, Amount * 4);
+  EditExperience(ARMSTRENGTH, Amount << 5);
+  EditExperience(LEGSTRENGTH, Amount << 5);
   RestoreHP();
 }
 
@@ -4024,7 +4043,7 @@ void character::AddOmleUrineConsumeEndMessage() const
 void character::ReceivePepsi(long SizeOfEffect)
 {
   ReceiveDamage(0, SizeOfEffect / 100, POISON, TORSO);
-  EditExperience(PERCEPTION, SizeOfEffect * 4);
+  EditExperience(PERCEPTION, SizeOfEffect << 5);
 
   if(CheckDeath("was poisoned by pepsi"))
     return;
@@ -4139,32 +4158,41 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
   if(!Attribute)
     return false;
 
-  if(!DoubleAttribute)
+  bool Effect = false;
+
+  while(true)
     {
-      if(Experience > long(Attribute) << 10)
+      if(!DoubleAttribute)
 	{
-	  if(Attribute < 100)
+	  if(Experience > long(Attribute) << 10)
 	    {
-	      Attribute += 1;
-	      Experience = 0;
-	      return true;
+	      if(Attribute < 100)
+		{
+		  Attribute += 1;
+		  Experience -= Attribute << 10;
+		  Effect = true;
+		  continue;
+		}
 	    }
 	}
-    }
-  else
-    {
-      if(Experience > long(Attribute) << 9)
+      else
 	{
-	  if(Attribute < 200)
+	  if(Experience > long(Attribute) << 9)
 	    {
-	      Attribute += 1;
-	      Experience = 0;
-	      return true;
+	      if(Attribute < 200)
+		{
+		  Attribute += 1;
+		  Experience -= Attribute << 9;
+		  Effect = true;
+		  continue;
+		}
 	    }
 	}
+
+      break;
     }
 
-  return false;
+  return Effect;
 }
 
 bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, bool DoubleAttribute)
@@ -4174,32 +4202,41 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
   if(!Attribute)
     return false;
 
-  if(!DoubleAttribute)
+  bool Effect = false;
+
+  while(true)
     {
-      if(Experience < (long(Attribute) - 100) << 8)
+      if(!DoubleAttribute)
 	{
-	  if(Attribute > 1)
+	  if(Experience < (long(Attribute) - 100) << 10)
 	    {
-	      Attribute -= 1;
-	      Experience = 0;
-	      return true;
+	      if(Attribute > 1)
+		{
+		  Attribute -= 1;
+		  Experience += long(100 - Attribute) << 10;
+		  Effect = true;
+		  continue;
+		}
 	    }
 	}
-    }
-  else
-    {
-      if(Experience < (long(Attribute) - 200) << 7)
+      else
 	{
-	  if(Attribute > 2)
+	  if(Experience < (long(Attribute) - 200) << 9)
 	    {
-	      Attribute -= 1;
-	      Experience = 0;
-	      return true;
+	      if(Attribute > 2)
+		{
+		  Attribute -= 1;
+		  Experience += long(200 - Attribute) << 9;
+		  Effect = true;
+		  continue;
+		}
 	    }
 	}
+
+      break;
     }
 
-  return false;
+  return Effect;
 }
 
 bool character::RawEditAttribute(ushort& Attribute, short& Amount, bool DoubleAttribute)
@@ -4322,7 +4359,7 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
 
 ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, float WeaponToHitValue, ushort Damage, short Success, uchar Type)
 {
-  float BlockStrength = Arm->GetBlockCapability();
+  ushort BlockStrength = Arm->GetBlockCapability();
 
   if(BlockStrength)
     {
@@ -5554,6 +5591,9 @@ void character::WeaponSkillHit(item* Weapon, uchar Type)
     case BITEATTACK:
       Category = BITE;
       break;
+    default:
+      ABORT("Illegal Type %d passed to character::WeaponSkillHit()!", Type);
+      return;
     }
 
   if(GetCWeaponSkill(Category)->AddHit())

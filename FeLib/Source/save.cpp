@@ -371,18 +371,23 @@ outputfile& operator<<(outputfile& SaveFile, const std::string& String)
 
 inputfile& operator>>(inputfile& SaveFile, std::string& String)
 {
-  char Buffer[256];
+  char* RealBuffer, StackBuffer[1024];
   uchar Length;
   SaveFile >> Length;
 
+  RealBuffer = Length < 1024 ? StackBuffer : new char[Length + 1];
+
   if(Length)
     {
-      SaveFile.Read(Buffer, Length);
-      Buffer[Length] = 0;
-      String = Buffer;
+      SaveFile.Read(RealBuffer, Length);
+      RealBuffer[Length] = 0;
+      String = RealBuffer;
     }
   else
     String.resize(0);
+
+  if(Length >= 1024)
+    delete [] RealBuffer;
 
   return SaveFile;
 }

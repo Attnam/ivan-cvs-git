@@ -126,16 +126,16 @@ human
 
 petrus
 {
-	DefaultArmStrength = 42;
-	DefaultLegStrength = 42;
-	DefaultDexterity = 42;
-	DefaultAgility = 42;
-	DefaultEndurance = 42;
-	DefaultPerception = 42;
-	DefaultIntelligence = 42;
-	DefaultWisdom = 42;
-	DefaultCharisma = 42;
-	DefaultMana = 42;
+	DefaultArmStrength = 32;
+	DefaultLegStrength = 32;
+	DefaultDexterity = 32;
+	DefaultAgility = 32;
+	DefaultEndurance = 32;
+	DefaultPerception = 32;
+	DefaultIntelligence = 32;
+	DefaultWisdom = 32;
+	DefaultCharisma = 32;
+	DefaultMana = 32;
 	IsCharmable = false;
 	CanBeDisplaced = false;
 	IsNameable = false;
@@ -156,14 +156,17 @@ petrus
 	CanBeWished = false;
 	Alias == "Petrus";
 	Amulet = amulet(AMULETOFLIFESAVING);
-	BodyArmor = DIAMOND bodyarmor(PLATEMAIL);
-	RightWielded = justifier;
+	BodyArmor = DIAMOND bodyarmor(PLATEMAIL) { Enchantment = 5; }
+	Cloak = FABRIC cloak { Enchantment = 5; }
+	Belt = LEATHER belt { Enchantment = 5; }
+	RightWielded = justifier { Enchantment = 16; }
+	RightGauntlet = MITHRIL gauntlet { Enchantment = 5; }
 	RightRing = ring(RINGOFFIRERESISTANCE);
 	LeftRing = ring(RINGOFPOISONRESISTANCE);
-	RightBoot = GOLD boot(BOOTOFSPEED);
+	RightBoot = GOLD boot(BOOTOFSPEED) { Enchantment = 5; }
 	KnownCWeaponSkills = { 4, UNARMED, KICK, BITE, LARGE_SWORDS; } /* He must not become too easy just if disarmed */
-	CWeaponSkillHits = { 4, 5000, 5000, 5000, 5000; }
-	RightSWeaponSkillHits = 5000;
+	CWeaponSkillHits = { 4, 2000, 2000, 2000, 2000; }
+	RightSWeaponSkillHits = 2000;
 	ClassStates = INFRAVISION;
 	PanicLevel = 0;
 	CanBeCloned = false;
@@ -247,9 +250,13 @@ shopkeeper
 	TotalSize = 160;
 	NameSingular = "shopkeeper";
 	IsPolymorphable = false;
-	Helmet = STEEL helmet;
-	BodyArmor = STEEL bodyarmor(CHAINMAIL);
-	RightWielded = STEEL pickaxe;
+	Helmet = STEEL helmet { Enchantment = 1; }
+	BodyArmor = STEEL bodyarmor(CHAINMAIL) { Enchantment = 1; }
+	Cloak = LEATHER cloak { Enchantment = 1; }
+	Belt = LEATHER belt { Enchantment = 1; }
+	RightWielded = STEEL pickaxe { Enchantment = 1; }
+	RightGauntlet = STEEL gauntlet { Enchantment = 1; }
+	RightBoot = STEEL boot { Enchantment = 1; }
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
@@ -278,9 +285,13 @@ priest
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "priest";
-	Helmet = MITHRIL helmet;
-	BodyArmor = MITHRIL bodyarmor(CHAINMAIL);
-	RightWielded = MITHRIL meleeweapon(SPIKEDMACE);
+	Helmet = MITHRIL helmet { Enchantment = 2; }
+	BodyArmor = MITHRIL bodyarmor(CHAINMAIL) { Enchantment = 2; }
+	Cloak = LEATHER cloak { Enchantment = 2; }
+	Belt = LEATHER belt { Enchantment = 2; }
+	RightWielded = MITHRIL meleeweapon(SPIKEDMACE) { Enchantment = 2; }
+	RightGauntlet = MITHRIL gauntlet { Enchantment = 2; }
+	RightBoot = MITHRIL boot { Enchantment = 2; }
 	KnownCWeaponSkills == MACES;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
@@ -289,16 +300,16 @@ priest
 
 oree
 {
-	DefaultArmStrength = 60;
-	DefaultLegStrength = 60;
-	DefaultDexterity = 90;
-	DefaultAgility = 90;
-	DefaultEndurance = 30;
-	DefaultPerception = 30;
-	DefaultIntelligence = 30;
-	DefaultWisdom = 20;
+	DefaultArmStrength = 50;
+	DefaultLegStrength = 50;
+	DefaultDexterity = 80;
+	DefaultAgility = 80;
+	DefaultEndurance = 20;
+	DefaultPerception = 20;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 10;
 	DefaultCharisma = 3;
-	DefaultMana = 30;
+	DefaultMana = 20;
 	IsCharmable = false;
 	CanBeDisplaced = false;
 	IsNameable = false;
@@ -316,16 +327,16 @@ oree
 	NameSingular = "Blood Daemon King";
 	IsPolymorphable = false;
 	AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
-	BaseUnarmedStrength = 10000;
-	BaseKickStrength = 20000;
-	BaseBiteStrength = 200000;
+	BaseUnarmedStrength = 15000;
+	BaseKickStrength = 30000;
+	BaseBiteStrength = 300000;
 	CanBeWished = false;
 	Alias == "Oree";
 	ClassStates = INVISIBLE|INFRAVISION|ESP;
-	Helmet = DIAMOND helmet;
-	BodyArmor = goldeneagleshirt;
-	RightGauntlet = DIAMOND gauntlet;
-	RightBoot = DIAMOND boot(BOOTOFSPEED);
+	Helmet = MITHRIL helmet { Enchantment = 6; }
+	BodyArmor = goldeneagleshirt { Enchantment = 23; }
+	RightGauntlet = MITHRIL gauntlet { Enchantment = 6; }
+	RightBoot = MITHRIL boot(BOOTOFSPEED) { Enchantment = 6; }
 	KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
 	CWeaponSkillHits = { 3, 2000, 2000, 2000; }
 	PanicLevel = 0;
@@ -399,9 +410,9 @@ darkknight
 	Config MASTER;
 	{
 		AttributeBonus = 10;
-		Helmet = STEEL helmet;
-		BodyArmor = STEEL bodyarmor(CHAINMAIL);
-		RightWielded = IRON IRON meleeweapon(TWOHANDEDSWORD);
+		Helmet = STEEL helmet { Enchantment = 1; }
+		BodyArmor = STEEL bodyarmor(CHAINMAIL) { Enchantment = 1; }
+		RightWielded = IRON IRON meleeweapon(TWOHANDEDSWORD) { Enchantment = 1; }
 		Adjective = "master";
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 200;
@@ -410,9 +421,9 @@ darkknight
 	Config GRANDMASTER;
 	{
 		AttributeBonus = 25;
-		Helmet = MITHRIL helmet;
-		BodyArmor = IRON bodyarmor(PLATEMAIL);
-		RightWielded = IRON IRON meleeweapon(CURVEDTWOHANDEDSWORD);
+		Helmet = MITHRIL helmet { Enchantment = 2; }
+		BodyArmor = IRON bodyarmor(PLATEMAIL) { Enchantment = 2; }
+		RightWielded = STEEL STEEL meleeweapon(CURVEDTWOHANDEDSWORD) { Enchantment = 2; }
 		Adjective = "grand master";
 		CWeaponSkillHits == 1000;
 		RightSWeaponSkillHits = 500;
@@ -488,7 +499,7 @@ darkfrog
 
 elpuri
 {
-	DefaultArmStrength = 90;
+	DefaultArmStrength = 70;
 	DefaultAgility = 10;
 	DefaultEndurance = 40;
 	DefaultPerception = 30;
@@ -571,7 +582,7 @@ skeleton
 	GroinBonePercentile = 100;
 	LegBonePercentile = 100;
 	Helmet = helmet;
-	RightWielded = meleeweapon(AXE);
+	RightWielded = meleeweapon(AXE) { Enchantment = -2; }
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 20;
 	RightSWeaponSkillHits = 10;
@@ -580,7 +591,7 @@ skeleton
 	Config WARRIOR;
 	{
 		AttributeBonus = 100;
-		RightWielded = meleeweapon(SPIKEDMACE);
+		RightWielded = meleeweapon(SPIKEDMACE) { Enchantment = -1; }
 		KnownCWeaponSkills == MACES;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
@@ -591,7 +602,7 @@ skeleton
 	{
 		AttributeBonus = 200;
 		BodyArmor = STEEL bodyarmor(BROKEN|PLATEMAIL);
-		RightWielded = STEEL STEEL flamingsword;
+		RightWielded = STEEL STEEL flamingsword { Enchantment = 0; }
 		LeftWielded = STEEL shield;
 		KnownCWeaponSkills == LARGE_SWORDS;
 		CWeaponSkillHits == 200;
@@ -656,9 +667,9 @@ goblin
 	Config PRINCE;
 	{
 		AttributeBonus = 75;
-		Helmet = BRONZE helmet;
-		BodyArmor = LEATHER bodyarmor(PLATEMAIL);
-		RightWielded = BRONZE meleeweapon(POLEAXE);
+		Helmet = BRONZE helmet { Enchantment = 1; }
+		BodyArmor = LEATHER bodyarmor(PLATEMAIL) { Enchantment = 1; }
+		RightWielded = BRONZE meleeweapon(POLEAXE) { Enchantment = 1; }
 		KnownCWeaponSkills == AXES;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
@@ -669,9 +680,9 @@ goblin
 	Config KING;
 	{
 		AttributeBonus = 100;
-		Helmet = IRON helmet;
-		BodyArmor = IRON bodyarmor(CHAINMAIL);
-		RightWielded = IRON meleeweapon(POLEAXE);
+		Helmet = IRON helmet { Enchantment = 2; }
+		BodyArmor = IRON bodyarmor(CHAINMAIL) { Enchantment = 2; }
+		RightWielded = IRON meleeweapon(POLEAXE) { Enchantment = 2; }
 		KnownCWeaponSkills == AXES;
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
@@ -904,16 +915,16 @@ communist /* Ivan */
 	NameSingular = "communist";
 	Alias == "Ivan";
 	ClassStates = INFRAVISION;
-	Helmet = IRON helmet;
-	Cloak = LEATHER cloak;
-	BodyArmor = IRON bodyarmor(PLATEMAIL);
-	Belt = LEATHER belt;
-	RightWielded = IRON meleeweapon(SPIKEDMACE);
+	Helmet = IRON helmet { Enchantment = 3; }
+	Cloak = LEATHER cloak { Enchantment = 3; }
+	BodyArmor = IRON bodyarmor(PLATEMAIL) { Enchantment = 3; }
+	Belt = LEATHER belt { Enchantment = 3; }
+	RightWielded = IRON meleeweapon(SPIKEDMACE) { Enchantment = 3; }
 	KnownCWeaponSkills = { 7, UNARMED, CLUBS, HAMMERS, MACES, FLAILS, AXES, HALBERDS; }
 	CWeaponSkillHits = { 7, 1000, 1000, 2000, 2000, 1000, 1000, 1000; }
 	RightSWeaponSkillHits = 1000;
-	RightGauntlet = IRON gauntlet;
-	RightBoot = IRON boot;
+	RightGauntlet = IRON gauntlet { Enchantment = 3; }
+	RightBoot = IRON boot { Enchantment = 3; }
 	PanicLevel = 0;
 }
 
@@ -1311,6 +1322,7 @@ mistress
 	NameSingular = "mistress";
 	CanBeGenerated = true;
 	BodyArmor = LEATHER bodyarmor(PLATEMAIL);
+	RightBoot = LEATHER boot;
 	RightWielded = LEATHER whip;
 	LeftWielded = LEATHER whip;
 	KnownCWeaponSkills == WHIPS;
@@ -1324,7 +1336,10 @@ mistress
 	{
 		HairColor = rgb(200, 200, 0);
 		AttributeBonus = 25;
-		BodyArmor = IRON bodyarmor(CHAINMAIL);
+		BodyArmor = IRON bodyarmor(CHAINMAIL) { Enchantment = 2; }
+		RightBoot = IRON boot { Enchantment = 2; }
+		RightWielded = LEATHER whip { Enchantment = 2; }
+		LeftWielded = LEATHER whip { Enchantment = 2; }
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 500;
 		LeftSWeaponSkillHits = 500;
@@ -1336,7 +1351,10 @@ mistress
 	{
 		HairColor = rgb(200, 0, 0);
 		AttributeBonus = 50;
-		BodyArmor = STEEL bodyarmor(CHAINMAIL);
+		BodyArmor = STEEL bodyarmor(CHAINMAIL) { Enchantment = 5; }
+		RightBoot = STEEL boot { Enchantment = 5; }
+		RightWielded = LEATHER whip { Enchantment = 5; }
+		LeftWielded = LEATHER whip { Enchantment = 5; }
 		CWeaponSkillHits == 1000;
 		RightSWeaponSkillHits = 1000;
 		LeftSWeaponSkillHits = 1000;
@@ -1348,7 +1366,10 @@ mistress
 	{
 		HairColor = rgb(80, 64, 32);
 		AttributeBonus = 75;
-		BodyArmor = MITHRIL bodyarmor(CHAINMAIL);
+		BodyArmor = MITHRIL bodyarmor(CHAINMAIL) { Enchantment = 8; }
+		RightBoot = MITHRIL boot { Enchantment = 8; }
+		RightWielded = LEATHER whip { Enchantment = 8; }
+		LeftWielded = LEATHER whip { Enchantment = 8; }
 		CWeaponSkillHits == 2000;
 		RightSWeaponSkillHits = 2000;
 		LeftSWeaponSkillHits = 2000;
@@ -1360,8 +1381,10 @@ mistress
 	{
 		HairColor = rgb(35, 35, 35);
 		AttributeBonus = 100;
-		BodyArmor = DIAMOND bodyarmor(CHAINMAIL);
-		RightWielded = whipofcleptia;
+		BodyArmor = SAPPHIRE bodyarmor(CHAINMAIL) { Enchantment = 10; }
+		RightBoot = SAPPHIRE boot(BOOTOFSPEED) { Enchantment = 10; }
+		RightWielded = whipofcleptia { Enchantment = 10; }
+		LeftWielded = LEATHER whip { Enchantment = 10; }
 		CWeaponSkillHits == 5000;
 		RightSWeaponSkillHits = 5000;
 		LeftSWeaponSkillHits = 5000;
@@ -1628,7 +1651,6 @@ kamikazedwarf
 	LegBitmapPos = 0, 208;
 	HairColor = rgb(144, 72, 0);
 	BeltColor = rgb(72, 56, 16);
-	/*BeltColor = rgb(64, 64, 64);*/
 	TotalVolume = 60000;
 	TotalSize = 130;
 	CanRead = true;
@@ -1650,19 +1672,20 @@ mammoth
 	DefaultWisdom = 7;
 	DefaultCharisma = 10;
 	DefaultMana = 0;
-	TotalVolume = 5000000;
+	TotalVolume = 4000000;
 	TorsoBitmapPos = 528, 0;
 	TalkVerb = "roars";
 	TotalSize = 500;
 	SkinColor = rgb(100, 130, 160);
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 15000;
-	BaseBiteStrength = 7500;
+	BaseKickStrength = 20000;
+	BaseBiteStrength = 10000;
 	CanBeGenerated = true;
 	CanKick = true;
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
+	PanicLevel = 10;
 }
 
 unicorn
@@ -1809,12 +1832,13 @@ buffalo
 	TorsoMainColor = rgb(120, 120, 120); /* the horns */
 	NameSingular = "buffalo";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 15000;
-	BaseBiteStrength = 7500;
+	BaseKickStrength = 20000;
+	BaseBiteStrength = 10000;
 	CanKick = true;
 	CanBeGenerated = true;
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
+	PanicLevel = 10;
 }
 
 snake
@@ -1919,9 +1943,9 @@ orc
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 75;
-		Helmet = IRON helmet;
-		BodyArmor = IRON bodyarmor(CHAINMAIL);
-		RightWielded = IRON meleeweapon(POLEAXE);
+		Helmet = IRON helmet { Enchantment = 1; }
+		BodyArmor = IRON bodyarmor(CHAINMAIL) { Enchantment = 1; }
+		RightWielded = IRON meleeweapon(POLEAXE) { Enchantment = 1; }
 		KnownCWeaponSkills == AXES;
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
@@ -1940,9 +1964,9 @@ orc
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 100;
-		Helmet = STEEL helmet;
-		BodyArmor = STEEL bodyarmor(CHAINMAIL);
-		RightWielded = meleeweapon(TWOHANDEDSWORD);
+		Helmet = STEEL helmet { Enchantment = 2; }
+		BodyArmor = STEEL bodyarmor(CHAINMAIL) { Enchantment = 2; }
+		RightWielded = meleeweapon(TWOHANDEDSWORD) { Enchantment = 2; }
 		KnownCWeaponSkills == LARGE_SWORDS;
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 200;

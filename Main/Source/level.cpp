@@ -316,11 +316,15 @@ void level::Generate()
       ApplyLSquareScript(Square);
     }
 
-  if(LevelScript->GetBase())
-    for(c = 0; c < LevelScript->GetBase()->GetSquare().size(); ++c)
+  /* gum solution */
+
+  levelscript* LevelBase = static_cast<levelscript*>(LevelScript->GetBase());
+
+  if(LevelBase)
+    for(c = 0; c < LevelBase->GetSquare().size(); ++c)
       {
 	game::BusyAnimation();
-	squarescript* Square = LevelScript->GetBase()->GetSquare()[c];
+	squarescript* Square = LevelBase->GetSquare()[c];
 	ApplyLSquareScript(Square);
       }
 }

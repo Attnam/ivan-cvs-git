@@ -72,7 +72,7 @@ class stack
   void ReceiveDamage(character*, ushort, uchar);
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
-  void AddContentsToList(felist&, const character*, const std::string&, bool, bool, bool (*)(item*, const character*)) const;
+  void AddContentsToList(felist&, const character*, const std::string&, bool, bool (*)(item*, const character*)) const;
   item* SearchChosen(ushort&, ushort, const character*, bool (*)(item*, const character*)) const;
   bool IsOnGround() const { return SquarePosition != HIDDEN; }
   bool RaiseTheDead(character*);

@@ -1,5 +1,7 @@
 hp - high priority
 lp - low priority
+// - done
+(r) - rejected
 
 //Stethoscope. (hp)
 Inhandspics of broken weapons. (lp)
@@ -7,7 +9,7 @@ Hit symbol.
 Village Elder.
 //Thief.
 Black Mage.
-Grave digger.
+//Grave digger.
 //Short sword + broken and in hands picture.
 //Dagger + broken and in hands picture.
 (r) Halberd + broken and in hands picture.
@@ -21,5 +23,12 @@ Staff + broken and in hands picture.
 //Broken chain mail.
 Club + broken and in hands picture.
 Jackals on gravel floor.
+Ring of teleportation + gravel floor.
+Smith.
+Forge.
+Anvil. (lp)
+Levitating ostrich.
+M-color for boots.
+Animation for mommos.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

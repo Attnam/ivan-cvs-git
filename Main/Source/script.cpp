@@ -13,83 +13,52 @@
 #include "materba.h"
 #include "femath.h"
 
-#define INITMEMBER(name)\
+#define ANALYZEMEMBER(name)\
 {\
-  name.SetIdentifier(#name);\
-  Data.push_back(&name);\
+  if(Identifier == #name)\
+    return &name;\
 }
 
-template <class type> datamembertemplate<type>::~datamembertemplate<type>()
+template <class type> void datamember<type>::Load(inputfile& SaveFile, const valuemap& ValueMap)
 {
-  delete Member;
+  if(!Member)
+    Member = new type;
+
+  ReadData(*Member, SaveFile, ValueMap);
 }
 
-template <class type> void datamembertemplate<type>::SetBase(datamemberbase* What)
+template void datamember<dungeonscript>::Load(inputfile&, const valuemap&); // this is insane
+
+template <class type> void protonamedmember<type>::Load(inputfile& SaveFile, const valuemap&)
 {
-  /* No type checking here, since only scriptwithbase<basetype>::SetBase uses this */
+  if(!Member)
+    Member = new ushort;
 
-  Base = static_cast<datamembertemplate<type>*>(What);
-}
-
-template <class type> bool datamember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap& ValueMap, bool RequireIdentifier)
-{
-  if(!RequireIdentifier || Word == Identifier)
-    {
-      if(!Member)
-	Member = new type;
-
-      ReadData(*Member, SaveFile, ValueMap);
-      return true;
-    }
-
-  return false;
-}
-
-template <class type> bool protonamedmember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap&, bool RequireIdentifier)
-{
-  if(!RequireIdentifier || Word == Identifier)
-    {
-      if(!Member)
-	Member = new ushort;
-
-      ReadData(*Member, SaveFile, protocontainer<type>::GetCodeNameMap());
-      return true;
-    }
-
-  return false;
+  ReadData(*Member, SaveFile, protocontainer<type>::GetCodeNameMap());
 }
 
 bool script::LoadData(inputfile& SaveFile, const std::string& Word)
 {
-  ushort c;
+  datamemberbase* Data = GetData(Word);
 
-  for(c = 0; c < Data.size(); ++c)
-    if(Data[c]->Load(Word, SaveFile, ValueMap))
-      break;
-
-  return c != Data.size();
+  if(Data)
+    {
+      Data->Load(SaveFile, ValueMap);
+      return true;
+    }
+  else
+    return false;
 }
 
-template <class basetype> void scriptwithbase<basetype>::SetBase(basetype* NewBase)
+datamemberbase* posscript::GetData(const std::string& Identifier)
 {
-  if(NewBase == this)
-    return;
-
-  Base = NewBase;
-
-  if(Base)
-    for(ushort c = 0; c < Data.size(); ++c)
-      Data[c]->SetBase(NewBase->Data[c]);
+  ANALYZEMEMBER(Vector);
+  ANALYZEMEMBER(Walkable);
+  ANALYZEMEMBER(InRoom);
+  return 0;
 }
 
-posscript::posscript()
-{
-  INITMEMBER(Vector);
-  INITMEMBER(Walkable);
-  INITMEMBER(InRoom);
-}
-
-void posscript::ReadFrom(inputfile& SaveFile)
+void posscript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word;
   SaveFile.ReadWord(Word);
@@ -97,7 +66,7 @@ void posscript::ReadFrom(inputfile& SaveFile)
   if(Word == "Pos")
     {
       Random = false;
-      Vector.Load("", SaveFile, ValueMap, false);
+      Vector.Load(SaveFile, ValueMap);
     }
 
   if(Word == "Random")
@@ -113,12 +82,13 @@ void posscript::ReadFrom(inputfile& SaveFile)
     }
 }
 
-materialscript::materialscript()
+datamemberbase* materialscript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(Volume);
+  ANALYZEMEMBER(Volume);
+  return 0;
 }
 
-void materialscript::ReadFrom(inputfile& SaveFile)
+void materialscript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word;
   SaveFile.ReadWord(Word);
@@ -151,15 +121,16 @@ material* materialscript::Instantiate() const
   return Instance;
 }
 
-basecontentscript::basecontentscript() : ContentType(0), Config(0)
+datamemberbase* basecontentscript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(MainMaterial);
-  INITMEMBER(SecondaryMaterial);
-  INITMEMBER(ContainedMaterial);
-  INITMEMBER(Parameters);
+  ANALYZEMEMBER(MainMaterial);
+  ANALYZEMEMBER(SecondaryMaterial);
+  ANALYZEMEMBER(ContainedMaterial);
+  ANALYZEMEMBER(Parameters);
+  return 0;
 }
 
-void basecontentscript::ReadFrom(inputfile& SaveFile)
+void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word = SaveFile.ReadWord();
 
@@ -271,9 +242,10 @@ template <class type> ushort contentscripttemplate<type>::SearchCodeName(const s
   return protocontainer<type>::SearchCodeName(Word);
 }
 
-contentscript<character>::contentscript<character>()
+datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 {
-  INITMEMBER(Team);
+  ANALYZEMEMBER(Team);
+  return contentscripttemplate<character>::GetData(Identifier);
 }
 
 void contentscript<character>::Instantiate(std::vector<character*>& Instance, ulong Amount, ushort SpecialFlags) const
@@ -295,11 +267,13 @@ character* contentscript<character>::Instantiate(ushort SpecialFlags) const
   return Instance[0];
 }
 
-contentscript<item>::contentscript<item>()
+datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
 {
-  INITMEMBER(Team);
-  INITMEMBER(Active);
-  INITMEMBER(SideStackIndex);
+  ANALYZEMEMBER(Team);
+  ANALYZEMEMBER(Active);
+  ANALYZEMEMBER(SideStackIndex);
+  ANALYZEMEMBER(Enchantment);
+  return contentscripttemplate<item>::GetData(Identifier);
 }
 
 void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount, ushort SpecialFlags) const
@@ -313,6 +287,10 @@ void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount
   if(GetActive(false))
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->SetIsActive(*GetActive());
+
+  if(GetEnchantment(false))
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->SetEnchantment(*GetEnchantment());
 }
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
@@ -340,9 +318,10 @@ glterrain* contentscript<glterrain>::Instantiate(ushort SpecialFlags) const
   return Instance[0];
 }
 
-contentscript<olterrain>::contentscript<olterrain>()
+datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
 {
-  INITMEMBER(VisualEffects);
+  ANALYZEMEMBER(VisualEffects);
+  return contentscripttemplate<olterrain>::GetData(Identifier);
 }
 
 void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
@@ -367,27 +346,28 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
   return Instance[0];
 }
 
-squarescript::squarescript()
+datamemberbase* squarescript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(Position);
-  INITMEMBER(Character);
-  INITMEMBER(Item);
-  INITMEMBER(GTerrain);
-  INITMEMBER(OTerrain);
-  INITMEMBER(IsUpStairs);
-  INITMEMBER(IsDownStairs);
-  INITMEMBER(IsWorldMapEntry);
-  INITMEMBER(Times);
+  ANALYZEMEMBER(Position);
+  ANALYZEMEMBER(Character);
+  ANALYZEMEMBER(Item);
+  ANALYZEMEMBER(GTerrain);
+  ANALYZEMEMBER(OTerrain);
+  ANALYZEMEMBER(IsUpStairs);
+  ANALYZEMEMBER(IsDownStairs);
+  ANALYZEMEMBER(IsWorldMapEntry);
+  ANALYZEMEMBER(Times);
+  return 0;
 }
 
-void squarescript::ReadFrom(inputfile& SaveFile)
+void squarescript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word;
   SaveFile.ReadWord(Word);
 
   if(Word != "=")
     {
-      Position.Load("", SaveFile, ValueMap, false);
+      Position.Load(SaveFile, ValueMap);
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in square script line %d!", SaveFile.TellLine());
@@ -398,15 +378,16 @@ void squarescript::ReadFrom(inputfile& SaveFile)
     }
   else
     {
-      GTerrain.Load("", SaveFile, ValueMap, false);
-      OTerrain.Load("", SaveFile, ValueMap, false);
+      GTerrain.Load(SaveFile, ValueMap);
+      OTerrain.Load(SaveFile, ValueMap);
     }
 }
 
-template <class type> contentmap<type>::contentmap<type>() : ContentScriptMap(0)
+template <class type> datamemberbase* contentmap<type>::GetData(const std::string& Identifier)
 {
-  INITMEMBER(Size);
-  INITMEMBER(Pos);
+  ANALYZEMEMBER(Size);
+  ANALYZEMEMBER(Pos);
+  return 0;
 }
 
 template <class type> void contentmap<type>::DeleteContents()
@@ -425,7 +406,7 @@ template <class type> void contentmap<type>::DeleteContents()
       }
 }
 
-template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
+template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
 {
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
@@ -488,27 +469,28 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
     ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 }
 
-roomscript::roomscript()
+datamemberbase* roomscript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(CharacterMap);
-  INITMEMBER(ItemMap);
-  INITMEMBER(GTerrainMap);
-  INITMEMBER(OTerrainMap);
-  INITMEMBER(WallSquare);
-  INITMEMBER(FloorSquare);
-  INITMEMBER(DoorSquare);
-  INITMEMBER(Size);
-  INITMEMBER(Pos);
-  INITMEMBER(AltarPossible);
-  INITMEMBER(GenerateDoor);
-  INITMEMBER(ReCalculate);
-  INITMEMBER(GenerateTunnel);
-  INITMEMBER(DivineMaster);
-  INITMEMBER(GenerateLanterns);
-  INITMEMBER(Type);
-  INITMEMBER(GenerateFountains);
-  INITMEMBER(AllowLockedDoors);
-  INITMEMBER(AllowBoobyTrappedDoors);
+  ANALYZEMEMBER(CharacterMap);
+  ANALYZEMEMBER(ItemMap);
+  ANALYZEMEMBER(GTerrainMap);
+  ANALYZEMEMBER(OTerrainMap);
+  ANALYZEMEMBER(WallSquare);
+  ANALYZEMEMBER(FloorSquare);
+  ANALYZEMEMBER(DoorSquare);
+  ANALYZEMEMBER(Size);
+  ANALYZEMEMBER(Pos);
+  ANALYZEMEMBER(AltarPossible);
+  ANALYZEMEMBER(GenerateDoor);
+  ANALYZEMEMBER(ReCalculate);
+  ANALYZEMEMBER(GenerateTunnel);
+  ANALYZEMEMBER(DivineMaster);
+  ANALYZEMEMBER(GenerateLanterns);
+  ANALYZEMEMBER(Type);
+  ANALYZEMEMBER(GenerateFountains);
+  ANALYZEMEMBER(AllowLockedDoors);
+  ANALYZEMEMBER(AllowBoobyTrappedDoors);
+  return 0;
 }
 
 roomscript::~roomscript()
@@ -521,9 +503,11 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
   if(ReRead)
     {
-      if(Base)
-	if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
-	  Base->ReadFrom(SaveFile, true);
+      roomscript* RoomBase = static_cast<roomscript*>(Base);
+
+      if(RoomBase)
+	if(RoomBase->GetReCalculate(false) && *RoomBase->GetReCalculate(false))
+	  RoomBase->ReadFrom(SaveFile, true);
 
       if(GetReCalculate(false) && *GetReCalculate(false))
 	{
@@ -562,23 +546,24 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
     }
 }
 
-levelscript::levelscript()
+datamemberbase* levelscript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(RoomDefault);
-  INITMEMBER(FillSquare);
-  INITMEMBER(LevelMessage);
-  INITMEMBER(Size);
-  INITMEMBER(Items);
-  INITMEMBER(Rooms);
-  INITMEMBER(GenerateMonsters);
-  INITMEMBER(ReCalculate);
-  INITMEMBER(GenerateUpStairs);
-  INITMEMBER(GenerateDownStairs);
-  INITMEMBER(OnGround);
-  INITMEMBER(TeamDefault);
-  INITMEMBER(AmbientLight);
-  INITMEMBER(Description);
-  INITMEMBER(LOSModifier);
+  ANALYZEMEMBER(RoomDefault);
+  ANALYZEMEMBER(FillSquare);
+  ANALYZEMEMBER(LevelMessage);
+  ANALYZEMEMBER(Size);
+  ANALYZEMEMBER(Items);
+  ANALYZEMEMBER(Rooms);
+  ANALYZEMEMBER(GenerateMonsters);
+  ANALYZEMEMBER(ReCalculate);
+  ANALYZEMEMBER(GenerateUpStairs);
+  ANALYZEMEMBER(GenerateDownStairs);
+  ANALYZEMEMBER(OnGround);
+  ANALYZEMEMBER(TeamDefault);
+  ANALYZEMEMBER(AmbientLight);
+  ANALYZEMEMBER(Description);
+  ANALYZEMEMBER(LOSModifier);
+  return 0;
 }
 
 levelscript::~levelscript()
@@ -594,9 +579,11 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
   if(ReRead)
     {
-      if(Base)
-	if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
-	  Base->ReadFrom(SaveFile, true);
+      levelscript* LevelBase = static_cast<levelscript*>(Base);
+
+      if(LevelBase)
+	if(LevelBase->GetReCalculate(false) && *LevelBase->GetReCalculate(false))
+	  LevelBase->ReadFrom(SaveFile, true);
 
       if(GetReCalculate(false) && *GetReCalculate())
 	{
@@ -657,14 +644,17 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	ABORT("Odd script term %s encountered in level scrip line %d!", Word.c_str(), SaveFile.TellLine());
     }
 
-  if(Base && Base->GetRoomDefault(false) && GetRoomDefault(false))
-    GetRoomDefault(false)->SetBase(Base->GetRoomDefault(false));
+  levelscript* LevelBase = static_cast<levelscript*>(Base);
+
+  if(LevelBase && RoomDefault.GetMember())
+    RoomDefault.GetMember()->SetBase(LevelBase->RoomDefault.GetMember());
 }
 
-dungeonscript::dungeonscript()
+datamemberbase* dungeonscript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(LevelDefault);
-  INITMEMBER(Levels);
+  ANALYZEMEMBER(LevelDefault);
+  ANALYZEMEMBER(Levels);
+  return 0;
 }
 
 dungeonscript::~dungeonscript()
@@ -673,7 +663,7 @@ dungeonscript::~dungeonscript()
     delete i->second;
 }
 
-void dungeonscript::ReadFrom(inputfile& SaveFile)
+void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
 {
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in dungeon script line %d!", SaveFile.TellLine());
@@ -701,16 +691,19 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 	ABORT("Odd script term %s encountered in dungeon script line %d!", Word.c_str(), SaveFile.TellLine());
     }
 
-  if(Base && Base->GetLevelDefault(false) && GetLevelDefault(false))
-    GetLevelDefault(false)->SetBase(Base->GetLevelDefault(false));
+  dungeonscript* DungeonBase = static_cast<dungeonscript*>(Base);
+
+  if(DungeonBase && LevelDefault.GetMember())
+    LevelDefault.GetMember()->SetBase(DungeonBase->LevelDefault.GetMember());
 }
 
-teamscript::teamscript()
+datamemberbase* teamscript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(AttackEvilness);
+  ANALYZEMEMBER(AttackEvilness);
+  return 0;
 }
 
-void teamscript::ReadFrom(inputfile& SaveFile)
+void teamscript::ReadFrom(inputfile& SaveFile, bool)
 {
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in team script line %d!", SaveFile.TellLine());
@@ -733,11 +726,12 @@ void teamscript::ReadFrom(inputfile& SaveFile)
     }
 }
 
-gamescript::gamescript()
+datamemberbase* gamescript::GetData(const std::string& Identifier)
 {
-  INITMEMBER(DungeonDefault);
-  INITMEMBER(Dungeons);
-  INITMEMBER(Teams);
+  ANALYZEMEMBER(DungeonDefault);
+  ANALYZEMEMBER(Dungeons);
+  ANALYZEMEMBER(Teams);
+  return 0;
 }
 
 gamescript::~gamescript()
@@ -749,7 +743,7 @@ gamescript::~gamescript()
     delete i2->second;
 }
 
-void gamescript::ReadFrom(inputfile& SaveFile)
+void gamescript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word;
 

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "proto.h"
 #include "charba.h"
 #include "itemba.h"
@@ -21,16 +23,22 @@ template <class type> void protocontainer<type>::GenerateCodeNameMap()
 
 character* protosystem::BalancedCreateMonster()
 {
+  std::vector<std::pair<ushort, ushort> > Illegal;
+
   for(ushort c = 0;; ++c)
     {
       float Difficulty = game::Difficulty();
 
-      for(ushort i = 0; i < 10; ++i)
+      for(ushort i = 0; i < 25; ++i)
 	{
 	  ushort ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 	  const character::prototype* Proto = protocontainer<character>::GetProto(ChosenType);
 	  const character::databasemap& Config = Proto->GetConfig();
 	  ushort ChosenConfig = RAND() % Config.size();
+	  std::pair<ushort, ushort> Chosen(ChosenType, ChosenConfig);
+
+	  if(c < 100 && std::find(Illegal.begin(), Illegal.end(), Chosen) != Illegal.end())
+	    continue;
 
 	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	    if(!ChosenConfig--)
@@ -39,11 +47,20 @@ character* protosystem::BalancedCreateMonster()
 		  {
 		    float DangerModifier = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
 
-		    if(c >= 99 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 5))
+		    if(c >= 100 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 25))
 		      {
 			character* Monster = Proto->Clone(i->first);
-			Monster->SetTeam(game::GetTeam(1));
-			return Monster;
+
+			if(c >= 100 || !(RAND() % 3) && Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 50000)
+			  {
+			    Monster->SetTeam(game::GetTeam(1));
+			    return Monster;
+			  }
+			else
+			  {
+			    delete Monster;
+			    Illegal.push_back(Chosen);
+			  }
 		      }
 		  }
 

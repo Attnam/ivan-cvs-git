@@ -483,8 +483,9 @@
 #define POOL 1
 
 #define BRICK_FINE 1
-#define BRICK_OLD 2
-#define EARTH 3
+#define BRICK_PROPAGANDA 2
+#define BRICK_OLD 3
+#define EARTH 4
 
 #define PINE 1
 #define SPRUCE 2

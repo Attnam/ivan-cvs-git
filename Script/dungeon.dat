@@ -520,6 +520,16 @@ Dungeon 1;
 			{
 				OTerrain = empty;
 			}
+
+			Square, Pos 31, 41;
+			{
+				OTerrain = STONE wall(BRICK_PROPAGANDA);
+			}
+
+			Square, Pos 9, 41;
+			{
+				OTerrain = STONE wall(BRICK_PROPAGANDA);
+			}
 			
 			GTerrainMap
 			{
@@ -576,6 +586,7 @@ Dungeon 1;
 				Types
 				{
 					# = MARBLE wall(BRICK_FINE);
+					@ = MARBLE wall(BRICK_PROPAGANDA);
 					T = throne;
 					c = decoration(CARPET);
 					A = VALPURIUM altar(valpurus);
@@ -609,7 +620,7 @@ Dungeon 1;
 				b.b#....#.b#.......c.......#b.#....#b.b
 				...#....#..#.......c.......#..#....#...
 				b.b###..#b.###.....c.....###.b#..###b.b
-				....b#..###.b#.....c.....#b.###..#b....
+				....b#..#@#.b#.....c.....#b.#@#..#b....
 				b....#....#..#.....c.....#..#....#....b
 				..bb.###..####.....c.....####..###.bb..
 				b.....b#.....#.....c.....#.....#b.....b
@@ -627,7 +638,7 @@ Dungeon 1;
 				.......#8.6#...............#...#.......
 				b...b.b#473#...............#...#b.b...b
 				.b....#######...###D###...#######....b.
-				b..####.s.s.D...#.b.b.#...L.....####..b
+				b..##@#.s.s.D...#.b.b.#...L.....#@##..b
 				..b#.d......#####.....#####........#b..
 				b..#....s.s.#b..b.....b..b#........#..b
 				.b.##...#####.bb..b.b..bb.#####...##.b.

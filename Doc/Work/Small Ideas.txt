@@ -290,7 +290,7 @@ Wings should be bodyparts.
 *Team waypoint setting when whistling.
 It shouldn't be possible to mutate nor resurrect non-living bodyparts.
 A special message should be printed when zapping a WoR at a bone or a skull.
-If the player is polymorphed into a monster that can't heal, the rest command should be disabled.
+//If the player is polymorphed into a monster that can't heal, the rest command should be disabled.
 Hallucination state.
 Random items to certain monsters' inventories.
 NP shouldn't be consumed if polymorphed into a golem.
@@ -306,3 +306,10 @@ Gold golems should be immune to acid.
 Mommos should do acid damage.
 "Character attributes" option to secret knowledge.
 It should be possible to dig the ground to create a hole through which you could fall to the next level.
+Potion of death.
+Physical damage should be divided.
+If the handle of a weapon is of the same material as the edge, change material should change it, too.
+Stressed state should slowly decrease player's size.
+Being satiated or bloated should decrease move ease.
+If HP == MaxHP, healing liquid should increase MaxHP a bit.
+Frost weapons should gradually develop ice which would increase damage .

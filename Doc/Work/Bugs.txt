@@ -82,3 +82,6 @@ Poison + poison resistance message.
 (7x) the werewolf resists.
 Bear trap in shop.
 Bloated monster eat AI.
+Omle urine doesn't really work.
+Infravision range.
+Carnivorous plants spill blood.

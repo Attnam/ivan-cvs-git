@@ -456,10 +456,8 @@ item* item::Duplicate() const
   return Clone;
 }
 
-void item::AddInventoryEntry(const character*, felist& List, ushort Amount, bool ShowSpecialInfo) const
+void item::AddInventoryEntry(const character*, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
-  std::string Entry;
-
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
   else
@@ -470,8 +468,6 @@ void item::AddInventoryEntry(const character*, felist& List, ushort Amount, bool
 
   if(ShowSpecialInfo)
     Entry << " [" << GetWeight() * Amount << "g]";
-
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
 const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
@@ -526,9 +522,6 @@ void itemdatabase::InitDefaults(ushort Config)
 
 void item::AddMiscellaneousInfo(felist& List) const
 {
-  if(dynamic_cast<const goldeneagleshirt*>(this) != 0)
-    int esko = 2;
-
   std::string Entry(40, ' ');
   Entry << int(GetPrice());
   Entry.resize(55, ' ');

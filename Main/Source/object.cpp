@@ -148,7 +148,7 @@ void object::UpdatePictures()
   vector2d SparklePos;
   uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
   uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
-  uchar SparkleTime;
+  uchar SparkleTime = 0;
   bool Sparkling = false;
 
   if(!(SpecialFlags & STFLAME))

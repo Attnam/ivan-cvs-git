@@ -13,13 +13,13 @@
 
 #define DATAMEMBER(type, name)\
  public:\
-  type* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
+  type* Get##name(bool AbortOnError = true) const { return name.GetMember(Base, #name, AbortOnError); }\
  protected:\
   datamember< type > name;
 
 #define PROTONAMEDMEMBER(type, name)\
  public:\
-  ushort* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
+  ushort* Get##name(bool AbortOnError = true) const { return name.GetMember(Base, #name, AbortOnError); }\
  protected:\
   protonamedmember< type > name;
 
@@ -31,37 +31,31 @@ class item;
 class god;
 class room;
 class material;
+class script;
 
 class datamemberbase
 {
  public:
   virtual ~datamemberbase() { }
-  void SetIdentifier(const std::string& What) { Identifier = What; }
-  virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true) = 0;
-  virtual void SetBase(datamemberbase*) = 0;
- protected:
-  std::string Identifier;
+  virtual void Load(inputfile&, const valuemap&) = 0;
 };
 
 template <class type> class datamembertemplate : public datamemberbase
 {
  public:
-  virtual ~datamembertemplate();
-  datamembertemplate() : Base(0), Member(0) { }
-  datamembertemplate(const datamembertemplate& Data) : datamemberbase(Data), Base(Data.Base), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  virtual ~datamembertemplate() { delete Member; }
+  datamembertemplate() : Member(0) { }
+  datamembertemplate(const datamembertemplate& Data) : datamemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
   datamembertemplate& operator=(const datamembertemplate&);
-  type* GetMember(bool) const;
+  type* GetMember() const { return Member; }
+  type* GetMember(const script*, const std::string&, bool) const;
   void SetMember(type* What) { Member = What; }
-  virtual void SetBase(datamemberbase*);
  protected:
-  datamembertemplate<type>* Base;
   type* Member;
 };
 
 template <class type> inline datamembertemplate<type>& datamembertemplate<type>::operator=(const datamembertemplate<type>& Data)
 {
-  Base = Data.Base;
-
   if(Member)
     {
       if(Data.Member)
@@ -81,13 +75,13 @@ template <class type> inline datamembertemplate<type>& datamembertemplate<type>:
   return *this;
 }
 
-template <class type> inline type* datamembertemplate<type>::GetMember(bool AbortOnError) const
+template <class type> inline type* datamembertemplate<type>::GetMember(const script* Base, const std::string& Identifier, bool AbortOnError) const
 {
   if(Member)
     return Member;
   else
     if(Base)
-      return Base->GetMember(AbortOnError);
+      return static_cast<const datamembertemplate<type>*>(Base->GetConstData(Identifier))->GetMember(Base->GetBase(), Identifier, AbortOnError);
     else
     {
       if(AbortOnError)
@@ -100,46 +94,38 @@ template <class type> inline type* datamembertemplate<type>::GetMember(bool Abor
 template <class type> class datamember : public datamembertemplate<type>
 {
  public:
-  virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true);
+  virtual void Load(inputfile&, const valuemap&);
 };
 
 template <class type> class protonamedmember : public datamembertemplate<ushort>
 {
  public:
-  virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true);
+  virtual void Load(inputfile&, const valuemap&);
 };
 
 class script
 {
  public:
-  script() { }
-  script(const script&) { }
-  script& operator=(const script&) { return *this; }
+  script() : Base(0) { }
   const valuemap& GetValueMap() const { return ValueMap; }
   void SetValueMap(const valuemap& What) { ValueMap = What; }
-  datamemberbase* GetDataMember(ushort Index) const { return Data[Index]; }
   bool LoadData(inputfile&, const std::string&);
+  virtual datamemberbase* GetData(const std::string&) = 0;
+  const datamemberbase* GetConstData(const std::string& Identifier) const { return const_cast<script*>(this)->GetData(Identifier); }
+  script* GetBase() const { return Base; }
+  void SetBase(script* What) { Base = What; }
+  virtual void ReadFrom(inputfile&, bool = false) = 0;
  protected:
-  std::vector<datamemberbase*> Data;
   valuemap ValueMap;
-};
-
-template <class basetype> class scriptwithbase : public script
-{
- public:
-  scriptwithbase() : Base(0) { }
-  basetype* GetBase() const { return Base; }
-  void SetBase(basetype*);
- protected:
-  basetype* Base;
+  script* Base;
 };
 
 class posscript : public script
 {
  public:
-  posscript();
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   bool GetRandom() const { return Random; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   bool Random;
   DATAMEMBER(vector2d, Vector);
@@ -150,10 +136,10 @@ class posscript : public script
 class materialscript : public script
 {
  public:
-  materialscript();
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   void SetConfig(ushort What) { Config = What; }
   material* Instantiate() const;
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(ulong, Volume);
   ushort Config;
@@ -162,10 +148,11 @@ class materialscript : public script
 class basecontentscript : public script
 {
  public:
-  basecontentscript();
+  basecontentscript() : ContentType(0), Config(0) { }
   virtual ~basecontentscript() { }
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   ushort GetContentType() const { return ContentType; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   virtual const std::string& GetClassId() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
@@ -190,9 +177,9 @@ template <class type> class contentscript;
 class contentscript<character> : public contentscripttemplate<character>
 {
  public:
-  contentscript<character>();
   void Instantiate(std::vector<character*>&, ulong, ushort = 0) const;
   character* Instantiate(ushort = 0) const;
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(ushort, Team);
 };
@@ -200,13 +187,14 @@ class contentscript<character> : public contentscripttemplate<character>
 class contentscript<item> : public contentscripttemplate<item>
 {
  public:
-  contentscript<item>();
   void Instantiate(std::vector<item*>&, ulong, ushort = 0) const;
   item* Instantiate(ushort = 0) const;
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(ushort, Team);
   DATAMEMBER(bool, Active);
   DATAMEMBER(uchar, SideStackIndex);
+  DATAMEMBER(short, Enchantment);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
@@ -219,9 +207,9 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
-  contentscript<olterrain>();
   void Instantiate(std::vector<olterrain*>&, ulong, ushort = 0) const;
   olterrain* Instantiate(ushort = 0) const;
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(uchar, VisualEffects);
 };
@@ -229,8 +217,8 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
 class squarescript : public script
 {
  public:
-  squarescript();
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(posscript, Position);
   DATAMEMBER(contentscript<character>, Character);
@@ -246,24 +234,25 @@ class squarescript : public script
 template <class type> class contentmap : public script
 {
  public:
-  contentmap();
+  contentmap() : ContentScriptMap(0) { }
   ~contentmap() { DeleteContents(); }
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   void DeleteContents();
   const contentscript<type>* GetContentScript(ushort X, ushort Y) const { return ContentScriptMap[X][Y]; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   contentscript<type>*** ContentScriptMap;
   DATAMEMBER(vector2d, Size);
   DATAMEMBER(vector2d, Pos);
 };
 
-class roomscript : public scriptwithbase<roomscript>
+class roomscript : public script
 {
  public:
-  roomscript();
   ~roomscript();
   void ReadFrom(inputfile&, bool = false);
   const std::vector<squarescript*>& GetSquare() const { return Square; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -288,14 +277,14 @@ class roomscript : public scriptwithbase<roomscript>
   DATAMEMBER(bool, AllowBoobyTrappedDoors);
 };
 
-class levelscript : public scriptwithbase<levelscript>
+class levelscript : public script
 {
  public:
-  levelscript();
   ~levelscript();
   void ReadFrom(inputfile&, bool = false);
   const std::vector<squarescript*>& GetSquare() const { return Square; }
   const std::map<uchar, roomscript*>& GetRoom() const { return Room; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -317,13 +306,13 @@ class levelscript : public scriptwithbase<levelscript>
   DATAMEMBER(uchar, LOSModifier);
 };
 
-class dungeonscript : public scriptwithbase<dungeonscript>
+class dungeonscript : public script
 {
  public:
-  dungeonscript();
   ~dungeonscript();
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   const std::map<uchar, levelscript*>& GetLevel() const { return Level; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   std::map<uchar, levelscript*> Level;
   DATAMEMBER(levelscript, LevelDefault);
@@ -333,9 +322,9 @@ class dungeonscript : public scriptwithbase<dungeonscript>
 class teamscript : public script
 {
  public:
-  teamscript();
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   const std::vector<std::pair<uchar, uchar> >& GetRelation() const { return Relation; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
   DATAMEMBER(ushort, AttackEvilness);
@@ -344,11 +333,11 @@ class teamscript : public script
 class gamescript : public script
 {
  public:
-  gamescript();
   ~gamescript();
-  void ReadFrom(inputfile&);
+  virtual void ReadFrom(inputfile&, bool = false);
   const std::vector<std::pair<uchar, teamscript*> >& GetTeam() const { return Team; }
   const std::map<uchar, dungeonscript*>& GetDungeon() const { return Dungeon; }
+  virtual datamemberbase* GetData(const std::string&);
  protected:
   std::vector<std::pair<uchar, teamscript*> > Team;
   std::map<uchar, dungeonscript*> Dungeon;

@@ -70,14 +70,14 @@ char* festring::IntegerToChar(long Integer)
   if(Integer < 0)
     {
       if(Integer < -2147483647)
-	return strcpy(BufferPtr, "-Inf");
+	return strncpy(BufferPtr, "-Inf", 5);
 
       *BufferPtr++ = '0';
       Integer = -Integer;
       Negative = true;
     }
   else if(Integer > 2147483647)
-    return strcpy(BufferPtr, "Inf");
+    return strncpy(BufferPtr, "Inf", 4);
 
   bool ForceZeros = false;
 

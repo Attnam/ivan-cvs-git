@@ -46,10 +46,21 @@ wall
 		BitmapPos = 64, 272;
 	}
 
+	Config BRICK_PROPAGANDA;
+	{
+		DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
+		MainMaterialConfig == STONE;
+		NameSingular = "wall";
+		PostFix = "with a poster explaining who's in charge here";
+		BitmapPos = 80, 272;
+	}
+
 	Config BRICK_OLD;
 	{
-		DigMessage = "The wall is pretty hard, but you still manage to go through it.";
+		DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
 		MainMaterialConfig == STONE;
+		AdjectiveArticle = "an";
+		Adjective = "old";
 		NameSingular = "wall";
 		BitmapPos = 16, 256;
 	}

@@ -334,9 +334,9 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
     }
 
   if(MergeStack)
-    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, SelectItem, ShowSpecialInfo, SorterFunction);
+    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, ShowSpecialInfo, SorterFunction);
 
-  AddContentsToList(Contents, Viewer, ThisDesc, SelectItem, ShowSpecialInfo, SorterFunction);
+  AddContentsToList(Contents, Viewer, ThisDesc, ShowSpecialInfo, SorterFunction);
   ushort Chosen = Contents.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
@@ -359,7 +359,7 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
 
 /* fix selectitem warning! */
 
-void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, bool SelectItem, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
+void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
 {
   std::vector<std::vector<item*> > PileVector;
   Pile(PileVector, Viewer, SorterFunction);
@@ -387,7 +387,9 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
 	  Contents.AddEntry(item::ItemCategoryName(LastCategory), LIGHTGRAY, 0, 0, false);
 	}
 
-      Item->AddInventoryEntry(Viewer, Contents, PileVector[p].size(), ShowSpecialInfo);
+      std::string Entry;
+      Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), ShowSpecialInfo);
+      Contents.AddEntry(Entry, LIGHTGRAY, 0, Item->GetPicture());
     }
 }
 

@@ -298,7 +298,7 @@ class item : public object
   ushort GetBaseMinDamage() const { return ushort(GetWeaponStrength() * 3 / 20000); }
   ushort GetBaseMaxDamage() const { return ushort(GetWeaponStrength() * 5 / 20000 + 1); }
   ushort GetBaseBlockValue() const { return ushort(12.5f * GetBlockModifier() / (2500 + float(GetWeight() - 500))); }
-  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
   virtual DATABASEBOOL(CanBeCloned);
@@ -314,6 +314,7 @@ class item : public object
   virtual ulong GetTotalExplosivePower() const { return 0; }
   virtual void Break();
   void Empty();
+  virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }
   void SignalAttackInfoChange();
   virtual float GetToHitValueBonus() const { return 1.0f; }

@@ -538,7 +538,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 1000;
 	BaseEmitation = 333;
-	/* StrengthModifier not used, SV == constant 100 */
+	/* StrengthModifier not used, SV == 3 * (10 + Enchantment) */
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == CLOTH;
 	ArticleMode = DEFINITEARTICLE;
@@ -550,7 +550,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 potion /* materialcontainer-> */
 {
 	DefaultSize = 30;
-	Possibility = 250;
+	Possibility = 400;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160, 128;
 	Category = POTION;
@@ -561,8 +561,8 @@ potion /* materialcontainer-> */
 	FormModifier = 40;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 5, 0, WATER, HEALINGLIQUID, OMLEURINE, POISONLIQUID; }
-	MaterialConfigChances = { 5, 100, 100, 50, 10, 50; }
+	ContainedMaterialConfig = { 5, WATER, HEALINGLIQUID, OMLEURINE, POISONLIQUID, VALDEMAR; }
+	MaterialConfigChances = { 5, 100, 75, 50, 75, 1; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;
@@ -925,7 +925,7 @@ fiftymillionroubles
 oillamp
 {
 	DefaultSize = 30;
-	Possibility = 25;
+	Possibility = 35;
 	CanBeWished = false;
 	Category = TOOL;
 	DefaultMainVolume = 150;
@@ -1074,7 +1074,7 @@ cloak /* armor-> */
 	Possibility = 250;
 	Category = CLOAK;
 	DefaultMainVolume = 4000;
-	StrengthModifier = 100;
+	StrengthModifier = 75;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
 	NameSingular = "cloak";
@@ -1141,7 +1141,7 @@ belt /* armor-> */
 	WeaponCategory = WHIPS;
 	Category = BELT;
 	DefaultMainVolume = 250;
-	StrengthModifier = 50;
+	StrengthModifier = 75;
 	BitmapPos = 32, 384;
 	NameSingular = "belt";
 	MainMaterialConfig = { 3, LEATHER, CLOTH, FABRIC; }
@@ -1656,7 +1656,6 @@ whipofcleptia /* meleeweapon->whip-> */
 	Roundness = 2;
 	Alias == "whip of cleptia";
 	FormModifier = 1000; /* this is multiplied by MainMaterial's flexibility */
-	ArticleMode = DEFINITEARTICLE;
 	CanBeCloned = false;
 	Price = 500;
 
@@ -1683,14 +1682,14 @@ wandofcloning /* wand-> */
 
 scrollofenchantweapon /* scroll-> */
 {
-	Possibility = 10;
+	Possibility = 25;
 	Price = 250;
 	PostFix = "of enchant weapon";
 }
 
 scrollofenchantarmor /* scroll-> */
 {
-	Possibility = 25;
+	Possibility = 50;
 	Price = 250;
 	PostFix = "of enchant armor";
 }

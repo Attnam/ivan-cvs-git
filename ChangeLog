@@ -1,10 +1,38 @@
+September 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected lots of warnings given by gcc compilation
+	* The game doesn't generate monsters that can't hurt the player nor can
+	  be themselves hurted, like a mammoth against an AV 60 enemy
+	* The same applies to monsters which deal a ton a damage but can also be
+	  killed really easily, like skeleton warriors
+	* Armies of monsters of single type are now a lot less common
+	* Attribute decrease due to negative exp is now four times slower than before
+	* Mammoth and buffalo stats tweaked a bit
+	* Attribute system balancing
+	* Valdemar added by Hex
+	* Omle urine is now more powerful
+	* Omle urine messages work now better
+	* Healing liquid doesn't work on non-living bodyparts anymore
+	* Healing liquid effect adjusted
+	* Healing liquid now prints a message when it grows new limbs
+	* Useful potions are now more common
+	* Enchantments can now be defined in the script
+	* Added lots of enchantments for the initial equipment of high level monsters
+	* Pictures of a native village and an entrance to an underwater tunnel added
+	  to WTerrain.pcx by Kahvi
+	* Picture of an imperialist added to Humanoid.pcx by Kahvi
+	* Wall with Petrus poster added to OLTerrain.pcx by me
+	* Added some Petrus posters around Attnam
+	* Probably something else, I was nine days without coding and my memory
+	  about what I did is dizzy
+
 September 07 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* The frequency of suicide dwarfs increased from 1000 to 10000
 	* Kicking locked chests can now shatter the lock
 	* The contained items of a chest now receive 50 % of the physical damaged inflicted to the chest 
-	* Chest's StorageVolume incresed from 1000 to 5000 (even bottles couldn't fit inside before)
-	
+	* Chest's StorageVolume increased from 1000 to 5000 (even bottles couldn't fit inside before)
+
 August 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Whistle now sets the waypoint of some creatures to users pos

@@ -1810,7 +1810,7 @@ void banana::VirtualConstructor(bool Load)
     SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
 }
 
-void lantern::VirtualConstructor(bool Load)
+void lantern::VirtualConstructor(bool)
 {
   SetSquarePosition(CENTER);
 }
@@ -1830,7 +1830,7 @@ void oillamp::VirtualConstructor(bool Load)
     SetInhabitedByGenie(RAND() & 1);
 }
 
-void mine::VirtualConstructor(bool Load)
+void mine::VirtualConstructor(bool)
 {
   Active = false; /* this must be false */
 }
@@ -1932,9 +1932,7 @@ void whistle::BlowEffect(character* Whistler)
 	      ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
 	      if(ThisDistance <= GetRange())
-		{
-		  (*i)->SetWayPoint(GetPos());
-		}
+		(*i)->SetWayPoint(GetPos());
 	    }
     }
 }
@@ -2461,7 +2459,7 @@ void beartrap::Save(outputfile& SaveFile) const
   SaveFile << Active << Team;
 }
 
-void beartrap::VirtualConstructor(bool Load)
+void beartrap::VirtualConstructor(bool)
 {
   Active = false; /* this must be false */
 }
@@ -3283,14 +3281,13 @@ bool wandofcloning::BeamEffect(character* Zapper, const std::string&, uchar, lsq
   return Where->CloneEverything(Zapper);
 }
 
-void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List, ushort, bool ShowSpecialInfo) const // never piled
+void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
 {
-  std::string Entry;
   AddName(Entry, INDEFINITE);
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, BDAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BBV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3303,19 +3300,15 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List, ushor
 
       Entry << "]";
     }
-
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
-void banana::AddInventoryEntry(const character* Viewer, felist& List, ushort Amount, bool ShowSpecialInfo) const
+void banana::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
-  item::AddInventoryEntry(Viewer, List, Amount, ShowSpecialInfo);
+  item::AddInventoryEntry(Viewer, Entry, Amount, ShowSpecialInfo);
 }
 
-void armor::AddInventoryEntry(const character*, felist& List, ushort Amount, bool ShowSpecialInfo) const
+void armor::AddInventoryEntry(const character*, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
-  std::string Entry;
-
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
   else
@@ -3326,18 +3319,15 @@ void armor::AddInventoryEntry(const character*, felist& List, ushort Amount, boo
 
   if(ShowSpecialInfo)
     Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << "]";
-
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
-void shield::AddInventoryEntry(const character* Viewer, felist& List, ushort, bool ShowSpecialInfo) const // never piled
+void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
 {
-  std::string Entry;
   AddName(Entry, INDEFINITE);
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, BBV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
+      Entry << " [" << GetWeight() << "g, BV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3350,13 +3340,10 @@ void shield::AddInventoryEntry(const character* Viewer, felist& List, ushort, bo
 
       Entry << "]";
     }
-
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
-void wand::AddInventoryEntry(const character*, felist& List, ushort, bool ShowSpecialInfo) const // never piled
+void wand::AddInventoryEntry(const character*, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
 {
-  std::string Entry;
   AddName(Entry, INDEFINITE);
 
   if(ShowSpecialInfo)
@@ -3370,8 +3357,6 @@ void wand::AddInventoryEntry(const character*, felist& List, ushort, bool ShowSp
       else
 	Entry << "]";
     }
-
-  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
 }
 
 void materialcontainer::SignalSpoil(material* Material)
@@ -3629,8 +3614,6 @@ void potion::Break()
 
 void bodypart::Be()
 {
-  if(Master && Master->IsPlayer())
-    int esko = 2;
   if(Master)
     {
       if(Master->IsPolymorphed())
@@ -3697,7 +3680,7 @@ void bodypart::InitSpecialAttributes()
 ulong shield::GetPrice() const /* temporary... */
 {
   float StrengthValue = GetStrengthValue();
-  return (GetBaseBlockValue() * StrengthValue * StrengthValue * StrengthValue / 750) + item::GetPrice();
+  return ulong(GetBaseBlockValue() * StrengthValue * StrengthValue * StrengthValue / 750) + item::GetPrice();
 }
 
 ulong whipofcleptia::GetPrice() const
@@ -3731,7 +3714,7 @@ ushort neercseulb::GetOutlineColor(ushort Frame) const
 ushort goldeneagleshirt::GetOutlineColor(ushort Frame) const
 {
   Frame %= 32;
-  return MakeRGB(0, 135 + (Frame * (31 - Frame) >> 1), 0);
+  return MakeRGB(0, 75 + (Frame * (31 - Frame) >> 1), 0);
 }
 
 void armor::Save(outputfile& SaveFile) const
@@ -3818,6 +3801,18 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     }
 }
 
+void meleeweapon::SetEnchantment(char Amount)
+{
+  Enchantment = Amount;
+  SignalAttackInfoChange();
+}
+
+void armor::SetEnchantment(char Amount)
+{
+  Enchantment = Amount;
+  SignalAttackInfoChange();
+}
+
 void meleeweapon::EditEnchantment(char Amount)
 {
   Enchantment += Amount;
@@ -3858,6 +3853,7 @@ bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
   if(Type == PHYSICALDAMAGE)
     {
       Contained->ReceiveDamage(Damager, Damage / 2, PHYSICALDAMAGE);
+
       if(IsLocked() && Damage > RAND() % 6)
 	{
 	  SetIsLocked(false);
@@ -3867,6 +3863,8 @@ bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 	    {
 	      ADD_MESSAGE("%s's lock shatters to pieces.", GetNameSingular().c_str());
 	    }
+
+	  return true;
 	}
       else
 	{
@@ -3874,4 +3872,6 @@ bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 	    ADD_MESSAGE("THUMB!");
 	}
     }
+
+  return false;
 }

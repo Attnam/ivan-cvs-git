@@ -25,7 +25,6 @@ ulong globalwindowhandler::UpdateTick()
 {
   Tick = clock() * 25 / CLOCKS_PER_SEC;
   return Tick;
-
 }
 
 #ifdef __DJGPP__
@@ -235,7 +234,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    graphics::BlitDBToScreen();
 		}
 
-	      Sleep(10);
+	      Sleep(30);
 	    }
 	  else
 	    WaitMessage();
@@ -307,7 +306,9 @@ void globalwindowhandler::CheckMessages()
 #endif
 
 #ifdef USE_SDL
+
 bool globalwindowhandler::Active = true;
+
 void globalwindowhandler::Init(const char* Title)
 {
   SDL_WM_SetCaption(Title, 0);

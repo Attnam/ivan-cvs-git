@@ -121,7 +121,7 @@ material
 
 	Config CLOTH;
 	{
-		StrengthValue = 5;
+		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
 		IsSolid = true;
@@ -182,7 +182,7 @@ material
 
 	Config LEATHER;
 	{
-		StrengthValue = 10;
+		StrengthValue = 15;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
@@ -194,7 +194,7 @@ material
 
 	Config LEAF;
 	{
-		StrengthValue = 5;
+		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
@@ -206,7 +206,7 @@ material
 
 	Config FABRIC;
 	{
-		StrengthValue = 5;
+		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
 		IsSolid = true;
@@ -218,7 +218,7 @@ material
 
 	Config PALMLEAF;
 	{
-		StrengthValue = 5;
+		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
@@ -497,7 +497,7 @@ liquid
 		StrengthValue = 1;
 		Color = rgb(160, 160, 0);
 		CanBeWished = false;
-		NutritionValue = 400;
+		NutritionValue = 50;
 		PriceModifier = 2500;
 		NameStem = "Omle urine";
 		Article = "an";
@@ -512,7 +512,7 @@ liquid
 		StrengthValue = 200;
 		Density = 1500;
 		Alignment = EVIL;
-		NutritionValue = 400;
+		NutritionValue = 50;
 		Color = rgb(48, 48, 48);
 		IsBadFoodForAI = true;
 		NameStem = "pepsi";
@@ -533,7 +533,7 @@ liquid
 	Config HEALINGLIQUID;
 	{
 		StrengthValue = 1;
-		NutritionValue = 100;
+		NutritionValue = 25;
 		Color = rgb(180, 0, 0);
 		PriceModifier = 1000;
 		NameStem = "healing liquid";
@@ -559,7 +559,7 @@ liquid
 	{
 		StrengthValue = 2;
 		Density = 400;
-		NutritionValue = 50;
+		NutritionValue = 25;
 		Color = rgb(0, 128, 0);
 		Color = rgb(111, 74, 37);
 		NameStem = "brown slime";
@@ -577,6 +577,18 @@ liquid
 		NameStem = "poison";
 		Effect = EPOISON;
 		Alpha = 150;
+	}
+
+	Config VALDEMAR;
+	{
+		StrengthValue = 1;
+		Alignment = EVIL;
+		NutritionValue = 8;
+		Color = rgb(50, 0, 0);
+		IsBadFoodForAI = true;
+		NameStem = "Valdemar";
+		Effect = EPOISON;
+		Alpha = 200;
 	}
 }
 

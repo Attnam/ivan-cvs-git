@@ -115,13 +115,14 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 3; }
-  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual bool HasSecondaryMaterial() const { return true; }
   virtual bool HasContainedMaterial() const { return true; }
   virtual void Be();
   virtual bool IsWeapon(const character*) const { return true; }
+  virtual void SetEnchantment(char);
   virtual void EditEnchantment(char);
   virtual float GetWeaponStrength() const;
   virtual ushort GetStrengthValue() const;
@@ -159,7 +160,7 @@ class ITEM
   virtual material* GetConsumeMaterial() const { return SecondaryMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeSecondaryMaterial(NewMaterial, SpecialFlags); }
-  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -208,11 +209,12 @@ class ABSTRACT_ITEM
   item,
  public:
   virtual ulong GetPrice() const;
-  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsWeapon(const character*) const { return true; }
   virtual bool IsArmor(const character*) const { return true; }
+  virtual void SetEnchantment(char);
   virtual void EditEnchantment(char);
   virtual ushort GetStrengthValue() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
@@ -239,7 +241,7 @@ class ITEM
   bodyarmor,
  public:
   virtual void Be() { }
-  virtual ushort GetStrengthValue() const { return 100; }
+  virtual ushort GetStrengthValue() const { return 3 * (10 + Enchantment); }
   virtual bool IsGoldenEagleShirt() const { return true; };
   virtual bool IsConsumable(const character*) const { return false; }
  protected:
@@ -392,7 +394,7 @@ class ABSTRACT_ITEM
   virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual bool Zap(character*, vector2d, uchar);
-  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual bool IsExplosive() const { return true; }
   virtual ulong GetTotalExplosivePower() const { return 40; }
  protected:
@@ -639,7 +641,7 @@ class ITEM
  public:
   virtual ulong GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
-  virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual float GetToHitValueBonus() const { return (10 + Enchantment) / 10.0f; }
 );
 
@@ -1114,7 +1116,7 @@ class ITEM
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;
   virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
-  virtual bool IsDrinkable(const character* Eater) const { return false; }
+  virtual bool IsDrinkable(const character*) const { return false; }
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
   virtual void SignalSpoil(material*);
