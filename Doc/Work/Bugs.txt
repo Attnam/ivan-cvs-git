@@ -86,3 +86,4 @@ You can sell mirrored items.
 Mirror + WorldMap.
 You can destroy terrains in Attnam with a wand of acid rain without causing an alarm.
 Vladimir can destroys terrains in Attnam even if the citizens are not hostile.
+"The kobold glows and transforms into an invisible talker."

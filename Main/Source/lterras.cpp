@@ -636,13 +636,10 @@ bool altar::SitOn(character* Sitter)
   else
     if(!(RAND() % 2500))
       {
-	character* Angel = GetMasterGod()->CreateAngel();
+	character* Angel = GetMasterGod()->CreateAngel(PLAYER->GetTeam());
 
 	if(Angel)
-	  {
-	    Angel->SetTeam(PLAYER->GetTeam());
-	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	  }
+	  ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 
 	GetMasterGod()->AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(GetMasterGod(), 10, true);

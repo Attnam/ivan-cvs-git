@@ -1276,7 +1276,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
     {
       if(!StateIsActivated(POLYMORPHED))
 	{
-	  if(!IsPlayer())
+	  if(!IsPlayer() && !GetTorso()->GetLifeExpectancy())
 	    game::SignalDeath(this, Killer, Msg);
 
 	  if(AllowCorpse)
@@ -1286,7 +1286,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	}
       else
 	{
-	  if(!IsPlayer())
+	  if(!IsPlayer() && !GetTorso()->GetLifeExpectancy())
 	    game::SignalDeath(GetPolymorphBackup(), Killer, Msg);
 
 	  GetPolymorphBackup()->CreateCorpse(LSquareUnder[0]);

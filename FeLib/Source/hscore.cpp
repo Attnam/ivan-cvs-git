@@ -158,7 +158,6 @@ int highscore::Find(long AScore, const festring& AEntry, time_t ATime, long ARan
   return 0;
 }
 
-
 bool highscore::LastAddFailed() const
 {
   return LastAdd == MAX_HIGHSCORES;

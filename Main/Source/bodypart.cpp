@@ -2338,11 +2338,8 @@ character* corpse::TryNecromancy(character* Summoner)
     {
       vector2d Pos = GetPos();
       RemoveFromSlot();
+      Zombie->ChangeTeam(Summoner ? Summoner->GetTeam() : game::GetTeam(MONSTER_TEAM));
       Zombie->PutToOrNear(Pos);
-      
-      if(Summoner)
-	Zombie->ChangeTeam(Summoner->GetTeam());
-
       Zombie->SignalStepFrom(0);
       SendToHell();
       return Zombie;
@@ -3043,10 +3040,10 @@ bool corpse::Necromancy(character* Necromancer)
 
   if(Zombie)
     {
+      Zombie->ChangeTeam(Necromancer ? Necromancer->GetTeam() : game::GetTeam(MONSTER_TEAM));
       Zombie->PutToOrNear(GetPos());
       RemoveFromSlot();
       SendToHell();
-      Zombie->ChangeTeam(Necromancer->GetTeam());
 
       if(Zombie->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s rises back to cursed undead life.", Zombie->CHAR_DESCRIPTION(INDEFINITE));

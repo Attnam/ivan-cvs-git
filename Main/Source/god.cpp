@@ -30,13 +30,10 @@ void god::Pray()
 
 	if(Relation > 250 && !(RAND() % 20))
 	  {
-	    character* Angel = CreateAngel(1000);
+	    character* Angel = CreateAngel(PLAYER->GetTeam(), 10000);
 
 	    if(Angel)
-	      {
-		Angel->SetTeam(PLAYER->GetTeam());
-		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	      }
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	  }
 	else if(Relation > 100 && !(RAND() % 20))
 	  {
@@ -96,13 +93,10 @@ void god::Pray()
 
 	if(Relation < -250 && !(RAND() % 10))
 	  {
-	    character* Angel = CreateAngel(10000);
+	    character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
 	    if(Angel)
-	      {
-		Angel->SetTeam(game::GetTeam(4));
-		ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
-	      }
+	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	  }
       }
 }
@@ -179,19 +173,16 @@ bool god::PlayerVomitedOnAltar(liquid* Liquid)
 
   if(!(RAND() % 10))
     {
-      character* Angel = CreateAngel(10000);
+      character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
       if(Angel)
-	{
-	  Angel->SetTeam(game::GetTeam(4));
-	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
-	}
+	ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
     }
 
   return true;
 }
 
-character* god::CreateAngel(int LifeBase)
+character* god::CreateAngel(team* Team, int LifeBase)
 {
   vector2d TryToCreate;
 
@@ -203,7 +194,7 @@ character* god::CreateAngel(int LifeBase)
 	{
 	  angel* Angel;
 
-	  if(LifeBase && (!(RAND() % 5) || Relation == 1000))
+	  if(LifeBase && (!(RAND() % 5) || abs(Relation) == 1000))
 	    Angel = new archangel(GetType());
 	  else
 	    Angel = new angel(GetType());
@@ -215,6 +206,7 @@ character* god::CreateAngel(int LifeBase)
 
 	  if(Angel->CanMoveOn(Square) && Angel->IsFreeForMe(Square))
 	    {
+	      Angel->SetTeam(Team);
 	      Angel->SetGenerationDanger(ANGEL_GENERATION_DANGER);
 	      Angel->PutTo(TryToCreate);
 	      ADD_MESSAGE("Suddenly %s appears!", Angel->CHAR_NAME(INDEFINITE));
@@ -292,13 +284,10 @@ bool god::ReceiveOffer(item* Sacrifice)
 
       if(OfferValue > 0 && Relation > 250 && !(RAND() % RandModifier))
 	{
-	  character* Angel = CreateAngel();
+	  character* Angel = CreateAngel(PLAYER->GetTeam());
 
 	  if(Angel)
-	    {
-	      Angel->SetTeam(PLAYER->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	    }
+	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	}
 
       return true;

@@ -25,6 +25,7 @@ class inputfile;
 class festring;
 class god;
 class liquid;
+class team;
 
 class godprototype
 {
@@ -67,7 +68,7 @@ class god
   void PlayerKickedAltar() { AdjustRelation(-100); }
   void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
   virtual bool PlayerVomitedOnAltar(liquid*);
-  character* CreateAngel(int = 0);
+  character* CreateAngel(team*, int = 0);
   virtual color16 GetColor() const = 0;
   virtual color16 GetEliteColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;

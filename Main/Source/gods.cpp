@@ -753,13 +753,10 @@ void valpurus::Pray()
 
       if(Relation > 250 && !(RAND() % 2))
 	{
-	  character* Angel = CreateAngel(10000);
+	  character* Angel = CreateAngel(PLAYER->GetTeam(), 10000);
 
 	  if(Angel)
-	    {
-	      Angel->SetTeam(PLAYER->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	    }
+	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
   else
@@ -773,13 +770,10 @@ void valpurus::Pray()
 
       if(Relation < -250 && !(RAND() % 3))
 	{
-	  character* Angel = CreateAngel(10000);
+	  character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
 	  if(Angel)
-	    {
-	      Angel->SetTeam(game::GetTeam(4));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
-	    }
+	    ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
 }
@@ -797,13 +791,10 @@ void mortifer::Pray()
 
       if(Relation > 250 && !(RAND() % 2))
 	{
-	  character* Angel = CreateAngel(10000);
+	  character* Angel = CreateAngel(PLAYER->GetTeam(), 10000);
 
 	  if(Angel)
-	    {
-	      Angel->SetTeam(PLAYER->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	    }
+	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
   else
@@ -817,13 +808,10 @@ void mortifer::Pray()
 
       if(Relation < -250 && !(RAND() % 3))
 	{
-	  character* Angel = CreateAngel(10000);
+	  character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
 	  if(Angel)
-	    {
-	      Angel->SetTeam(game::GetTeam(4));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
-	    }
+	    ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
 }

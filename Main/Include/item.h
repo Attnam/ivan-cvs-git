@@ -344,7 +344,6 @@ class item : public object
   DATA_BASE_VALUE(int, EnchantmentPlusChance);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
-  //virtual bool TryToUnstuck(character*, vector2d) { return true; }
   virtual bool TryToUnstuck(character*, int, vector2d) { return false; }
   long GetBlockModifier() const;
   bool IsSimiliarTo(item*) const;
@@ -392,7 +391,6 @@ class item : public object
   virtual void SetEnchantment(int) { }
   virtual void EditEnchantment(int) { }
   virtual void SignalEnchantmentChange();
-  //virtual int GetBonus() const { return 100; }
   virtual double GetTHVBonus() const { return 0.; }
   virtual double GetDamageBonus() const { return 0.; }
   virtual void DrawContents(const character*) { }
@@ -485,6 +483,7 @@ class item : public object
   int GetSquarePosition() const { return (Flags & SQUARE_POSITION_BITS) >> SQUARE_POSITION_SHIFT; }
   virtual bool IsLanternOnWall() const { return false; }
   virtual void DestroyBodyPart(stack*) { SendToHell(); }
+  int GetLifeExpectancy() const { return LifeExpectancy; }
   virtual void SetLifeExpectancy(int, int);
   int NeedsBe() const { return !!LifeExpectancy; }
   bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
