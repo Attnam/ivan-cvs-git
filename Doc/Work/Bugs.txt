@@ -77,3 +77,4 @@ Several archangels with the same name can be generated.
 Several artifact weapons with the same name can be generated.
 Check: does Ivan break doors correctly?
 "Weak kick has no chance to affect door" even if the door is sometimes affected by a second kick.
+Earthquakes drop moraine in the level even if it's inappropriate.

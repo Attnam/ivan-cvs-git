@@ -141,3 +141,6 @@ McDonalds in New Attnam. (from Henri Kiviluoto)
 It should be possible for a tourist in a swimsuit to appear from a fountain.
 Friction.
 Team formations.
+After the 16x16 -> 32x32 conversion, the old graphics could be used for
+    midgets.
+Petrus should be able to divide the sea in two when he travels abroad.

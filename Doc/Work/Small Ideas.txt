@@ -542,3 +542,15 @@ Lyre of charm's effect should depend on charisma and the relation to Dulcis.
 Amnesia should use different shapes to blur memory, for instance remove some rectangular areas from one's map.
 Maybe vesana could be animated somehow?
 If you have no limbs, your head should sometimes drop off due to leprosy.
+There should be more savescumming detection, at least hidden data in highscores we could use.
+HP-based monster generation of special monsters shouldn't consider HPs of polymorph forms.
+When wishing for "a mithril chain mail +5", the game should ask "Do you mean 'chain mail'? [y/n]".
+Damage source IDs.
+Ultraviolet light which causes the disease skin cancer.
+MIHAIL should something sensible if one tries to merge a file which doesn't exist.
+MIHAIL --version could say its version.
+INT requirements for certain other replies.
+If the player has very low INT, he shouldn't be able to say anything else than "Ugh." to NPCs.
+Commented insults to savescummers above RemoveSaves() in the code.
+Installer to the Win32 version.
+A way to define default attack mode (melee/bite/kick).
