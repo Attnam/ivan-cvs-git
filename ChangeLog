@@ -1,3 +1,7 @@
+April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item.pcx: shield, cloak, gauntlet, belt, amulet and ring added by Kahvi
+
 2002-04-01 (later) Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Include/itemba.h: #included lterrade (fountain), added function HasBeenDippedInFountain
 	* Main/Include/itemde.h: Added function HasBeenDippedInFountain and CanBeDipped to fountain
