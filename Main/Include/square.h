@@ -49,6 +49,7 @@ public:
 	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
 	virtual bitmap* GetMemorized() const { return Memorized; }
 	virtual void SetDescriptionChanged(bool) {}
+	virtual bool CanBeSeenFrom(vector2d) const;
 protected:
 	std::string MemorizedDescription;
 	area* AreaUnder;

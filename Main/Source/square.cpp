@@ -77,3 +77,8 @@ bool square::CanBeSeen() const
 	else
 		return false;
 }
+
+bool square::CanBeSeenFrom(vector2d FromPos) const
+{
+	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
+}

@@ -554,11 +554,6 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 	return true;
 }
 
-bool levelsquare::CanBeSeenFrom(vector2d FromPos) const
-{
-	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
-}
-
 bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
 {
 	char Result = CanBeDigged(DiggerCharacter, DiggerItem);

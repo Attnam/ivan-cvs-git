@@ -836,4 +836,5 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual bool Zap(vector2d, uchar);
 );
+
 #endif

@@ -58,7 +58,6 @@ public:
 	virtual void SetEmitation(ushort What) { Emitation = What; }
 	virtual void UpdateMemorizedDescription();
 	virtual bool Kick(ushort,uchar, character*);
-	virtual bool CanBeSeenFrom(vector2d) const;
 	virtual uchar GetDivineOwner() const { return DivineOwner; }
 	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
 	virtual void DrawToTileBuffer() const;

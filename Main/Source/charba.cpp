@@ -238,6 +238,7 @@ void character::Be()
 					Timer = 0;
 				}
 				CharacterSpeciality();
+				StateAutoDeactivation();
 				if(CanMove())
 					GetPlayerCommand();
 				Hunger();
@@ -247,7 +248,9 @@ void character::Be()
 			}
 			else
 			{
-				GetAICommand(); //This should handle AI suicide also...
+				StateAutoDeactivation();
+				if(CanMove())
+					GetAICommand(); //This should handle AI suicide also...
 				Regenerate();
 			}
 
@@ -1644,12 +1647,14 @@ void character::NeutralAICommand()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
 		{
-			item* ToEat = GetLevelSquareUnder()->GetStack()->RemoveItem(c);
+			//item* ToEat = GetLevelSquareUnder()->GetStack()->RemoveItem(c);
 
 			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), ToEat->CNAME(DEFINITE));
+				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
 
-			delete ToEat; //This should take time also.
+			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
+
+			//delete ToEat; //This should take time also.
 
 			return;
 		}
@@ -1739,12 +1744,17 @@ void character::HostileAICommand()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
 		{
-			item* ToEat = GetLevelSquareUnder()->GetStack()->RemoveItem(c);
+			/*item* ToEat = GetLevelSquareUnder()->GetStack()->RemoveItem(c);
 
 			if(SquareUnder->CanBeSeen())
 				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), ToEat->CNAME(DEFINITE));
 
-			delete ToEat; //This should take time also.
+			delete ToEat; //This should take time also.*/
+
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
+
+			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
 
 			return;
 		}
@@ -2326,7 +2336,9 @@ bool character::ShowWeaponSkills()
 
 void character::Faint()
 {
-	ADD_MESSAGE("You faint.");
+	if(GetIsPlayer())
+		ADD_MESSAGE("You faint.");
+
 	SetStrengthExperience(GetStrengthExperience() - 100);
 	ActivateState(FAINTED);
 	StateCounter[FAINTED] = 100 + rand() % 101;
@@ -2373,7 +2385,8 @@ void character::EatHandler()
 
 	if(!(StateCounter[EATING]--))
 	{
-		ADD_MESSAGE("You have eaten for a long time now.");
+		if(GetIsPlayer())
+			ADD_MESSAGE("You have eaten for a long time now.");
 
 		EndEating();
 	}
@@ -2455,6 +2468,24 @@ bool character::CanMove()
 void character::DeActivateVoluntaryStates()
 {
 	EndEating();
+}
+
+void character::StateAutoDeactivation()
+{
+	if(!StateIsActivated(EATING))
+		return;
+
+	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentArea()->GetXSize() - 1, game::GetCurrentArea()->GetYSize() - 1, LOSRange(),
+	{
+		character* Character = game::GetCurrentArea()->GetSquare(vector2d(XPointer,YPointer))->GetCharacter();
+
+		if(Character && ((GetIsPlayer() && Character->SquareUnder->CanBeSeen()) || (!GetIsPlayer() && Character->SquareUnder->CanBeSeenFrom(GetPos()))))
+			if((!GetRelations() && Character->GetRelations()) || (GetRelations() && !Character->GetRelations()))
+			{
+				DeActivateVoluntaryStates();
+				return;
+			}
+	});
 }
 
 void character::StruckByWandOfStriking()

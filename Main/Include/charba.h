@@ -224,6 +224,7 @@ public:
 	virtual void EndEating();
 	virtual void EndPolymorph();
 	virtual void StruckByWandOfStriking();
+	virtual void StateAutoDeactivation();
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
