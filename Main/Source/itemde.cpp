@@ -769,7 +769,7 @@ std::string wand::Name(uchar Case) const
 		return NameWithMaterial(Case) + " (used " + TimesUsed + " times)";
 }
 
-bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect)
+bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long)
 {
 	if(!(RAND() % 10) && GetMaterial(0)->IsFlammable())
 	{
@@ -830,7 +830,7 @@ void wandofstriking::BeamEffect(character* Who, uchar Dir, levelsquare* Where)
 	Where->StrikeEverything(Who, Dir); 
 }
 
-bool holybook::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect)
+bool holybook::ReceiveFireDamage(character*, stack* MotherStack, long)
 {
 	if(!(RAND() % 2) && GetMaterial(0)->IsFlammable())
 	{

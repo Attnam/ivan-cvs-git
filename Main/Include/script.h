@@ -77,6 +77,7 @@ template <class type> class contentscript : public script
 {
 public:
 	contentscript() : ContentType(0) {}
+	virtual ~contentscript() {}
 	virtual void ReadFrom(inputfile&);
 	virtual void ReadParameters(inputfile&, std::string);
 	virtual ushort* GetMaterialType(ushort, bool = true) const;
