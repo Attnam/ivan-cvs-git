@@ -238,19 +238,6 @@ material
 		NameStem = "sulfur";
 	}
 
-	Config GUNPOWDER;
-	{
-		StrengthValue = 5;
-		ConsumeType = MINERAL;
-		Density = 250;
-		Color = rgb16(30, 30, 30);
-		CanBeWished = false;
-		IsExplosive = true;
-		PriceModifier = 600;
-		NameStem = "gunpowder";
-		ExplosivePower = 8000;
-	}
-
 	Config UNICORNHORN;
 	{
 		StrengthValue = 200;
@@ -807,4 +794,18 @@ flesh
 	}
 }
 
-
+powder
+{
+	Config GUNPOWDER;
+	{
+		StrengthValue = 5;
+		ConsumeType = MINERAL;
+		Density = 250;
+		Color = rgb16(30, 30, 30);
+		CanBeWished = false;
+		IsExplosive = true;
+		PriceModifier = 600;
+		NameStem = "gunpowder";
+		ExplosivePower = 8000;
+	}
+}

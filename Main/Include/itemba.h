@@ -325,6 +325,7 @@ class item : public object
   virtual DATABASEVALUE(ulong, StorageVolume);
   virtual DATABASEVALUE(ushort, MaxGeneratedContainedItems);
   bool IsBroken() const { return Config & BROKEN != 0; }
+  virtual void ReceiveFluidSpill(material*) {}
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

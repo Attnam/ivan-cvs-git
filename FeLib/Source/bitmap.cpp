@@ -1160,7 +1160,7 @@ void bitmap::CreateFlies(ushort FlyAmount, ulong Seed, ushort Frame)
       Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = short(StartPos.Y + sin(2*(Constant + Temp))  * 3);
 
-      SafePutPixelAndResetAlpha(Where.X, Where.Y, MakeRGB16(100,100,100));
+      SafePutPixelAndResetAlpha(Where.X, Where.Y, MakeRGB16(0,0,0));
     }
   femath::SetSeed(NewSeed);
 }

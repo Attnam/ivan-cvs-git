@@ -652,3 +652,8 @@ ulong stack::GetTotalExplosivePower() const
   return ExplosivePower;
 }
 
+void stack::ReceiveFluidSpill(material* Liquid)
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->ReceiveFluidSpill(Liquid);
+}

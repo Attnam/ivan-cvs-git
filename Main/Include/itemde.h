@@ -487,6 +487,7 @@ class ITEM
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual bool IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
   virtual ulong GetTotalExplosivePower() const { return GetContainedMaterial() ? GetContainedMaterial()->GetTotalExplosivePower() : 0; }
+  virtual void ReceiveFluidSpill(material*);
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
 );

@@ -46,3 +46,21 @@ void flesh::Load(inputfile& SaveFile)
   organicsubstance::Load(SaveFile);
   SaveFile >> SkinColor;
 }
+
+void powder::Be()
+{
+  if(Wetness > 0)
+    --Wetness;
+}
+
+void powder::Save(outputfile& SaveFile) const
+{
+  material::Save(SaveFile);
+  SaveFile << Wetness;
+}
+
+void powder::Load(inputfile& SaveFile)
+{
+  material::Load(SaveFile);
+  SaveFile >> Wetness;
+}

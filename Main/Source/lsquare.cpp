@@ -1274,6 +1274,8 @@ void lsquare::SpillFluid(material* Liquid, ushort HitPercent, character* Spiller
 	Spiller->Hostility(CharHere);
       CharHere->ReceiveFluidSpill(Liquid, HitPercent);
     }
+  GetStack()->ReceiveFluidSpill(Liquid);
+
   delete Liquid;
 }
 

@@ -616,3 +616,4 @@ void item::SignalAttackInfoChange()
     Slot->SignalAttackInfoChange();
 }
 
+

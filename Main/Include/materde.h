@@ -55,5 +55,23 @@ class MATERIAL
   ushort SkinColor;
 );
 
+class MATERIAL
+(
+  powder,
+  material,
+ public:
+  virtual bool IsPowder() const { return true; }
+  virtual bool IsWet() const { return Wetness; }
+  virtual bool IsExplosive() const { return !Wetness && material::IsExplosive(); }
+  virtual void SetWetness(ulong What) { Wetness = What; }
+  virtual void Be();
+  virtual bool HasBe() const { return true; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void VirtualConstructor(bool) { Wetness = 0; }
+  ulong Wetness;
+);
+
 #endif
 

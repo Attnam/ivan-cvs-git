@@ -114,7 +114,7 @@ class material
   DATABASEBOOL(IsAlive);
   DATABASEBOOL(IsBadFoodForAI);
   DATABASEBOOL(IsFlammable);
-  DATABASEBOOL(IsExplosive);
+  virtual DATABASEBOOL(IsExplosive);
   DATABASEVALUE(const std::string&, NameStem);
   DATABASEVALUE(const std::string&, AdjectiveStem);
   DATABASEVALUE(const std::string&, Article);
@@ -148,6 +148,7 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue(const item*) const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
+  virtual void SetWetness(ulong) {}
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

@@ -512,7 +512,7 @@ bool backpack::Apply(character* Terrorist)
       return true;
     }
   else if(Terrorist->IsPlayer())
-    ADD_MESSAGE("You can't apply this!");	
+    ADD_MESSAGE("You are not able to explode yourself with this crummy %s!", CHARNAME(UNARTICLED));
 
   return false;
 }
@@ -3893,3 +3893,13 @@ void chest::DrawContents(const character* Char)
   GetContained()->DrawContents(Char, Topic, false);
 }
 
+void backpack::ReceiveFluidSpill(material* Liquid)
+{
+  if(!Liquid->IsExplosive())
+    {
+      ulong Amount = Liquid->GetVolume() * (30 + (RAND() % 71)) / 100;
+      GetContainedMaterial()->SetWetness(Amount);
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s gets wet.", CHARNAME(DEFINITE));
+    }
+}

@@ -154,6 +154,7 @@ material* material::MakeMaterial(ushort Config)
     case FIRSTGAS >> 12: return new gas(Config, 0);
     case FIRSTLIQUID >> 12: return new liquid(Config, 0);
     case FIRSTFLESH >> 12: return new flesh(Config, 0);
+    case FIRSTPOWDER >> 12: return new powder(Config, 0);
     default:
       ABORT("Odd material configuration number %d requested!", Config);
       return 0;
@@ -172,6 +173,7 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
     case FIRSTGAS >> 12: return new gas(Config, Volume);
     case FIRSTLIQUID >> 12: return new liquid(Config, Volume);
     case FIRSTFLESH >> 12: return new flesh(Config, Volume);
+    case FIRSTPOWDER >> 12: return new powder(Config, Volume);
     default:
       ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
       return 0;
