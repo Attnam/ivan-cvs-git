@@ -163,6 +163,7 @@ class lsquare : public square
   bool HasEngravings() const { return !Engraved.IsEmpty(); }
   void FinalProcessForBone();
   void SetIsFreezed(bool What) { Freezed = What; }
+  bool IsDangerousForAIToBreathe(const character*) const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

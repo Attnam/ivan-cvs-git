@@ -1162,7 +1162,7 @@ void lsquare::DrawMemorizedCharacter()
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
-  return !Who->CanFly() && Stack->IsDangerousForAIToStepOn(Who); 
+  return (!Who->CanFly() && Stack->IsDangerousForAIToStepOn(Who)) || IsDangerousForAIToBreathe(Who);
 }
 
 stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
@@ -1766,4 +1766,14 @@ bool lsquare::EngravingsCanBeReadByPlayer()
 void lsquare::DisplayEngravedInfo(festring& Buffer) const
 {
   Buffer << " There is a message engraved here: \"" << Engraved << '\"';
+}
+
+bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
+{
+  for(ushort c = 0; c < Smoke.size(); ++c)
+    {
+      if(Smoke[c]->IsDangerousForAIToBreathe(Who))
+	return true;
+    }
+  return false;
 }

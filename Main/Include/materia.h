@@ -61,6 +61,7 @@ struct materialdatabase
   bool IsWarm;
   bool UseMaterialAttributes;
   bool CanRegenerate;
+  ushort BreatheWisdomLimit;
 };
 
 class materialprototype
@@ -176,6 +177,7 @@ class material
   virtual bool SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(bool) { }
   DATA_BASE_BOOL(IsWarm);
+  DATA_BASE_VALUE(ushort, BreatheWisdomLimit);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

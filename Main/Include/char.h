@@ -164,6 +164,7 @@ struct characterdatabase
   bool ArmSpecialColorIsSparkling;
   bool LegMainColorIsSparkling;
   bool LegSpecialColorIsSparkling;
+  bool IsPlant;
 };
 
 class characterprototype
@@ -764,6 +765,8 @@ class character : public entity, public id
   virtual bool MustBeRemovedFromBone() const;
   bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
+  virtual uchar GetArms() const { return 0; }
+  DATA_BASE_BOOL(IsPlant);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

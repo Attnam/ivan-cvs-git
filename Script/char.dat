@@ -104,6 +104,7 @@ character
 	ArmSpecialColorIsSparkling = false;
 	LegMainColorIsSparkling = false;
 	LegSpecialColorIsSparkling = false;
+	IsPlant = false;
 }
 
 humanoid
@@ -2598,6 +2599,7 @@ carnivorousplant
 	SpillsBlood = false;
 	StandVerb = "rooted";
 	AttachedGod = SILVA;
+	IsPlant = true;
 
 	Config GREATER;
 	{
@@ -3052,6 +3054,7 @@ genetrixvesana
 	BaseEmitation = rgb24(140, 100, 100);
 	FleshMaterial = MUTANT_PLANT_FIBER;
 	AttachedGod = SCABIES;
+	IsPlant = true;
 }
 
 ostrich

@@ -962,7 +962,7 @@ void arm::Hit(character* Enemy, bool ForceHit)
 {
   item* Wielded = GetWielded();
 
-  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % Master->GetCriticalModifier()), ForceHit))
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), GetDamage() * GetEnemyTypeBonus(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % Master->GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -2391,4 +2391,12 @@ bool corpse::SuckSoul(character* Soul, character* Summoner)
     }
   else
     return false;
+}
+
+float arm::GetEnemyTypeBonus(const character* Enemy) const 
+{
+  if(GetWielded() && GetWielded()->IsGoodWithPlants() && Enemy->IsPlant())
+    return 1.5f;
+  else
+    return 1;
 }

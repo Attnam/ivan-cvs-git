@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Hands no longer tingle when praying to Loricatus handless
+	* Monsters don't walk to smoke for fun
+	* Sickle and scythe are better with plants than other items
+	
 May 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added version information to bone files

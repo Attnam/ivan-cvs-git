@@ -548,7 +548,12 @@ void loricatus::PrayGoodEffect()
 	ADD_MESSAGE("%s emits strange light but remains unchanged.", MainWielded->CHAR_NAME(DEFINITE));
     }
   else
-    ADD_MESSAGE("You feel a slight tingling in your hands.");
+    {
+      if(PLAYER->GetArms())
+	ADD_MESSAGE("You feel a slight tingling in your hands.");
+      else
+	ADD_MESSAGE("You feel a slight tingle.");
+    }
 }
 
 void loricatus::PrayBadEffect()

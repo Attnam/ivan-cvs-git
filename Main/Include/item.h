@@ -101,6 +101,7 @@ struct itemdatabase
   uchar BreakEffectRange;
   vector2d WieldedBitmapPos;
   bool IsQuestItem;
+  bool IsGoodWithPlants;
 };
 
 class itemprototype
@@ -404,6 +405,7 @@ class item : public object
   virtual bool SuckSoul(character*, character* = 0) { return false; }
   void SetConfig(ushort);
   god* GetMasterGod() const;
+  DATA_BASE_BOOL(IsGoodWithPlants);
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

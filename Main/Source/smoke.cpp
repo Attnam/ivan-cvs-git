@@ -127,3 +127,14 @@ void smoke::Merge(gas* OtherGas)
 
   delete OtherGas;
 }
+
+bool smoke::IsDangerousForAIToBreathe(const character* Who)
+{
+  if(Who->StateIsActivated(GAS_IMMUNITY))
+     return false;
+  
+  if(Gas->GetBreatheWisdomLimit() != NO_LIMIT && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit())
+    return true;
+  
+  return false;
+}

@@ -42,6 +42,7 @@ material
 	IsWarm = false;
 	UseMaterialAttributes = true;
 	CanRegenerate = false;
+	BreatheWisdomLimit = NO_LIMIT;
 
 	Config IRON;
 	{
@@ -913,6 +914,7 @@ gas
 		EffectStrength = 4;
 		Effect = EFFECT_SKUNK_SMELL;
 		BreatheMessage = "It smells really bad here.";
+		BreatheWisdomLimit = 3;
 	}
 
 	Config GHOST;
@@ -933,6 +935,7 @@ gas
 		AttachedGod = SOPHOS;
 		Effect = EFFECT_MAGIC_VAPOUR;
 		BreatheMessage = "The air is filled with tiny magical bubbles.";
+		BreatheWisdomLimit = 10;
 	}
 
 	Config EVIL_WONDER_STAFF_VAPOUR;
@@ -943,6 +946,7 @@ gas
 		AttachedGod = INFUSCOR;
 		Effect = EFFECT_EVIL_WONDER_STAFF_VAPOUR;
 		BreatheMessage = "A sinister stench surrounds you.";
+		BreatheWisdomLimit = 5;
 	}
 
 	Config GOOD_WONDER_STAFF_VAPOUR;

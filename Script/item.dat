@@ -81,6 +81,7 @@ item
 	/* Obligatory: AttachedGod */
 	WieldedBitmapPos = 176, 0;
 	IsQuestItem = false;
+	IsGoodWithPlants = true;
 }
 
 materialcontainer
@@ -420,6 +421,7 @@ meleeweapon
 		Roundness = 20;
 		AttachedGod = SEGES;
 		WieldedBitmapPos = 176, 32;
+		IsGoodWithPlants = true;
 	}
 
 	Config BROKEN|SICKLE;
@@ -565,6 +567,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = MORTIFER;
 		WieldedBitmapPos = 176, 48;
+		IsGoodWithPlants = true;
 	}
 
 	Config BROKEN|SCYTHE;

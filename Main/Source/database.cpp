@@ -285,6 +285,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ArmSpecialColorIsSparkling);
   ADD_MEMBER(LegMainColorIsSparkling);
   ADD_MEMBER(LegSpecialColorIsSparkling);
+  ADD_MEMBER(IsPlant);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -367,6 +368,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(BreakEffectRange);
   ADD_MEMBER(WieldedBitmapPos);
   ADD_MEMBER(IsQuestItem);
+  ADD_MEMBER(IsGoodWithPlants);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -472,6 +474,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsWarm);
   ADD_MEMBER(UseMaterialAttributes);
   ADD_MEMBER(CanRegenerate);
+  ADD_MEMBER(BreatheWisdomLimit);
 }
 
 template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)
