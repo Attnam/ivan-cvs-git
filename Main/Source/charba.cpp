@@ -1839,6 +1839,8 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
 
       HScore.Save();
     }
+  else
+    ADD_MESSAGE("Death message: %s.", Description.c_str());
 }
 
 bool character::CheckDeath(const std::string& Msg, bool ForceMsg)

@@ -3267,7 +3267,7 @@ meleeweapon::~meleeweapon()
   delete ContainedMaterial;
 }
 
-void poleaxeofmjolak::ReceiveHitEffect(character* Enemy, character* Hitter)
+void mjolak::ReceiveHitEffect(character* Enemy, character* Hitter)
 {
   if(!(RAND() % 5))
     {
@@ -3278,12 +3278,32 @@ void poleaxeofmjolak::ReceiveHitEffect(character* Enemy, character* Hitter)
     }
 }
 
-void spearofvermis::ReceiveHitEffect(character* Enemy, character* Hitter)
+void vermis::ReceiveHitEffect(character* Enemy, character* Hitter)
 {
   if(RAND() & 1)
     {
       Enemy->TeleportRandomly();
       ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
+    }
+}
+
+void turox::ReceiveHitEffect(character* Enemy, character* Hitter)
+{
+  if(!(RAND() % 5))
+    {
+      square* Square = Enemy->GetSquareUnder();
+      std::string DeathMSG = "Killed by " + Enemy->GetName(DEFINITE); 
+      Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Square->GetPos(), 20);
+      ADD_MESSAGE("BANG BANG BANG! FIX FIX FIX!");
+    }  
+}
+
+void whipofcalamus::ReceiveHitEffect(character* Enemy, character* Hitter)
+{
+  if(Enemy->GetMainWielded() && !(RAND() % 7))
+    {
+      ADD_MESSAGE("THIEF THIEF THIEF. FIX FIX FIX.");
+      Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
     }
 }
 
@@ -3302,4 +3322,5 @@ void bodypart::ResetPosition()
 
   UpdatePictures();
 }
+
 

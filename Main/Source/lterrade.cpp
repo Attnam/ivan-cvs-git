@@ -670,7 +670,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
 	}
 
-      if(Energy > 1000)
+      if(Energy > 400)
 	{
 	  // The door opens
 	  MakeWalkable();
@@ -680,7 +680,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
 	}
-      else if(Energy > 500)
+      else if(Energy > 300)
 	{
 	  // The door breaks
 	  if(IsLocked())
@@ -712,7 +712,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	{
 	  ADD_MESSAGE("Energy hitting the broken door: %f.", Energy);
 	}
-      if(Energy > 400)
+      if(Energy > 200)
 	{
 	  // The door opens
 	  MakeWalkable();

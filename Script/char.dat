@@ -1329,6 +1329,7 @@ mistress
 		HairColor = rgb(35, 35, 35);
 		AttributeBonus = 100;
 		BodyArmor = DIAMOND bodyarmor(CHAINMAIL);
+		RightWielded = whipofcalamus;
 		CategoryWeaponSkillHits == 5000;
 		RightSingleWeaponSkillHits = 5000;
 		LeftSingleWeaponSkillHits = 5000;

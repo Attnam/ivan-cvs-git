@@ -1400,7 +1400,7 @@ flamingsword
 }
 
 
-poleaxeofmjolak
+mjolak
 {
 	Category = WEAPON;
 	ContainedMaterialConfig == 0;
@@ -1424,7 +1424,7 @@ poleaxeofmjolak
 	Alias == "Mjolak";
 }
 
-spearofvermis
+vermis
 {
 	Category = WEAPON;
 	ContainedMaterialConfig == 0;
@@ -1446,4 +1446,46 @@ spearofvermis
 	Roundness = 10;
 	IsTwoHanded = true;
 	Alias == "Vermis";
+}
+
+
+turox
+{
+	Category = WEAPON;
+	ContainedMaterialConfig == 0;
+	StrengthModifier = 400; 
+	FormModifier = 125; 
+	DefaultSize = 150; 
+	DefaultMainVolume = 5000; 
+	BitmapPos = 0, 32;
+	Possibility = 20;
+	InHandsPic = 160, 192;
+	DefaultSecondaryVolume = 2000;
+	WeaponCategory = MACES;
+	OfferModifier = 1250;
+	NameSingular = "mace named Turox";
+	MainMaterialConfig = { 2, IRON, MITHRIL; }
+	SecondaryMaterialConfig == WOOD;
+	MaterialConfigChances = { 2, 100, 10; }
+	Roundness = 30; /* we count the handle, too */
+	IsTwoHanded = true;
+	Alias == "Turox";
+}
+
+whipofcalamus /* meleeweapon-> */
+{
+	DefaultSize = 200;
+	Possibility = 25;
+	InHandsPic = 160, 224;
+	WeaponCategory = WHIPS;
+	DefaultMainVolume = 1000;
+	DefaultSecondaryVolume = 200;
+	StrengthModifier = 50;
+	BitmapPos = 32, 0;
+	OfferModifier = 5000;
+	/* FormModifier not used */
+	NameSingular = "whip of Calamus";
+	MainMaterialConfig == LEATHER;
+	SecondaryMaterialConfig == WOOD;
+	Roundness = 2;
 }

@@ -1217,7 +1217,7 @@ class ITEM
 
 class ITEM
 (
- poleaxeofmjolak,
+ mjolak,
  meleeweapon,
 public:
  virtual void ReceiveHitEffect(character*, character*);
@@ -1226,12 +1226,27 @@ public:
 
 class ITEM
 (
- spearofvermis,
+ vermis,
  meleeweapon,
 public:
  virtual void ReceiveHitEffect(character*,character*);
 );
 
+class ITEM
+(
+ turox,
+ meleeweapon,
+public:
+ virtual void ReceiveHitEffect(character*, character*);
+);
+
+class ITEM
+(
+ whipofcalamus,
+ meleeweapon,
+public:
+ virtual void ReceiveHitEffect(character*, character*);
+);
 #endif
 
 
