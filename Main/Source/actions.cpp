@@ -88,7 +88,7 @@ void consume::Handle()
     {
       ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
-      if(game::truthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
+      if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
 	ActivateInDNDMode();
       else
       {

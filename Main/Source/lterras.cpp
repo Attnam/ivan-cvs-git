@@ -348,7 +348,7 @@ truth fountain::Drink(character* Drinker)
 	return false;
       else
       {
-	if(!game::truthQuestion(CONST_S("Do you want to drink from the fountain? [y/N]")))
+	if(!game::TruthQuestion(CONST_S("Do you want to drink from the fountain? [y/N]")))
 	  return false;
       }
 
@@ -861,7 +861,7 @@ truth stairs::Enter(truth DirectionUp) const
   {
     ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you shouldn't wander any further. On the other hand you have little choice.");
 
-    if(!game::truthQuestion(CONST_S("Continue? [y/N]")))
+    if(!game::TruthQuestion(CONST_S("Continue? [y/N]")))
       return false;
   }
 
@@ -870,7 +870,7 @@ truth stairs::Enter(truth DirectionUp) const
     {
       ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 
-      if(!game::truthQuestion(CONST_S("Continue anyway? [y/N]")))
+      if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
 	return false;
     }
     else
@@ -884,7 +884,7 @@ truth stairs::Enter(truth DirectionUp) const
   {
     ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely dangerous on the other side. You feel you should think twice before entering.");
 
-    if(!game::truthQuestion(CONST_S("Continue? [y/N]")))
+    if(!game::TruthQuestion(CONST_S("Continue? [y/N]")))
       return false;
   }
 

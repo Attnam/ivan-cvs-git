@@ -26,10 +26,6 @@ script::datamap contentscript<item>::DataMap;
 script::datamap contentscript<glterrain>::DataMap;
 script::datamap contentscript<olterrain>::DataMap;
 script::datamap squarescript::DataMap;
-//template class itemcontentmap; //script::datamap itemcontentmap::DataMap;
-//template class charactercontentmap; //script::datamap charactercontentmap::DataMap;
-//template<> //script::datamap glterraincontentmap::DataMap;
-//template<> //script::datamap olterraincontentmap::DataMap;
 script::datamap roomscript::DataMap;
 script::datamap levelscript::DataMap;
 script::datamap dungeonscript::DataMap;
@@ -106,6 +102,7 @@ INST_SCRIPT_MEMBER(charactercontentmap);
 INST_SCRIPT_MEMBER(itemcontentmap);
 INST_SCRIPT_MEMBER(glterraincontentmap);
 INST_SCRIPT_MEMBER(olterraincontentmap);
+INST_SCRIPT_MEMBER(fearray<packv2>);
 
 template <class type> void fastscriptmember<type>::ReadFrom(inputfile& SaveFile)
 {
@@ -132,7 +129,14 @@ template <class type> void fastscriptmember<type>::Load(inputfile& SaveFile)
 template void fastscriptmember< type >::ReadFrom(inputfile&);\
 template void fastscriptmember< type >::Replace(scriptmemberbase&);\
 template void fastscriptmember< type >::Save(outputfile&) const;\
-template void fastscriptmember< type >::Load(inputfile&);
+template void fastscriptmember< type >::Load(inputfile&)
+
+INST_FAST_SCRIPT_MEMBER(char);
+INST_FAST_SCRIPT_MEMBER(uchar);
+INST_FAST_SCRIPT_MEMBER(int);
+INST_FAST_SCRIPT_MEMBER(long);
+INST_FAST_SCRIPT_MEMBER(ulong);
+INST_FAST_SCRIPT_MEMBER(packv2);
 
 truth script::ReadMember(inputfile& SaveFile, const festring& Word)
 {

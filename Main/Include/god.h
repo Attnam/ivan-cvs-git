@@ -49,6 +49,8 @@ class god
   virtual void Pray();
   virtual const char* GetName() const = 0;
   virtual const char* GetDescription() const = 0;
+  const char* GetPersonalPronoun() const;
+  const char* GetObjectPronoun() const;
   virtual int GetAlignment() const = 0;
   festring GetCompleteDescription() const;
   void ApplyDivineTick();
@@ -79,6 +81,7 @@ class god
   truth TryToAttachBodyPart(character*);
   truth TryToHardenBodyPart(character*);
   virtual truth MutatesBodyParts() const { return false; }
+  virtual int GetSex() const = 0;
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;

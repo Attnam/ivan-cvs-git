@@ -92,7 +92,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
       else
 	ADD_MESSAGE("\"Ah! Those %d %s cost %ld gold pieces. No haggling, please.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-      if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
 	Customer->EditMoney(-Price);
 	GetMaster()->EditMoney(+Price);
@@ -113,7 +113,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
     }
   }
   else
-    if(game::truthQuestion(CONST_S("Are you sure you want to commit this thievery? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to commit this thievery? [y/N]")))
     {
       Customer->Hostility(GetMaster());
       return true;
@@ -171,7 +171,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
       else
 	ADD_MESSAGE("\"What a fine pile of %d %s. I'll pay %ld gold pieces for them.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-      if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
@@ -190,7 +190,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
   else
   {
     ADD_MESSAGE("The shopkeeper doesn't see you, so you cannot trade with him.");
-    return game::truthQuestion(CONST_S("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+    return game::TruthQuestion(CONST_S("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
   }
 }
 
@@ -217,7 +217,7 @@ truth shop::ConsumeItem(character* Customer, item*, int)
     return false;
   }
   else
-    if(game::truthQuestion(CONST_S("It's illegal to eat property of others. Are you sure you sure? [y/N]")))
+    if(game::TruthQuestion(CONST_S("It's illegal to eat property of others. Are you sure you sure? [y/N]")))
     {
       Customer->Hostility(GetMaster());
       return true;
@@ -249,7 +249,7 @@ truth cathedral::PickupItem(character* Visitor, item* Item, int)
 
     ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
 
-    if(game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
       Visitor->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
       return true;
@@ -272,7 +272,7 @@ truth cathedral::DropItem(character* Visitor, item* Item, int)
       return false;
     }
 
-    if(game::truthQuestion(CONST_S("Do you wish to donate this item to the Cathedral? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you wish to donate this item to the Cathedral? [y/N]")))
       return true;
   }
 
@@ -297,7 +297,7 @@ truth cathedral::ConsumeItem(character* HungryMan, item*, int)
   {
     ADD_MESSAGE("Eating the property of the Cathedral is forbidden.");
 
-    if(game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
       HungryMan->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
       return true;
@@ -322,13 +322,13 @@ void cathedral::Load(inputfile& SaveFile)
 truth cathedral::Drink(character* Thirsty) const
 {
   if(game::GetStoryState() == 2 || game::GetTeam(ATTNAM_TEAM)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
-    return game::truthQuestion(CONST_S("Do you want to drink? [y/N]"));
+    return game::TruthQuestion(CONST_S("Do you want to drink? [y/N]"));
 
   if(Thirsty->IsPlayer())
   {
     ADD_MESSAGE("Drinking property of the Cathedral is prohibited.");
 
-    if(game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
       Thirsty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
       return true;
@@ -370,7 +370,7 @@ truth cathedral::Dip(character* Thirsty) const
 
     ADD_MESSAGE("Stealing the precious water of the Cathedral is prohibited.");
 
-    if(game::truthQuestion(CONST_S("Are you sure you want to dip? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to dip? [y/N]")))
     {
       Thirsty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
       return true;
@@ -448,7 +448,7 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
       else
 	ADD_MESSAGE("\"Ah! Those %d %s cost %ld gold pieces. No haggling, please.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-      if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
 	Customer->EditMoney(-Price);
 	GetMaster()->EditMoney(Price);
@@ -469,7 +469,7 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
     }
   }
   else
-    if(game::truthQuestion(CONST_S("Are you sure you want to commit this thievery? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to commit this thievery? [y/N]")))
     {
       Customer->Hostility(GetMaster());
       return true;
@@ -521,7 +521,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
       else
 	ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %ld gold pieces for it.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-      if(game::truthQuestion(CONST_S("Do you want to sell ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]"))
+      if(game::TruthQuestion(CONST_S("Do you want to sell ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]"))
       {
 	Customer->EditMoney(Price);
 	GetMaster()->EditMoney(-Price);
@@ -540,7 +540,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
   else
   {
     ADD_MESSAGE("The librarian doesn't see you, so you cannot trade with him.");
-    return game::truthQuestion(CONST_S("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+    return game::TruthQuestion(CONST_S("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
   }
 }
 
@@ -579,7 +579,7 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
     ADD_MESSAGE("That would be stealing.");
 
-    if(game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
       Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
       return true;
@@ -591,7 +591,7 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
 truth bananadroparea::DropItem(character* Dropper, item* Item, int)
 {
-  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall()) || game::truthQuestion(CONST_S("Do you wish to donate this item to the town? [y/N]"))));
+  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall()) || game::TruthQuestion(CONST_S("Do you wish to donate this item to the town? [y/N]"))));
 }
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
@@ -615,10 +615,12 @@ truth bananadroparea::ConsumeItem(character* HungryMan, item* Item, int)
 
   if(HungryMan->IsPlayer())
   {
-    if(Item->IsBanana() || Item->IsLanternOnWall())
-      ADD_MESSAGE("Eating this is forbidden.");
+    if(!Item->IsBanana() && !Item->IsLanternOnWall())
+      return true;
 
-    if(game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    ADD_MESSAGE("Eating this is forbidden.");
+
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
       HungryMan->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
       return true;
@@ -716,7 +718,7 @@ truth sumoarena::CheckDestroyTerrain(character* Infidel)
 
   ADD_MESSAGE("The residents of New Attnam might not like this.");
 
-  if(game::truthQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
+  if(game::TruthQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
   {
     DestroyTerrain(Infidel);
     return true;

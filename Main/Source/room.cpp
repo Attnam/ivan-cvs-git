@@ -50,7 +50,7 @@ truth room::CheckDestroyTerrain(character* Infidel)
 
   ADD_MESSAGE("%s might not like this.", GetMaster()->CHAR_NAME(DEFINITE));
 
-  if(game::truthQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
+  if(game::TruthQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
   {
     DestroyTerrain(Infidel);
     return true;
@@ -71,7 +71,7 @@ truth room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) con
   {
     ADD_MESSAGE("That would be vandalism.");
 
-    if(!game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(!game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
       return false;
   }
   return true;

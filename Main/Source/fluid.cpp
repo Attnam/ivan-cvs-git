@@ -534,7 +534,13 @@ void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, 
 
   for(long c = 0; c < Lumps; ++c)
   {
-    v2 Cords = Shadow ? PixelAllowed[RAND() % PixelsAllowed] : v2(1 + RAND() % 14, 1 + RAND() % 14);
+    v2 Cords;
+    
+    if(Shadow)
+      Cords = PixelAllowed[RAND() % PixelsAllowed];
+    else
+      Cords = v2(1 + RAND() % 14, 1 + RAND() % 14);
+
     Picture->PutPixel(Cords, Color);
     long Alpha = Limit<long>(AlphaSuggestion - 25 + RAND() % 50, 0, 0xFF);
     AlphaSum += Alpha - Picture->GetAlpha(Cords);

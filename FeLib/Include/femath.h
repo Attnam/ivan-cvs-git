@@ -214,20 +214,21 @@ truth quadricontroller<controller>::Handler(int x, int y)
   return false;
 }
 
+const int ChangeXArray[4][3] = { { -1,  0, -1 },
+				 {  0,  1,  1 },
+				 { -1, -1,  0 },
+				 {  1,  0,  1 } };
+const int ChangeYArray[4][3] = { { -1, -1,  0 },
+				 { -1, -1,  0 },
+				 {  0,  1,  1 },
+				 {  0,  1,  1 } };
+
 template <class controller>
 inline void mapmath<controller>::DoArea()
 {
   int Buffer[2][2048];
   int* OldStack = Buffer[0];
   int* NewStack = Buffer[1];
-  static const int ChangeXArray[4][3] = { { -1,  0, -1 },
-					  {  0,  1,  1 },
-					  { -1, -1,  0 },
-					  {  1,  0,  1 } };
-  static const int ChangeYArray[4][3] = { { -1, -1,  0 },
-					  { -1, -1,  0 },
-					  {  0,  1,  1 },
-					  {  0,  1,  1 } };
 
   for(int c1 = 0; c1 < 4; ++c1)
   {

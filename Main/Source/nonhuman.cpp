@@ -250,7 +250,7 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHi
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::truthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
@@ -900,7 +900,7 @@ int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
 truth eddy::Hit(character* Enemy, v2, int, truth)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::truthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   Hostility(Enemy);
@@ -1036,7 +1036,7 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, truth Forc
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::truthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
@@ -1824,7 +1824,7 @@ truth mommo::Hit(character* Enemy, v2 Pos, int, truth)
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::truthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   Hostility(Enemy);

@@ -198,7 +198,7 @@ void graphics::SetMode(const char*, const char*, v2 NewRes, truth)
   Res.Y = ModeInfo.Height;
   BufferSize = Res.Y * ModeInfo.BytesPerLine;
   delete DoubleBuffer;
-  DoubleBuffer = new bitmap(Res.X, Res.Y);
+  DoubleBuffer = new bitmap(Res);
   __dpmi_meminfo MemoryInfo;
   MemoryInfo.size = BufferSize;
   MemoryInfo.address = ModeInfo.PhysicalLFBAddress;

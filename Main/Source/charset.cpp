@@ -10,17 +10,28 @@
  *
  */
 
+ #define __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
+
+#include "proto.h"
+#include "char.h"
+#include "database.h"
+
+EXTENDED_SYSTEM_SPECIALIZATIONS(character)(0, 0, 0, "character");
+
+#include "human.h"
+#include "nonhuman.h"
+
+#undef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
+
 #include <algorithm>
 #include <queue>
+#include <cctype>
 
 #include "team.h"
-#include "human.h"
 #include "error.h"
 #include "game.h"
 #include "message.h"
-#include "database.h"
 #include "save.h"
-#include "proto.h"
 #include "stack.h"
 #include "wsquare.h"
 #include "actions.h"

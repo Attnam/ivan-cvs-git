@@ -255,7 +255,7 @@ truth commandsystem::Drop(character* Char)
     {
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
-	if(game::truthQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
+	if(game::TruthQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
 			       + " again! [y/N]"))
 	{
 
@@ -436,12 +436,12 @@ truth commandsystem::PickUp(character* Char)
 
 truth commandsystem::Quit(character* Char)
 {
-  if(game::truthQuestion(CONST_S("Your quest is not yet compeleted! Really quit? [y/N]")))
+  if(game::TruthQuestion(CONST_S("Your quest is not yet compeleted! Really quit? [y/N]")))
   {
     Char->ShowAdventureInfo();
     festring Msg = CONST_S("cowardly quit the game");
     Char->AddScoreEntry(Msg, 0.75);
-    game::End(Msg, !game::WizardModeIsActive() || game::truthQuestion(CONST_S("Remove saves? [y/N]")));
+    game::End(Msg, !game::WizardModeIsActive() || game::TruthQuestion(CONST_S("Remove saves? [y/N]")));
     return true;
   }
   else
@@ -525,7 +525,7 @@ truth commandsystem::NOP(character* Char)
 
 truth commandsystem::Save(character*)
 {
-  if(game::truthQuestion(CONST_S("Do you truly wish to save and flee? [y/N]")))
+  if(game::TruthQuestion(CONST_S("Do you truly wish to save and flee? [y/N]")))
   {
     game::Save();
     game::End("", false);
@@ -588,7 +588,7 @@ truth commandsystem::Dip(character* Char)
 
   if(Item)
   {
-    if(!HasDipDestination || (DipDestinationNear && game::truthQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
+    if(!HasDipDestination || (DipDestinationNear && game::TruthQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
     {
       int Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
@@ -734,7 +734,7 @@ truth commandsystem::Pray(character* Char)
     {
       if(!Select)
       {
-	if(game::truthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
+	if(game::TruthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
 	  game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->Pray();
 	else
 	  return false;
@@ -744,7 +744,7 @@ truth commandsystem::Pray(character* Char)
     }
     else
     {
-      if(game::truthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
+      if(game::TruthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
       {
 	if(Char->StateIsActivated(CONFUSED) && !(RAND() & 7))
 	{
@@ -797,7 +797,7 @@ truth commandsystem::Kick(character* Char)
     return false;
 
   if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
-    if(!game::truthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    if(!game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
       return false;
     else
       Char->Hostility(Square->GetCharacter());
@@ -1175,7 +1175,7 @@ truth commandsystem::WizardMode(character* Char)
 {
   if(!game::WizardModeIsActive())
   {
-    if(game::truthQuestion(CONST_S("Do you want to cheat, cheater? This action cannot be undone. [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you want to cheat, cheater? This action cannot be undone. [y/N]")))
     {
       game::ActivateWizardMode();
       ADD_MESSAGE("Wizard mode activated.");

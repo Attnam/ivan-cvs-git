@@ -118,7 +118,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
 			truth SlaveScreen)
 {
   int Chosen;
-  truth truthChange = false;
+  truth TruthChange = false;
 
   felist List(CONST_S("Which setting do you wish to configure?"));
   List.AddDescription(CONST_S(""));
@@ -144,12 +144,12 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       ListAttributeInitializer(List);
 
     List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)
-		  |(!SlaveScreen && !truthChange ? FADE : 0));
+		  |(!SlaveScreen && !TruthChange ? FADE : 0));
     Chosen = List.Draw();
     festring String;
 
     if(Chosen < Options)
-      truthChange = Option[Chosen]->ActivateChangeInterface();
+      TruthChange = Option[Chosen]->ActivateChangeInterface();
     else
     {
       Save();

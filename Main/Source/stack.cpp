@@ -979,13 +979,13 @@ truth stack::PutSomethingIn(character* Opener, const festring& ContainerName, lo
       if(ToPut.size() == 1)
 	ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.CStr());
       else
-	ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
+	ADD_MESSAGE("None of the %d %s fits in %s.", int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
 
       continue;
     }
 
     if(Amount != ToPut.size())
-      ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.CStr());
+      ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.CStr());
 
     if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
     {

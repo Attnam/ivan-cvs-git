@@ -15,6 +15,7 @@
 
 #include <map>
 #include <vector>
+#include <ctime>
 
 #include "femath.h"
 #include "festring.h"
@@ -190,7 +191,7 @@ class game
   static void InitLuxTable();
   static void DeInitLuxTable();
   static const char* Insult();
-  static truth truthQuestion(const festring&, int = 0, int = 0);
+  static truth TruthQuestion(const festring&, int = 0, int = 0);
   static void DrawEverything();
   static truth Save(const festring& = SaveName(""));
   static int Load(const festring& = SaveName(""));

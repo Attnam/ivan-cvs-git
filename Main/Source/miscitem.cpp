@@ -121,7 +121,7 @@ void scrollofteleportation::FinishReading(character* Reader)
 
 truth wand::Apply(character* Terrorist)
 {
-  if(Terrorist->IsPlayer() && !game::truthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]")) 
+  if(Terrorist->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
   BreakEffect(Terrorist, CONST_S("killed by ") + GetName(INDEFINITE) + " broken @bk");
@@ -166,7 +166,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
     Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR);
 
     if(Item.empty())
-      if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
       else
 	continue;
@@ -181,7 +181,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
     {
       ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
 
-      if(!game::truthQuestion(CONST_S("Still continue? [y/N]")))
+      if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
 	continue;
     }
 
@@ -504,7 +504,7 @@ truth oillamp::Apply(character* Applier)
 	{
 	  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHAR_NAME(INDEFINITE));
 
-	  if(game::truthQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))
+	  if(game::TruthQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))
 	  {
 	    ADD_MESSAGE("You may wish for an item.");
 	    game::Wish(Applier,
@@ -587,7 +587,7 @@ void scrollofcharging::FinishReading(character* Reader)
 	{
 	  ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	  if(!game::truthQuestion(CONST_S("Still continue? [y/N]")))
+	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
 	    continue;
 	}
 
@@ -597,7 +597,7 @@ void scrollofcharging::FinishReading(character* Reader)
 	ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
 	break;
       }
-      else if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
     }
 
@@ -1293,7 +1293,7 @@ truth beartrap::CanBeSeenBy(const character* Viewer) const
 
 truth mine::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::truthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
+  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
   room* Room = GetRoom();
@@ -1328,7 +1328,7 @@ truth beartrap::Apply(character* User)
   }
 
   if(User->IsPlayer()
-     && !game::truthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
+     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
   room* Room = GetRoom();
@@ -1590,7 +1590,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 	{
 	  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	  if(!game::truthQuestion(CONST_S("Still continue? [y/N]")))
+	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
 	    continue;
 	}
 
@@ -1614,7 +1614,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
 	break;
       }
-      else if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
     }
 
@@ -1663,7 +1663,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 	{
 	  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	  if(!game::truthQuestion(CONST_S("Still continue? [y/N]")))
+	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
 	    continue;
 	}
 
@@ -1687,7 +1687,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
 	break;
       }
-      else if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
     }
 
@@ -1808,7 +1808,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
       if(BodyPart)
       {
-	if(BodyPart->IsRepairable() && game::truthQuestion("Would you like to repair your " + BodyPart->GetBodyPartName() + "? [y/N]"))
+	if(BodyPart->IsRepairable() && game::TruthQuestion("Would you like to repair your " + BodyPart->GetBodyPartName() + "? [y/N]"))
 	{
 	  BodyPart->RestoreHP();
 	  RemoveFromSlot();
@@ -1829,7 +1829,7 @@ void scrollofrepair::FinishReading(character* Reader)
 	{
 	  ADD_MESSAGE("Only one %s will be repaired.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	  if(!game::truthQuestion(CONST_S("Still continue? [y/N]")))
+	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
 	    continue;
 	}
 
@@ -1846,7 +1846,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
 	break;
       }
-      else if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
     }
   }
@@ -2713,7 +2713,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
     Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to harden?"), NO_MULTI_SELECT|SELECT_PAIR, &item::CanBeHardened);
 
     if(Item.empty())
-      if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
       else
 	continue;
@@ -2728,7 +2728,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
     {
       ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
 
-      if(!game::truthQuestion(CONST_S("Still continue? [y/N]")))
+      if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
 	continue;
     }
 
@@ -2874,7 +2874,7 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 	}
 
 	if(MainPossible && SecPossible)
-	  if(game::truthQuestion(CONST_S("Use main material? [Y/n]"), YES))
+	  if(game::TruthQuestion(CONST_S("Use main material? [Y/n]"), YES))
 	    SecPossible = false;
 	  else
 	    MainPossible = false;
@@ -2908,7 +2908,7 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 
 	break;
       }
-      else if(game::truthQuestion(CONST_S("Really cancel read? [y/N]")))
+      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
     }
 

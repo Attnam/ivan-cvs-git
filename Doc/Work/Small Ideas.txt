@@ -517,3 +517,4 @@ Golems' wisdom shouldn't rise.
 "Psycho" state.
 The holy kiwi of Oily Orpiv.
 The holy pineapple of Oily Orpiv.
+If the player has a giant beard, Richel Decos shouldn't pay for him for wearing the ad shirt, since the banana logo can't be seen by anyone.

@@ -1113,7 +1113,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	      }
 	      else
 	      {
-		if(!IsPlayer() || game::truthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
+		if(!IsPlayer() || game::TruthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
 		{
 		  return OpenPos(MoveToSquare[c]->GetPos());
 		  //return true;
@@ -1142,7 +1142,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
     }
     else
     {
-      if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::truthQuestion(CONST_S("Do you want to leave ") + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
+      if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::TruthQuestion(CONST_S("Do you want to leave ") + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
       {
 	if(HasPetrussNut() && !HasGoldenEagleShirt())
 	{
@@ -1184,7 +1184,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	    {
 	      ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
 
-	      if(!game::truthQuestion("Discard them? [y/N]"))
+	      if(!game::TruthQuestion("Discard them? [y/N]"))
 		return false;
 
 	      Discard = true;
@@ -1236,7 +1236,7 @@ void character::Die(const character* Killer, const festring& Msg, ulong DeathFla
     {
       game::DrawEverything();
 
-      if(!game::truthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))
+      if(!game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))
       {
 	RestoreBodyParts();
 	ResetSpoiling();
@@ -2204,7 +2204,7 @@ void character::DeActivateVoluntaryAction(const festring& Reason)
       if(Reason.GetSize())
 	ADD_MESSAGE("%s", Reason.CStr());
 
-      if(game::truthQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
+      if(game::TruthQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 	GetAction()->ActivateInDNDMode();
       else
 	GetAction()->Terminate(false);
@@ -2233,7 +2233,7 @@ void character::ActionAutoTermination()
 	  {
 	    ADD_MESSAGE("%s seems to be hostile.", (*i)->CHAR_NAME(DEFINITE));
 
-	    if(game::truthQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
+	    if(game::TruthQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 	      GetAction()->ActivateInDNDMode();
 	    else
 	      GetAction()->Terminate(false);
@@ -4509,7 +4509,7 @@ void character::LycanthropyHandler()
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
-       && !game::truthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")))
+       && !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")))
       return;
 
     Polymorph(werewolfwolf::Spawn(), 1000 + RAND() % 2000);
@@ -6345,7 +6345,7 @@ void character::SetBodyPart(int I, bodypart* What)
 
 truth character::ConsumeItem(item* Item, const festring& ConsumeVerb)
 {
-  if(IsPlayer() && HasHadBodyPart(Item) && !game::truthQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))
+  if(IsPlayer() && HasHadBodyPart(Item) && !game::TruthQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))
     return false;
 
   if(Item->IsOnGround() && GetRoom() && !GetRoom()->ConsumeItem(this, Item, 1))
@@ -6500,7 +6500,7 @@ void character::PrintEndGasImmunityMessage() const
 
 void character::ShowAdventureInfo() const
 {
-  if(GetStack()->GetItems() && game::truthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+  if(GetStack()->GetItems() && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
   {
     GetStack()->DrawContents(this, CONST_S("Your inventory"), NO_SELECT);
 
@@ -6510,10 +6510,10 @@ void character::ShowAdventureInfo() const
     DoForEquipments(this, &item::DrawContents, this);
   }
 
-  if(game::truthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
+  if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
     msgsystem::DrawMessageHistory();
 
-  if(!game::MassacreListsEmpty() && game::truthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
+  if(!game::MassacreListsEmpty() && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
     game::DisplayMassacreLists();
 }
 

@@ -634,7 +634,7 @@ void lsquare::CalculateLuminance()
     ulong BitMask = 0, LOSTick = game::GetLOSTick();
 
     for(int c = 0; c < 4; ++c)
-      if((SquarePartLastSeen >> (c << 3) & 0xFF) == LOSTick)
+      if((SquarePartLastSeen >> (c << 3) & 0xFF) >= LOSTick)
 	BitMask |= 1 << EMITTER_SQUARE_PART_SHIFT << c;
 
     CalculateSunLightLuminance(BitMask);

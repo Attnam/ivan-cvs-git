@@ -25,6 +25,7 @@ GOD(valpurus, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -39,6 +40,7 @@ GOD(legifer, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -54,6 +56,7 @@ GOD(atavus, god)
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
   virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -68,6 +71,7 @@ GOD(dulcis, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -85,6 +89,7 @@ GOD(seges, god)
   virtual truth ForceGiveBodyPart() const { return true; }
   virtual truth HealRegeneratingBodyParts() const { return true; }
   virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -99,6 +104,7 @@ GOD(sophos, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -113,6 +119,7 @@ GOD(silva, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -127,6 +134,7 @@ GOD(loricatus, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -141,6 +149,7 @@ GOD(mellis, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -155,6 +164,7 @@ GOD(cleptia, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -169,6 +179,7 @@ GOD(nefas, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -186,6 +197,7 @@ GOD(scabies, god)
   virtual col16 GetEliteColor() const;
   virtual truth LikesMaterial(const materialdatabase*, const character*) const;
   virtual truth MutatesBodyParts() const { return true; }
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -200,6 +212,7 @@ GOD(infuscor, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -214,6 +227,7 @@ GOD(cruentus, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -229,6 +243,7 @@ GOD(mortifer, god)
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
+  virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();

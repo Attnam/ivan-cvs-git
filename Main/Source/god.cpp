@@ -458,3 +458,13 @@ truth god::TryToHardenBodyPart(character* Char)
 
   return Changed;
 }
+
+const char* god::GetPersonalPronoun() const
+{
+  return GetSex() == MALE ? "He" : "She";
+}
+
+const char* god::GetObjectPronoun() const
+{
+  return GetSex() == MALE ? "Him" : "Her";
+}

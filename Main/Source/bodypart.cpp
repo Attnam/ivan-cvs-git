@@ -2081,7 +2081,7 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
   if(!IsUsable())
   {
     ADD_MESSAGE("Your %s is not usable.", GetBodyPartName().CStr());
-    return !game::truthQuestion(CONST_S("Continue anyway? [y/N]"));
+    return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
   }
 
   int HitStrength = GetAttribute(ARM_STRENGTH);
@@ -2103,7 +2103,7 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
       else
 	ADD_MESSAGE("It is somewhat difficult to use %s even with two hands.", WeaponDescription);
 
-      return !game::truthQuestion(CONST_S("Continue anyway? [y/N]"));
+      return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
   }
   else
@@ -2130,7 +2130,7 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
       else
 	ADD_MESSAGE("%sIt is somewhat difficult to use %s%s.", OtherHandInfo, WeaponDescription, HandInfo);
 
-      return !game::truthQuestion(CONST_S("Continue anyway? [y/N]"));
+      return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
   }
 

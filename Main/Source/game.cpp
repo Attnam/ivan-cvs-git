@@ -688,14 +688,14 @@ const char* game::Insult() // convert to array
 
 /* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
 
-truth game::truthQuestion(const festring& String, int DefaultAnswer, int OtherKeyForTrue)
+truth game::TruthQuestion(const festring& String, int DefaultAnswer, int OtherKeyForTrue)
 {
   if(DefaultAnswer == NO)
     DefaultAnswer = 'n';
   else if(DefaultAnswer == YES)
     DefaultAnswer = 'y';
   else if(DefaultAnswer != REQUIRES_ANSWER)
-    ABORT("Illegal truthQuestion DefaultAnswer send!");
+    ABORT("Illegal TruthQuestion DefaultAnswer send!");
   
   int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
   return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
@@ -2726,7 +2726,7 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 		 ALLOW_ANIMATE };
 
   itemvector ItemVector = ItemDrawVector[I];
-  int Amount = Min(ItemVector.size(), 3U);
+  int Amount = Min<int>(ItemVector.size(), 3);
 
   for(int c = 0; c < Amount; ++c)
   {
@@ -2833,7 +2833,7 @@ truth game::TryToEnterSumoArena()
 
   ADD_MESSAGE("\"So you want to compete? Okay, I'll explain the rules. First, I'll make a mirror image out of us both. We'll enter the arena and fight till one is knocked out. Use of any equipment is not allowed. Note that we will not gain experience from fighting as a mirror image, but won't get really hurt, either. However, controlling the image is exhausting and you can get hungry very quickly.\"");
 
-  if(!truthQuestion("Do you want to challenge him? [y/N]"))
+  if(!TruthQuestion("Do you want to challenge him? [y/N]"))
     return false;
 
   SumoWrestling = true;
@@ -2852,7 +2852,7 @@ truth game::TryToEnterSumoArena()
   GetCurrentDungeon()->SaveLevel(SaveName(), 0);
   charactervector test;
   EnterArea(test, 1, STAIRS_UP);
-  MirrorSumo->PutTo(SUMO_ARENA_POS + v2(6, 7));
+  MirrorSumo->PutTo(SUMO_ARENA_POS + v2(6, 5));
   MirrorSumo->ChangeTeam(GetTeam(SUMO_TEAM));
   GetCurrentLevel()->GetLSquare(SUMO_ARENA_POS)->GetRoom()->SetMasterID(MirrorSumo->GetID());
 
@@ -2873,7 +2873,7 @@ truth game::TryToExitSumoArena()
 
   if(IsSumoWrestling())
   {
-    if(truthQuestion("Do you really wish to give up? [y/N]"))
+    if(TruthQuestion("Do you really wish to give up? [y/N]"))
       return EndSumoWrestling(LOST);
     else
       return false;

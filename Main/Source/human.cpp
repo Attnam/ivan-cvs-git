@@ -349,7 +349,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::truthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
@@ -530,7 +530,7 @@ void petrus::BeTalkedTo()
   {
     ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Mayst thou be blessed by Valpurus for the rest of thy life! And thou possess the Shirt of the Golden Eagle, the symbol of Our status! Return it now, please.\"");
 
-    if(game::truthQuestion(CONST_S("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]"), REQUIRES_ANSWER))
+    if(game::TruthQuestion(CONST_S("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]"), REQUIRES_ANSWER))
     {
       game::TextScreen(CONST_S( "The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
 				"Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
@@ -656,7 +656,7 @@ void priest::BeTalkedTo()
     {
       ADD_MESSAGE("\"You seem to be rather ill. I could give you a small dose of antidote for %ld gold pieces.\"", Price);
 
-      if(game::truthQuestion(CONST_S("Do you agree? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
       {
 	ADD_MESSAGE("You feel better.");
 	PLAYER->DeActivateTemporaryState(POISONED);
@@ -677,7 +677,7 @@ void priest::BeTalkedTo()
     {
       ADD_MESSAGE("\"You seem to have contracted the vile disease of leprosy. I could give you a small dose of medicince for %ld gold pieces.\"", Price);
 
-      if(game::truthQuestion(CONST_S("Do you agree? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
       {
 	ADD_MESSAGE("You feel better.");
 	PLAYER->DeActivateTemporaryState(LEPROSY);
@@ -688,6 +688,27 @@ void priest::BeTalkedTo()
     }
     else
       ADD_MESSAGE("\"You seem to be falling apart. Get %ld gold pieces and I'll fix that.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(LYCANTHROPY))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"You seem to be turning into a werewolf quite frequently. Well, everyone has right to little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray %s to remove the canine blood from your veins, just so you don't scare our blessed youth.\"", Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+	ADD_MESSAGE("You feel better.");
+	PLAYER->DeActivateTemporaryState(LYCANTHROPY);
+	PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+	SetMoney(GetMoney() + Price);
+	return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to be lycanthropic. I might be able to do something for that but I need %ldgp for the ritual materials first.\"", Price);
   }
 
   for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
@@ -712,7 +733,7 @@ void priest::BeTalkedTo()
 	    {
 	      ADD_MESSAGE("\"I could put your old %s back in exchange for %ld gold.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
 
-	      if(game::truthQuestion(CONST_S("Do you agree? [y/N]")))
+	      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
 	      {
 		OldBodyPart->SetHP(1);
 		PLAYER->SetMoney(PLAYER->GetMoney() - Price);
@@ -724,7 +745,7 @@ void priest::BeTalkedTo()
 	    }
 	  }
 	  else
-	    ADD_MESSAGE("\"You %s is severed. Help yourself and get %ldgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
+	    ADD_MESSAGE("\"Your %s is severed. Help yourself and get %ldgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
 	}
       }
 
@@ -737,7 +758,7 @@ void priest::BeTalkedTo()
 	else
 	  ADD_MESSAGE("\"Since you don't seem to have your original %s with you, I could summon up a new one for %ld gold.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
 
-	if(game::truthQuestion(CONST_S("Agreed? [y/N]")))
+	if(game::TruthQuestion(CONST_S("Agreed? [y/N]")))
 	{
 	  PLAYER->SetMoney(PLAYER->GetMoney() - Price);
 	  SetMoney(GetMoney() + Price);
@@ -747,7 +768,7 @@ void priest::BeTalkedTo()
 	}
       }
       else if(!HasOld)
-	ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %ldgp first.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
+	ADD_MESSAGE("\"You don't have your original %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %ldgp first.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
     }
 
   humanoid::BeTalkedTo();
@@ -812,7 +833,7 @@ void slave::BeTalkedTo()
     {
       ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
 
-      if(game::truthQuestion(CONST_S("Do you want to buy him? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you want to buy him? [y/N]")))
       {
 	PLAYER->SetMoney(PLAYER->GetMoney() - 50);
 	Master->SetMoney(Master->GetMoney() + 50);
@@ -2663,7 +2684,7 @@ void smith::BeTalkedTo()
 
       ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
 	  
-      if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
 	BodyPart->RestoreHP();
 	PLAYER->EditMoney(-25);
@@ -2671,7 +2692,8 @@ void smith::BeTalkedTo()
     }
   }
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith))
+  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith)
+  || PLAYER->EquipsSomething(&item::IsFixableBySmith))
   {
     item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableBySmith);
 
@@ -2696,7 +2718,7 @@ void smith::BeTalkedTo()
 
     ADD_MESSAGE("\"I can fix your %s, but it'll cost you %ld gold pieces.\"", Item->CHAR_NAME(UNARTICLED), FixPrice);
 
-    if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
     {
       Item->RemoveRust();
       Item->Fix();
@@ -4629,7 +4651,7 @@ void tailor::BeTalkedTo()
 
       ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
 	  
-      if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
 	BodyPart->RestoreHP();
 	PLAYER->EditMoney(-25);
@@ -4637,7 +4659,8 @@ void tailor::BeTalkedTo()
     }
   }
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor))
+  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor)
+  || PLAYER->EquipsSomething(&item::IsFixableByTailor))
   {
     item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableByTailor);
 
@@ -4662,7 +4685,7 @@ void tailor::BeTalkedTo()
 
     ADD_MESSAGE("\"I can fix your %s, but it'll cost you %ld gold pieces.\"", Item->CHAR_NAME(UNARTICLED), FixPrice);
 
-    if(game::truthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
     {
       Item->Fix();
       PLAYER->EditMoney(-FixPrice);

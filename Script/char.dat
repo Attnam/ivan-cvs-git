@@ -2733,7 +2733,7 @@ werewolfhuman
 	HostileReplies == "@Dd screams in fury.";
 	FriendlyReplies == "@Dd screams in a friendly manner.";
 	TotalSize = 170;
-	NameSingular = "werewolf";
+	NameSingular = "werewolf1";
 	NamePlural = "werewolves";
 	AttackStyle = USE_ARMS;
 	CanBeGenerated = true;
@@ -4876,7 +4876,7 @@ tourist
 		DefaultIntelligence = 7;
 		DefaultWisdom = 10;
 		DefaultCharisma = 10;
-		TotalVolume = 100000;
+		TotalVolume = 70000;
 		TotalSize = 170;
 		Sex = FEMALE;
 		NameSingular = "female tourist";
@@ -4898,7 +4898,7 @@ tourist
 			"\"Why are all the villagers so sweaty? Can't they try to wash themselves often enough at least when civilized people are around?\"",
 			"\"I so love bananas! This is a heaven!\"",
 			"\"My friend's brother's ex-wife's uncle's old schoolmate inherited some money, bought shares of Decos Bananas Co. and became a millionaire. I think of it as an example of how anyone can become rich and happy if he tries hard enough.\"",
-			"\"Richel Decos is such a great person! I wish I was married to someone as well-off as him!\"";
+			"\"Richel Decos is such a wonderful person! I wish I was married to someone as well-off as him!\"";
 		}
 	}
 
@@ -4932,7 +4932,7 @@ tourist
 			"\"A real native!!! Can I touch him, mommy? Can I? Can I?\"",
 			"\"I wanna see you sacrifice someone to tree gods!!!\"",
 			"\"Mister, can you catch me a demon spider? I wanna bring one home as a pet!!!\"",
-			"\"Did you see that Pong person? He's fatter than mommy and daddy!!! I can't believe it!!!\"";
+			"\"Did you see that Pong person? He's fatter than daddy!!! I can't believe it!!!\"";
 		}
 	}
 }
