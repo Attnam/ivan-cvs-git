@@ -551,3 +551,4 @@ Priest should perhaps be able to remove parasites.
 //There shouldn't be doors in UT4. It is a natural cave.
 It should be possible to name individual items.
 You should be able to change level anywhere if WalkThroughWalls cheat is on.
+Using teleport control / polymorph control should train either intelligence or willpower.
