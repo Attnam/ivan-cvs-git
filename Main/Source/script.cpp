@@ -675,6 +675,15 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 	  continue;
 	}
+      if(Word == "AllowBoobyTrappedDoors")
+	{
+	  if(!AllowBoobyTrappedDoors)
+	    AllowBoobyTrappedDoors = new bool;
+
+	  *AllowBoobyTrappedDoors = SaveFile.ReadBool();
+
+	  continue;
+	}
 
       ABORT("Odd script term %s encountered in room script!", Word.c_str());
     }

@@ -37,7 +37,7 @@ bool door::Open(character* Opener)
 	{
 	  if(Opener->GetIsPlayer())
 	    ADD_MESSAGE("The door is locked.");
-
+	  
 	  return false;
 	}
       else if(RAND() % 20 < Opener->GetStrength())
@@ -53,7 +53,6 @@ bool door::Open(character* Opener)
 	      else
 		ADD_MESSAGE("Something opens the door.");
 	    }
-
 	  return true;
 	}
       else
@@ -63,7 +62,7 @@ bool door::Open(character* Opener)
 	  else if(GetLSquareUnder()->CanBeSeen())
 	    if(Opener->GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("%s fails to open the door.", Opener->CNAME(DEFINITE));
-
+	  ActivateBoobyTrap();
 	  return true;
 	}
     }
@@ -241,14 +240,12 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 	    {			//Strength isn't everything
 	      if(ShowOnScreen)
 		ADD_MESSAGE("The lock breaks and the door is damaged.");
-
 	      NewLockedStatus = false;
 	    }
 	  else
 	    {
 	      if(ShowOnScreen)
 		ADD_MESSAGE("The door is damaged.");
-
 	      NewLockedStatus = IsLocked;
 	    }
 
@@ -291,6 +288,7 @@ void door::MakeWalkable()
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     game::SendLOSUpdateRequest();
+  ActivateBoobyTrap();
 }
 
 void door::MakeNotWalkable()
@@ -799,9 +797,39 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 
 void door::Break(bool NewLockedStatus)
 {
-  brokendoor* Temp = new brokendoor(false);
-  Temp->InitMaterials(GetMaterial(0));
-  PreserveMaterial(0);
-  GetLSquareUnder()->ChangeOLTerrain(Temp);
-  Temp->SetIsLocked(NewLockedStatus);  
+  if(BoobyTrap)
+  {
+    ActivateBoobyTrap();
+  }
+  else
+  {
+    brokendoor* Temp = new brokendoor(false);
+    Temp->InitMaterials(GetMaterial(0));
+    PreserveMaterial(0);
+    GetLSquareUnder()->ChangeOLTerrain(Temp);
+    Temp->SetIsLocked(NewLockedStatus);  
+  }
+}
+
+void door::ActivateBoobyTrap()
+{
+  switch(BoobyTrap)
+    {
+    case 1:
+      // Explosion
+      if(GetLSquareUnder()->CanBeSeen())
+	{
+	  ADD_MESSAGE("%s is booby trapped!", CNAME(DEFINITE));
+	  GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
+	}
+      break;
+    case 0:
+      break;
+    }
+  BoobyTrap = 0;
+}
+
+void door::CreateBoobyTrap()
+{
+  SetBoobyTrap(1); 
 }

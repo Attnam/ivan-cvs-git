@@ -1,3 +1,7 @@
+2002-03-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Source/level.cpp (MakeRoom): 
+
 2002-03-23  Heikki Sairanen  <hex@localhost.localdomain>
 
 	* Main/Include/charde.h: Changed ivan class to communist and assigned it the name "Ivan". Also changed Elpuri, Oree and Petrus to get their _name_ from AssignedName

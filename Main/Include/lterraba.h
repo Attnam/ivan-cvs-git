@@ -84,6 +84,7 @@ class olterrain : public lterrain, public oterrain
   virtual bool HasConsumeEffect() const { return false; } 
   virtual bool Consume(character*) { return false; }
   virtual void Lock() { }
+  virtual void CreateBoobyTrap() { }
   virtual void HasBeenHitBy(item*, float, uchar, bool) {}
 };
 

@@ -531,8 +531,11 @@ bool level::MakeRoom(roomscript* RoomScript)
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
+	{
+	  if(*RoomScript->GetAllowBoobyTrappedDoors() && !(RAND() % 5))
+	    Door->CreateBoobyTrap();
 	Door->Lock();
-
+	}      
       Map[LXPos][LYPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[LXPos][LYPos]->Clean();
 
@@ -562,8 +565,12 @@ bool level::MakeRoom(roomscript* RoomScript)
       Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
-	Door->Lock();
+	{
+	  if(*RoomScript->GetAllowBoobyTrappedDoors() && !(RAND() % 5))
+	    Door->CreateBoobyTrap();
 
+	  Door->Lock();
+	}
       Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[XPos][YPos]->Clean();
 
@@ -969,7 +976,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	character* Char = Square->GetCharacter();
 	ushort Damage = Strength / (DistanceSquare + 1);
 
-	if(Char && (HurtNeutrals || Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE))
+	if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
 	  if(Char->GetIsPlayer())
 	    {
 	      PlayerDamage = Damage;
@@ -977,7 +984,8 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	    }
 	  else
 	    {
-	      Terrorist->GetTeam()->Hostility(Char->GetTeam());
+	      if(Terrorist)
+		Terrorist->GetTeam()->Hostility(Char->GetTeam());
 	      Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 
 	      DO_FOR_SQUARES_AROUND(Char->GetPos().X, Char->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
@@ -1007,7 +1015,8 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 
   if(PlayerHurt)
     {
-      Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
+      if(Terrorist)
+	Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
       game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 
       DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),

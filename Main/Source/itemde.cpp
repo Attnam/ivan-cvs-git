@@ -1151,7 +1151,7 @@ bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar, ls
 { 
   if(!Where->GetOTerrain()->GetIsWalkable() || Where->GetCharacter())
     {
-      Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 1 + RAND() % 40);
+      Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 20 + RAND() % 5 - RAND() % 5);
       return true;
     }
   return false;

@@ -162,7 +162,7 @@ template <class type> class contentmap : public script
 class roomscript : public script
 {
  public:
-  roomscript() : CharacterMap(0), ItemMap(0), GTerrainMap(0), OTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) { }
+  roomscript() : CharacterMap(0), ItemMap(0), GTerrainMap(0), OTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), AllowBoobyTrappedDoors(0), Base(0) { }
   void ReadFrom(inputfile&, bool = false);
   void SetBase(roomscript* What) { Base = What; }
   std::vector<squarescript*>& GetSquare() { return Square; }
@@ -184,6 +184,7 @@ class roomscript : public script
   ushort* GetType(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Type) }
   bool* GetGenerateFountains(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateFountains) }
   bool* GetAllowLockedDoors(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AllowLockedDoors) }
+  bool* GetAllowBoobyTrappedDoors(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AllowBoobyTrappedDoors) }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -202,6 +203,7 @@ class roomscript : public script
   ushort* Type;
   bool* GenerateFountains;
   bool* AllowLockedDoors;
+  bool* AllowBoobyTrappedDoors;
   roomscript* Base;
 };
 

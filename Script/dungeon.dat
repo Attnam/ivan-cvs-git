@@ -83,6 +83,7 @@ Dungeon 0;
 			Type=normalroom;
 			GenerateFountains=true;
 			AllowLockedDoors=true;
+			AllowBoobyTrappedDoors=true;
 		}
 	}
 
@@ -111,7 +112,7 @@ Dungeon 0;
 		{
 			Size=5,5;
 			AllowLockedDoors=false;
-
+			AllowBoobyTrappedDoors=false;
 			Square, Pos 2,2;
 			{
 				IsWorldMapEntry=true;
@@ -167,6 +168,7 @@ Dungeon 0;
 			DivineOwner=10;
 			Type=shop;
 			AllowLockedDoors=false;
+			AllowBoobyTrappedDoors=false;
 			GenerateFountains=false;
 
 			Square, Pos 1,1;
@@ -417,6 +419,7 @@ Dungeon 1;
 			Type=normalroom;
 			GenerateFountains=false;
 			AllowLockedDoors=false;
+			AllowBoobyTrappedDoors=false;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }

@@ -121,6 +121,7 @@ class OLTERRAIN
   {
     SetIsOpen(false);
     SetIsLocked(false);
+    SetBoobyTrap(0);
     UpdatePicture();
   },
  public:
@@ -142,6 +143,8 @@ class OLTERRAIN
   virtual void Lock() { SetIsLocked(true); }
   virtual bool CanBeDigged() const { return true; }
   virtual void HasBeenHitBy(item*, float, uchar, bool);
+  virtual void CreateBoobyTrap();
+  virtual void ActivateBoobyTrap();
  private:
   virtual void Break(bool);
  protected:
@@ -149,8 +152,11 @@ class OLTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 176); }
   virtual void MakeWalkable();
   virtual void MakeNotWalkable();
+  virtual uchar GetBoobyTrap() { return BoobyTrap; }
+  virtual void SetBoobyTrap(uchar What) { BoobyTrap = What; }
   bool IsOpen;
   bool IsLocked;
+  uchar BoobyTrap;
 );
 
 class OLTERRAIN
