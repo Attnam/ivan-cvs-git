@@ -274,7 +274,7 @@ class item : public object
   virtual truth IsRepairable(const character*) const { return IsBroken() || IsRusted(); }
   virtual truth IsDecosAdShirt(const character*) const { return false; }
   virtual truth MaterialIsChangeable(const character*) const { return true; }
-  truth CanBeHardened(const character*) const;
+  virtual truth CanBeHardened(const character*) const;
   virtual truth HasLock(const character*) const { return false; }
   virtual truth IsOnGround() const;
   int GetResistance(int) const;

@@ -512,6 +512,7 @@ ITEM(corpse, item)
   virtual truth Necromancy(character*);
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
+  virtual truth CanBeHardened(const character*) const { return false; }
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;
