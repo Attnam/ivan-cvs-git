@@ -3615,15 +3615,51 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
 void character::ReceiveOmmelUrine(long Amount)
 {
-  EditExperience(ARM_STRENGTH, Amount << 1, 1 << 13);
-  EditExperience(LEG_STRENGTH, Amount << 1, 1 << 13);
+  EditExperience(ARM_STRENGTH, Amount, 1 << 13);
+  EditExperience(LEG_STRENGTH, Amount, 1 << 13);
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
+void character::ReceiveOmmelCerumen(long Amount)
+{
+  EditExperience(INTELLIGENCE, Amount, 1 << 13);
+  EditExperience(WISDOM, Amount, 1 << 13);
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
+void character::ReceiveOmmelSweat(long Amount)
+{
+  EditExperience(AGILITY, Amount, 1 << 13);
+  EditExperience(DEXTERITY, Amount, 1 << 13);
+  RestoreStamina();
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
+void character::ReceiveOmmelTears(long Amount)
+{
+  EditExperience(PERCEPTION, Amount, 1 << 13);
+  EditExperience(CHARISMA, Amount, 1 << 13);
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
+void character::ReceiveOmmelSnot(long Amount)
+{
+  EditExperience(ENDURANCE, Amount, 1 << 13);
   RestoreLivingHP();
 
   if(IsPlayer())
     game::DoEvilDeed(Amount / 25);
 }
 
-void character::AddOmmelUrineConsumeEndMessage() const
+void character::AddOmmelConsumeEndMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You feel a primitive force coursing through your veins.");

@@ -108,6 +108,10 @@ bool material::Effect(character* Eater, long Amount)
         Eater->ActivateRandomState(SRC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	break;
       }
+    case EFFECT_OMMEL_CERUMEN: Eater->ReceiveOmmelCerumen(Amount); break;
+    case EFFECT_OMMEL_SWEAT: Eater->ReceiveOmmelSweat(Amount); break;
+    case EFFECT_OMMEL_TEARS: Eater->ReceiveOmmelTears(Amount); break;
+    case EFFECT_OMMEL_SNOT: Eater->ReceiveOmmelSnot(Amount); break;
     default: return false;
     }
 
@@ -141,7 +145,7 @@ bool material::HitEffect(character* Enemy)
     {
     case HM_SCHOOL_FOOD: Enemy->AddSchoolFoodHitMessage(); break;
     case HM_FROG_FLESH: Enemy->AddFrogFleshConsumeEndMessage(); break;
-    case HM_OMMEL_URINE: Enemy->AddOmmelUrineConsumeEndMessage(); break;
+    case HM_OMMEL: Enemy->AddOmmelConsumeEndMessage(); break;
     case HM_PEPSI: Enemy->AddPepsiConsumeEndMessage(); break;
     case HM_KOBOLD_FLESH: Enemy->AddKoboldFleshHitMessage(); break;
     case HM_HEALING_LIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
@@ -168,7 +172,7 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_SCHOOL_FOOD: Eater->AddSchoolFoodConsumeEndMessage(); break;
     case CEM_BONE: Eater->AddBoneConsumeEndMessage(); break;
     case CEM_FROG_FLESH: Eater->AddFrogFleshConsumeEndMessage(); break;
-    case CEM_OMMEL_URINE: Eater->AddOmmelUrineConsumeEndMessage(); break;
+    case CEM_OMMEL: Eater->AddOmmelConsumeEndMessage(); break;
     case CEM_PEPSI: Eater->AddPepsiConsumeEndMessage(); break;
     case CEM_KOBOLD_FLESH: Eater->AddKoboldFleshConsumeEndMessage(); break;
     case CEM_HEALING_LIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;

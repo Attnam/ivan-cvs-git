@@ -68,6 +68,7 @@
 #define BREAD (ORGANIC_ID + 9)
 #define HOLY_BANANA_FLESH (ORGANIC_ID + 10)
 #define CARROT_FLESH (ORGANIC_ID + 11)
+#define OMMEL_CERUMEN (ORGANIC_ID + 12)
 
 #define GAS_ID (3 << 12)
 
@@ -101,6 +102,9 @@
 #define SULPHURIC_ACID (LIQUID_ID + 16)
 #define DOG_DROOL (LIQUID_ID + 17)
 #define PEA_SOUP (LIQUID_ID + 18)
+#define OMMEL_SWEAT (LIQUID_ID + 19)
+#define OMMEL_TEARS (LIQUID_ID + 20)
+#define OMMEL_SNOT (LIQUID_ID + 21)
 
 #define FLESH_ID (5 << 12)
 

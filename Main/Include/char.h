@@ -358,7 +358,7 @@ class character : public entity, public id
   void AddHealingLiquidConsumeEndMessage() const;
   void AddSchoolFoodConsumeEndMessage() const;
   void AddSchoolFoodHitMessage() const;
-  void AddOmmelUrineConsumeEndMessage() const;
+  void AddOmmelConsumeEndMessage() const;
   void AddPepsiConsumeEndMessage() const;
   void AddFrogFleshConsumeEndMessage() const;
   void AddKoboldFleshConsumeEndMessage() const;
@@ -866,6 +866,10 @@ class character : public entity, public id
   virtual bool CanHear() const;
   void BeginLeprosy();
   void EndLeprosy();
+  void ReceiveOmmelCerumen(long);
+  void ReceiveOmmelSweat(long);
+  void ReceiveOmmelTears(long);
+  void ReceiveOmmelSnot(long);
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

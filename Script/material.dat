@@ -966,6 +966,23 @@ organic /* substances that spoil but are not flesh */
 		PriceModifier = 1000;
 		Flexibility = 5;
 	}
+
+	Config OMMEL_CERUMEN;
+	{
+		StrengthValue = 1;
+		Color = rgb16(180, 150, 50);
+		NutritionValue = 500;
+		PriceModifier = 2500;
+		NameStem = "ommel cerumen";
+		Article = "an";
+		Effect = EFFECT_OMMEL_CERUMEN;
+		ConsumeEndMessage = CEM_OMMEL;
+		HitMessage = HM_OMMEL;
+		AttachedGod = SOPHOS;
+		EffectIsGood = true;
+		CanBeMirrored = false;
+		Density = 500;
+	}
 }
 
 gas
@@ -1089,8 +1106,8 @@ liquid
 		NameStem = "ommel urine";
 		Article = "an";
 		Effect = EFFECT_OMMEL_URINE;
-		ConsumeEndMessage = CEM_OMMEL_URINE;
-		HitMessage = HM_OMMEL_URINE;
+		ConsumeEndMessage = CEM_OMMEL;
+		HitMessage = HM_OMMEL;
 		Alpha = 150;
 		AttachedGod = NEFAS;
 		EffectIsGood = true;
@@ -1235,7 +1252,7 @@ liquid
 	Config TROLL_BLOOD;
 	{
 		StrengthValue = 1;
-		NutritionValue = 500;
+		NutritionValue = 1000;
 		Color = rgb16(160, 0, 0);
 		NameStem = "troll blood";
 		Alpha = 175;
@@ -1336,6 +1353,55 @@ liquid
 		Effect = EFFECT_PEA_SOUP;
 		ConsumeEndMessage = CEM_PEA_SOUP;
 		AttachedGod = SEGES;
+	}
+
+	Config OMMEL_SWEAT;
+	{
+		StrengthValue = 1;
+		Color = rgb16(144, 144, 240);
+		NutritionValue = 250;
+		PriceModifier = 2500;
+		NameStem = "ommel sweat";
+		Article = "an";
+		Effect = EFFECT_OMMEL_SWEAT;
+		ConsumeEndMessage = CEM_OMMEL;
+		HitMessage = HM_OMMEL;
+		AttachedGod = SEGES;
+		EffectIsGood = true;
+		CanBeMirrored = false;
+	}
+
+	Config OMMEL_TEARS;
+	{
+		StrengthValue = 1;
+		Color = rgb16(144, 144, 240);
+		NutritionValue = 250;
+		PriceModifier = 2500;
+		NameStem = "ommel tears";
+		Article = "an";
+		Effect = EFFECT_OMMEL_TEARS;
+		ConsumeEndMessage = CEM_OMMEL;
+		HitMessage = HM_OMMEL;
+		AttachedGod = MELLIS;
+		EffectIsGood = true;
+		CanBeMirrored = false;
+	}
+
+	Config OMMEL_SNOT;
+	{
+		StrengthValue = 1;
+		Color = rgb16(145, 145, 16);
+		NutritionValue = 750;
+		PriceModifier = 2500;
+		NameStem = "ommel snot";
+		Article = "an";
+		Effect = EFFECT_OMMEL_SNOT;
+		ConsumeEndMessage = CEM_OMMEL;
+		HitMessage = HM_OMMEL;
+		AttachedGod = SEGES;
+		EffectIsGood = true;
+		CanBeMirrored = false;
+		Density = 800;
 	}
 }
 

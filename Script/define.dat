@@ -191,6 +191,10 @@
 #define EFFECT_WHITE_UNICORN_FLESH 22
 #define EFFECT_TELEPORT_CONTROL 23
 #define EFFECT_MUSHROOM 24
+#define EFFECT_OMMEL_CERUMEN 25
+#define EFFECT_OMMEL_SWEAT 26
+#define EFFECT_OMMEL_TEARS 27
+#define EFFECT_OMMEL_SNOT 28
 
 /* CEM = Consume End Message */
 
@@ -198,7 +202,7 @@
 #define CEM_SCHOOL_FOOD 1
 #define CEM_BONE 2
 #define CEM_FROG_FLESH 3
-#define CEM_OMMEL_URINE 4
+#define CEM_OMMEL 4
 #define CEM_PEPSI 5
 #define CEM_KOBOLD_FLESH 6
 #define CEM_HEALING_LIQUID 7
@@ -215,7 +219,7 @@
 #define HM_NOTHING 0
 #define HM_SCHOOL_FOOD 1
 #define HM_FROG_FLESH 2
-#define HM_OMMEL_URINE 3
+#define HM_OMMEL 3
 #define HM_PEPSI 4
 #define HM_KOBOLD_FLESH 5
 #define HM_HEALING_LIQUID 6
@@ -288,6 +292,7 @@
 #define BREAD (ORGANIC_ID + 9)
 #define HOLY_BANANA_FLESH (ORGANIC_ID + 10)
 #define CARROT_FLESH (ORGANIC_ID + 11)
+#define OMMEL_CERUMEN (ORGANIC_ID + 12)
 
 #define GAS_ID (4096 * 3)
 
@@ -321,6 +326,9 @@
 #define SULPHURIC_ACID (LIQUID_ID + 16)
 #define DOG_DROOL (LIQUID_ID + 17)
 #define PEA_SOUP (LIQUID_ID + 18)
+#define OMMEL_SWEAT (LIQUID_ID + 19)
+#define OMMEL_TEARS (LIQUID_ID + 20)
+#define OMMEL_SNOT (LIQUID_ID + 21)
 
 #define FLESH_ID (4096 * 5)
 

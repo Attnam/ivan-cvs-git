@@ -150,8 +150,8 @@ can /* materialcontainer-> */
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
-	SecondaryMaterialConfig = { 4, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP; }
-	MaterialConfigChances = { 4, 750, 50, 25, 10; }
+	SecondaryMaterialConfig = { 6, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP, OMMEL_CERUMEN, OMMEL_SNOT; }
+	MaterialConfigChances = { 6, 750, 50, 25, 10, 50, 50; }
 	Roundness = 60;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
@@ -942,8 +942,8 @@ potion /* materialcontainer-> */
 	FormModifier = 25;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	SecondaryMaterialConfig = { 8, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD; }
-	MaterialConfigChances = { 8, 100, 75, 25, 75, 1, 10, 5, 25; }
+	SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS; }
+	MaterialConfigChances = { 10, 100, 75, 10, 75, 1, 10, 5, 25, 10, 10; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;

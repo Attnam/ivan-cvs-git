@@ -293,6 +293,10 @@ struct databasebase { int Config; };
 #define EFFECT_WHITE_UNICORN_FLESH 22
 #define EFFECT_TELEPORT_CONTROL 23
 #define EFFECT_MUSHROOM 24
+#define EFFECT_OMMEL_CERUMEN 25
+#define EFFECT_OMMEL_SWEAT 26
+#define EFFECT_OMMEL_TEARS 27
+#define EFFECT_OMMEL_SNOT 28
 
 /* CEM = Consume End Message */
 
@@ -300,7 +304,7 @@ struct databasebase { int Config; };
 #define CEM_SCHOOL_FOOD 1
 #define CEM_BONE 2
 #define CEM_FROG_FLESH 3
-#define CEM_OMMEL_URINE 4
+#define CEM_OMMEL 4
 #define CEM_PEPSI 5
 #define CEM_KOBOLD_FLESH 6
 #define CEM_HEALING_LIQUID 7
@@ -317,7 +321,7 @@ struct databasebase { int Config; };
 #define HM_NOTHING 0
 #define HM_SCHOOL_FOOD 1
 #define HM_FROG_FLESH 2
-#define HM_OMMEL_URINE 3
+#define HM_OMMEL 3
 #define HM_PEPSI 4
 #define HM_KOBOLD_FLESH 5
 #define HM_HEALING_LIQUID 6
