@@ -14,9 +14,7 @@
 #define HIGH_SCORE_FILENAME "HScore.dat"
 #endif
 
-#ifdef USE_SDL
-#define HIGH_SCORE_FILENAME "/var/lib/games/ivan-highscores.scores"
-#endif
+// HIGH_SCORE_FILENAME defined in configure.in in Linux
 
 class highscore
 {

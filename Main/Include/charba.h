@@ -151,6 +151,7 @@ struct characterdatabase
   uchar PanicLevel;
   bool CanBeCloned;
   std::vector<contentscript<item> > Inventory;
+  bool CanZap;
 };
 
 class characterprototype
@@ -481,6 +482,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(const std::string&, NamePlural);
   DATA_BASE_VALUE(const std::string&, PostFix);
   DATA_BASE_VALUE(uchar, ArticleMode);
+  DATA_BASE_BOOL(CanZap);
   virtual DATA_BASE_BOOL(IsPolymorphable);
   virtual DATA_BASE_VALUE(ulong, BaseUnarmedStrength);
   virtual DATA_BASE_VALUE(ulong, BaseBiteStrength);
@@ -702,6 +704,7 @@ class character : public entity, public id
   void AddOriginalBodyPartID(ushort, ulong);
   void AddToInventory(const std::vector<contentscript<item> >&, ushort);
   virtual void CalculateCarryingBonus();
+  virtual bool CheckZap();
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

@@ -553,7 +553,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	  // Nothing happens
 	  if(CanBeSeenByPlayer())
 	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	    }
 	}
     }
@@ -584,7 +584,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	  // Nothing happens
 	  if(CanBeSeenByPlayer())
 	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	    }
 	}
     }

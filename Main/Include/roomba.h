@@ -65,8 +65,9 @@ class room
   virtual void TeleportSquare(character*, lsquare*) { }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool DestroyTerrain(character*, olterrain*) { return true; }
+  virtual void DestroyTerrain(character*, olterrain*);
   virtual bool AllowSpoil() const { return true; }
+  virtual bool CheckDestroyTerrain(character*, olterrain*) { return true; }
  protected:
   virtual void VirtualConstructor(bool) { }
   std::vector<vector2d> Door;

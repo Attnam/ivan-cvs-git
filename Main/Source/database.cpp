@@ -216,7 +216,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(PanicLevel);
   ANALYZE_DATA(CanBeCloned);
   ANALYZE_DATA(Inventory);
-
+  ANALYZE_DATA(CanZap);
   return Found;
 }
 

@@ -146,6 +146,7 @@ class ABSTRACT_CHARACTER
   virtual uchar GetSWeaponSkillLevel(const item*) const;
   virtual bool IsAlive() const;
   virtual bool ShowBattleInfo();
+  virtual bool CheckZap();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -876,6 +877,18 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
+  virtual void GetAICommand();
+);
+
+class CHARACTER
+(
+  genedrixvesana,
+  nonhumanoid,
+ public:
+  virtual bool HasFeet() const { return false; }
+ protected:
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is brutally destroyed."; }
   virtual void GetAICommand();
 );
 #endif

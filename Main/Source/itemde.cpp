@@ -213,7 +213,7 @@ bool pickaxe::Apply(character* User)
 	{
 	  uchar RoomNumber = Square->GetRoom();
 
-	  if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->DestroyTerrain(User, Square->GetOLTerrain()))
+	  if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->CheckDestroyTerrain(User, Square->GetOLTerrain()))
 	    {
 	      User->SwitchToDig(this, User->GetPos() + Temp);
 	      User->DexterityAction(5);
@@ -785,7 +785,7 @@ ushort holybook::GetMaterialColorA(ushort) const
 
 bool scrollofcharging::Read(character* Reader)
 {
-  if(Reader->GetStack()->GetItems() > 1) // that 1 is the scroll itself
+  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter)) // that 1 is the scroll itself
     {
       ADD_MESSAGE("You have nothing to charge.");
       return false;
@@ -4756,3 +4756,9 @@ short armor::GetCarryingBonus() const
   else
     return 0;
 }
+
+void itemcontainer::GenerateLeftOvers(character*)
+{
+  Contained->MoveItemsTo(GetSlot());
+}
+

@@ -740,7 +740,7 @@ void skeleton::BeTalkedTo(character* Talker)
     }
 
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-    ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hip bone is connected to the rib bone...\"", CHAR_DESCRIPTION(DEFINITE));
   else
     ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", CHAR_DESCRIPTION(DEFINITE));
 }
@@ -2686,12 +2686,16 @@ bool humanoid::CanWield() const
   return CanUseEquipment(RIGHT_WIELDED_INDEX) || CanUseEquipment(LEFT_WIELDED_INDEX);
 }
 
+/* return true if still in balance */
 bool humanoid::CheckBalance(float KickDamage)
 {
-  if(GetLegs() == 1)
+  if(KickDamage == 0)
     return true;
+
+  if(GetLegs() == 1)
+    return false;
   else
-    return KickDamage * 50 >= RAND() % GetSize();
+    return KickDamage * 50 < RAND() % GetSize();
 }
 
 long humanoid::GetMoveAPRequirement(uchar Difficulty) const
@@ -3345,13 +3349,13 @@ void cossack::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Graah! Eating raw flesh makes one feel so masculine and powerful! (and sick)\"");
       break;
     case 1:
-      ADD_MESSAGE("\"It surely is cold on this island. Remembers me of my six years in Siberia after breaking into the local pub's booze cellar...\"");
+      ADD_MESSAGE("\"It surely is cold on this island. Reminds me of my six years in Siberia after breaking into the local pub's booze cellar...\"");
       break;
     case 2:
       ADD_MESSAGE("\"What, why have I no horse? Er, I lost it in poker.\"");
       break;
     case 3:
-      ADD_MESSAGE("\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"");
+      ADD_MESSAGE("\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still like me.\"");
       break;
     }
 }
@@ -3927,3 +3931,43 @@ void nonhumanoid::AddBiteInfo(felist& Info) const
   Info.AddEntry("", LIGHT_GRAY);
 }
 
+bool humanoid::CheckZap()
+{
+  if(GetArms() == 0)
+    {
+      ADD_MESSAGE("You need at least one arm to zap."); 
+      return false;
+    }
+  return character::CheckZap();
+}
+
+void genedrixvesana::GetAICommand()
+{
+  if(!(RAND() % 20))
+    {
+      uchar NumberOfTries = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
+      for(uchar c = 0; c < NumberOfTries; ++c)
+	{
+	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
+	    {
+	      character* Victim = *i;
+	      lsquare* LSquare =  Victim->GetNeighbourLSquare(RAND() % 8);
+	      if(LSquare->IsWalkable(0) && !LSquare->GetCharacter())
+		{
+		  character* NewPlant = new carnivorousplant;
+		  NewPlant->SetTeam(GetTeam());
+		  LSquare->AddCharacter(NewPlant);
+		  if(NewPlant->CanBeSeenByPlayer(Victim))
+		    {
+		      if(Victim->IsPlayer())
+			ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));
+		      else
+			ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE));
+		    }
+		}
+	    }
+	}
+      EditAP(-1000);
+    }
+  EditAP(-1000);
+}

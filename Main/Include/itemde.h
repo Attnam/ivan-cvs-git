@@ -733,7 +733,7 @@ class ABSTRACT_ITEM
   void SetHP(short);
   short GetHP() const { return HP; }
   void EditHP(short);
-  void IncHP() { ++HP; }
+  void IncreaseHP() { ++HP; }
   virtual ushort GetTotalResistance(uchar) const = 0;
   virtual bool ReceiveDamage(character*, ushort, uchar);
   const std::string& GetOwnerDescription() const { return OwnerDescription; }
@@ -1250,6 +1250,7 @@ class ITEM
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void AddItemsInside(const std::vector<contentscript<item> >&, ushort);
+  virtual void GenerateLeftOvers(character*);  
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }

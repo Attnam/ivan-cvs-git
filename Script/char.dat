@@ -74,6 +74,7 @@ character
 	LeftSWeaponSkillHits = 0;
 	PanicLevel = 33;
 	CanBeCloned = true;
+	CanZap = false;
 }
 
 humanoid
@@ -97,6 +98,7 @@ humanoid
 	CanUseEquipment = true;
 	CanKick = true;
 	CanTalk = true;
+	CanZap = true; /* AND has one hand (hard coded) */
 }
 
 nonhumanoid
@@ -2154,4 +2156,35 @@ smith
 	HairColor = rgb16(48, 48, 48);
 	ClothColor = rgb16(80, 80, 80);
 	LegSpecialColor = rgb16(110,70, 48);
+}
+
+genedrixvesana
+{
+	DefaultArmStrength = 10;
+	DefaultAgility = 1;
+	DefaultEndurance = 5;
+	DefaultPerception = 20;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 40;
+	DefaultCharisma = 40;
+	DefaultMana = 0;
+	CanOpen = false;
+	TotalVolume = 20000;
+	TorsoBitmapPos = 0,16;
+	TalkVerb = "is silent";
+	TotalSize = 250;
+	NameSingular = "genedrix vesana";
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 5000;
+	SkinColor = rgb16(111, 64, 37);
+	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
+	TorsoSpecialColor = rgb16(100,0,0);
+	CanWalk = false;
+	CanBeGenerated = true;
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 20;
+	PanicLevel = 0;
+	CanBeGenerated = false;
+	IsCharmable = false;
+	CanBeDisplaced = false;
 }

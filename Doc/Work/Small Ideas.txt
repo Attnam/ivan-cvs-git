@@ -364,3 +364,4 @@ Lookmode should show whether a creature is panicked.
 Coconuts falling from palms
 Changing keyboard layout (some people don't seem to like numpad)
 Reflecting items (mirror and shield of reflection)
+Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)       

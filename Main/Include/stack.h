@@ -95,6 +95,7 @@ class stack
   bool IsDangerousForAIToStepOn(const character*) const;
   bool Clone(ushort);
   void MoveItemsTo(stack*);
+  void MoveItemsTo(slot*);
   item* GetBottomVisibleItem(const character*) const;
   item* GetBottomItem(const character*, bool) const;
   void Pile(std::vector<std::vector<item*> >&, const character*, bool (*)(item*, const character*) = 0) const;

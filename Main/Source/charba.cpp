@@ -2099,6 +2099,9 @@ bool character::ForceVomit()
 
 bool character::Zap()
 {
+  if(!CheckZap())
+    return false;
+
   if(!GetStack()->GetItems())
     {
       ADD_MESSAGE("You have nothing to zap with.");
@@ -2211,7 +2214,7 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
     case HAS_HIT:
     case HAS_BLOCKED:
     case DID_NO_DAMAGE:
-      if(CheckBalance(KickDamage))
+      if(!CheckBalance(KickDamage))
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("The kick throws you off balance.");
@@ -2223,10 +2226,12 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 	}
     }
 }
-
+/* return true if still in balance */
 bool character::CheckBalance(float KickDamage)
 {
-  return KickDamage * 25 >= RAND() % GetSize();
+  if(KickDamage == 0)
+    return true;
+  return KickDamage * 25 < RAND() % GetSize();
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -3614,7 +3619,7 @@ void character::Regenerate()
       if(!NeedHeal)
 	break;
 
-      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncHP();
+      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncreaseHP();
       ++HP;
       EditExperience(ENDURANCE, 200);
       RegenerationCounter -= 100000;
@@ -3969,7 +3974,7 @@ void character::ReceiveHeal(long Amount)
       if(!NeedHeal)
 	break;
 
-      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncHP();
+      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncreaseHP();
       ++HP;
     }
 
@@ -5989,3 +5994,14 @@ void character::CalculateCarryingBonus()
     if(GetEquipment(c))
       CarryingBonus += GetEquipment(c)->GetCarryingBonus();
 }
+
+bool character::CheckZap()
+{
+  if(!CanZap())
+    {
+      ADD_MESSAGE("This monster type can't zap.");
+      return false;
+    }
+  return true;
+}
+

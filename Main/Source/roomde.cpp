@@ -148,8 +148,11 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  return false;
 	}
 
-      if(Master->GetMoney() >= Price)
+      if(Master->GetMoney() == 0)
 	{
+	  if(Master->GetMoney() < Price)
+	    Price = Master->GetMoney();
+
 	  if(Amount == 1)
 	    ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
@@ -166,7 +169,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I don't have so much. Sorry.\"", Price, Amount == 1 ? "it" : "them");
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I'm temporary short of cash. Sorry.\"", Price, Amount == 1 ? "it" : "them");
 	  return false;
 	}
     }
@@ -568,7 +571,7 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
 
 /* returns true if player agrees to continue */
 
-bool library::DestroyTerrain(character* Infidel, olterrain* Terrain) 
+bool library::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
 { 
   if(!Master || Infidel == Master || Master->GetTeam()->GetRelation(Infidel->GetTeam()) == HOSTILE || !Terrain->CanBeSeenBy(Master))
     return true;
@@ -578,7 +581,7 @@ bool library::DestroyTerrain(character* Infidel, olterrain* Terrain)
   if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
       ADD_MESSAGE("\"You book worm!\"");
-      Infidel->Hostility(Master);
+      DestroyTerrain(Infidel, Terrain);
       return true;
     }
   else
@@ -587,7 +590,7 @@ bool library::DestroyTerrain(character* Infidel, olterrain* Terrain)
 
 /* returns true if player agrees to continue */
 
-bool cathedral::DestroyTerrain(character* Infidel, olterrain*) 
+bool cathedral::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
 {
   if(game::GetTeam(2)->GetRelation(Infidel->GetTeam()) == HOSTILE)
     return true;
@@ -596,7 +599,7 @@ bool cathedral::DestroyTerrain(character* Infidel, olterrain*)
 
   if(game::BoolQuestion("Are you sure? [y/N]"))
     {
-      Infidel->GetTeam()->Hostility(game::GetTeam(2));
+      DestroyTerrain(Infidel, Terrain);
       return true;
     }
   else
@@ -605,7 +608,7 @@ bool cathedral::DestroyTerrain(character* Infidel, olterrain*)
 
 /* returns true if player agrees to continue */
 
-bool shop::DestroyTerrain(character* Infidel, olterrain* Terrain) 
+bool shop::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
 {
   if(!Master || Infidel == Master || Master->GetTeam()->GetRelation(Infidel->GetTeam()) == HOSTILE || !Terrain->CanBeSeenBy(Master))
     return true;
@@ -615,9 +618,14 @@ bool shop::DestroyTerrain(character* Infidel, olterrain* Terrain)
   if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
       ADD_MESSAGE("\"You communist!\"");
-      Infidel->Hostility(Master);
+      DestroyTerrain(Infidel, Terrain);
       return true;
     }
   else
     return false; 
+}
+
+void cathedral::DestroyTerrain(character* Who, olterrain*)
+{
+  Who->GetTeam()->Hostility(game::GetTeam(2));  
 }

@@ -37,6 +37,8 @@ Lich
 
 Cyclops
 Vampire
+	
+	Should be damaged by too much light.
 Minotaur
 
 Kerberus
@@ -59,4 +61,17 @@ Mutant tentacle
 
 	Purple skin. Low agility, but very high intelligence. Can use humanoid weapons.
 
-Evil monkeys
+unnamed (maybe xorn or ghost)
+	
+	Can go through walls
+
+Huge firefly
+     
+	Flying. Emits light (might be a useful pet)
+
+Shaman
+
+	Curses at you and so lowers the echantment level of a randomly picked item in your equipment or stack.
+
+Monkey
+	(a la Nethack) Fights a short time and then steals one of your items and then tries to run away.

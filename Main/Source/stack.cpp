@@ -619,6 +619,15 @@ void stack::MoveItemsTo(stack* Stack)
     GetBottom()->MoveTo(Stack);
 }
 
+void stack::MoveItemsTo(slot* Slot)
+{
+  while(GetItems())
+    {
+      Slot->AddFriendItem(*GetBottom());
+    }
+}
+
+
 ushort stack::GetItems(const character* Char, bool ForceIgnoreVisibility) const
 {
   return ForceIgnoreVisibility ? Items : GetVisibleItems(Char);
@@ -697,3 +706,4 @@ void stack::ReceiveFluidSpill(material* Liquid)
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->ReceiveFluidSpill(Liquid);
 }
+
