@@ -474,7 +474,7 @@ void game::Run()
 
 	      GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
 
-	      {
+	      /*	      {
 		item* Item;
 
 		if(!RAND_N(2))
@@ -566,7 +566,7 @@ void game::Run()
 
 		  Char->SetTeam(GetTeam(RAND() % Teams));
 		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-		}
+		  }*/
 	    }
 	}
 
@@ -2449,8 +2449,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  //  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
-  if(!IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
     {
       int BoneIndex;
       festring BoneName;
@@ -2475,7 +2474,7 @@ void game::CreateBone()
 
 bool game::PrepareRandomBone(int LevelIndex)
 {
-  if(/*WizardModeIsActive() ||*/ GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
+  if(WizardModeIsActive() || GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
     return false;
 
   int BoneIndex;

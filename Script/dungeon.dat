@@ -1873,7 +1873,7 @@ Dungeon ATTNAM;
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
-		Square, Random;
+		/*Square, Random;
 		{
 			Character = communist { Team = IVAN_TEAM; }
 			Times = 3;
@@ -1979,7 +1979,7 @@ Dungeon ATTNAM;
 		{
 			Character = spider { Team = MONSTER_TEAM; }
 			Times = 3;
-		}
+		}*/
 	}
 }
 

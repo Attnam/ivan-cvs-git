@@ -1692,8 +1692,8 @@ bool level::PostProcessForBone()
     for(int y = 0; y < YSize; ++y)
       Map[x][y]->PostProcessForBone(DangerSum, Enemies);
 
-  /*  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > Difficulty * 10))
-      return false;*/
+  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > Difficulty * 10))
+      return false;
 
   return true;
 }
