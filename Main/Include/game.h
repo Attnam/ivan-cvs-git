@@ -211,6 +211,7 @@ class game
   static char CompareLightToInt(ulong, uchar);
   static void CombineLights(ulong&, ulong);
   static bool IsDark(ulong);
+  static void SetStandardListAttributes(felist&);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

@@ -446,15 +446,21 @@ bool character::Drop()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to drop?");
+  std::vector<item*> ToDrop;
+  GetStack()->DrawContents(ToDrop, this, "What do you want to drop?");
 
-  if(Item)
-    if(!GetRoomUnder() || GetRoomUnder()->DropItem(this, Item))
-      {
-	Item->MoveTo(GetStackUnder());
-	DexterityAction(1);
-	return true;
-      }
+  if(ToDrop.empty())
+    return false;
+
+  if(!GetRoomUnder() || GetRoomUnder()->DropItem(this, ToDrop[0], ToDrop.size()))
+    {
+      for(ushort c = 0; c < ToDrop.size(); ++c)
+	ToDrop[c]->MoveTo(GetStackUnder());
+
+      ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).c_str());
+      DexterityAction(1);
+      return true;
+    }
 
   return false;
 }
@@ -473,14 +479,14 @@ bool character::Eat()
       return false;
     }
 
-  item* Item;
+  std::vector<item*> Item;
 
   if(!game::IsInWilderness() && GetStackUnder()->SortedItems(this, &item::EatableSorter))
-    Item = GetStack()->DrawContents(GetStackUnder(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", true, true, &item::EatableSorter);
+    GetStack()->DrawContents(Item, GetStackUnder(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", 0, &item::EatableSorter);
   else
-    Item = GetStack()->DrawContents(this, "What do you wish to eat?", true, true, &item::EatableSorter);
+    GetStack()->DrawContents(Item, this, "What do you wish to eat?", 0, &item::EatableSorter);
 
-  return Item ? ConsumeItem(Item) : false;
+  return !Item.empty() ? ConsumeItem(Item[0]) : false;
 }
 
 bool character::Drink()
@@ -497,14 +503,14 @@ bool character::Drink()
       return false;
     }
 
-  item* Item;
+  std::vector<item*> Item;
 
   if(!game::IsInWilderness() && GetStackUnder()->SortedItems(this, &item::DrinkableSorter))
-    Item = GetStack()->DrawContents(GetStackUnder(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", true, true, &item::DrinkableSorter);
+    GetStack()->DrawContents(Item, GetStackUnder(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", 0, &item::DrinkableSorter);
   else
-    Item = GetStack()->DrawContents(this, "What do you wish to drink?", true, true, &item::DrinkableSorter);
+    GetStack()->DrawContents(Item, this, "What do you wish to drink?", 0, &item::DrinkableSorter);
 
-  return Item ? ConsumeItem(Item) : false;
+  return !Item.empty() ? ConsumeItem(Item[0]) : false;
 }
 
 bool character::ConsumeItem(item* Item)
@@ -793,60 +799,66 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 bool character::ShowInventory()
 {
-  GetStack()->DrawContents(this, "Your inventory", false);
+  GetStack()->DrawContents(this, "Your inventory", NO_SELECT);
   return false;
 }
 
 bool character::PickUp()
 {
-  bool ToBeReturned = false;
-
   ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems(this);
 
-  if(VisibleItemsOnGround > 0)
-    if(VisibleItemsOnGround > 1)
-      {
-	for(;;)
-	  {
-	    item* Item = GetStackUnder()->DrawContents(this, "What do you want to pick up?");
+  if(!VisibleItemsOnGround)
+    {
+      ADD_MESSAGE("There is nothing here to pick up, %s!", game::Insult());
+      return false;
+    }
 
-	    if(Item && (!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item)))
-	      {
-		if(Item->CheckPickUpEffect(this))
-		  {
-		    ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
-		    Item->MoveTo(GetStack());
-		    ToBeReturned = true;
-		  }
-		else
-		  continue;
-	      }
+  std::vector<std::vector<item*> > PileVector;
+  GetStackUnder()->Pile(PileVector, this);
 
-	    if(!Item || !GetStackUnder()->GetVisibleItems(this))
-	      break;
+  if(PileVector.size() == 1)
+    {
+      ushort Amount = PileVector[0].size();
 
-	    game::DrawEverythingNoBlit();
-	  }
-      }
-    else
-      {
-	item* Item = GetStackUnder()->GetBottomVisibleItem(this);
+      if(Amount > 1)
+	Amount = game::ScrollBarQuestion("How many " + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), 1, 1, 0, Amount, WHITE, LIGHTGRAY, DARKGRAY);
 
-	if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item))
-	  {
-	    if(Item->CheckPickUpEffect(this))
-	      {
-		ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
-		Item->MoveTo(GetStack());
-		DexterityAction(2);
-		return true;
-	      }
-	  }
-      }
-  else
-    ADD_MESSAGE("There is nothing here to pick up, %s!", game::Insult());
+      if((!GetRoomUnder() || GetRoomUnder()->PickupItem(this, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(this))
+	{
+	  for(ushort c = 0; c < Amount; ++c)
+	    PileVector[0][c]->MoveTo(GetStack());
 
-  if(ToBeReturned)
+	  ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).c_str());
+	  DexterityAction(2);
+	  return true;
+	}
+      else
+	return false;
+    }
+
+  bool Success = false;
+  stack::SetSelected(0);
+
+  for(;;)
+    {
+      std::vector<item*> ToPickup;
+      game::DrawEverythingNoBlit();
+      GetStackUnder()->DrawContents(ToPickup, this, "What do you want to pick up?", REMEMBER_SELECTED);
+
+      if(ToPickup.empty())
+	break;
+
+      if((!GetRoomUnder() || GetRoomUnder()->PickupItem(this, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(this))
+	{
+	  for(ushort c = 0; c < ToPickup.size(); ++c)
+	    ToPickup[c]->MoveTo(GetStack());
+
+	  ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).c_str());
+	  Success = true;
+	}
+    }
+
+  if(Success)
     {
       DexterityAction(2);
       return true;
@@ -933,7 +945,8 @@ void character::Die(bool ForceMsg)
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", REQUIRES_ANSWER))
 	  {
-	    GetStack()->DrawContents(this, "Your inventory", false);
+	    GetStack()->DrawContents(this, "Your inventory", NO_SELECT);
+
 	    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
 	      i->DrawContents(this);
 
@@ -941,6 +954,7 @@ void character::Die(bool ForceMsg)
 	      if(GetEquipment(c))
 		GetEquipment(c)->DrawContents(this);
 	  }
+
       if(game::BoolQuestion("Do you want to see your message history? [y/n]", REQUIRES_ANSWER))
 	DrawMessageHistory();
 
@@ -999,7 +1013,7 @@ void character::Die(bool ForceMsg)
 
 bool character::OpenItem()
 {
-  item* Item = Stack->DrawContents(this, "What do you want to open?", true, true, &item::OpenableSorter);
+  item* Item = Stack->DrawContents(this, "What do you want to open?", 0, &item::OpenableSorter);
   return Item && Item->Open(this);
 }
 
@@ -1365,7 +1379,7 @@ bool character::Read()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to read?", true, true, &item::ReadableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to read?", 0, &item::ReadableSorter);
   return Item && ReadItem(Item);
 }
 
@@ -1427,7 +1441,7 @@ bool character::Dip()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", true, true, &item::DippableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", 0, &item::DippableSorter);
 
   if(Item)
     {
@@ -1444,7 +1458,7 @@ bool character::Dip()
 	}
       else
 	{
-	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", true, true, &item::DipDestinationSorter);
+	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", 0, &item::DipDestinationSorter);
 
 	  if(DipTo)
 	    {
@@ -1684,7 +1698,8 @@ bool character::ShowKeyLayout()
 	  }
     }
 
-  List.Draw(vector2d(26, 42), 652, 30, MakeRGB16(0, 0, 16), false);
+  game::SetStandardListAttributes(List);
+  List.Draw();
   return false;
 }
 
@@ -1776,7 +1791,9 @@ bool character::Pray()
     else
       ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
 
-  ushort Select = Panthenon.Draw(vector2d(26, 42), 652);
+  game::SetStandardListAttributes(Panthenon);
+  Panthenon.AddFlags(SELECTABLE);
+  ushort Select = Panthenon.Draw();
 
   if(Select & 0x8000)
     return false;
@@ -2078,7 +2095,7 @@ bool character::Apply()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", true, true, &item::AppliableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", 0, &item::AppliableSorter);
   return Item && Item->Apply(this);
 }
 
@@ -2098,7 +2115,7 @@ bool character::Zap()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", true, true, &item::ZappableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", 0, &item::ZappableSorter);
 
   if(Item)
     {
@@ -3025,7 +3042,8 @@ bool character::SecretKnowledge()
   List.AddEntry("Character defence info", LIGHTGRAY);
   List.AddEntry("Character danger values", LIGHTGRAY);
   List.AddEntry("Miscellaneous item info", LIGHTGRAY);
-  ushort Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB16(0, 0, 16));
+  game::SetStandardListAttributes(List);
+  ushort Chosen = List.Draw();
   ushort c, PageLength = 20;
 
   if(Chosen & 0x8000)
@@ -3118,7 +3136,9 @@ bool character::SecretKnowledge()
 	delete Item[c];
     }
 
-  List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB16(0, 0, 16), false);
+  game::SetStandardListAttributes(List);
+  List.SetPageLength(PageLength);
+  List.Draw();
   List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
   ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
   return false;
@@ -3412,7 +3432,9 @@ bool character::EquipmentScreen()
 	}
 
       game::DrawEverythingNoBlit();
-      Chosen = List.Draw(vector2d(26, 42), 652, 20, MakeRGB16(0, 0, 16), true, false);
+      game::SetStandardListAttributes(List);
+      List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
+      Chosen = List.Draw();
 
       if(Chosen >= GetEquipmentSlots())
 	break;
@@ -3436,7 +3458,7 @@ bool character::EquipmentScreen()
       else
 	{
 	  game::DrawEverythingNoBlit();
-	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", true, true, EquipmentSorter(Chosen));
+	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", 0, EquipmentSorter(Chosen));
 
 	  if(Item != OldEquipment)
 	    EquipmentChanged = true;
@@ -3623,7 +3645,10 @@ void character::PrintInfo() const
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHARNAME(DEFINITE));
   else
-    Info.Draw(vector2d(26, 42), 652, 30, MakeRGB16(0, 0, 16), false);
+    {
+      game::SetStandardListAttributes(Info);
+      Info.Draw();
+    }
 }
 
 void character::CompleteRiseFromTheDead()
@@ -4409,7 +4434,10 @@ bool character::ShowWeaponSkills()
     Something = true;
 
   if(Something)
-    List.Draw(vector2d(26, 42), 652, 20, MakeRGB16(0, 0, 16), false);
+    {
+      game::SetStandardListAttributes(List);
+      List.Draw();
+    }
   else
     ADD_MESSAGE("You are not experienced in any weapon skill yet!");
 
@@ -5154,7 +5182,8 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
   Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHTGRAY);
   Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHTGRAY);
-  Info.Draw(vector2d(26, 42), 652, 30, MakeRGB16(0, 0, 16), false);
+  game::SetStandardListAttributes(Info);
+  Info.Draw();
 }
 
 bool character::CanUseStethoscope(bool PrintReason) const
@@ -5637,13 +5666,13 @@ bool character::TryToEquip(item* Item)
 	  {
 	    if(NewDanger > Danger)
 	      {
-		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item))
+		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item, 1))
 		  {
 		    if(CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s drops %s %s and equips %s instead.", CHARNAME(DEFINITE), CHARPOSSESSIVEPRONOUN, OldEquipment->CHARNAME(UNARTICLED), Item->CHARNAME(DEFINITE));
 
 		    if(GetRoomUnder())
-		      GetRoomUnder()->DropItem(this, OldEquipment);
+		      GetRoomUnder()->DropItem(this, OldEquipment, 1);
 
 		    OldEquipment->MoveTo(GetStackUnder());
 		    Item->RemoveFromSlot();
@@ -5657,7 +5686,7 @@ bool character::TryToEquip(item* Item)
 	  {
 	    if(NewDanger >= Danger)
 	      {
-		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item))
+		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item, 1))
 		  {
 		    if(CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s picks up and equips %s.", CHARNAME(DEFINITE), Item->CHARNAME(DEFINITE));
@@ -5676,7 +5705,7 @@ bool character::TryToEquip(item* Item)
 
 bool character::TryToConsume(item* Item)
 {
-  if(Item->IsConsumable(this) && !Item->IsBadFoodForAI(this) && (!GetRoomUnder() || GetRoomUnder()->ConsumeItem(this, Item)))
+  if(Item->IsConsumable(this) && !Item->IsBadFoodForAI(this) && (!GetRoomUnder() || GetRoomUnder()->ConsumeItem(this, Item, 1)))
     {
       ConsumeItem(Item);
       return true;

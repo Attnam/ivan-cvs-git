@@ -804,7 +804,7 @@ void scrollofcharging::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", true, true, &item::ChargeableSorter);
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", 0, &item::ChargeableSorter);
 
 	if(Item)
 	  {
@@ -1964,7 +1964,6 @@ void chest::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      StorageVolume = 5000;
       SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
       SetIsLocked(RAND() % 3 != 0);
       ulong ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
@@ -1973,7 +1972,7 @@ void chest::VirtualConstructor(bool Load)
 	{
 	  item* NewItem = protosystem::BalancedCreateItem();
 
-	  if(NewItem->CanBeGeneratedInContainer() && FitsIn(NewItem))
+	  if(NewItem->CanBeGeneratedInContainer() && HowManyFits(NewItem))
 	    {
 	      GetContained()->AddItem(NewItem);
 	      NewItem->SpecialGenerationHandler();
@@ -2302,18 +2301,37 @@ bool chest::Open(character* Opener)
 
 bool chest::TakeSomethingFrom(character* Opener)
 {
-  if(GetContained()->GetItems() == 0)
+  if(!GetContained()->GetItems())
     {
       ADD_MESSAGE("There is nothing in %s.", CHARNAME(DEFINITE));
       return false;
     }
 
-  item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
+  bool Success = false;
   uchar RoomNumber = GetLSquareUnder()->GetRoom();
+  stack::SetSelected(0);
 
-  if(ToBeTaken && (!RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,ToBeTaken)))
+  for(;;)
     {
-      ToBeTaken->MoveTo(Opener->GetStack());
+      std::vector<item*> ToTake;
+      game::DrawEverythingNoBlit();
+      GetContained()->DrawContents(ToTake, Opener, "What do you want to take from " + GetName(DEFINITE) + "?", REMEMBER_SELECTED);
+
+      if(ToTake.empty())
+	break;
+
+      if(!IsOnGround() || !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener, ToTake[0], ToTake.size()))
+	{
+	  for(ushort c = 0; c < ToTake.size(); ++c)
+	    ToTake[c]->MoveTo(Opener->GetStack());
+
+	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).c_str(), CHARNAME(DEFINITE));
+	  Success = true;
+	}
+    }
+
+  if(Success)
+    {
       Opener->DexterityAction(Opener->OpenMultiplier() * 5);
       return true;
     }
@@ -2323,54 +2341,77 @@ bool chest::TakeSomethingFrom(character* Opener)
 
 bool chest::PutSomethingIn(character* Opener)
 {
-  if(Opener->GetStack()->GetItems() == 0)
+  if(!Opener->GetStack()->GetItems())
     {
       ADD_MESSAGE("You have nothing to put in %s.", CHARNAME(DEFINITE));
       return false;
     }
 
-  item* ToBePut = Opener->GetStack()->DrawContents(Opener, "What do you want to put in " + GetName(DEFINITE) + "?");
+  bool Success = false;
+  uchar RoomNumber = GetLSquareUnder()->GetRoom();
+  stack::SetSelected(0);
 
-  if(ToBePut)
+  for(;;)
     {
-      uchar RoomNumber = GetLSquareUnder()->GetRoom();
-      if(ToBePut == this)
+      std::vector<item*> ToPut;
+      game::DrawEverythingNoBlit();
+      Opener->GetStack()->DrawContents(ToPut, Opener, "What do you want to put in " + GetName(DEFINITE) + "?", REMEMBER_SELECTED);
+
+      if(ToPut.empty())
+	break;
+
+      if(ToPut[0]->GetID() == GetID())
 	{
-	  ADD_MESSAGE("Why are you trying to put the item inside itself?");
-	  return false;
+	  ADD_MESSAGE("You can't put %s inside itself!", CHARNAME(DEFINITE));
+	  continue;
 	}
-      if(FitsIn(ToBePut))
+
+      ushort Amount = Min<ushort>(HowManyFits(ToPut[0]), ToPut.size());
+
+      if(!Amount)
 	{
-	  if((RoomNumber == 0 || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, ToBePut)))
-	    {
-	      ToBePut->MoveTo(GetContained());
-	      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
-	      return true;
-	    }
+	  if(ToPut.size() == 1)
+	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	  else
-	    return false;
+	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHARNAME(PLURAL), CHARNAME(DEFINITE));
+
+	  continue;
 	}
-      else
+
+      if(Amount != ToPut.size())
+	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHARNAME(PLURAL), Amount == 1 ? "s" : "", CHARNAME(DEFINITE));
+
+      if(!IsOnGround() || !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, ToPut[0], Amount))
 	{
-	  ADD_MESSAGE("%s doesn't fit in %s.", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
-	  return false;
+	  for(ushort c = 0; c < Amount; ++c)
+	    ToPut[c]->MoveTo(GetContained());
+
+	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).c_str(), CHARNAME(DEFINITE));
+	  Success = true;
 	}
     }
-  return false;
+
+  if(Success)
+    {
+      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
+      return true;
+    }
+  else
+    return false;
 }
 
 void chest::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   GetContained()->Save(SaveFile);
-  SaveFile << StorageVolume << LockType << Locked;
+  SaveFile << LockType << Locked;
 }
 
 void chest::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   GetContained()->Load(SaveFile);
-  SaveFile >> StorageVolume >> LockType >> Locked;
+  SaveFile >> LockType >> Locked;
 }
 
 bool chest::Polymorph(stack* CurrentStack)
@@ -2380,9 +2421,9 @@ bool chest::Polymorph(stack* CurrentStack)
   return true;
 }
 
-bool chest::FitsIn(item* ToBePut) const
+ushort chest::HowManyFits(item* ToBePut) const
 {
-  return GetContained()->GetVolume() + ToBePut->GetVolume() <= GetStorageVolume();
+  return (GetStorageVolume() - GetContained()->GetVolume()) / ToBePut->GetVolume();
 }
 
 chest::~chest()
@@ -3248,7 +3289,7 @@ corpse::corpse(const corpse& Corpse) : item(Corpse)
   Deceased->SetMotherEntity(this);
 }
 
-chest::chest(const chest& Chest) : item(Chest), StorageVolume(Chest.StorageVolume), LockType(Chest.LockType), Locked(Chest.Locked)
+chest::chest(const chest& Chest) : item(Chest), LockType(Chest.LockType), Locked(Chest.Locked)
 {
   Contained = new stack(0, this, HIDDEN, true);
 }
@@ -3764,7 +3805,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose a weapon to enchant:", true, true, item::WeaponSorter);
+	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose a weapon to enchant:", 0, item::WeaponSorter);
 
 	  if(Item)
 	    {
@@ -3795,7 +3836,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose an armor to enchant:", true, true, item::ArmorSorter);
+	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose an armor to enchant:", 0, item::ArmorSorter);
 
 	  if(Item)
 	    {
@@ -3890,7 +3931,7 @@ bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 void chest::DrawContents(const character* Char)
 {
   std::string Topic = "Contents of your " + GetName(UNARTICLED);
-  GetContained()->DrawContents(Char, Topic, false);
+  GetContained()->DrawContents(Char, Topic, NO_SELECT);
 }
 
 void backpack::ReceiveFluidSpill(material* Liquid)

@@ -1017,7 +1017,7 @@ void game::CreateTeams()
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0); // pos may be incorrect!
   std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
   DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
@@ -1415,7 +1415,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", false, GetSeeWholeMapCheat());
+	      Stack->DrawContents(game::GetPlayer(), "Items here", NO_SELECT|(GetSeeWholeMapCheat() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1703,3 +1703,10 @@ bool game::IsDark(ulong Light)
   return !Light || (GetRed24(Light) < LIGHT_BORDER && GetGreen24(Light) < LIGHT_BORDER && GetBlue24(Light) < LIGHT_BORDER);
 }
 
+void game::SetStandardListAttributes(felist& List)
+{
+  List.SetPos(vector2d(26, 42));
+  List.SetWidth(652);
+  List.SetBackColor(MakeRGB16(0, 0, 16));
+  List.SetFlags(BLIT_AFTERWARDS|DRAW_BACKGROUND_AFTERWARDS);
+}

@@ -1210,6 +1210,7 @@ librarian
 	NameSingular = "librarian";
 	PanicLevel = 50;
 	CanBeCloned = false;
+	DefaultMoney = 2000;
 }
 
 zombie

@@ -15,6 +15,8 @@
 #include "save.h"
 #include "config.h"
 
+ushort stack::Selected;
+
 stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility)
 {
 }
@@ -314,50 +316,68 @@ ushort stack::SearchItem(item* ToBeSearched) const
   return 0xFFFF;
 }
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
 {
-  return DrawContents(0, Viewer, Topic, "", "", SelectItem, ShowSpecialInfo, SorterFunction);
+  std::vector<item*> ReturnVector;
+  DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags|NO_MULTI_SELECT, SorterFunction);
+  return ReturnVector.empty() ? 0 : ReturnVector[0];
+}
+
+void stack::DrawContents(std::vector<item*>& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
+{
+  DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
 
-item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
+void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
 {
   felist Contents(Topic, WHITE, 0);
 
-  if(ShowSpecialInfo)
+  if(!(Flags & NO_SPECIAL_INFO))
     {
       Contents.AddDescription("");
       Contents.AddDescription(std::string("Overall weight: ") + (MergeStack ? GetWeight() + MergeStack->GetWeight() : GetWeight()) + " grams");
     }
 
   if(MergeStack)
-    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, ShowSpecialInfo, SorterFunction);
+    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, SorterFunction);
 
-  AddContentsToList(Contents, Viewer, ThisDesc, ShowSpecialInfo, SorterFunction);
-  ushort Chosen = Contents.Draw(vector2d(26, 42), 652, 12, MakeRGB16(0, 0, 16), SelectItem, false);
+  AddContentsToList(Contents, Viewer, ThisDesc, Flags, SorterFunction);
+  game::SetStandardListAttributes(Contents);
+  Contents.SetPageLength(12);
+  Contents.RemoveFlags(BLIT_AFTERWARDS);
 
-  if(Chosen & 0x8000)
-    return 0;
+  if(!(Flags & NO_SELECT))
+    Contents.AddFlags(SELECTABLE);
+
+  if(Flags & REMEMBER_SELECTED)
+    Contents.SetSelected(GetSelected());
+
+  Selected = Contents.Draw();
+
+  if(Selected & 0x8000)
+    {
+      Selected = 0;
+      return;
+    }
 
   ushort Pos = 0;
-  item* Item;
 
   if(MergeStack)
     {
-      Item = MergeStack->SearchChosen(Pos, Chosen, Viewer, SorterFunction);
+      Pos = MergeStack->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, SorterFunction);
 
-      if(Item)
-	return Item;
+      if(Pos != 0xFFFF)
+	return;
     }
 
-  Item = SearchChosen(Pos, Chosen, Viewer, SorterFunction);
-  return Item;
+  SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, SorterFunction);
 }
 
 /* fix selectitem warning! */
 
-void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, bool ShowSpecialInfo, bool (*SorterFunction)(item*, const character*)) const
+void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
 {
   std::vector<std::vector<item*> > PileVector;
   Pile(PileVector, Viewer, SorterFunction);
@@ -386,12 +406,12 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
 	}
 
       std::string Entry;
-      Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), ShowSpecialInfo);
+      Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
       Contents.AddEntry(Entry, LIGHTGRAY, 0, Item->GetPicture());
     }
 }
 
-item* stack::SearchChosen(ushort& Pos, ushort Chosen, const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
+ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Viewer, ushort Pos, ushort Chosen, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
 {
   /* Not really efficient... :( */
 
@@ -400,9 +420,23 @@ item* stack::SearchChosen(ushort& Pos, ushort Chosen, const character* Viewer, b
 
   for(ushort p = 0; p < PileVector.size(); ++p)
     if(Pos++ == Chosen)
-      return PileVector[p].back();
+      if(Flags & NO_MULTI_SELECT)
+	{
+	  ReturnVector.assign(1, PileVector[p].back());
+	  return 0xFFFF;
+	}
+      else
+	{
+	  ushort Amount = PileVector[p].size();
 
-  return 0;
+	  if(Amount > 1)
+	    Amount = game::ScrollBarQuestion("How many " + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), 1, 1, 0, Amount, WHITE, LIGHTGRAY, DARKGRAY);
+
+	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
+	  return 0xFFFF;
+	}
+
+  return Pos;
 }
 
 bool stack::RaiseTheDead(character* Summoner)
@@ -425,7 +459,10 @@ bool stack::TryKey(item* Key, character* Applier)
 
 bool stack::Open(character* Opener)
 {
-  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", true, true, &item::OpenableSorter);
+  if(!Opener->IsPlayer())
+    return false;
+
+  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", 0, &item::OpenableSorter);
 
   if(ToBeOpened == 0)
     return false;

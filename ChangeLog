@@ -1,3 +1,17 @@
+October 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Using felist is now perhaps a bit easier
+	* Picking up multiple items is now more convenient
+	* Chest usage is now easier
+	* Chests' StorageVolumes now work correctly
+	* You can no longer earn money by putting things inside a chest
+	  in your *own* inventory in a shop
+	* Applying a chest now opens it
+	* Tweaked the placement of the jungle island a little
+	* The librarian now starts with some money so he can buy things
+	  from the player even if the latter hasn't yet bought anything
+	* Fixed a bug in New Attnam's entry pos
+
 October 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Support for round corners for rooms added

@@ -1445,7 +1445,6 @@ magicalwhistle /* whistle-> */
 
 chest
 {
-	MainMaterialConfig == WOOD;
 	NameSingular = "chest";
 	CanBeGeneratedInContainer = false;
 	Roundness = 60;
@@ -1453,11 +1452,11 @@ chest
 	FormModifier = 35;
 	MainMaterialConfig == WOOD;
 	Roundness = 60;
-	DefaultMainVolume = 60000;
 	BitmapPos = 48, 80;
 	CanBePiled = false;
-	Price = 100;
 	StrengthModifier = 50;
+	IsAbstract = true;
+	IsPolymorphSpawnable = false;
 
 	Config SMALLCHEST;
 	{
@@ -1513,6 +1512,7 @@ beartrap
 	FormModifier = 100;
 	Roundness = 30;
 	Price = 10;
+	CanBePiled = false;
 }
 
 wandofinvisibility /* wand-> */

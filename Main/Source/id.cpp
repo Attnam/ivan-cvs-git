@@ -44,6 +44,27 @@ std::string id::GetName(uchar Case) const
   return Name;
 }
 
+void id::AddName(std::string& Name, uchar Case, ushort Amount) const
+{
+  if(Amount == 1)
+    AddName(Name, Case&~PLURAL);
+  else
+    {
+      if((Case & ARTICLEBIT) && (GetArticleMode() == DEFINITEARTICLE || (GetArticleMode() == NORMALARTICLE && !(Case & INDEFINEBIT))))
+	Name << "the ";
+
+      Name << Amount << ' ';
+      AddName(Name, Case&~ARTICLEBIT|PLURAL);
+    }
+}
+
+std::string id::GetName(uchar Case, ushort Amount) const
+{
+  std::string Name;
+  AddName(Name, Case, Amount);
+  return Name;
+}
+
 bool id::AddAdjective(std::string& String, bool Articled) const
 {
   if(GetAdjective().length())

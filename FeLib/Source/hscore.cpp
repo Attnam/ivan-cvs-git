@@ -56,7 +56,9 @@ void highscore::Draw() const
       List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHTGRAY, 13);
     }
 
-  List.Draw(vector2d(10, 10), 780, 50, BLACK, false, false, false, true);
+  List.SetFlags(FADE);
+  List.SetPageLength(50);
+  List.Draw();
 }
 
 void highscore::Save(const std::string& File) const

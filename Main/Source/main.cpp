@@ -88,7 +88,7 @@ int Main(int argc, char **argv)
 	break;
       case 1:
 	{
-	  std::string LoadName = iosystem::WhatToLoadMenu(WHITE, LIGHTGRAY, SAVE_DIR);
+	  std::string LoadName = iosystem::ContinueMenu(WHITE, LIGHTGRAY, SAVE_DIR);
 
 	  if(LoadName.length())
 	    {

@@ -28,17 +28,10 @@ felist::~felist()
   Empty();
 }
 
-ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, ushort DrawBackColor, bool DrawSelectable, bool BlitAfterwards, bool DrawBackroundAfterwards, bool Fade, bool DrawInverseMode)
+ushort felist::Draw()
 {
   if(!Entry.size())
     return 0xFFFF;
-
-  Pos = DrawPos;
-  Width = DrawWidth;
-  PageLength = DrawPageLength;
-  Selectable = DrawSelectable;
-  BackColor = DrawBackColor;
-  InverseMode = DrawInverseMode;
 
   FelistCurrentlyDrawn = this;
 
@@ -48,7 +41,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
   bitmap BackGround(RES);
   bitmap* Buffer;
 
-  if(Fade)
+  if(Flags & FADE)
     {
       Buffer = new bitmap(RES, 0);
       BackGround.Fill(0);
@@ -59,14 +52,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
       DOUBLEBUFFER->Blit(&BackGround);
     }
 
-  if(Selectable)
-    PageBegin = Selected - Selected % PageLength;
-  else if(InverseMode)
-    PageBegin = LastEntryIndex() - LastEntryIndex() % PageLength;
-  else
-    PageBegin = 0;
-
-  ushort Return, c, Selectables = 0;
+  ushort c, Return, Selectables = 0;
 
   bool JustSelectMove = false;
 
@@ -74,11 +60,21 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
     if(Entry[c].Selectable)
       ++Selectables;
 
+  if(Selected >= Selectables)
+    Selected = Selectables - 1;
+
+  if(Flags & SELECTABLE)
+    PageBegin = Selected - Selected % PageLength;
+  else if(Flags & INVERSE_MODE)
+    PageBegin = LastEntryIndex() - LastEntryIndex() % PageLength;
+  else
+    PageBegin = 0;
+
   for(;;)
     {
       bool AtTheEnd = DrawPage(Buffer);
 
-      if(Fade)
+      if(Flags & FADE)
 	{
 	  if(JustSelectMove)
 	    {
@@ -95,19 +91,19 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 
       int Pressed = GETKEY(false);
 
-      if(Selectable && Pressed > 64 && Pressed < 91)
+      if(Flags & SELECTABLE && Pressed > 64 && Pressed < 91 && Pressed - 65 + PageBegin < long(Entry.size()))
 	{
-	  Return = Pressed - 65 + PageBegin < long(Entry.size()) ? Pressed - 65 + PageBegin : 0xFFFF;
+	  Return = Pressed - 65 + PageBegin;
 	  break;
 	}
 
-      if(Selectable && Pressed > 96 && Pressed < 123)
+      if(Flags & SELECTABLE && Pressed > 96 && Pressed < 123 && Pressed - 97 + PageBegin < long(Entry.size()))
 	{
-	  Return = Pressed - 97 + PageBegin < long(Entry.size()) ? Pressed - 97 + PageBegin : 0xFFFF;
+	  Return = Pressed - 97 + PageBegin;
 	  break;
 	}
 
-      if(Selectable && Pressed == KEYUP)
+      if(Flags & SELECTABLE && Pressed == KEYUP)
 	{
 	  if(Selected)
 	    {
@@ -139,7 +135,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  continue;
 	}
 
-      if(Selectable && Pressed == KEYDOWN)
+      if(Flags & SELECTABLE && Pressed == KEYDOWN)
 	{
 	  if(!AtTheEnd || Selected != Selectables - 1)
 	    {
@@ -166,13 +162,13 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  continue;
 	}
 
-      if(Selectable && Pressed == KEYENTER)
+      if(Flags & SELECTABLE && Pressed == KEYENTER)
 	{
 	  Return = Selected;
 	  break;
 	}
 
-      if(Pressed == KEYESC || (AtTheEnd && !InverseMode) || (!PageBegin && InverseMode))
+      if(Pressed == KEYESC || (AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && Flags & INVERSE_MODE))
 	{
 	  Return = 0xFFFF;
 	  break;
@@ -181,22 +177,22 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	{
 	  BackGround.Blit(Buffer);
 
-	  if(InverseMode)
+	  if(Flags & INVERSE_MODE)
 	    PageBegin -= PageLength;
 	  else
 	    PageBegin += PageLength;
 
-	  if(Selectable)
+	  if(Flags & SELECTABLE)
 	    Selected = PageBegin;
 	}
     }
 
-  if(!Fade)
+  if(!(Flags & FADE))
     {
-      if(DrawBackroundAfterwards)
+      if(Flags & DRAW_BACKGROUND_AFTERWARDS)
 	BackGround.Blit(DOUBLEBUFFER);
 
-      if(BlitAfterwards)
+      if(Flags & BLIT_AFTERWARDS)
 	graphics::BlitDBToScreen();
     }
   else
@@ -222,7 +218,7 @@ bool felist::DrawPage(bitmap* Buffer) const
       std::string Str;
       ushort Marginal = Entry[c].Marginal;
 
-      if(Selectable && Entry[c].Selectable)
+      if(Flags & SELECTABLE && Entry[c].Selectable)
 	{
 	  Str += char('A' + (i - PageBegin));
 	  Str += ": ";
@@ -238,7 +234,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 	      Entry[c].Bitmap[globalwindowhandler::GetTick() % Entry[c].Bitmap.size()]->MaskedBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16);
 
-	      if(Selectable && Entry[c].Selectable && Selected == i)
+	      if(Flags & SELECTABLE && Entry[c].Selectable && Selected == i)
 		  FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
 	      else
 		  FONT->Printf(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
@@ -255,7 +251,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 		{
 		  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-		  if(Selectable && Entry[c].Selectable && Selected == i)
+		  if(Flags & SELECTABLE && Entry[c].Selectable && Selected == i)
 		      FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom, Entry[c].Color, "%s", Chapter[l].c_str());
 		  else
 		      FONT->Printf(Buffer, Pos.X + 37, LastFillBottom, Entry[c].Color, "%s", Chapter[l].c_str());
@@ -275,7 +271,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-	      if(Selectable && Entry[c].Selectable && Selected == i)
+	      if(Flags & SELECTABLE && Entry[c].Selectable && Selected == i)
 		  FONT->PrintfShade(Buffer, Pos.X + 13, LastFillBottom, Entry[c].Color, "%s", Chapter[l].c_str());
 	      else
 		  FONT->Printf(Buffer, Pos.X + 13, LastFillBottom, Entry[c].Color, "%s", Chapter[l].c_str());
@@ -286,7 +282,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       if((i - PageBegin == PageLength - 1 && Entry[c].Selectable) || c == Entry.size() - 1)
 	{
-	  if((!InverseMode && c != Entry.size() - 1) || (InverseMode && PageBegin))
+	  if((!(Flags & INVERSE_MODE) && c != Entry.size() - 1) || (Flags & INVERSE_MODE && PageBegin))
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
 	      FONT->Printf(Buffer, Pos.X + 13, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");

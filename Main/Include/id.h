@@ -16,6 +16,8 @@
 class id
 {
  public:
+  virtual void AddName(std::string&, uchar, ushort) const;
+  virtual std::string GetName(uchar, ushort) const;
   virtual void AddName(std::string&, uchar) const;
   virtual std::string GetName(uchar) const;
  protected:

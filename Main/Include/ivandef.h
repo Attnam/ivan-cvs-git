@@ -542,6 +542,11 @@
 #define DARKLEVEL 6
 #define OREELAIR 9
 
+#define NO_SELECT 1
+#define NO_MULTI_SELECT 2
+#define NO_SPECIAL_INFO 4
+#define REMEMBER_SELECTED 8
+
 #define RECTANGLE 1
 #define ROUNDCORNERS 2
 

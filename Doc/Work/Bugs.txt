@@ -88,4 +88,5 @@ Carnivorous plants spill blood.
 Oree's blood golems' HPs' are incorrect.
 (In Linux) push X-button, then cancel
 Skeletons' health bugs. Some have over 20000 hps.
-
+"Valpurus shall not carry more continents!"
+Going down from underwater tunnel level 3 in WMode crashes.

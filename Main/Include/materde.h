@@ -61,7 +61,7 @@ class MATERIAL
   material,
  public:
   virtual bool IsPowder() const { return true; }
-  virtual bool IsWet() const { return Wetness; }
+  virtual bool IsWet() const { return Wetness != 0; }
   virtual bool IsExplosive() const { return !Wetness && material::IsExplosive(); }
   virtual void SetWetness(ulong What) { Wetness = What; }
   virtual void Be();

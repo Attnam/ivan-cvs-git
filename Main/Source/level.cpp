@@ -47,15 +47,15 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
     {
       if(Target.X < Origo.X)
 	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y)
+	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
 	    if(Target.X > Origo.X)
 	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y)
+		CALL_EXPAND(Origo.X + 1, Origo.Y);
 
 		  if(Target.Y < Origo.Y)
 		    if(CHECK(Origo.X, Origo.Y - 1))
-		      CALL_EXPAND(Origo.X, Origo.Y - 1)
+		      CALL_EXPAND(Origo.X, Origo.Y - 1);
 
 			if(Target.Y > Origo.Y)
 			  if(CHECK(Origo.X, Origo.Y + 1))
@@ -81,7 +81,7 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
     {
       if(Target.Y < Origo.Y)
 	if(CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1)
+	  CALL_EXPAND(Origo.X, Origo.Y - 1);
 
 	    if(Target.Y > Origo.Y)
 	      if(CHECK(Origo.X, Origo.Y + 1))
@@ -89,11 +89,11 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 
       if(Target.X < Origo.X)
 	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y)
+	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
 	    if(Target.X > Origo.X)
 	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y)
+		CALL_EXPAND(Origo.X + 1, Origo.Y);
 
 		  if(Target.Y <= Origo.Y)
 		    if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
@@ -135,15 +135,15 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
     {
       if(Target.X < Origo.X)
 	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y)
+	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
 	    if(Target.X > Origo.X)
 	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y)
+		CALL_EXPAND(Origo.X + 1, Origo.Y);
 
 		  if(Target.Y < Origo.Y)
 		    if(CHECK(Origo.X, Origo.Y - 1))
-		      CALL_EXPAND(Origo.X, Origo.Y - 1)
+		      CALL_EXPAND(Origo.X, Origo.Y - 1);
 
 			if(Target.Y > Origo.Y)
 			  if(CHECK(Origo.X, Origo.Y + 1))
@@ -169,7 +169,7 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
     {
       if(Target.Y < Origo.Y)
 	if(CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1)
+	  CALL_EXPAND(Origo.X, Origo.Y - 1);
 
 	    if(Target.Y > Origo.Y)
 	      if(CHECK(Origo.X, Origo.Y + 1))
@@ -177,11 +177,11 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
 
       if(Target.X < Origo.X)
 	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y)
+	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
 	    if(Target.X > Origo.X)
 	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y)
+		CALL_EXPAND(Origo.X + 1, Origo.Y);
 
 		  if(Target.Y <= Origo.Y)
 		    if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
@@ -394,7 +394,6 @@ bool level::MakeRoom(roomscript* RoomScript)
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
   game::BusyAnimation();
 
-
   uchar Room = RoomClass->GetIndex();
   std::vector<vector2d> OKForDoor, Inside, Border;
 
@@ -408,9 +407,10 @@ bool level::MakeRoom(roomscript* RoomScript)
     {
       uchar Owner = 1 + RAND() % (game::GetGods() - 1);
       GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new altar(Owner));
-      ushort c;
+
       for(c = 0; c < Inside.size(); ++c)
 	GetLSquare(Inside[c])->SetDivineMaster(Owner);
+
       for(c = 0; c < Border.size(); ++c)
 	GetLSquare(Border[c])->SetDivineMaster(Owner);
     }
@@ -418,9 +418,12 @@ bool level::MakeRoom(roomscript* RoomScript)
   if(*RoomScript->GetGenerateTunnel() && !Door.empty())
     {
       game::BusyAnimation();
+
       vector2d OutsideDoorPos = Door[RAND() % Door.size()]; // An other room
+
       if(OKForDoor.empty())
 	ABORT("The Doors - You are strange.");
+
       vector2d InsideDoorPos = OKForDoor[RAND() % OKForDoor.size()]; // this door
 
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
@@ -437,9 +440,6 @@ bool level::MakeRoom(roomscript* RoomScript)
       Map[OutsideDoorPos.X][OutsideDoorPos.Y]->Clean();
       FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] &= ~FORBIDDEN;
       FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] |= PREFERRED;
-
-
-
       FlagMap[InsideDoorPos.X][InsideDoorPos.Y] &= ~FORBIDDEN;
       FlagMap[InsideDoorPos.X][InsideDoorPos.Y] |= PREFERRED;
       Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
@@ -464,10 +464,11 @@ bool level::MakeRoom(roomscript* RoomScript)
   if(*RoomScript->GetGenerateDoor())
     {
       game::BusyAnimation();
-
       vector2d DoorPos;
+
       if(OKForDoor.empty())
 	ABORT("The Doors - This thing has been broken.");
+
       DoorPos = OKForDoor[RAND() % OKForDoor.size()];
       Door.push_back(DoorPos);
 
@@ -478,13 +479,13 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  for(ushort c = 0; c < RoomScript->GetSquare().size(); ++c)
+  for(c = 0; c < RoomScript->GetSquare().size(); ++c)
     {
       game::BusyAnimation();
       squarescript* Script = RoomScript->GetSquare()[c];
       uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
 
-      for(ushort c = 0; c < Times; ++c)
+      for(ushort t = 0; t < Times; ++t)
 	{
 	  vector2d Pos;
 
@@ -997,8 +998,9 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   ulong Counter = 0;
   uchar DivineMaster = RoomScript->GetDivineMaster(false) ? *RoomScript->GetDivineMaster() : 0;
   bool AllowLanterns = *RoomScript->GetGenerateLanterns();
-  ushort x,y;
+  ushort x, y;
   uchar Shape = *RoomScript->GetShape();
+
   if(Shape == ROUNDCORNERS && ((Size.X < 4 || Size.Y < 4) || (Size.X == 4 && Size.Y == 4))) /* No wierd shapes this way. */
     Shape = RECTANGLE;
 
@@ -1023,12 +1025,12 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	      continue;
 	    }
 	}
+
       CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x, Pos.Y, Room, DivineMaster);
       CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x, Pos.Y + Size.Y - 1, Room, DivineMaster);
 
-
       if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
-	 || (Shape == ROUNDCORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
+      || (Shape == ROUNDCORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
 	{
 	  OKForDoor.push_back(vector2d(x,Pos.Y));
 	  OKForDoor.push_back(vector2d(x,Pos.Y + Size.Y - 1));
@@ -1048,13 +1050,16 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
     {
       CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], Pos.X, y, Room, DivineMaster);
       CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], Pos.X + Size.X - 1, y, Room, DivineMaster);
+
       if(Shape == ROUNDCORNERS && y > Pos.Y + 1 && y < Pos.Y + Size.Y - 2)
 	{
 	  OKForDoor.push_back(vector2d(Pos.X, y));
 	  OKForDoor.push_back(vector2d(Pos.X + Size.X - 1, y));
 	}
+
       Border.push_back(vector2d(Pos.X, y));
       Border.push_back(vector2d(Pos.X + Size.X - 1, y));
+
       if(AllowLanterns)
 	{
 	  GenerateLanterns(Pos.X, y, RIGHT);
@@ -1065,10 +1070,12 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   RoomScript->GetFloorSquare()->GetGTerrain()->Instantiate(GTerrain, (Size.X - 2) * (Size.Y - 2));
   RoomScript->GetFloorSquare()->GetOTerrain()->Instantiate(OTerrain, (Size.X - 2) * (Size.Y - 2));
   Counter = 0;
+
   for(x = Pos.X + 1; x < Pos.X + Size.X - 1; ++x)
     for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y, ++Counter)
       {
 	/* if not in the corner */
+
 	if(!(Shape == ROUNDCORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
 	  {
 	    CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x, y, Room, DivineMaster);

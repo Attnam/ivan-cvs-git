@@ -156,11 +156,13 @@ void worldmap::Generate()
 			    continue;
 
 			  short x, y;
+			  ushort Counter = 0;
 
-			  for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
+			  for(x = TunnelEntry.X - 3; x <= TunnelEntry.X + 3; ++x)
 			    {
-			      for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2; ++y)
-				if(!IsValidPos(x, y) || AltitudeBuffer[x][y] > 0 || AltitudeBuffer[x][y] < -300)
+			      for(y = TunnelEntry.Y - 3; y <= TunnelEntry.Y + 3; ++y, ++Counter)
+				if(Counter != 0 && Counter != 6 && Counter != 42 && Counter != 48
+				&&(!IsValidPos(x, y) || AltitudeBuffer[x][y] > 0 || AltitudeBuffer[x][y] < -350))
 				  {
 				    Error = true;
 				    break;
@@ -185,7 +187,7 @@ void worldmap::Generate()
 			  if(Error)
 			    continue;
 
-			  ushort Counter = 0;
+			  Counter = 0;
 
 			  for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
 			    for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2; ++y, ++Counter)
@@ -232,7 +234,7 @@ void worldmap::Generate()
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       SetEntryPos(ELPURICAVE, ElpuriCavePos);
       GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
-      SetEntryPos(NEWATTNAM, ElpuriCavePos);
+      SetEntryPos(NEWATTNAM, NewAttnamPos);
       GetWSquare(TunnelEntry)->ChangeOWTerrain(new underwatertunnel);
       SetEntryPos(UNDERWATERTUNNEL, TunnelEntry);
       GetWSquare(TunnelExit)->ChangeOWTerrain(new underwatertunnelexit);

@@ -286,12 +286,10 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
   return atoi(Input.c_str());
 }
 
-long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, bool Fade, void (*Handler)(long))
+long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long DefaultValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, bool Fade, void (*Handler)(long))
 {
-  long BarValue = BeginValue;
+  long BarValue = DefaultValue;
   std::string Input;
-
-  Input += BarValue;
 
   if(Fade)
     {
@@ -308,7 +306,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long Be
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      BarValue = atoi(Input.c_str());
+      BarValue = Input.empty() ? DefaultValue : atoi(Input.c_str());
 
       if(BarValue < Min)
 	BarValue = Min;
@@ -319,7 +317,8 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long Be
       if(Handler)
 	Handler(BarValue);
 
-      DOUBLEBUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 20, 0);
+      DOUBLEBUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 10, 0);
+      DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
       FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Input.c_str());
       DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
       DOUBLEBUFFER->DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
@@ -328,7 +327,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long Be
       DOUBLEBUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()) && LastKey != '<' && LastKey != '>')
+      while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()) && LastKey != '<' && LastKey != '>' && LastKey != KEYRIGHT && LastKey != KEYLEFT)
 	LastKey = GETKEY(false);
 
       if(LastKey == 8)
@@ -342,7 +341,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long Be
       if(LastKey == 13)
 	break;
 
-      if(LastKey == '<')
+      if(LastKey == '<' || LastKey == KEYLEFT)
 	{
 	  BarValue -= Step;
 
@@ -354,7 +353,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long Be
 	  continue;
 	}
 
-      if(LastKey == '>')
+      if(LastKey == '>' || LastKey == KEYRIGHT)
 	{
 	  BarValue += Step;
 
@@ -373,7 +372,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long Be
   return BarValue;
 }
 
-std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const std::string& DirectoryName) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
+std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const std::string& DirectoryName)
 {
 #ifdef WIN32
   struct _finddata_t Found;
@@ -394,7 +393,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
       Check = _findnext(hFile, &Found);
     }
 
-  Check = Buffer.Draw(vector2d(10, 10), 780, 30, BLACK, true, false, false, true);
+  Check = Buffer.Draw();
 
   if(Check == 0xFFFF)
     return "";
@@ -425,7 +424,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
 	}
       else
 	{
-	  int Check = List.Draw(vector2d(10, 10), 780, 30, BLACK, true, false, false, true);
+	  int Check = List.Draw();
 
 	  if(Check == 0xFFFF)
 	    return "";
@@ -454,7 +453,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
       Check = findnext(&Found);
     }
 
-  Check = Buffer.Draw(vector2d(10, 10), 780, 30, BLACK, true, false, false, true);
+  Check = Buffer.Draw();
 
   if(Check == 0xFFFF)
     return "";

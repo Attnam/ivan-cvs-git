@@ -333,7 +333,15 @@ Spruces should block light.
 "It is too dark to read" message should be printed before selecting item, not after.
 Reading holy books should aggravate monsters.
 Time bomb.
-Prohibit vomiting over Avatar.
+Prohibit vomiting over the Avatar.
 Monster that only sees in red, green or blue light.
+Page up, page down, home and end should work with message panel.
+If Petrus is attacked via a ranged weapon, his guards should jump in the missile's path to protect him.
 Monsters that have died of poisoning should be poisoned when eaten.
+Bear traps should break eventually.
+Carrot that would increase perception a little.
+*RDAM and similiar unclear attributes should be moved to an own screen.
+When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
+Eat, drink and offer selection should accept multiple items.
+If something inside a chest explodes, the container should be completely destroyed.
 Fly system should be remade (with the ability of having two or more items in the air at the same time)

@@ -21,10 +21,10 @@ class ROOM
  public:
   virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
-  virtual bool PickupItem(character*, item*);
-  virtual bool DropItem(character*, item*);
+  virtual bool PickupItem(character*, item*, ushort);
+  virtual bool DropItem(character*, item*, ushort);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*);
+  virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool DestroyTerrain(character*, olterrain*);
@@ -45,10 +45,10 @@ class ROOM
   room,
  public:
   virtual void Enter(character*);
-  virtual bool PickupItem(character*, item*);
-  virtual bool DropItem(character*, item*);
+  virtual bool PickupItem(character*, item*, ushort);
+  virtual bool DropItem(character*, item*, ushort);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*);
+  virtual bool ConsumeItem(character*, item*, ushort);
   virtual void SetEntered(bool What) { Entered = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -72,10 +72,10 @@ class ROOM
  public:
   virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
-  virtual bool PickupItem(character*, item*);
-  virtual bool DropItem(character*, item*);
+  virtual bool PickupItem(character*, item*, ushort);
+  virtual bool DropItem(character*, item*, ushort);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*);
+  virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool DestroyTerrain(character*, olterrain*);

@@ -50,7 +50,7 @@ material
 		Color = rgb16(232, 232, 0);
 		IsSolid = true;
 		CanBeWished = false;
-		Emitation = rgb24(150, 150, 130);
+		Emitation = rgb24(150, 150, 150);
 		PriceModifier = 50000;
 		Alignment = GOOD;
 		NameStem = "valpurium";

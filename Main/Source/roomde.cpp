@@ -44,19 +44,19 @@ void shop::Enter(character* Customer)
 
 /* item* ForSale can also be in chest or other container, so don't assume anything else in this function */
 
-bool shop::PickupItem(character* Customer, item* ForSale)
+bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
   /* This should depend on charisma */
 
-  ulong Price = ForSale->GetPrice();
+  ulong Price = ForSale->GetPrice() * Amount;
 
   if(!Customer->IsPlayer())
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(-Price);
 	Master->EditMoney(Price);
 	return true;
@@ -80,9 +80,12 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
       if(Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  if(Amount == 1)
+	    ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  else
+	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
+	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
 	      Customer->EditMoney(-Price);
 	      Master->EditMoney(+Price);
@@ -93,12 +96,16 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  if(Amount == 1)
+	    ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  else
+	    ADD_MESSAGE("\"Don't touch those %s, beggar! They are worth %d gold pieces!\"", ForSale->CHARNAME(PLURAL), Price);
+
 	  return false;
 	}
     }
   else
-    if(game::BoolQuestion("Are you sure you want to steal this item? [y/N]"))
+    if(game::BoolQuestion("Are you sure you want to commit this thievery? [y/N]"))
       {
 	Customer->Hostility(Master);
 	return true;
@@ -107,19 +114,19 @@ bool shop::PickupItem(character* Customer, item* ForSale)
       return false;
 }
 
-bool shop::DropItem(character* Customer, item* ForSale)
+bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
   /* This should depend on charisma */
 
-  ulong Price = (ForSale->GetPrice() >> 1);
+  ulong Price = (ForSale->GetPrice() >> 1) * Amount;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(Price);
 	Master->EditMoney(-Price);
 	return true;
@@ -137,15 +144,18 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
       if(!Price)
 	{
-	  ADD_MESSAGE("\"Hah! I wouldn't take that even if you paid me for it!\"");
+	  ADD_MESSAGE("\"Hah! I wouldn't take %s even if you paid me for it!\"", Amount == 1 ? "that" : "those");
 	  return false;
 	}
 
       if(Master->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  if(Amount == 1)
+	    ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  else
+	    ADD_MESSAGE("\"What a fine pile of %d %s. I'll pay %d gold pieces for them.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
+	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
 	      Customer->SetMoney(Customer->GetMoney() + Price);
 	      Master->SetMoney(Master->GetMoney() - Price);
@@ -156,7 +166,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d gold pieces for it, but I don't have so much. Sorry.\"", Price);
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I don't have so much. Sorry.\"", Price, Amount == 1 ? "it" : "them");
 	  return false;
 	}
     }
@@ -194,7 +204,7 @@ void shop::KickSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool shop::ConsumeItem(character* Customer, item*)
+bool shop::ConsumeItem(character* Customer, item*, ushort)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
@@ -228,7 +238,7 @@ void cathedral::Enter(character* Visitor)
 
 /* Item can also be in a chest, so don't assume anything else... */
 
-bool cathedral::PickupItem(character* Visitor, item* Item)
+bool cathedral::PickupItem(character* Visitor, item* Item, ushort)
 {
   if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
@@ -250,7 +260,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item)
   return false;
 }
 
-bool cathedral::DropItem(character* Visitor, item* Item)
+bool cathedral::DropItem(character* Visitor, item* Item, ushort)
 {
   if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
@@ -282,7 +292,7 @@ void cathedral::KickSquare(character* Kicker, lsquare* Square)
     }
 }
 
-bool cathedral::ConsumeItem(character* HungryMan, item*)
+bool cathedral::ConsumeItem(character* HungryMan, item*, ushort)
 {
   if(game::GetTeam(2)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
     return true;
@@ -401,20 +411,20 @@ void library::Enter(character* Customer)
       ADD_MESSAGE("The library appears to be deserted.");
 }
 
-bool library::PickupItem(character* Customer, item* ForSale)
+bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
   /* This should depend on charisma */
 
-  ulong Price = ForSale->GetPrice();
+  ulong Price = ForSale->GetPrice() * Amount;
 
   if(!Customer->IsPlayer())
     {
       if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	  Customer->EditMoney(-Price);
 	  Master->EditMoney(Price);
 	  return true;
@@ -439,9 +449,12 @@ bool library::PickupItem(character* Customer, item* ForSale)
 
       if(Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  if(Amount == 1)
+	    ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  else
+	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
+	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
 	      Customer->EditMoney(-Price);
 	      Master->EditMoney(Price);
@@ -452,12 +465,16 @@ bool library::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  if(Amount == 1)
+	    ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  else
+	    ADD_MESSAGE("\"Don't touch those %s, beggar! They are worth %d gold pieces!\"", ForSale->CHARNAME(PLURAL), Price);
+
 	  return false;
 	}
     }
   else
-    if(game::BoolQuestion("Are you sure you want to steal this item? [y/N]"))
+    if(game::BoolQuestion("Are you sure you want to commit this thievery? [y/N]"))
       {
 	Customer->Hostility(Master);
 	return true;
@@ -466,19 +483,19 @@ bool library::PickupItem(character* Customer, item* ForSale)
       return false;
 }
 
-bool library::DropItem(character* Customer, item* ForSale)
+bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
   /* This should depend on charisma */
 
-  ulong Price = (ForSale->GetPrice() >> 1);
+  ulong Price = (ForSale->GetPrice() >> 1) * Amount;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	Master->SetMoney(Master->GetMoney() - Price);
 	return true;
@@ -496,13 +513,16 @@ bool library::DropItem(character* Customer, item* ForSale)
 
       if(!Price || !ForSale->CanBeSoldInLibrary(Master))
 	{
-	  ADD_MESSAGE("\"Sorry I don't think that fits into my collection.\"");
+	  ADD_MESSAGE("\"Sorry, but I don't think %s into my collection.\"", Amount == 1 ? "that fits" : "those fit");
 	  return false;
 	}
 
       if(Master->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  if(Amount == 1)
+	    ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  else
+	    ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %d gold pieces for it.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
 
 	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 	    {
@@ -515,7 +535,7 @@ bool library::DropItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d gold pieces for it, but I don't have so much. Sorry.\"", Price);
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I don't have so much. Sorry.\"", Price, Amount == 1 ? "it" : "them");
 	  return false;
 	}
     }
@@ -532,7 +552,7 @@ void library::KickSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool library::ConsumeItem(character*, item*)
+bool library::ConsumeItem(character*, item*, ushort)
 {
   return true;
 }

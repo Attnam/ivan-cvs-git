@@ -1195,19 +1195,19 @@ class ITEM
   virtual bool PutSomethingIn(character*);
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual ulong GetStorageVolume() const { return StorageVolume; }
   virtual bool Polymorph(stack*);
-  virtual bool FitsIn(item*) const;
+  virtual ushort HowManyFits(item*) const;
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
   virtual ulong GetPrice() const;
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual void DrawContents(const character*);
+  virtual bool Apply(character* Applier) { return Open(Applier); }
+  virtual bool IsAppliable(const character*) const { return true; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
   virtual void VirtualConstructor(bool);
-  ulong StorageVolume;
   stack* Contained;
   uchar LockType;
   bool Locked;

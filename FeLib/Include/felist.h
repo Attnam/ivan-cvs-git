@@ -46,12 +46,12 @@ inputfile& operator>>(inputfile&, felistdescription&);
 class felist
 {
  public:
-  felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0) : Maximum(Maximum), Selected(0) { AddDescription(Topic, TopicColor); }
+  felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE) { AddDescription(Topic, TopicColor); }
   ~felist();
   void AddEntry(const std::string&, ushort, ushort = 0, bitmap* = 0, bool = true);
   void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
   void AddDescription(const std::string&, ushort = 0xFFFF);
-  ushort Draw(vector2d, ushort, ushort = 20, ushort = MakeRGB16(0, 0, 16), bool = true, bool = true, bool = true, bool = false, bool = false);
+  ushort Draw();
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();
   std::string GetEntry(ushort Index) const { return Entry[Index].String; }
@@ -69,19 +69,25 @@ class felist
   void Pop() { Entry.pop_back(); }
   static void CreateQuickDrawFontCaches(colorizablebitmap*, ushort, ushort);
   void PrintToFile(const std::string&);
+  void SetPos(vector2d What) { Pos = What; }
+  void SetWidth(ushort What) { Width = What; }
+  void SetPageLength(ushort What) { PageLength = What; }
+  void SetBackColor(ushort What) { BackColor = What; }
+  void SetFlags(ushort What) { Flags = What; }
+  void AddFlags(ushort What) { Flags |= What; }
+  void RemoveFlags(ushort What) { Flags &= ~What; }
  private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry> Entry;
   std::vector<felistdescription> Description;
-  vector2d Pos;
   ushort PageBegin;
   ushort Maximum;
   ushort Selected;
+  vector2d Pos;
   ushort Width;
   ushort PageLength;
   ushort BackColor;
-  bool Selectable;
-  bool InverseMode;
+  ushort Flags;
 };
 
 #endif

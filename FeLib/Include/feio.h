@@ -14,7 +14,7 @@ class colorizablebitmap;
 class iosystem
 {
  public:
-  static std::string WhatToLoadMenu(ushort, ushort, const std::string&);
+  static std::string ContinueMenu(ushort, ushort, const std::string&);
   static std::string StringQuestion(const std::string&, vector2d, ushort, ushort, ushort, bool, bool);
   static long NumberQuestion(const std::string&, vector2d, ushort, bool);
   static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, bool, void (*)(long) = 0);

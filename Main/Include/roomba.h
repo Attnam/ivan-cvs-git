@@ -51,12 +51,12 @@ class room
   virtual uchar GetIndex() const { return Index; }
   virtual character* GetMaster() const { return Master; }
   virtual void SetMaster(character* What) { Master = What; }
-  virtual bool PickupItem(character*, item*) { return true; }
-  virtual bool DropItem(character*, item*) { return true; }
+  virtual bool PickupItem(character*, item*, ushort) { return true; }
+  virtual bool DropItem(character*, item*, ushort) { return true; }
   virtual uchar GetDivineMaster() const { return DivineMaster; }
   virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual void KickSquare(character*, lsquare*) { }
-  virtual bool ConsumeItem(character*, item*) { return true; }
+  virtual bool ConsumeItem(character*, item*, ushort) { return true; }
   virtual bool AllowDropGifts() const { return true; }
   virtual bool Drink(character*) const { return true; }
   virtual bool HasDrinkHandler() const { return false; }

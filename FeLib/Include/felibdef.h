@@ -75,5 +75,11 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define PACKED
 #endif
 
+#define SELECTABLE 1
+#define INVERSE_MODE 2
+#define BLIT_AFTERWARDS 4
+#define DRAW_BACKGROUND_AFTERWARDS 8
+#define FADE 16
+
 #endif
 
