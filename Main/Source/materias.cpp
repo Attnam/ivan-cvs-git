@@ -212,7 +212,7 @@ truth ironalloy::AddRustLevelDescription(festring& Name, truth Articled) const
   switch(GetRustLevel())
   {
    case SLIGHTLY_RUSTED:
-    Name << "sligthly rusted ";
+    Name << "slightly rusted ";
     break;
    case RUSTED:
     Name << "rusted ";
