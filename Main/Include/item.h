@@ -11,6 +11,8 @@
 #include "lsquare.h"
 #include "slot.h"
 
+typedef std::vector<item*> itemvector;
+
 class felist;
 template <class type> class contentscript;
 template <class type> class database;
@@ -192,6 +194,7 @@ class item : public object
   static bool ArmorSorter(const item* Item, const character* Char) { return Item->IsArmor(Char); }
   static bool FixableBySmithSorter(const item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
   static bool BrokenSorter(const item* Item, const character*) { return Item->IsBroken(); }
+  static bool EnchantableSorter(const item* Item, const character* Char) { return Item->IsEnchantable(Char); }
   virtual bool IsConsumable(const character*) const;
   virtual bool IsEatable(const character*) const;
   virtual bool IsDrinkable(const character*) const;
@@ -213,6 +216,7 @@ class item : public object
   virtual bool IsShield(const character*) const { return false; }
   virtual bool IsWeapon(const character*) const { return false; }
   virtual bool IsArmor(const character*) const { return false; }
+  virtual bool IsEnchantable(const character*) const { return CanBeEnchanted(); }
   virtual bool IsOnGround() const;
   ushort GetResistance(uchar) const;
   virtual void GenerateLeftOvers(character*);
@@ -376,6 +380,7 @@ class item : public object
   ushort GetEquipmentIndex() const;
   room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
   virtual bool HasBetterVersion() const { return false; }
+  virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
   virtual bool AllowAlphaEverywhere() const { return false; }
  protected:
   virtual item* RawDuplicate() const = 0;

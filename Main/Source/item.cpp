@@ -727,3 +727,10 @@ bool item::IsBroken() const
   return (Config & BROKEN) != 0;
 }
 
+void item::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
+{
+  if(Sorter == 0 || Sorter(this,Character))
+    {
+      AllItems.push_back(const_cast<item*>(this));
+    }
+}

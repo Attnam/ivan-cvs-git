@@ -3174,3 +3174,34 @@ mutatedmushroom
 	SkinColor = rgb16(220,190,190);
 	CanBeGenerated = true;
 }
+
+darkwizard
+{
+	DefaultArmStrength = 8;
+	DefaultLegStrength = 8;
+	DefaultDexterity = 15;
+	DefaultAgility = 8;
+	DefaultEndurance = 10;
+	DefaultPerception = 30;
+	DefaultIntelligence = 30;
+	DefaultWisdom = 30;
+	DefaultCharisma = 15;
+	DefaultMana = 50;
+	HeadBitmapPos = 112, 304;
+	TorsoBitmapPos = 48, 224;
+	ArmBitmapPos = 80, 64;
+	LegBitmapPos = 16, 160;
+	ClothColor = rgb16(50, 50, 50);
+	TotalVolume = 90000;
+	TotalSize = 185;
+	CanRead = true;
+	NameSingular = "dark wizard";
+	CanBeGenerated = true;
+	ClassStates = INFRA_VISION;
+	HostileReplies == "@Dd yells: \"Prepare to meet your maker!\"";
+	FriendlyReplies == "\"Death awaits our foes.\"";
+	IgnoreDanger = true;
+	HPRequirementForGeneration = 80;
+	Frequency = 500;
+	IsExtraCoward = true;
+}

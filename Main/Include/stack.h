@@ -98,6 +98,7 @@ class stack
   bool PutSomethingIn(character*, const std::string, ulong, ulong);
   bool IsVisible() const { return !MotherEntity; }
   ushort GetSpoiledItems() const;
+  void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);

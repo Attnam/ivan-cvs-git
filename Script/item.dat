@@ -74,7 +74,7 @@ item
 	CanBeUsedBySmith = false;
 	AffectsCarryingCapacity = false;
 	HandleInPairs = false;
-	CanBeEnchanted = true;
+	CanBeEnchanted = false;
 	/* Obligatory if wand: BeamColor */
 	/* Obligatory if wand: BeamEffect */
 	BeamStyle = PARTICLE_BEAM;
@@ -121,7 +121,7 @@ lantern
 can /* materialcontainer-> */
 {
 	DefaultSize = 10;
-	Possibility = 400;
+	Possibility = 450;
 	InHandsPic = 160, 144;
 	Category = FOOD;
 	DefaultMainVolume = 50;
@@ -132,8 +132,8 @@ can /* materialcontainer-> */
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
-	ContainedMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
-	MaterialConfigChances = { 2, 75, 5; }
+	ContainedMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
+	MaterialConfigChances = { 2, 75, 5, 10; }
 	Roundness = 60;
 }
 
@@ -161,6 +161,7 @@ meleeweapon
 	IsAbstract = true;
 	CanBeBroken = true;
 	CanBePiled = false;
+	CanBeEnchanted = true;
 
 	Config LONG_SWORD;
 	{
@@ -687,6 +688,7 @@ armor
 {
 	IsAbstract = true;
 	CanBePiled = false;
+	CanBeEnchanted = true;
 }
 
 bodyarmor /* armor-> */
@@ -1434,6 +1436,7 @@ cloak /* armor-> */
 		PostFix = "of invisibility";
 		Price = 2500;
 		CanBeWished = false;
+		AttachedGod = CLEPTIA;
 	}
 }
 
@@ -1476,6 +1479,7 @@ boot /* armor-> */
 		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = CLEPTIA;
 	}
 
 	Config BOOT_OF_KICKING;
@@ -1516,6 +1520,7 @@ gauntlet /* armor-> */
 		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config GAUNTLET_OF_DEXTERITY;
@@ -1528,6 +1533,7 @@ gauntlet /* armor-> */
 		Price = 100;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = CLEPTIA;
 	}
 }
 
@@ -1554,6 +1560,7 @@ belt /* armor-> */
 		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = MELLIS;
 	}
 }
 
@@ -1577,6 +1584,7 @@ ring
 		PostFix = "of fire resistance";
 		MainMaterialConfig == DIAMOND;
 		Price = 250;
+		AttachedGod = LORICATUS;
 	}
 
 	Config RING_OF_POLYMORPH_CONTROL;
@@ -1586,6 +1594,7 @@ ring
 		MainMaterialConfig == SAPPHIRE;
 		GearStates == POLYMORPH_CONTROL;
 		Price = 500;
+		AttachedGod = SCABIES;
 	}
 
 	Config RING_OF_INFRA_VISION;
@@ -1595,6 +1604,7 @@ ring
 		MainMaterialConfig == SILVER;
 		GearStates = INFRA_VISION;
 		Price = 500;
+		AttachedGod = LEGIFER;
 	}
 
 	Config RING_OF_TELEPORTATION;
@@ -1606,6 +1616,7 @@ ring
 		Alias == "ring of teleport";
 		Price = 250;
 		WearWisdomLimit = 15;
+		AttachedGod = SOPHOS;
 	}
 
 	Config RING_OF_TELEPORT_CONTROL;
@@ -1615,6 +1626,7 @@ ring
 		MainMaterialConfig == RUBY;
 		GearStates = TELEPORT_CONTROL;
 		Price = 500;
+		AttachedGod = SOPHOS;
 	}
 
 	Config RING_OF_POLYMORPH;
@@ -1625,6 +1637,7 @@ ring
 		GearStates = POLYMORPH;
 		Price = 250;
 		WearWisdomLimit = 15;
+		AttachedGod = SCABIES;
 	}
 
 	Config RING_OF_POISON_RESISTANCE;
@@ -1634,6 +1647,7 @@ ring
 		PostFix = "of poison resistance";
 		MainMaterialConfig == TIN;
 		Price = 250;
+		AttachedGod = SEGES;
 	}
 
 	Config RING_OF_INVISIBILITY;
@@ -1644,6 +1658,7 @@ ring
 		GearStates = INVISIBLE;
 		Price = 2500;
 		CanBeWished = false;
+		AttachedGod = CLEPTIA;
 	}
 
 	Config RING_OF_ELECTRICITY_RESISTANCE;
@@ -1653,6 +1668,7 @@ ring
 		PostFix = "of electricity resistance";
 		MainMaterialConfig == GLASS;
 		Price = 250;
+		AttachedGod = LORICATUS;
 	}
 }
 
@@ -1678,6 +1694,7 @@ amulet
 		GearStates = LIFE_SAVED;
 		CanBeCloned = false;
 		Price = 5000;
+		AttachedGod = SEGES;
 	}
 
 	Config AMULET_OF_ESP;
@@ -1687,6 +1704,7 @@ amulet
 		MainMaterialConfig == SAPPHIRE;
 		GearStates = ESP;
 		Price = 1000;
+		AttachedGod = LEGIFER;
 	}
 }
 
@@ -1700,6 +1718,7 @@ bodypart
 	IsTwoHanded = true;
 	Adjective = "severed"; /* only used if severed */
 	CanBeWished = false; /* temporary */
+	AttachedGod = NONE;
 }
 
 head /* bodypart-> */
@@ -1795,6 +1814,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	IsTwoHanded = true;
 	NPModifier = 100;
 	CanBeCloned = false;
+	AttachedGod = SCABIES;
 }
 
 corpse
@@ -1813,14 +1833,17 @@ corpse
 	IsTwoHanded = true;
 	CanBeWished = false; /* temporary */
 	IsMaterialChangeable = false;
+	AttachedGod = NONE;
 }
 
 eddytorso /* normaltorso-> */
 {
+	AttachedGod = NONE;
 }
 
 mommotorso /* normaltorso-> */
 {
+	AttachedGod = NONE;
 }
 
 whistle
@@ -1836,6 +1859,7 @@ whistle
 	MainMaterialConfig == TIN;
 	Roundness = 10;
 	Price = 20;
+	AttachedGod = DULCIS;
 }
 
 magicalwhistle /* whistle-> */
@@ -1847,6 +1871,7 @@ magicalwhistle /* whistle-> */
 	Price = 1500;
 	Alias == "magic whistle";
 	CanBePiled = false;
+	AttachedGod = DULCIS;
 }
 
 itemcontainer
@@ -1861,6 +1886,7 @@ itemcontainer
 	IsAbstract = true;
 	IsPolymorphSpawnable = false;
 	IsDestroyable = false;
+	AttachedGod = ATAVUS;
 
 	Config SMALL_CHEST;
 	{
@@ -1937,6 +1963,7 @@ beartrap
 	Price = 10;
 	CanBePiled = false;
 	CanBeBroken = true;
+	AttachedGod = CRUENTUS;
 
 	Config BROKEN;
 	{
@@ -2000,6 +2027,7 @@ helmet
 		DefaultEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = LEGIFER;
 	}
 
 	Config BROKEN|HELM_OF_PERCEPTION;
@@ -2025,6 +2053,7 @@ helmet
 		DefaultEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = SOPHOS;
 	}
 
 	Config BROKEN|HELM_OF_UNDERSTANDING;
@@ -2042,14 +2071,15 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 5;
+		Possibility = 3;
 		PostFix = "of brilliance";
 		AffectsIntelligence = true;
-		MainMaterialConfig == MITHRIL;
+		MainMaterialConfig == RUBY;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = INFUSCOR;
 	}
 
 	Config BROKEN|HELM_OF_BRILLIANCE;
@@ -2075,6 +2105,7 @@ helmet
 		DefaultEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = MELLIS;
 	}
 
 	Config BROKEN|HELM_OF_ATTRACTIVITY;
@@ -2099,6 +2130,7 @@ stethoscope
 	NameSingular = "stethoscope";
 	Price = 250;
 	MainMaterialConfig == UNICORN_HORN;
+	AttachedGod = SEGES;
 }
 
 flamingsword /* meleeweapon-> */
@@ -2120,6 +2152,7 @@ flamingsword /* meleeweapon-> */
 	Roundness = 10;
 	BaseEmitation = rgb24(150, 120, 90);
 	Price = 250;
+	AttachedGod = LORICATUS;
 
 	Config BROKEN;
 	{
@@ -2151,6 +2184,7 @@ mjolak /* meleeweapon-> */
 	CanBeCloned = false;
 	Price = 750;
 	Score = 750;
+	AttachedGod = CRUENTUS;
 
 	Config BROKEN;
 	{
@@ -2183,6 +2217,7 @@ vermis /* meleeweapon-> */
 	CanBeCloned = false;
 	Price = 500;
 	Score = 750;
+	AttachedGod = SOPHOS;
 
 	Config BROKEN;
 	{
@@ -2214,6 +2249,7 @@ turox /* meleeweapon-> */
 	CanBeCloned = false;
 	Price = 250;
 	Score = 750;
+	AttachedGod = CRUENTUS;
 
 	Config BROKEN;
 	{
@@ -2237,6 +2273,7 @@ whipofthievery /* meleeweapon->whip-> */
 	Roundness = 2;
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	Price = 500;
+	AttachedGod = CLEPTIA;
 }
 
 scrollofenchantweapon /* scroll-> */
@@ -2244,6 +2281,7 @@ scrollofenchantweapon /* scroll-> */
 	Possibility = 50;
 	Price = 250;
 	PostFix = "of enchant weapon";
+	AttachedGod = SOPHOS;
 }
 
 scrollofenchantarmor /* scroll-> */
@@ -2251,6 +2289,7 @@ scrollofenchantarmor /* scroll-> */
 	Possibility = 100;
 	Price = 250;
 	PostFix = "of enchant armor";
+	AttachedGod = SOPHOS;
 }
 
 skull
@@ -2267,6 +2306,7 @@ skull
 	NameSingular = "skull";
 	MainMaterialConfig == BONE;
 	IsTwoHanded = true;
+	AttachedGod = MORTIFER;
 }
 
 gorovitshammer
@@ -2315,6 +2355,7 @@ gorovitssickle
 	DefaultEnchantment = 2;
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
+	AttachedGod = SEGES;
 }
 
 scrollofrepair /* scroll-> */
@@ -2323,6 +2364,7 @@ scrollofrepair /* scroll-> */
 	Price = 250;
 	PostFix = "of repair";
 	Alias == "scroll of repairing";
+	AttachedGod = LORICATUS;
 }
 
 encryptedscroll /* scroll-> */
@@ -2334,6 +2376,7 @@ encryptedscroll /* scroll-> */
 	IsMaterialChangeable = false;
 	IsPolymorphable = false;
 	CanBeCloned = false;
+	AttachedGod = MELLIS;
 }
 
 horn
@@ -2352,6 +2395,7 @@ horn
 	IsAbstract = true;
 	Price = 500;
 	CanBePiled = false;
+	AttachedGod = DULCIS;
 
 	Config BRAVERY;
 	{
@@ -2385,6 +2429,7 @@ thunderhammer /* meleeweapon-> */
 	CanBeUsedBySmith = true;
 	Price = 500;
 	BaseEmitation = rgb24(130, 130, 130);
+	AttachedGod = SILVA;
 
 	Config BROKEN;
 	{
@@ -2417,6 +2462,7 @@ saalthul
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Alias == "Saal'thul";
+	AttachedGod = CLEPTIA;
 
 	Config BROKEN;
 	{
@@ -2440,4 +2486,5 @@ chameleonwhip
 	Roundness = 2;
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	Price = 500;
+	AttachedGod = SCABIES;
 }

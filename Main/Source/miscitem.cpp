@@ -2103,3 +2103,11 @@ uchar lantern::GetAlphaD(ushort Frame) const
   return (Frame * (31 - Frame) >> 3);
 }
 
+void itemcontainer::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
+{
+  if(Sorter == 0 || Sorter(this,Character))
+    {
+      AllItems.push_back(const_cast<itemcontainer*>(this));
+    }
+  GetContained()->SortAllItems(AllItems, Character, Sorter);
+}

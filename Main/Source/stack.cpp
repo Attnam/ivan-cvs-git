@@ -805,3 +805,11 @@ ushort stack::GetSpoiledItems() const
 
   return Counter;
 }
+
+void stack::SortAllItems(itemvector& ItemVector, const character* Character, bool (*Sorter)(const item*, const character*)) const
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    {
+      i->SortAllItems(ItemVector, Character, Sorter);
+    }
+}

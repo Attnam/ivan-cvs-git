@@ -688,6 +688,7 @@ class character : public entity, public id
   bool AllowPoisoned() const { return IsAlive(); }
   bool AllowParasitized() const { return IsAlive(); }
   virtual ushort GetSpecies() const { return 0; }
+  virtual void SortAllItems(std::vector<item*>&, const character* = 0, bool (*)(const item*, const character*) = 0);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

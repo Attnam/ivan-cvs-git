@@ -1336,8 +1336,6 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
       HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc);
       HScore.Save();
     }
-  else
-    ADD_MESSAGE("Death message: %s.", Description.c_str());
 }
 
 bool character::CheckDeath(const std::string& Msg, character* Murderer, bool ForceMsg)
@@ -1349,8 +1347,11 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
     {
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
+      if(IsPlayer() && game::WizardModeIsActive())
+	ADD_MESSAGE("Death message: %s.", Msg.c_str());
 
       Die(Msg, ForceMsg);
+
       return true;
     }
   else
@@ -5399,3 +5400,11 @@ void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
 }
 
 
+void character::SortAllItems(std::vector<item*>& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
+{
+  GetStack()->SortAllItems(AllItems, Character, Sorter);
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      GetEquipment(c)->SortAllItems(AllItems, Character, Sorter);
+}

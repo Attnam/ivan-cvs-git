@@ -519,6 +519,7 @@ class ITEM
   virtual bool AllowContentEmitation() const { return false; }
   virtual bool IsDestroyable() const;
   virtual short GetOfferValue(char) const;
+  virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
   virtual void AddPostFix(std::string&) const;

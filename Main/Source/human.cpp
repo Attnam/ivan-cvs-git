@@ -3074,3 +3074,42 @@ const std::string& humanoid::GetStandVerb() const
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
 
+void darkwizard::GetAICommand()
+{
+  bool HostileCharsNear = false;
+  character* NearestChar = 0;
+  ulong NearestDistance = 0xFFFFFFFF;
+
+  for(ushort c = 0; c < game::GetTeams(); ++c)
+    if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled())
+	  {
+	    ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+
+	    if(ThisDistance <= GetLOSRangeSquare())
+	      HostileCharsNear = true;
+
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true) && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
+	      {
+		NearestChar = *i;
+		NearestDistance = ThisDistance;
+	      }
+	  }
+
+  if(NearestChar && NearestDistance <= 49)
+    {
+      if(!(RAND() % 4))
+	NearestChar->GetLSquareUnder()->Strike(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
+      else if(!(RAND() % 4))
+	NearestChar->GetLSquareUnder()->Lightning(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
+      else
+	NearestChar->GetLSquareUnder()->LowerEnchantment(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
+      EditAP(-1000);
+      return;
+    }
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
+}

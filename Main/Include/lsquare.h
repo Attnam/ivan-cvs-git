@@ -137,6 +137,8 @@ class lsquare : public square
   void GetHitByExplosion(const explosion&);
   ushort GetSpoiledItemsNear() const;
   ushort GetSpoiledItems() const;
+  void SortAllItems(std::vector<item*>&, const character* = 0, bool (*)(const item*, const character*) = 0);
+  bool LowerEnchantment(character*, const std::string&, uchar);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

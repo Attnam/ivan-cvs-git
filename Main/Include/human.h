@@ -539,4 +539,12 @@ class CHARACTER
   ulong LastHit;
 );
 
+class CHARACTER
+(
+  darkwizard,
+  humanoid,
+ public:
+  virtual void GetAICommand();
+);
+
 #endif

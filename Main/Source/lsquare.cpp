@@ -1225,8 +1225,13 @@ bool lsquare::Strike(character* Zapper, const std::string& DeathMsg, uchar Direc
 {
   ushort Damage = 50 + RAND() % 21 - RAND() % 21;
   GetStack()->ReceiveDamage(Zapper, Damage, ENERGY);
-  GetFirstSideStackUnderAttack(Direction)->ReceiveDamage(Zapper, Damage, ENERGY);
-  stack* SideStack = GetSecondSideStackUnderAttack(Direction);
+  //  GetFirstSideStackUnderAttack(Direction)->ReceiveDamage(Zapper, Damage, ENERGY);
+  stack* SideStack = GetFirstSideStackUnderAttack(Direction);
+
+  if(SideStack)
+    SideStack->ReceiveDamage(Zapper, Damage, ENERGY);
+
+  SideStack = GetSecondSideStackUnderAttack(Direction);
 
   if(SideStack)
     SideStack->ReceiveDamage(Zapper, Damage, ENERGY);
@@ -1331,8 +1336,12 @@ bool lsquare::Lightning(character* Zapper, const std::string& DeathMsg, uchar Di
 {
   ushort Damage = 30 + RAND() % 11 - RAND() % 11;
   GetStack()->ReceiveDamage(Zapper, Damage, ELECTRICITY);
-  GetFirstSideStackUnderAttack(Direction)->ReceiveDamage(Zapper, Damage, ELECTRICITY);
-  stack* SideStack = GetSecondSideStackUnderAttack(Direction);
+  stack* SideStack = GetFirstSideStackUnderAttack(Direction);
+
+  if(SideStack)
+    SideStack->ReceiveDamage(Zapper, Damage, ELECTRICITY);
+
+  SideStack = GetSecondSideStackUnderAttack(Direction);
 
   if(SideStack)
     SideStack->ReceiveDamage(Zapper, Damage, ELECTRICITY);
@@ -1381,7 +1390,7 @@ stack* lsquare::GetFirstSideStackUnderAttack(uchar Direction) const
     case 5: return GetSideStack(UP);
     case 6: return GetSideStack(UP);
     case 7: return GetSideStack(UP);
-    default: return 0; /* Not possible */
+    default: return 0; /* YOURSELF */
     }
 }
 
@@ -1455,4 +1464,40 @@ ushort lsquare::GetSpoiledItemsNear() const
 ushort lsquare::GetSpoiledItems() const
 {
   return GetStack()->GetSpoiledItems();
+}
+
+bool lsquare::LowerEnchantment(character* Zapper, const std::string& DeathMsg, uchar Direction)
+{
+  character* Char = GetCharacter();
+
+  std::vector<item*> AllItems;
+  SortAllItems(AllItems, Zapper, &item::EnchantableSorter);
+  item* RandomItem;
+  if(!AllItems.empty())
+    RandomItem = AllItems[RAND() % AllItems.size()];
+  else
+    return false;
+
+  if(Char)
+    {
+      if(Char->IsPlayer())
+	ADD_MESSAGE("%s glows blue for a moment!", RandomItem->CHAR_NAME(DEFINITE));
+
+      Zapper->Hostility(Char);
+    }
+  if(RandomItem->GetEnchantment() > -5)
+     RandomItem->EditEnchantment(-1);
+  
+
+  return true;
+}
+
+
+void lsquare::SortAllItems(std::vector<item*>& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
+{
+  if(GetCharacter())
+    {
+      GetCharacter()->SortAllItems(AllItems, Character, Sorter);
+    }
+  GetStack()->SortAllItems(AllItems, Character, Sorter);
 }
