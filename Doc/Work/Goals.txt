@@ -12,7 +12,7 @@ Pimeydelle vaikutuksia.
 ////%Asetaidot.
 ////%Tiimit.
 ////*Script.
-%*Attnam.
+//%*Attnam.
 ////*Player must not be the Only Son anymore.
 ////Garbage monsters.
 ////%*New material color system.

@@ -303,7 +303,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return ODD; }
 	virtual ushort GetDensity() const				{ return 500; }
 	virtual ushort OfferValue() const				{ return 1; }
-	virtual ushort GetColor() const { return MAKE_RGB(225, 225, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(208, 208, 0); }
 protected:
 	virtual std::string NameStem() const	{ return "banana peal"; }
 );
@@ -318,7 +318,7 @@ public:
 	virtual ushort GetDensity() const				{ return 600; }
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(192, 192, 192); }
+	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
 protected:
 	virtual std::string NameStem() const	{ return "parchment"; }
 );
@@ -447,7 +447,7 @@ public:
 	virtual ushort GetDensity() const 				{ return 5000; }
 	virtual ushort OfferValue() const				{ return 25; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
+	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
 	virtual ulong RawPrice() const { return GetVolume() >> 1; }
 	virtual bool CanBeDigged() const { return false; }
 protected:

@@ -40,7 +40,7 @@ Wood types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
 List of killed monsters and list of monsters killed by pets.
-Prepare bug-report functions that would make bug-reporting easier.
+Prepare bug-report function that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 Checking exp balance.
@@ -50,5 +50,3 @@ Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
-Scrolls in characters' inventories and on the ground should burn when they are hit by fire damage, e.g. Venius's wrath.
-Message of receiving Calamus knowledge is too long.

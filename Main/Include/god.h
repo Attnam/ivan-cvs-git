@@ -199,7 +199,7 @@ class calamus : public god
 {
 public:
 	virtual std::string Name() const { return "Calamus"; }
-	virtual std::string Description() const { return "god of assassins, thieves & other secretive activities"; }
+	virtual std::string Description() const { return "god of assassins and thieves"; }
 	virtual uchar Alignment() const { return ACP; }
 	virtual uchar BasicAlignment() const { return EVIL; }
 protected:
