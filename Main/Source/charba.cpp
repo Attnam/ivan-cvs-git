@@ -1059,9 +1059,13 @@ bool character::Talk()
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 			if(k == game::GetMoveCommandKey(c))
 			{
-				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter())
+				character* Who = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter();
+				if(Who)
 				{
-					game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter()->BeTalkedTo(this);
+					if(Who->GetTeam()->GetRelation(GetTeam()) != HOSTILE)
+						Who->SetAP(0);
+
+					Who->BeTalkedTo(this);
 					return true;
 				}
 				else
