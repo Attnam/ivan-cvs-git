@@ -421,6 +421,7 @@ template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::
   ANALYZE_DATA(DigProductMaterial);
   ANALYZE_DATA(ConsumeWisdomLimit);
   ANALYZE_DATA(AttachedGod);
+  ANALYZE_DATA(BreatheMessage);
 
   return Found;
 }

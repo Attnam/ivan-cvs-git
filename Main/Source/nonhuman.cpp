@@ -1337,3 +1337,21 @@ bool eddy::MoveRandomly()
     return character::MoveRandomly();
 }
 
+void skunk::GetAICommand()
+{
+  if(!IsRetreating())
+    {
+      character* Char = GetRandomNeighbour(HOSTILE);
+      if(Char)
+	{
+	  Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 1000));
+	  EditAP(-1000);
+	  return;
+	}
+    }
+  else
+    {
+      GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 500));
+    }
+  nonhumanoid::GetAICommand();
+}

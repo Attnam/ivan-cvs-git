@@ -156,6 +156,7 @@ class bitmap
   ushort** GetImage() const { return Image; }
   uchar** GetAlphaMap() const { return AlphaMap; }
   static bool PixelVectorHandler(long, long);
+  void FillAlpha(uchar);
  protected:
   ushort XSize, YSize;
   ulong XSizeTimesYSize;

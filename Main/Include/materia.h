@@ -54,6 +54,7 @@ struct materialdatabase
   ushort DigProductMaterial;
   ushort ConsumeWisdomLimit;
   uchar AttachedGod;
+  std::string BreatheMessage;
 };
 
 class materialprototype
@@ -161,6 +162,8 @@ class material
   virtual void SetSpoilCounter(ushort) { }
   virtual bool IsStupidToConsume();
   void EditVolume(long What) { SetVolume(Volume + What); }
+  DATA_BASE_VALUE(const std::string&, BreatheMessage);
+  bool BreatheEffect(character*);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

@@ -26,6 +26,9 @@ class smoke : public entity
   void Save(outputfile&) const;
   void Load(inputfile&);
   virtual bool IsOnGround() const { return true; }
+  void AddBreatheMessage() const;
+  void Merge(gas*);
+  const material* GetGas() const { return Gas; }
  protected:
   material* Gas;
   std::vector<bitmap*> Picture;

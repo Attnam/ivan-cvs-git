@@ -30,7 +30,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "game.h"
 #include "graphics.h"
 #include "wskill.h"
-#include "materia.h"
+#include "materias.h"
 #include "bitmap.h"
 #include "lterras.h"
 

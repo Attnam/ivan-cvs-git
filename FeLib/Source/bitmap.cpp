@@ -1634,3 +1634,8 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, uchar Flags) const
       }
     }
 }
+
+void bitmap::FillAlpha(uchar Alpha)
+{
+  memset(AlphaMap[0], Alpha, XSizeTimesYSize);
+}

@@ -14,12 +14,14 @@ lsquare::~lsquare()
   delete GLTerrain;
   delete OLTerrain;
   delete Stack;
-
-  for(ushort c = 0; c < 4; ++c)
+  ushort c;
+  for(c = 0; c < 4; ++c)
     delete SideStack[c];
 
   delete Fluid;
   delete Memorized;
+  for(c = 0; c < Smoke.size(); ++c)
+    delete Smoke[c];
 }
 
 void lsquare::SignalEmitationIncrease(ulong EmitationUpdate)
@@ -1513,8 +1515,25 @@ void lsquare::RemoveSmoke(smoke* ToBeRemoved)
 
 void lsquare::AddSmoke(gas* ToBeAdded)
 {
+  SendNewDrawRequest();
   if(Smoke.empty())
     IncAnimatedEntities();
+  else
+    {
+      for(ushort c = 0; c < Smoke.size(); ++c)
+	if(ToBeAdded->IsSameAs(Smoke[c]->GetGas()))
+	  {
+	    Smoke[c]->Merge(ToBeAdded);
+	    return;
+	  }
+    }
   Smoke.push_back(new smoke(ToBeAdded, this));
-  SendNewDrawRequest();
+}
+
+void lsquare::ShowSmokeMessage() const
+{
+  for(ushort c = 0; c < Smoke.size(); ++c)
+    {
+      Smoke[c]->AddBreatheMessage();
+    }
 }

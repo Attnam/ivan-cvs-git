@@ -370,4 +370,12 @@ class CHARACTER
   virtual bool IsRetreating() const;
 );
 
+class CHARACTER
+(
+  skunk,
+  nonhumanoid,
+ public:
+  virtual void GetAICommand();
+);
+
 #endif

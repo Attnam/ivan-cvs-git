@@ -201,6 +201,7 @@
 #define EFFECT_CONFUSE 10
 #define EFFECT_POLYMORPH 11
 #define EFFECT_ESP 12
+#define EFFECT_SKUNK_SMELL 13
 
 #define CEM_NOTHING 0
 #define CEM_SCHOOL_FOOD 1
@@ -278,6 +279,7 @@
 #define AIR (GAS_ID + 1)
 #define MAGICAL_AIR (GAS_ID + 2)
 #define SMOKE (GAS_ID + 3)
+#define SKUNK_SMELL (GAS_ID + 4)
 
 #define LIQUID_ID (4096 * 4)
 
@@ -332,6 +334,7 @@
 #define MUSHROOM_FLESH (FLESH_ID + 35)
 #define MOOSE_FLESH (FLESH_ID + 36)
 #define MAGPIE_FLESH (FLESH_ID + 37)
+#define SKUNK_FLESH (FLESH_ID + 38)
 
 #define POWDER_ID (4096 * 6)
 

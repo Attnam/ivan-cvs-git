@@ -27,7 +27,7 @@ std::string material::GetName(bool Articled, bool Adjective) const
 ushort material::TakeDipVolumeAway()
 {
   ulong Amount = Min(500UL, GetVolume());
-  SetVolume(GetVolume() - Amount);
+  EditVolume(-Amount);
   return Amount;
 }
 
@@ -67,6 +67,7 @@ bool material::Effect(character* Eater, ulong Amount)
     case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); return true;
     case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); return true;
     case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); return true;
+    case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); return true;
     default: return false;
     }
 }
@@ -78,7 +79,7 @@ void material::EatEffect(character* Eater, ulong Amount, ulong NPModifier)
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
   Eater->ReceiveNutrition(ulonglong(GetNutritionValue()) * Amount * NPModifier * 15 / 1000000);
-  SetVolume(Volume - Amount);
+  EditVolume(-Amount);
 }
 
 bool material::HitEffect(character* Enemy)
@@ -96,7 +97,7 @@ bool material::HitEffect(character* Enemy)
     }
 
   ulong Amount = Min(100UL, GetVolume());
-  SetVolume(GetVolume() - Amount);
+  EditVolume(-Amount);
   return Effect(Enemy, Amount);
 }
 
@@ -196,4 +197,9 @@ bool material::CanBeEatenByAI(const character* Eater) const
 bool material::IsStupidToConsume()
 {
   return GetConsumeWisdomLimit() != NO_LIMIT;
+}
+
+bool material::BreatheEffect(character* Enemy)
+{
+  return Effect(Enemy, GetVolume() / 10);
 }

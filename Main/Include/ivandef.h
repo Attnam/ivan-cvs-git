@@ -257,6 +257,7 @@
 #define EFFECT_CONFUSE 10
 #define EFFECT_POLYMORPH 11
 #define EFFECT_ESP 12
+#define EFFECT_SKUNK_SMELL 13
 
 /* CEM = Consume End Message */
 

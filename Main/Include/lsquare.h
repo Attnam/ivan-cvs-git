@@ -145,6 +145,7 @@ class lsquare : public square
   bool LowerEnchantment(character*, const std::string&, uchar);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
+  void ShowSmokeMessage() const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

@@ -9,6 +9,7 @@
 #include "game.h"
 #include "igraph.h"
 #include "colorbit.h"
+#include "message.h"
 
 smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquareUnder(LSquareUnder)
 {
@@ -49,7 +50,12 @@ void smoke::Be()
 	    }
 	}
       GetLSquareUnder()->SendNewDrawRequest();
-      Gas->EditVolume(-Gas->GetVolume() / 50);
+      Gas->SetVolume(Gas->GetVolume() - Gas->GetVolume() / 50);
+    }
+  character* Char = LSquareUnder->GetCharacter();
+  if(Char)
+    {
+      Gas->BreatheEffect(Char);
     }
 }
 
@@ -86,4 +92,17 @@ inputfile& operator>>(inputfile& SaveFile, smoke*& Smoke)
   Smoke = new smoke;
   Smoke->Load(SaveFile);
   return SaveFile;
+}
+
+void smoke::AddBreatheMessage() const
+{
+  ADD_MESSAGE("%s", Gas->GetBreatheMessage().c_str());
+}
+
+void smoke::Merge(gas* OtherGas)
+{
+  Gas->EditVolume(OtherGas->GetVolume());
+  for(ushort c = 0; c < 4; ++c)
+    Picture[c]->FillAlpha(OtherGas->GetAlpha());
+  delete OtherGas;
 }

@@ -691,6 +691,17 @@ gas
 		NameStem = "smoke";
 		Alpha = 200;
 		AttachedGod = LORICATUS;
+		Effect = EFFECT_NOTHING;
+	}
+	Config SKUNK_SMELL;
+	{
+		Color = rgb16(20, 60, 20);
+		NameStem = "skunk smell";
+		Alpha = 200;
+		AttachedGod = SCABIES;
+		EffectStrength = 10;
+		Effect = EFFECT_SKUNK_SMELL;
+		BreatheMessage = "It smells really bad here.";
 	}
 }
 
@@ -1151,6 +1162,14 @@ flesh
 	{
 		NameStem = "moose flesh";
 		AttachedGod = MORTIFER;
+	}
+	Config SKUNK_FLESH;
+	{
+		NameStem = "skunk flesh";
+		AttachedGod = MORTIFER;
+		Effect = EFFECT_POISON;
+		EffectStrength = 10;
+		ConsumeWisdomLimit = 4;
 	}
 }
 

@@ -60,6 +60,7 @@
 #define AIR (GAS_ID + 1)
 #define MAGICAL_AIR (GAS_ID + 2)
 #define SMOKE (GAS_ID + 3)
+#define SKUNK_SMELL (GAS_ID + 4)
 
 #define LIQUID_ID (4096 << 2)
 

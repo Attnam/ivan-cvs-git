@@ -32,7 +32,7 @@ const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_Pr
 #include "god.h"
 #include "festring.h"
 #include "bitmap.h"
-#include "materia.h"
+#include "materias.h"
 #include "confdef.h"
 #include "fluid.h"
 #include "database.h"

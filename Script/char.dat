@@ -3387,3 +3387,32 @@ magpie
 	DangerModifier = 50;
 	AttachedGod = CLEPTIA;
 }
+
+skunk
+{
+	DefaultArmStrength = 3;
+	DefaultAgility = 14;
+	DefaultEndurance = 6;
+	DefaultPerception = 18;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
+	TotalVolume = 20000;
+	TorsoBitmapPos = 128, 0;
+	HostileReplies == "@Dd grawls.";
+	FriendlyReplies == "@Dd discusses philosophy with you.";
+	TotalSize = 80;
+	SkinColor = rgb16(10, 10, 10);
+	NameSingular = "skunk";
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 300;
+	CanBeGenerated = true;
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 50;
+	FleshMaterial = SKUNK_FLESH;
+	AttachedGod = SILVA;
+	PanicLevel = 85;
+	TorsoMainColor = rgb16(255, 255, 255); 
+	PoisonResistance = 10;
+}
