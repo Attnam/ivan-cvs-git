@@ -135,11 +135,21 @@ void rain::Be()
 
 void rain::Save(outputfile& SaveFile) const
 {
+  if(!Liquid)
+    int esko = 2;
+
+  if(!Liquid->GetVolume())
+    int esko = 2;
+
+  if(!OwnLiquid)
+    int esko = 2;
+
   SaveFile << Liquid << Speed << (uchar)Team;
 }
 
 void rain::Load(inputfile& SaveFile)
 {
+  OwnLiquid = 1;
   LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
   Liquid = static_cast<liquid*>(ReadType<material*>(SaveFile));
   Liquid->SetMotherEntity(this);

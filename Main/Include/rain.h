@@ -11,14 +11,14 @@ class rain : public entity
   /* Come To The Dark Side */
   rain* Next;
  public:
-  rain() : entity(HAS_BE), Next(0), Drop(0), Drops(0), OwnLiquid(false) { }
+  rain() : entity(HAS_BE), Next(0), Drop(0), Drops(0), OwnLiquid(0) { }
   rain(liquid*, lsquare*, vector2d, int, bool);
   ~rain();
   virtual void Be();
   void Save(outputfile&) const;
   void Load(inputfile&);
   void Draw(bitmap*, vector2d, color24) const;
-  bool HasOwnLiquid() const { return OwnLiquid; }
+  bool HasOwnLiquid() const { return !!OwnLiquid; }
   void RandomizeDropPos(int) const;
   liquid* GetLiquid() const { return Liquid; }
   virtual square* GetSquareUnderEntity(int = 0) const { return LSquareUnder; }

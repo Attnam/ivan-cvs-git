@@ -515,6 +515,10 @@ void lsquare::Load(inputfile& SaveFile)
   Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
   Stack->SetMotherSquare(this);
   square::Load(SaveFile);
+
+  if(vector2d(24, 10) == Pos)
+    int esko = 2;
+
   SaveFile >> GLTerrain >> OLTerrain;
   SaveFile >> Emitter >> SunEmitter;
   SaveFile >> Emitation >> Engraved >> Luminance;

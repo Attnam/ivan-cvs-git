@@ -1328,7 +1328,7 @@ golem
 	BaseUnarmedStrength = 500;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
-	PanicLevel = 10;
+	PanicLevel = 0;
 	HostileReplies == "Yes, master. Golem kill human. Golem then return."; /* No quotes! (golem engraves) */
 	FriendlyReplies == "Yes, master?";
 	/* FleshMaterial overridden */
