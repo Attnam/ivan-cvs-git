@@ -100,7 +100,7 @@ item* protosystem::CreateItem(std::string What, bool Output)
 {
 	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 		if(protocontainer<item>::GetProto(c)->GetNameSingular() == What)
-			if(protocontainer<item>::GetProto(c)->CanBeWished())
+			if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
 				return protocontainer<item>::GetProto(c)->CreateWishedItem();
 			else if(Output)
 			{
