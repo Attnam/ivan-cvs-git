@@ -25,6 +25,7 @@ class ABSTRACT_CHARACTER
   humanoid,
   character,
  public:
+  humanoid(const humanoid&);
   virtual bool CanWield() const;
   virtual bool Hit(character*);
   virtual void AddSpecialItemInfo(std::string&, item*) const;
@@ -80,7 +81,7 @@ class ABSTRACT_CHARACTER
   virtual std::string EquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
-  virtual ushort EquipmentSlots() const { return 13; }
+  virtual ushort GetEquipmentSlots() const { return 13; }
   virtual void SwitchToDig(item*, vector2d);
   virtual uchar GetLegs() const;
   virtual uchar GetArms() const;
@@ -145,6 +146,7 @@ class ABSTRACT_CHARACTER
   void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
   virtual item* SevereBodyPart(ushort);
   virtual void AddDefenceInfo(felist&) const;
+  //virtual character* Duplicate() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -213,6 +215,7 @@ class ABSTRACT_CHARACTER
   virtual void CalculateUnarmedAttackInfo();
   virtual void CalculateKickAttackInfo();
   virtual void CalculateBiteAttackInfo();
+  //virtual character* Duplicate(bool) const;
  protected:
   ushort Strength;
   ushort Agility;
@@ -238,6 +241,7 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual ushort GetTotalSize() const { return TotalSize; }
   virtual void SetTotalSize(ushort What) { TotalSize = What; }
+  //virtual character* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   ushort TotalSize;
@@ -257,6 +261,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
+  //virtual character* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse();
@@ -705,6 +710,7 @@ class CHARACTER
   virtual void CreateBodyParts();
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
   virtual ushort GetAttribute(ushort) const;
+  //virtual character* Duplicate(bool) const;
  protected:
   virtual ushort GetTorsoMainColor(ushort) const;
   virtual ushort GetArmMainColor(ushort) const;

@@ -105,6 +105,7 @@ class item : public object
   typedef itemdatabase database;
   typedef std::map<ushort, itemdatabase> databasemap;
   item(donothing);
+  item(const item&);
   virtual float GetWeaponStrength() const;
   virtual bool Open(character*);
   virtual bool Consume(character*, long);
@@ -143,11 +144,11 @@ class item : public object
   virtual void SetID(ulong What) { ID = What; }
   virtual void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
-  virtual slot* GetSlot() const { return Slot; }
-  virtual void SetSlot(slot* What) { Slot = What; }
-  virtual void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
-  virtual void RemoveFromSlot();
-  virtual void MoveTo(stack*);
+  slot* GetSlot() const { return Slot; }
+  void SetSlot(slot* What) { Slot = What; }
+  void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
+  void RemoveFromSlot();
+  void MoveTo(stack*);
   static std::string ItemCategoryName(uchar);
   static bool EatableSorter(item* Item, const character* Char) { return Item->IsEatable(Char); }
   static bool DrinkableSorter(item* Item, const character* Char) { return Item->IsDrinkable(Char); }
@@ -278,7 +279,10 @@ class item : public object
   virtual bool DangerousToStepOn(const character*) const { return false; } 
   void WeaponSkillHit();
   virtual void SetTeam(ushort What) { }
+  virtual void SpecialGenerationHandler() { }
+  item* Duplicate() const;
  protected:
+  virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, bool, bool);
@@ -289,7 +293,6 @@ class item : public object
   bool Cannibalised;
   ushort Size;
   ulong ID;
-  graphic_id InHandsGraphicId;
   const database* DataBase;
   static prototype item_ProtoType;
   ulong Volume;
@@ -314,6 +317,7 @@ name : public base\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static item* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\
  protected:\
+  virtual item* RawDuplicate() const { return new name(*this); }\
   static itemprototype name##_ProtoType;\
   data\
 }; ITEM_PROTOTYPE(name, &base##_ProtoType);

@@ -1626,7 +1626,7 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
 
   if(DamageTypeAffectsInventory(Type))
     {
-      for(ushort c = 0; c < EquipmentSlots(); ++c)
+      for(ushort c = 0; c < GetEquipmentSlots(); ++c)
 	if(GetEquipment(c))
 	  GetEquipment(c)->ReceiveDamage(Damager, Damage, Type);
 
@@ -1920,7 +1920,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 {
   ushort c;
 
-  for(c = 0; c < EquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipmentSlots(); ++c)
     if(CanUseEquipment(c))
       {
 	vector2d Pos = Where + GetEquipmentPanelPos(c);
@@ -2471,10 +2471,10 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingArms())
     {
       if(GetRightArm() && GetRightArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetRightArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetRightArm()->GetAPCost());
 
       if(GetLeftArm() && GetLeftArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetLeftArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetLeftArm()->GetAPCost());
 
       ++AttackStyles;
     }
@@ -2482,13 +2482,13 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * KickLeg->GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * KickLeg->GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetHead()->GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetHead()->GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2504,19 +2504,19 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingArms())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), AttackIsBlockable(UNARMEDATTACK), UseMaxHP) * GetUnarmedAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), AttackIsBlockable(UNARMEDATTACK), UseMaxHP) * GetUnarmedAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetKickDamage()), GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetKickDamage()), GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetBiteDamage()), GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetBiteDamage()), GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2876,22 +2876,22 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 ushort humanoid::GetRandomStepperBodyPart() const
 {
   std::vector<ushort> Possible;
-  if(GetBodyPart(RIGHTLEGINDEX))
+
+  if(GetRightLeg())
     Possible.push_back(RIGHTLEGINDEX);
-  if(GetBodyPart(LEFTLEGINDEX))
+
+  if(GetLeftLeg())
     Possible.push_back(LEFTLEGINDEX);
+
   if(Possible.size())
     return Possible[RAND() % Possible.size()];
   else
-    switch(RAND() % 3)
-      {
-      case 0:
-	return GROININDEX;
-      case 1:
-	return TORSOINDEX;
-      default:
+    {
+      if(GetHead() && RAND() % 3)
 	return HEADINDEX;
-      }
+
+      return RAND() & 1 ? GROININDEX : TORSOINDEX;
+    }
 }
 
 ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
@@ -3057,7 +3057,7 @@ void humanoid::SWeaponSkillTick()
 		break;
 	      }
 
-	  for(ushort c = 0; c < EquipmentSlots(); ++c)
+	  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
 	    if(GetEquipment(c) && GetEquipment(c)->GetID() == (*i)->GetID())
 	      {
 		(*i)->AddLevelDownMessage(GetEquipment(c)->GetName(UNARTICLED));
@@ -3651,6 +3651,14 @@ void humanoid::AddDefenceInfo(felist& List) const
 
   if(GetLeftArm())
     GetLeftArm()->AddDefenceInfo(List);
+}
+
+humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRightSWeaponSkill(0), CurrentLeftSWeaponSkill(0)
+{
+  SWeaponSkill.resize(Humanoid.SWeaponSkill.size());
+
+  for(ushort c = 0; c < SWeaponSkill.size(); ++c)
+    SWeaponSkill[c] = new sweaponskill(*Humanoid.SWeaponSkill[c]);
 }
 
 std::string humanoid::GetDeathMessage() const

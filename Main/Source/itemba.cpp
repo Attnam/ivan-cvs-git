@@ -19,6 +19,10 @@
 #include "save.h"
 #include "database.h"
 
+item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
+{
+}
+
 item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
 {
 }
@@ -446,6 +450,7 @@ void item::CalculateAll()
   CalculateVolumeAndWeight();
   CalculateEmitation();
 }
+
 /* Somewhat temporary. */
 
 void item::WeaponSkillHit()
@@ -453,3 +458,9 @@ void item::WeaponSkillHit()
   static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }
 
+item* item::Duplicate() const
+{
+  item* Clone = RawDuplicate();
+  Clone->UpdatePictures();
+  return Clone;
+}

@@ -22,6 +22,7 @@ class ABSTRACT_ITEM
   virtual void DipInto(material*, character*);
   virtual ulong Price() const;
   virtual bool IsDippable(character*) const { return true; }*/
+  materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
@@ -33,8 +34,8 @@ class ABSTRACT_ITEM
   virtual void SetConsumeMaterial(material* NewMaterial) { SetContainedMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeContainedMaterial(NewMaterial); }
   virtual uchar GetMaterials() const { return 2; }
-  virtual material* GetMaterial(ushort) const;
  protected:
+  virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
@@ -57,6 +58,7 @@ class ITEM
   virtual bool IsChargeable(const character*) const { return true; }
   virtual void GenerateLeftOvers(character*);
   virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual ushort GetMaterialColorA(ushort) const;
@@ -120,6 +122,7 @@ class ITEM
   meleeweapon,
   item,
  public:
+  meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
   virtual void DipInto(material*, character*);
@@ -135,8 +138,8 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 3; }
-  virtual material* GetMaterial(ushort) const;
  protected:
+  virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
@@ -341,6 +344,7 @@ class ABSTRACT_ITEM
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, ushort, uchar);
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual ushort GetBeamColor() const { return WHITE; }
   virtual void VirtualConstructor(bool);
@@ -485,6 +489,7 @@ class ITEM
   oillamp,
   item,
  public:
+  oillamp(const oillamp&);
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -492,6 +497,7 @@ class ITEM
   virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; }
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   bool InhabitedByGenie;
@@ -554,7 +560,9 @@ class ITEM
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool DangerousToStepOn(const character* Stepper) const { return WillExplode(Stepper); } 
   virtual bool WillExplode(const character*) const;
+  virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;
@@ -598,6 +606,7 @@ class ITEM
   virtual void Load(inputfile&);
   virtual bool CanOpenDoors() const { return true; }
   virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual const std::string& GetAdjective() const;
   virtual void VirtualConstructor(bool);
@@ -631,6 +640,7 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the boots can be calculated someho
   virtual bool IsBoot(const character*) const { return true; }
+  virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
 );
 
 class ITEM
@@ -640,6 +650,7 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the gauntlets can be calculated somehow
   virtual bool IsGauntlet(const character*) const { return true; }
+  virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
 );
 
 class ITEM
@@ -697,9 +708,6 @@ class ABSTRACT_ITEM
   void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
   bool GetUnique() const { return Unique; }
   void SetUnique(bool What) { Unique = What; }
-  ulong GetRegenerationCounter() const { return RegenerationCounter; }
-  void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
-  void EditRegenerationCounter(long What) { RegenerationCounter += What; }
   void Regenerate();
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
@@ -730,11 +738,12 @@ class ABSTRACT_ITEM
   virtual void CalculateToHitValue() { }
   virtual void CalculateAPCost() { }
   void CalculateAttackInfo();
-  float GetTimeToDie(ushort, float, bool, bool) const;
-  virtual float GetRoughChanceToHit(float) const;
+  float GetTimeToDie(ushort, float, float, bool, bool) const;
+  virtual float GetRoughChanceToHit(float, float) const;
   const std::string& GetBodyPartName() const { return GetNameSingular(); }
   void RandomizePosition();
   void ResetPosition();
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
@@ -768,6 +777,7 @@ class ITEM
   head,
   bodypart,
  public:
+  head(const head&);
   virtual ~head();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -791,6 +801,7 @@ class ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
@@ -807,7 +818,7 @@ class ABSTRACT_ITEM
   bodypart,
  public:
   virtual uchar GetBodyPartIndex() const { return TORSOINDEX; }
-  virtual float GetRoughChanceToHit(float) const;
+  virtual float GetRoughChanceToHit(float, float) const;
  protected:
   virtual bool ReceiveDamage(character*, ushort, uchar);
 );
@@ -826,6 +837,7 @@ class ITEM
   humanoidtorso,
   torso,
  public:
+  humanoidtorso(const humanoidtorso&);
   virtual ~humanoidtorso();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -840,6 +852,7 @@ class ITEM
   virtual void DropEquipment();
   virtual item* GetEquipment(ushort) const;
   virtual ushort GetEquipmentSlots() const { return 3; }
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BodyArmorSlot;
@@ -852,6 +865,7 @@ class ABSTRACT_ITEM
   arm,
   bodypart,
  public:
+  arm(const arm&);
   virtual ~arm();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -906,6 +920,7 @@ class ABSTRACT_ITEM
   ushort GetBlockStrength() const { return GetWielded()->GetStrengthValue(); }
   float GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier(Master) / 10000; }
   void AddDefenceInfo(felist&) const;
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -926,6 +941,7 @@ class ITEM
   rightarm,
   arm,
  public:
+  rightarm(const rightarm&);
   virtual uchar GetBodyPartIndex() const { return RIGHTARMINDEX; }
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
@@ -939,6 +955,7 @@ class ITEM
   leftarm,
   arm,
  public:
+  leftarm(const leftarm&);
   virtual uchar GetBodyPartIndex() const { return  LEFTARMINDEX; }
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
@@ -963,6 +980,7 @@ class ABSTRACT_ITEM
   leg,
   bodypart,
  public:
+  leg(const leg&);
   virtual ~leg();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -994,6 +1012,7 @@ class ABSTRACT_ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -1012,6 +1031,7 @@ class ITEM
   rightleg,
   leg,
  public:
+  rightleg(const rightleg&);
   virtual uchar GetBodyPartIndex() const { return RIGHTLEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
@@ -1023,6 +1043,7 @@ class ITEM
   leftleg,
   leg,
  public:
+  leftleg(const leftleg&);
   virtual uchar GetBodyPartIndex() const { return LEFTLEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
@@ -1043,6 +1064,7 @@ class ITEM
   corpse,
   item,
  public:
+  corpse(const corpse&);
   virtual ~corpse();
   virtual bool Consume(character*, long);
   virtual bool IsConsumable(const character*) const;
@@ -1063,13 +1085,14 @@ class ITEM
   virtual ulong Price() const;
   virtual item* PrepareForConsuming(character*);
   virtual uchar GetMaterials() const { return 2; }
-  virtual material* GetMaterial(ushort) const;
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;
   virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
+  //virtual item* Duplicate(bool) const;
  protected:
+  virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const;
@@ -1128,6 +1151,7 @@ class ITEM
   chest,
   item,
  public:
+  chest(const chest&);
   virtual ~chest();
   virtual bool Open(character*);
   virtual bool IsOpenable(const character*) const { return true; }
@@ -1147,6 +1171,7 @@ class ITEM
   virtual bool FitsIn(item*) const;
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
@@ -1175,7 +1200,9 @@ class ITEM
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool DangerousToStepOn(const character* What) const { return true; } 
+  virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
+  //virtual item* Duplicate(bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;
@@ -1269,4 +1296,3 @@ class ITEM
 );
 
 #endif
-

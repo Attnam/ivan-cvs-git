@@ -5,6 +5,12 @@
 #include "materba.h"
 #include "proto.h"
 
+entity::entity(const entity& Entity) : ExistsBool(Entity.ExistsBool), HasBeBool(Entity.HasBeBool), Emitation(Entity.Emitation)
+{
+  if(HasBeBool)
+    PoolIterator = pool::Add(this);
+}
+
 entity::entity(bool HasBeBool) : ExistsBool(true), HasBeBool(HasBeBool), Emitation(0)
 {
   if(HasBeBool)

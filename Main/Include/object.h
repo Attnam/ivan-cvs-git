@@ -26,6 +26,7 @@ class object : public entity, public id
 {
  public:
   object() : entity(false), MainMaterial(0), AnimationFrames(1) { }
+  object(const object&);
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -44,7 +45,7 @@ class object : public entity, public id
   virtual void SetContainedMaterial(material*);
   virtual void ChangeContainedMaterial(material*);
   virtual uchar GetMaterials() const { return 1; }
-  virtual material* GetMaterial(ushort Index) const { return Index ? 0 : MainMaterial; }
+  material* GetMaterial(ushort Index) const { return const_cast<object*>(this)->GetMaterialReference(Index); }
   const std::vector<bitmap*>& GetPicture() const { return Picture; }
   bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
   virtual ushort GetBaseEmitation() const { return 0; }
@@ -64,6 +65,8 @@ class object : public entity, public id
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
   void SetConfig(ushort);
  protected:
+  void CopyMaterial(material* const&, material*&);
+  virtual material*& GetMaterialReference(ushort) { return MainMaterial; }
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual ulong GetDefaultMainVolume() const { return 0; }

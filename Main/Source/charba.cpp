@@ -46,7 +46,45 @@ std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed",
 bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false, false, true };
 bool character::StateCanBeRandomlyActivated[] = { false,true,true,true,false,true,true,true,true,false,true,true, true };
 
-character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
+character::character(const character& Char) : entity(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts)
+{
+  Stack = new stack(0, this, HIDDEN);
+
+  ushort c;
+
+  for(c = 0; c < STATES; ++c)
+    TemporaryStateCounter[c] = Char.TemporaryStateCounter[c];
+
+  if(Team)
+    TeamIterator = Team->Add(this);
+
+  for(c = 0; c < BASEATTRIBUTES; ++c)
+    {
+      BaseAttribute[c] = Char.BaseAttribute[c];
+      BaseExperience[c] = Char.BaseExperience[c];
+    }
+
+  BodyPartSlot = new characterslot[BodyParts];
+  OriginalBodyPartID = new ulong[BodyParts];
+  CWeaponSkill = new cweaponskill*[AllowedWeaponSkillCategories];
+
+  for(c = 0; c < BodyParts; ++c)
+    {
+      BodyPartSlot[c].SetMaster(this);
+
+      if(Char.GetBodyPart(c))
+	SetBodyPart(c, static_cast<bodypart*>(Char.GetBodyPart(c)->Duplicate()));
+      else
+	OriginalBodyPartID[c] = Char.OriginalBodyPartID[c];
+    }
+
+  for(c = 0; c < AllowedWeaponSkillCategories; ++c)
+    CWeaponSkill[c] = new cweaponskill(*Char.CWeaponSkill[c]);
+
+  Initializing = false;
+}
+
+character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -415,7 +453,7 @@ bool character::Drop()
   item* Item = GetStack()->DrawContents(this, "What do you want to drop?");
 
   if(Item)
-    if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->DropItem(this, Item)))
+    if(!GetRoomUnder() || GetRoomUnder()->DropItem(this, Item))
       {
 	Item->MoveTo(GetStackUnder());
 	DexterityAction(1);
@@ -792,7 +830,7 @@ bool character::PickUp()
 	  {
 	    item* Item = GetStackUnder()->DrawContents(this, "What do you want to pick up?");
 
-	    if(Item && (!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item))))
+	    if(Item && (!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item)))
 	      {
 		if(Item->CheckPickUpEffect(this))
 		  {
@@ -815,7 +853,7 @@ bool character::PickUp()
       {
 	item* Item = GetStackUnder()->GetBottomVisibleItem(this);
 
-	if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item)))
+	if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item))
 	  {
 	    ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
 	    Item->MoveTo(GetStack());
@@ -1457,7 +1495,10 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile << GetCWeaponSkill(c);
 
-  SaveFile << StuckTo << StuckToBodyPart;
+  if(IsStuck())
+    SaveFile << bool(true) << GetStackUnder()->SearchItem(StuckTo) << StuckToBodyPart;
+  else
+    SaveFile << bool(false);
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1500,7 +1541,12 @@ void character::Load(inputfile& SaveFile)
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile >> GetCWeaponSkill(c);
 
-  SaveFile >> StuckTo >> StuckToBodyPart;
+  if(ReadType<bool>(SaveFile))
+    {
+      StuckTo = GetStackUnder()->GetItem(ReadType<ushort>(SaveFile));
+      SaveFile >> StuckToBodyPart;
+    }
+
   InstallDataBase();
 }
 
@@ -2109,7 +2155,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 
   NewForm->SetMoney(GetMoney());
 
-  for(ushort c = 0; c < EquipmentSlots(); ++c)
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     {
       item* Item = GetEquipment(c);
 
@@ -2352,18 +2398,17 @@ bool character::CheckForDoors()
 
 bool character::CheckForUsefulItemsOnGround()
 {
-  for(stackiterator i = GetStackUnder()->GetBottomSlot(); i != GetStackUnder()->GetSlotAboveTop(); ++i)
-    if((**i)->CanBeSeenBy(this) && (**i)->IsPickable(this))
-      {
-	if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this))
-	  if(!GetLSquareUnder()->GetRoom() || GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, ***i))
-	    {
-	      if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s begins %s %s.", CHARNAME(DEFINITE), (**i)->GetConsumeVerb().c_str(), (**i)->CHARNAME(DEFINITE));
+  itemvector ItemVector;
+  GetStackUnder()->FillItemVector(ItemVector);
 
-	      ConsumeItem(***i);
-	      return true;
-	    }
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this))
+      {
+	if(TryToEquip(ItemVector[c]))
+	  return true;
+
+	if(TryToConsume(ItemVector[c]))
+	  return true;
       }
 
   return false;
@@ -2912,7 +2957,9 @@ void character::ChangeContainedMaterial(material* NewMaterial)
 
 void character::TeleportRandomly()
 {
+  StuckTo = 0;
   SetStuckToBodyPart(NONEINDEX);
+
   if(StateIsActivated(TELEPORT_CONTROL) && IsPlayer())
     {
       while(true)
@@ -3152,6 +3199,13 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->RemoveFromSlot();
   BodyPart->RandomizePosition();
   CalculateBattleInfo();
+
+  if(StuckToBodyPart == BodyPartIndex)
+    {
+      StuckToBodyPart = NONEINDEX;
+      StuckTo = 0;
+    }
+
   return BodyPart;
 }
 
@@ -3163,7 +3217,7 @@ bool character::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uch
 
   if(DamageTypeAffectsInventory(Type))
     {
-      for(ushort c = 0; c < EquipmentSlots(); ++c)
+      for(ushort c = 0; c < GetEquipmentSlots(); ++c)
 	if(GetEquipment(c))
 	  GetEquipment(c)->ReceiveDamage(Damager, Damage, Type);
 
@@ -3286,7 +3340,7 @@ bool character::EquipmentScreen()
     {
       List.Empty();
 
-      for(ushort c = 0; c < EquipmentSlots(); ++c)
+      for(ushort c = 0; c < GetEquipmentSlots(); ++c)
 	{
 	  std::string Entry = EquipmentName(c) + ":";
 	  Entry.resize(20, ' ');
@@ -3308,7 +3362,7 @@ bool character::EquipmentScreen()
       game::DrawEverythingNoBlit();
       Chosen = List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), true, false);
 
-      if(Chosen >= EquipmentSlots())
+      if(Chosen >= GetEquipmentSlots())
 	break;
 
       if(!GetBodyPartOfEquipment(Chosen))
@@ -3451,7 +3505,7 @@ void character::PrintInfo() const
 	  Info.AddEntry(GetBodyPartName(c) + " armor value: " + GetBodyPart(c)->GetTotalResistance(PHYSICALDAMAGE), LIGHTGRAY);
     }
 
-  for(c = 0; c < EquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipmentSlots(); ++c)
     if((EquipmentEasilyRecognized(c) && GetEquipment(c)) || game::WizardModeActivated())
       {
 	std::string Entry = EquipmentName(c) + ": ";
@@ -3772,8 +3826,6 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
       for(c = 0; c < BASEATTRIBUTES; ++c)
 	BaseExperience[c] = 0;
 
-      StuckTo = 0;
-      StuckToBodyPart = NONEINDEX;
       InitSpecialAttributes();
     }
 
@@ -4011,14 +4063,7 @@ bool character::TryToUnstuck(vector2d Direction)
 
 bool character::IsStuck() const
 {
-  if(GetStuckToBodyPart() == NONEINDEX)
-    return false;
-  
-
-  if(GetBodyPart(GetStuckToBodyPart()))
-    return true;
-  else
-    return false;
+  return GetStuckToBodyPart() != NONEINDEX;
 }
 
 bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, bool DoubleAttribute)
@@ -4314,13 +4359,13 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 	  {
 	    if(!StateIsActivated(1 << c))
 	      {
-		EquipmentState |= 1 << c;
+		if(!Initializing)
+		  (this->*PrintBeginStateMessage[c])();
 
 		if(BeginStateHandler[c])
 		  (this->*BeginStateHandler[c])();
 
-		if(!Initializing)
-		  (this->*PrintBeginStateMessage[c])();
+		EquipmentState |= 1 << c;
 	      }
 	    else
 	      EquipmentState |= 1 << c;
@@ -4338,7 +4383,7 @@ void character::CalculateEquipmentState()
   ushort c, Back = EquipmentState;
   EquipmentState = 0;
 
-  for(c = 0; c < EquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipmentSlots(); ++c)
     if(GetEquipment(c) && EquipmentHasNoPairProblems(c))
       EquipmentState |= GetEquipment(c)->GetGearStates();
 
@@ -4376,16 +4421,16 @@ void character::BeginTemporaryState(ushort State, ushort Counter)
     }
   else
     {
-      ActivateTemporaryState(State);
-      SetTemporaryStateCounter(State, Counter);
-
       if(!EquipmentStateIsActivated(State))
 	{
+	  (this->*PrintBeginStateMessage[Index])();
+
 	  if(BeginStateHandler[Index])
 	    (this->*BeginStateHandler[Index])();
-
-	  (this->*PrintBeginStateMessage[Index])();
 	}
+
+      ActivateTemporaryState(State);
+      SetTemporaryStateCounter(State, Counter);
     }
 }
 
@@ -4609,7 +4654,7 @@ void character::EndPolymorph()
 
   SetSquareUnder(Char->GetSquareUnder()); // might be used afterwards
 
-  for(ushort c = 0; c < EquipmentSlots(); ++c)
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     {
       item* Item = GetEquipment(c);
 
@@ -4661,7 +4706,7 @@ void character::SaveLife()
     {
       item* LifeSaver = 0;
 
-      for(ushort c = 0; c < EquipmentSlots(); ++c)
+      for(ushort c = 0; c < GetEquipmentSlots(); ++c)
 	if(GetEquipment(c) && EquipmentHasNoPairProblems(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
 	  LifeSaver = GetEquipment(c);
 
@@ -4747,32 +4792,32 @@ void character::DexterityAction(ushort Difficulty)
   EditExperience(DEXTERITY, 5 * Difficulty);
 }
 
-bool character::CanBeSeenByPlayer() const
+bool character::CanBeSeenByPlayer(bool Theoretically) const
 {
   bool Visible = !StateIsActivated(INVISIBLE) || (game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm());
 
-  if((game::IsInWilderness() && Visible) || (game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare()))
+  if((game::IsInWilderness() && Visible) || (game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
   else
-    return GetSquareUnder()->CanBeSeenByPlayer(game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm());
+    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm());
 }
 
-bool character::CanBeSeenBy(const character* Who) const
+bool character::CanBeSeenBy(const character* Who, bool Theoretically) const
 {
   if(Who->IsPlayer())
-    return CanBeSeenByPlayer();
+    return CanBeSeenByPlayer(Theoretically);
   else
     {
       bool Visible = !StateIsActivated(INVISIBLE) || (Who->StateIsActivated(INFRAVISION) && IsWarm());
 
-      if((game::IsInWilderness() && Visible) || (Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (GetPos() - Who->GetPos()).Length() <= Who->ESPRangeSquare()))
+      if((game::IsInWilderness() && Visible) || (Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - Who->GetPos()).Length() <= Who->ESPRangeSquare())))
 	return true;
       else if(!Visible)
 	return false;
       else
-	return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), Who->StateIsActivated(INFRAVISION) && IsWarm());
+	return Theoretically || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), Who->StateIsActivated(INFRAVISION) && IsWarm());
     }
 }
 
@@ -4855,7 +4900,7 @@ void character::PrintEndPoisonedMessage() const
 void character::PoisonedHandler()
 {
   if(!(RAND() % 100))
-    Vomit(3); 
+    Vomit(3);
 
   ushort Used = 0;
   while(Used + 100 <= GetTemporaryStateCounter(POISONED))
@@ -5320,14 +5365,22 @@ material* character::CreateBodyPartFlesh(ushort, ulong Volume) const
     }
 }
 
-float character::GetTimeToDie(ushort Damage, float ToHitValue, bool AttackIsBlockable, bool UseMaxHP) const
+float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHitValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
+  float DodgeValue = GetDodgeValue();
+
+  if(!Enemy->CanBeSeenBy(this, true))
+    ToHitValue *= 2;
+
+  if(!CanBeSeenBy(Enemy, true))
+    DodgeValue *= 2;
+
   float MinHits = 1000;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(BodyPartVital(c) && GetBodyPart(c))
       {
-	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, AttackIsBlockable, UseMaxHP);
+	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, DodgeValue, AttackIsBlockable, UseMaxHP);
 
 	if(Hits < MinHits)
 	  MinHits = Hits;
@@ -5366,7 +5419,7 @@ std::string character::GetBodyPartName(ushort Index, bool Articled) const
 
 item* character::SearchForItemWithID(ulong ID) const
 {
-  for(ushort c = 0; c < EquipmentSlots(); ++c)
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if(GetEquipment(c) && GetEquipment(c)->GetID() == ID)
       return GetEquipment(c);
 
@@ -5442,4 +5495,90 @@ void character::AddDefenceInfo(felist& List) const
 	Entry << GetBodyPart(c)->GetTotalResistance(PHYSICALDAMAGE);
 	List.AddEntry(Entry, LIGHTGRAY);
       }
+}
+
+character* character::Duplicate() const
+{
+  character* Char = RawDuplicate();
+  Char->CalculateAll();
+  return Char;
+}
+
+bool character::TryToEquip(item* Item)
+{
+  if(!CanUseEquipment())
+    return false;
+
+  for(ushort e = 0; e < GetEquipmentSlots(); ++e)
+    if(GetBodyPartOfEquipment(e) && (!EquipmentSorter(e) || EquipmentSorter(e)(Item, this)))
+      {
+	msgsystem::DisableMessages();
+	float Danger = GetRelativeDanger(game::GetPlayer());
+	item* OldEquipment = GetEquipment(e);
+
+	if(OldEquipment)
+	  OldEquipment->RemoveFromSlot();
+
+	Item->RemoveFromSlot();
+	SetEquipment(e, Item);
+	float NewDanger = GetRelativeDanger(game::GetPlayer());
+	Item->RemoveFromSlot();
+	GetStackUnder()->AddItem(Item);
+
+	if(OldEquipment)
+	  SetEquipment(e, OldEquipment);
+
+	msgsystem::EnableMessages();
+
+	if(OldEquipment)
+	  {
+	    if(NewDanger > Danger)
+	      {
+		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item))
+		  {
+		    if(CanBeSeenByPlayer())
+		      ADD_MESSAGE("%s drops %s %s and equips %s instead.", CHARNAME(DEFINITE), CHARPOSSESSIVEPRONOUN, OldEquipment->CHARNAME(UNARTICLED), Item->CHARNAME(DEFINITE));
+
+		    if(GetRoomUnder())
+		      GetRoomUnder()->DropItem(this, OldEquipment);
+
+		    OldEquipment->MoveTo(GetStackUnder());
+		    Item->RemoveFromSlot();
+		    SetEquipment(e, Item);
+		    return true;
+		  }
+	      }
+	  }
+	else
+	  {
+	    if(NewDanger >= Danger)
+	      {
+		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item))
+		  {
+		    if(CanBeSeenByPlayer())
+		      ADD_MESSAGE("%s picks up and equips %s.", CHARNAME(DEFINITE), Item->CHARNAME(DEFINITE));
+
+		    Item->RemoveFromSlot();
+		    SetEquipment(e, Item);
+		    return true;
+		  }
+	      }
+	  }
+      }
+
+  return false;
+}
+
+bool character::TryToConsume(item* Item)
+{
+  if(Item->IsConsumable(this) && !Item->IsBadFoodForAI(this) && (!GetRoomUnder() || GetRoomUnder()->ConsumeItem(this, Item)))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s begins %s %s.", CHARNAME(DEFINITE), Item->GetConsumeVerb().c_str(), Item->CHARNAME(DEFINITE));
+
+      ConsumeItem(Item);
+      return true;
+    }
+  else
+    return false;
 }

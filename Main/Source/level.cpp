@@ -389,7 +389,9 @@ void level::CreateItems(ushort Amount)
   for(ushort x = 0; x < Amount; ++x)
     {
       vector2d Pos = RandomSquare(0, true);
-      Map[Pos.X][Pos.Y]->Stack->FastAddItem(protosystem::BalancedCreateItem());
+      item* Item = protosystem::BalancedCreateItem();
+      Map[Pos.X][Pos.Y]->Stack->FastAddItem(Item);
+      Item->SpecialGenerationHandler();
     }
 }
 
@@ -783,7 +785,6 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
   for(ushort c = 0; c < HowMany; ++c)
     {
       Pos = vector2d(0,0);
-
       character* Char = protosystem::BalancedCreateMonster();
 
       for(ushort cc = 0; cc < 30; ++c)
@@ -803,8 +804,14 @@ vector2d level::RandomSquare(character* Char, bool Walkablility, bool HasCharact
 {
   vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-  for(ushort c = 0; (Map[Pos.X][Pos.Y]->IsWalkable(Char) != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
+  for(ushort c = 0; Map[Pos.X][Pos.Y]->IsWalkable(Char) != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter()); ++c)
     {
+      if(c == 100)
+	Char = 0;
+
+      if(c == 10000)
+	ABORT("RandomSquare request failed!");
+
       Pos.X = 1 + RAND() % (XSize - 2);
       Pos.Y = 1 + RAND() % (YSize - 2);
     }

@@ -207,12 +207,12 @@ void characterslot::PutInItem(item* What)
   if(Item)
     {
       Item->SetSlot(this);
-      SignalVolumeAndWeightChange();
-      SignalEmitationIncrease(Item->GetEmitation());
       static_cast<bodypart*>(Item)->SetMaster(GetMaster());
 
       if(!GetMaster()->IsInitializing())
 	{
+	  SignalVolumeAndWeightChange();
+	  SignalEmitationIncrease(Item->GetEmitation());
 	  static_cast<bodypart*>(Item)->CalculateMaxHP();
 	  GetMaster()->CalculateHP();
 	  GetMaster()->CalculateMaxHP();

@@ -976,6 +976,13 @@ cloak
 	MaterialConfigChances = { 3, 250, 50, 50; }
 	Roundness = 60;
 	IsTwoHanded = true;
+
+	Config CLOAKOFINVISIBILITY;
+	{
+		Possibility = 1;
+		GearStates = INVISIBLE;
+		PostFix = "of invisibility";
+	}
 }
 
 boot

@@ -37,7 +37,7 @@ inline std::string& operator+=(std::string& String, ushort Int) { return String.
 inline std::string& operator+=(std::string& String, int Int) { return String.append(festring::IntegerToChar(Int)); }
 inline std::string& operator+=(std::string& String, long Int) { return String.append(festring::IntegerToChar(Int)); }
 inline std::string& operator+=(std::string& String, ulong Int) { return String.append(festring::IntegerToChar(Int)); }
-inline std::string operator+(const char* const CString, std::string CppString) { return CppString.insert(0, CString); }
+inline std::string operator+(const char* CString, std::string CppString) { return CppString.insert(0, CString); }
 template <class type> inline std::string& operator<<(std::string& String, const type& Type) { return String += Type; }
 
 #endif

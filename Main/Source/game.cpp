@@ -235,7 +235,6 @@ bool game::Init(const std::string& Name)
 	CreateTeams();
 	CreateGods();
 	SetPlayer(new human);
-
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);

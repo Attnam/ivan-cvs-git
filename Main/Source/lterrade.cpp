@@ -800,13 +800,12 @@ void fountain::Load(inputfile& SaveFile)
 
 }
 
-material* fountain::GetMaterial(ushort Index) const
+material*& fountain::GetMaterialReference(ushort Index)
 {
   switch(Index)
     {
     case 0: return MainMaterial;
-    case 1: return ContainedMaterial;
-    default: return 0;
+    default: return ContainedMaterial;
     }
 }
 

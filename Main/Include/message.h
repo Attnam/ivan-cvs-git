@@ -26,11 +26,14 @@ class msgsystem
   static void Load(inputfile&);
   static void ScrollDown();
   static void ScrollUp();
+  static void EnableMessages() { Enabled = true; }
+  static void DisableMessages() { Enabled = false; }
  private:
   static felist MessageHistory;
   static std::string LastMessage;
   static ushort Times;
   static ulong Begin, End;
+  static bool Enabled;
 };
 
 #endif

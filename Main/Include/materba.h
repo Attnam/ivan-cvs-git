@@ -125,6 +125,7 @@ class material
   DATABASEVALUE(uchar, Flexibility);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
+  material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
   material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
   ulong GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
   ushort GetConfig() const { return Config; }
@@ -141,6 +142,7 @@ class material
   void SetConfig(ushort);
   static material* Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
   bool IsTransparent() const { return GetAlpha() != 255; }
+  virtual material* Duplicate() const { return new material(*this); }
  protected:
   void Initialize(ushort, ulong, bool);
   void InstallDataBase();
@@ -167,6 +169,7 @@ name : public base\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static material* Clone(ushort NewConfig, ulong Volume, bool Load) { return new name(NewConfig, Volume, Load); }\
+  virtual material* Duplicate() const { return new name(*this); }\
  protected:\
   static prototype name##_ProtoType;\
   data\

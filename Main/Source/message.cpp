@@ -17,9 +17,13 @@ felist msgsystem::MessageHistory("Message history", WHITE, 128);
 std::string msgsystem::LastMessage;
 ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;
+bool msgsystem::Enabled = true;
 
 void msgsystem::AddMessage(const char* Format, ...)
 {
+  if(!Enabled)
+    return;
+
   char Message[1024];
 
   va_list AP;

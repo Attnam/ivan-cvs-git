@@ -11,12 +11,28 @@
 #include "whandler.h"
 #include "festring.h"
 
+object::object(const object& Object) : entity(Object), Config(Object.Config), VisualEffects(Object.VisualEffects), AnimationFrames(Object.AnimationFrames)
+{
+  CopyMaterial(Object.MainMaterial, MainMaterial);
+}
+
 object::~object()
 {
   for(ushort c = 0; c < GraphicId.size(); ++c)
     igraph::RemoveUser(GraphicId[c]);
 
   delete MainMaterial;
+}
+
+void object::CopyMaterial(material* const& Source, material*& Dest)
+{
+  if(Source)
+    {
+      Dest = Source->Duplicate();
+      Dest->SetMotherEntity(this);
+    }
+  else
+    Dest = 0;
 }
 
 void object::Save(outputfile& SaveFile) const
@@ -124,14 +140,15 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  if(GraphicId.size())
-    for(ushort c = 0; c < GraphicId.size(); ++c)
-      igraph::RemoveUser(GraphicId[c]);
+  ushort c;
+
+  for(c = 0; c < GraphicId.size(); ++c)
+    igraph::RemoveUser(GraphicId[c]);
 
   GraphicId.resize(AnimationFrames);
   Picture.resize(AnimationFrames);
 
-  for(ushort c = 0; c < GraphicId.size(); ++c)
+  for(c = 0; c < GraphicId.size(); ++c)
     {
       GraphicId[c].Color[0] = GetMaterialColorA(c);
       GraphicId[c].Color[1] = GetMaterialColorB(c);

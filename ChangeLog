@@ -1,3 +1,13 @@
+August 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Carnivorous plants are now longer born inside walls nor over monsters
+	* StuckTo system works better now, maybe
+	* Added Duplicate() functions for character and item
+	* Gauntlets and boots are now generated in pairs
+	* Monsters pick up and use equipment again
+	* Added cloak of invisibility
+	* Invisibility is now taken into account when calculating danger
+
 August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Msgs of special items corrected
@@ -12,7 +22,6 @@ August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Bug in poisoned fixed
-
 	
 August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

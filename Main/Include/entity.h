@@ -21,6 +21,7 @@ class entity
 {
  public:
   entity(bool);
+  entity(const entity&);
   virtual ~entity();
   virtual void Be() { }
   bool Exists() const { return ExistsBool; }
@@ -36,7 +37,6 @@ class entity
   virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
  protected:
   std::list<entity*>::iterator PoolIterator;
-  bool InPool;
   bool ExistsBool;
   bool HasBeBool;
   ushort Emitation;

@@ -1887,35 +1887,28 @@ void meleeweapon::Load(inputfile& SaveFile)
   LoadMaterial(SaveFile, ContainedMaterial);
 }
 
-material* materialcontainer::GetMaterial(ushort Index) const
+material*& materialcontainer::GetMaterialReference(ushort Index)
 {
   switch(Index)
     {
     case 0: return MainMaterial;
-    case 1: return ContainedMaterial;
-    default: return 0;
+    default: return ContainedMaterial;
     }
 }
 
-material* meleeweapon::GetMaterial(ushort Index) const
+material*& meleeweapon::GetMaterialReference(ushort Index)
 {
   switch(Index)
     {
     case 0: return MainMaterial;
     case 1: return SecondaryMaterial;
-    case 2: return ContainedMaterial;
-    default: return 0;
+    default: return ContainedMaterial;
     }
 }
 
-material* corpse::GetMaterial(ushort Index) const
+material*& corpse::GetMaterialReference(ushort Index)
 {
-  switch(Index)
-    {
-    case 0: return GetDeceased()->GetTorso()->GetMainMaterial();
-    case 1: return GetDeceased()->GetTorso()->GetContainedMaterial();
-    default: return 0;
-    }
+  return GetDeceased()->GetTorso()->GetMaterialReference(Index);
 }
 
 ushort materialcontainer::GetMaterialColorB(ushort Frame) const
@@ -2099,7 +2092,7 @@ void bodypart::VirtualConstructor(bool Load)
 {
   materialcontainer::VirtualConstructor(Load);
   SetUnique(false);
-  SetRegenerationCounter(0);
+  RegenerationCounter = 0;
   SetMaster(0);
 }
 
@@ -2237,7 +2230,10 @@ void chest::VirtualConstructor(bool Load)
 	  item* NewItem = protosystem::BalancedCreateItem();
 
 	  if(NewItem->CanBeGeneratedInContainer() && FitsIn(NewItem))
-	    GetContained()->AddItem(NewItem);
+	    {
+	      GetContained()->AddItem(NewItem);
+	      NewItem->SpecialGenerationHandler();
+	    }
 	  else
 	    delete NewItem;
 	}
@@ -2657,15 +2653,15 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
   if(!(RAND() % 5))
     {
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPart(BodyPart)->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).c_str());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHARNAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0, RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
-      std::string DeathMessage = "died while trying to escape from " + GetName(DEFINITE) + ".";
-      Victim->CheckDeath(DeathMessage);
+      Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE) + ".");
       return false;
     }
+
   if(!(RAND() % 3))
     {
       Victim->SetStuckTo(0);
@@ -2674,15 +2670,14 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to free yourself from %s.", CHARNAME(DEFINITE));
       else if(Victim->CanBeSeenByPlayer())
-	{
-	  std::string msg = Victim->GetName(DEFINITE) + " manages to free " + Victim->GetPersonalPronoun() + "self from " + GetName(DEFINITE) + ".";
-	  ADD_MESSAGE("%s", msg.c_str());
-	}
+	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHARNAME(DEFINITE), Victim->CHARPERSONALPRONOUN, CHARNAME(DEFINITE));
 
       return true;
     }
+
   if(Victim->IsPlayer())
     ADD_MESSAGE("You are unable to escape from %s.", CHARNAME(DEFINITE));
+
   return false;
 }
 
@@ -2711,7 +2706,7 @@ void beartrap::VirtualConstructor(bool Load)
 
 bool beartrap::StepOnEffect(character* Stepper)
 {
-  if(IsActive())
+  if(IsActive() && !Stepper->IsStuck())
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
@@ -2720,8 +2715,9 @@ bool beartrap::StepOnEffect(character* Stepper)
 
       Stepper->SetStuckTo(this);
       Stepper->SetStuckToBodyPart(StepperBodyPart);
+
       if(Stepper->IsPlayer())
-	ADD_MESSAGE("You step in %s and it traps your %s.", CHARNAME(INDEFINITE), Stepper->GetBodyPart(Stepper->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("You step in %s and it traps your %s.", CHARNAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).c_str());
       else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
@@ -2731,9 +2727,10 @@ bool beartrap::StepOnEffect(character* Stepper)
     }
   else
     {
+      /* My English seems to be a bit rusty. It might be good to choose some other word than "active" */
+
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("You step on %s but luckily it isn't active.", CHARNAME(INDEFINITE));
-      /* My English seems to be a bit rusty. It might be good to choose some other word than "active" */
     }
 
   return false;
@@ -2741,14 +2738,15 @@ bool beartrap::StepOnEffect(character* Stepper)
 
 bool beartrap::CheckPickUpEffect(character* Picker)
 {
-  if(Picker->GetStuckTo() == this)
+  if(Picker->IsStuck() && Picker->GetStuckTo()->GetID() == GetID())
     {
       if(Picker->IsPlayer())
 	ADD_MESSAGE("%s is tightly stuck to %s.", CHARNAME(DEFINITE), Picker->GetBodyPart(Picker->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+
       return false;
     }
 
-  SetIsActive(false); /* Just in case something wierd is going on */
+  SetIsActive(false); /* Just in case something wierd is going on. */
   return true;
 }
 
@@ -2854,7 +2852,7 @@ void bodypart::SignalEquipmentRemoval(gearslot* Slot)
 
 bool beartrap::IsPickable(character* Picker) const
 {
-  return Picker->GetStuckTo() != (item*)this;
+  return Picker->GetStuckTo()->GetID() != GetID();
 }
 
 void bodypart::Mutate()
@@ -3210,7 +3208,7 @@ bool arm::TwoHandWieldIsActive() const
     return false;
 }
 
-float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool AttackIsBlockable, bool UseMaxHP) const
+float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, float DodgeValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
   float Durability;
   short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
@@ -3246,7 +3244,7 @@ float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool AttackIsBlock
       else
 	AverageDamage = TrueDamage;
 
-      Durability = HP / (AverageDamage * GetRoughChanceToHit(ToHitValue));
+      Durability = HP / (AverageDamage * GetRoughChanceToHit(ToHitValue, DodgeValue));
 
       if(Durability < 1)
 	Durability = 1;
@@ -3260,14 +3258,14 @@ float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool AttackIsBlock
   return Durability;
 }
 
-float bodypart::GetRoughChanceToHit(float ToHitValue) const
+float bodypart::GetRoughChanceToHit(float ToHitValue, float DodgeValue) const
 {
-  return GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume() / ((Master->GetDodgeValue() / ToHitValue + 1) * Master->GetDodgeValue() * Master->GetBodyVolume() * 100);
+  return GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume() / ((DodgeValue / ToHitValue + 1) * DodgeValue * Master->GetBodyVolume() * 100);
 }
 
-float torso::GetRoughChanceToHit(float ToHitValue) const
+float torso::GetRoughChanceToHit(float ToHitValue, float DodgeValue) const
 {
-  return 1 / (Master->GetDodgeValue() / ToHitValue + 1);
+  return 1 / (DodgeValue / ToHitValue + 1);
 }
 
 materialcontainer::~materialcontainer()
@@ -3424,14 +3422,86 @@ void arm::WieldedSkillHit()
 vector2d beartrap::GetBitmapPos(ushort) const
 {
   if(IsActive())
-    return vector2d(32,304);
+    return vector2d(32, 304);
   else
-    return vector2d(32,320);
+    return vector2d(32, 320);
 }
 
 bool mine::WillExplode(const character* Stepper) const
 {
-  return GetContainedMaterial()->GetTotalExplosivePower() != 0 && Stepper->GetWeight() > 500;
+  return GetContainedMaterial()->IsExplosive() && Stepper->GetWeight() > 500;
+}
+<<<<<<< itemde.cpp
+
+materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
+{
+  CopyMaterial(MC.ContainedMaterial, ContainedMaterial);
+}
+
+meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW)
+{
+  CopyMaterial(MW.SecondaryMaterial, SecondaryMaterial);
+  CopyMaterial(MW.ContainedMaterial, ContainedMaterial);
+}
+
+head::head(const head& Head) : bodypart(Head), BaseBiteStrength(Head.BaseBiteStrength)
+{
+  HelmetSlot.Init(this, HELMETINDEX);
+  AmuletSlot.Init(this, AMULETINDEX);
+}
+
+humanoidtorso::humanoidtorso(const humanoidtorso& Torso) : torso(Torso)
+{
+  BodyArmorSlot.Init(this, BODYARMORINDEX);
+  CloakSlot.Init(this, CLOAKINDEX);
+  BeltSlot.Init(this, BELTINDEX);
+}
+
+arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
+{
+}
+
+rightarm::rightarm(const rightarm& Arm) : arm(Arm)
+{
+  WieldedSlot.Init(this, RIGHTWIELDEDINDEX);
+  GauntletSlot.Init(this, RIGHTGAUNTLETINDEX);
+  RingSlot.Init(this, RIGHTRINGINDEX);
+}
+
+leftarm::leftarm(const leftarm& Arm) : arm(Arm)
+{
+  WieldedSlot.Init(this, LEFTWIELDEDINDEX);
+  GauntletSlot.Init(this, LEFTGAUNTLETINDEX);
+  RingSlot.Init(this, LEFTRINGINDEX);
+}
+
+leg::leg(const leg& Leg) : bodypart(Leg), Strength(Leg.Strength), Agility(Leg.Agility), StrengthExperience(Leg.StrengthExperience), AgilityExperience(Leg.AgilityExperience), BaseKickStrength(Leg.BaseKickStrength)
+{
+}
+
+rightleg::rightleg(const rightleg& Leg) : leg(Leg)
+{
+  BootSlot.Init(this, RIGHTBOOTINDEX);
+}
+
+leftleg::leftleg(const leftleg& Leg) : leg(Leg)
+{
+  BootSlot.Init(this, LEFTBOOTINDEX);
+}
+
+corpse::corpse(const corpse& Corpse) : item(Corpse)
+{
+  Deceased = 0;//new corpse(*Corpse.Deceased);
+  Deceased->SetMotherEntity(this);
+}
+
+chest::chest(const chest& Chest) : item(Chest), StorageVolume(Chest.StorageVolume), LockType(Chest.LockType), Locked(Chest.Locked)
+{
+  Contained = new stack(0, this, HIDDEN);
+}
+
+oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
+{
 }
 
 bool whipofcalamus::CalamusHelps(const character* Enemy, const character* Hitter) const

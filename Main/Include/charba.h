@@ -181,6 +181,7 @@ class character : public entity, public id
   typedef characterdatabase database;
   typedef std::map<ushort, characterdatabase> databasemap;
   character(donothing);
+  character(const character&);
   virtual ~character();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -386,7 +387,7 @@ class character : public entity, public id
   virtual std::string EquipmentName(ushort) const { return ""; }
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
-  virtual ushort EquipmentSlots() const { return 0; }
+  virtual ushort GetEquipmentSlots() const { return 0; }
   virtual bool (*EquipmentSorter(ushort) const)(item*, const character*) { return 0; }
   virtual void SetEquipment(ushort, item*) { }
   virtual bool ScrollMessagesDown();
@@ -407,7 +408,7 @@ class character : public entity, public id
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   virtual bodypart* CreateBodyPart(ushort);
-  virtual bool CanUseEquipment(ushort Index) const { return CanUseEquipment() && Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
+  virtual bool CanUseEquipment(ushort Index) const { return CanUseEquipment() && Index < GetEquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const prototype* GetProtoType() const { return &character_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
@@ -522,7 +523,7 @@ class character : public entity, public id
   ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
   void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
   virtual bool DamageTypeAffectsInventory(uchar) const;
-  virtual void SetStuckTo(item* What) {  StuckTo = What; }
+  virtual void SetStuckTo(item* What) { StuckTo = What; }
   virtual item* GetStuckTo() const { return StuckTo; }
   virtual void SetStuckToBodyPart(ushort What) { StuckToBodyPart = What; }
   virtual ushort GetStuckToBodyPart() const { return StuckToBodyPart; }
@@ -578,8 +579,8 @@ class character : public entity, public id
   virtual void PrintEndInfraVisionMessage() const;
   virtual void PrintBeginESPMessage() const;
   virtual void PrintEndESPMessage() const;
-  virtual bool CanBeSeenByPlayer() const;
-  virtual bool CanBeSeenBy(const character*) const;
+  bool CanBeSeenByPlayer(bool = false) const;
+  bool CanBeSeenBy(const character*, bool = false) const;
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
   virtual void AttachBodyPart(bodypart*);
@@ -653,7 +654,7 @@ class character : public entity, public id
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
   virtual float GetRelativeDanger(const character*, bool = false) const;
-  virtual float GetTimeToDie(ushort, float, bool, bool) const;
+  virtual float GetTimeToDie(const character*, ushort, float, bool, bool) const;
   virtual float GetTimeToKill(const character*, bool) const = 0;
   virtual bool HasFeet() const { return true; }
   float GetDangerModifier() const;
@@ -670,7 +671,13 @@ class character : public entity, public id
   virtual bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
   virtual void WeaponSkillHit(item*, uchar);
   virtual void AddDefenceInfo(felist&) const;
+  //virtual character* Duplicate(bool) const;
+  character* Duplicate() const;
+  room* GetRoomUnder() const { return GetLSquareUnder()->GetRoomClass(); }
+  virtual bool TryToEquip(item*);
+  virtual bool TryToConsume(item*);
  protected:
+  virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }
   void Initialize(ushort, bool, bool);
@@ -785,6 +792,7 @@ name : public base\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static character* Clone(ushort Config, bool CreateEquipment, bool Load) { return new name(Config, CreateEquipment, Load); }\
  protected:\
+  virtual character* RawDuplicate() const { return new name(*this); }\
   static prototype name##_ProtoType;\
   data\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
@@ -803,5 +811,3 @@ name : public base\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
-
-
