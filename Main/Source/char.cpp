@@ -2,7 +2,10 @@
  *
  *  Iter Vehemens ad Necem 
  *  Copyright (C) Timo Kiviluoto
- *  See LICENSING which should included with this file
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
  *
  */
 
@@ -4813,7 +4816,15 @@ void character::PrintEndPoisonedMessage() const
 void character::PoisonedHandler()
 {
   if(!(RAND() % 100))
-    Vomit(GetPos(), 500 + RAND() % 250);
+    {
+      lsquare* Where = GetLSquareUnder()->GetRandomAdjacentFlyableLSquare();
+      if(Where && RAND_8) // slightly more probable to vomit on self than other squares
+	{
+	  Vomit(Where->GetPos(), 500 + RAND() % 250);       
+	}
+      else
+	Vomit(GetPos(), 500 + RAND() % 250);
+    }
 
   int Damage = 0;
 

@@ -2,7 +2,10 @@
  *
  *  Iter Vehemens ad Necem 
  *  Copyright (C) Timo Kiviluoto
- *  See LICENSING which should included with this file
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
  *
  */
 
@@ -2433,4 +2436,22 @@ void lsquare::SwapMemorized(lsquare* Square)
 bool lsquare::Necromancy(const beamdata& Beam)
 {
   return GetStack()->Necromancy(Beam.Owner);
+}
+
+
+// Returns 0 if fails
+lsquare* lsquare::GetRandomAdjacentFlyableLSquare() const
+{
+  std::vector<lsquare*> OK;
+  lsquare* LSquare;
+  for(int c = 0; c < 8; ++c)
+    {
+      LSquare = GetNeighbourLSquare(c);
+      if(LSquare->IsFlyable())
+	OK.push_back(LSquare);
+    }
+  if(OK.empty())
+    return 0;
+  else
+    return OK[RAND_N(OK.size())];
 }

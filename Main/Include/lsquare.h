@@ -2,7 +2,10 @@
  *
  *  Iter Vehemens ad Necem 
  *  Copyright (C) Timo Kiviluoto
- *  See LICENSING which should included with this file
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
  *
  */
 
@@ -247,6 +250,7 @@ class lsquare : public square
   void DestroyMemorized();
   void SwapMemorized(lsquare*);
   bool HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
+  lsquare* GetRandomAdjacentFlyableLSquare() const;
  protected:
   void ChangeLuminance(color24&, color24);
   void RemoveLuminance(color24&);

@@ -481,7 +481,7 @@ Equipment weight to inventory.
 (hs) Levitating mushrooms should be able to move.
 (d) Offering many items at the same time.
 Running and levitating.
-(hs+) Autovomiting should choose various squares.
+//(hs+) Autovomiting should choose various squares.
 Wands show "times used" even if they come from a bone file. This shouldn't be so.
 Hunter (hunts with bear traps).
 Taxidermy.

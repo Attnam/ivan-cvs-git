@@ -2,7 +2,10 @@
  *
  *  Iter Vehemens ad Necem 
  *  Copyright (C) Timo Kiviluoto
- *  See LICENSING which should included with this file
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
  *
  */
 #include <algorithm>

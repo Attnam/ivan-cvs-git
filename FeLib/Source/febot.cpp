@@ -1,3 +1,14 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
+ *
+ */
+
 #include "febot.h"
 #include "femath.h"
 #include "save.h"
