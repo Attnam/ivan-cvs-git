@@ -4,3 +4,6 @@ Multi-tiled creatures.
 New team system.
 Corpses.
 Lines & words.
+Healing.
+Danger values.
+Name system.

@@ -1,3 +1,4 @@
+/ partly done, or done but needs checking/balancing
 // done
 * high priority
 
@@ -61,7 +62,7 @@ Gurus.
 Meditation command.
 *Opening a banana should remove its peals.
 *Specialities to daemon flesh.
-/*Pressing X while in WMode should give more scrolls of wishing.
+//*Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
 *Random item option to script.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpuri carries the Earth, what orbit is he talking about?)
@@ -203,3 +204,8 @@ Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
 Money to humanoid monsters. (from JM)
 Stores specialized on potions or scrolls. (from JM)
 Pick-axes available in the lowest levels. (from JM)
+In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
+Spiders should make webs.
+Wand of locking.
+Scroll of gold detection that would identify every unit made of gold.
+Bananas should act as boomerangs when thrown.

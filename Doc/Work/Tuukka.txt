@@ -8,3 +8,4 @@ Shield items.
 //48x48 mammoth.
 ?Bodypart items
 Tame symbol.
+Silhouettes.
