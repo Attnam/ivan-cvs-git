@@ -1018,6 +1018,7 @@ class character : public entity, public id
   void RemoveLifeSavers();
   virtual const character* FindCarrier() const;
   virtual const char* GetNormalDeathMessage() const;
+  virtual bool IsConscious() const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

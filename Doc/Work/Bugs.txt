@@ -96,7 +96,7 @@ MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go
 //Graphics bug in vesana corpse.
 Light sources in glass chests don't work correctly.
 Digging walls with lanterns doesn't update memorized etc. correctly.
-(hs) Shopkeepers/librarians can buy items even if unconsciouss.
+//(hs) Shopkeepers/librarians can buy items even if unconsciouss.
 If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
 (hs) You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
 One has no way to use stairs covered by sticky slime.

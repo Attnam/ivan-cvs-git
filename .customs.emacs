@@ -1,20 +1,18 @@
-(defconst ivan-style
- '((c++-offsets-alist . ((substatement-open . 0)
-			(label . /)
-			(access-label . /)
-			(case-label . *)
-			(statement-case-intro . *)
-			(brace-list-open . 0)
-			(statement-cont . c-lineup-math)
-			(inline-open . 0)
-			(member-init-intro . 0)
-			(arglist-close . 0)
-			(statement-case-open . *))))
- "The Standard IVAN Programming Style")
+(defconst ivan-c-style
+  '((c-offsets-alist            . ((arglist-close . c-lineup-arglist)
+                                   (substatement-open . 0)
+                                   (case-label        . 4)
+                                   (block-open        . 0)
+                                   (knr-argdecl-intro . -))))
+  "Ivan C++ Programming Style")
 
-(add-hook 'c++-mode-common-hook 'ivan-mode-common-hook)
+;; offset customizations not in my-c-style
+(setq c-offsets-alist '((member-init-intro . ++)))
 
-(defun ivan-mode-common-hook ()
- ;; add style and set it for the current buffer
- (c++-add-style "IVAN" ivan-style t))
+;; Customizations for all modes in CC Mode.
+(defun ivan-c-mode-common-hook ()
+  ;; add my personal style and set it for the current buffer
+  (c-add-style "IVAN" ivan-c-style t))
+
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 

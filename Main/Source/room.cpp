@@ -62,7 +62,7 @@ truth room::CheckDestroyTerrain(character* Infidel)
 truth room::MasterIsActive() const
 {
   character* Master = GetMaster();
-  return Master && Master->IsEnabled();
+  return Master && Master->IsEnabled() && Master->IsConscious();
 }
 
 truth room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) const

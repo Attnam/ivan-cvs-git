@@ -9406,3 +9406,7 @@ void character::HiccupsSituationDangerModifier(double& Danger) const
 {
   Danger *= 1.25;
 }
+
+bool character::IsConscious() const {
+  return !Action || !Action->IsUnconsciousness();
+}
