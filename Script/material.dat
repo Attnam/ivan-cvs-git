@@ -87,7 +87,7 @@ material
 
 	Config WOOD;
 	{
-		StrengthValue = 30;
+		StrengthValue = 35;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
@@ -98,7 +98,7 @@ material
 
 	Config GLASS;
 	{
-		StrengthValue = 30;
+		StrengthValue = 40;
 		ConsumeType = CT_MINERAL;
 		Density = 2500;
 		IsSolid = true;
@@ -337,7 +337,7 @@ material
 
 	Config STEEL;
 	{
-		StrengthValue = 175;
+		StrengthValue = 125;
 		ConsumeType = CT_METAL;
 		Density = 7500;
 		Color = rgb16(128, 128, 128);

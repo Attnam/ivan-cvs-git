@@ -24,7 +24,7 @@ Staff + broken and in hands picture.
 Club + broken and in hands picture.
 Jackals on gravel floor.
 Ring of teleportation + gravel floor.
-Smith.
+//Smith.
 Forge.
 Anvil. (lp)
 //Levitating ostrich.

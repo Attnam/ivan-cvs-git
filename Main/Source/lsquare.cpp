@@ -170,7 +170,7 @@ void lsquare::Emitate()
 
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+      if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	femath::DoLine(Pos.X, Pos.Y, x, y, game::EmitationHandler);
 }
 
@@ -193,7 +193,7 @@ void lsquare::ReEmitate(ulong OldEmitation)
 
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+      if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	femath::DoLine(Pos.X, Pos.Y, x, y, game::EmitationHandler);
 }
 
@@ -212,7 +212,7 @@ void lsquare::Noxify()
 
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+      if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	femath::DoLine(Pos.X, Pos.Y, x, y, game::NoxifyHandler);
 }
 

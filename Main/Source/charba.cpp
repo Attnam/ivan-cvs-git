@@ -2360,7 +2360,7 @@ bool character::CheckForEnemies(bool CheckDoors)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	  {
-	    ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+	    ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
 	    if(ThisDistance <= LOSRangeSquare())
 	      HostileCharsNear = true;
@@ -3043,6 +3043,7 @@ bool character::SecretKnowledge()
   List.AddEntry("Character danger values", LIGHT_GRAY);
   List.AddEntry("Miscellaneous item info", LIGHT_GRAY);
   game::SetStandardListAttributes(List);
+  List.AddFlags(SELECTABLE);
   ushort Chosen = List.Draw();
   ushort c, PageLength = 20;
 
@@ -4486,7 +4487,7 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
     ApplyEquipmentAttributeBonuses(Equipment);
 }
 
-void character::SignalEquipmentRemoval(ushort EquipmentIndex)
+void character::SignalEquipmentRemoval(ushort)
 {
   CalculateEquipmentState();
   CalculateAttributeBonuses();

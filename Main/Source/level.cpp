@@ -393,8 +393,6 @@ bool level::MakeRoom(roomscript* RoomScript)
   AddRoom(RoomClass);
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
   game::BusyAnimation();
-
-  uchar Room = RoomClass->GetIndex();
   std::vector<vector2d> OKForDoor, Inside, Border;
 
   GenerateRectangularRoom(OKForDoor, Inside, Border, RoomScript, RoomClass, vector2d(XPos, YPos), vector2d(Width, Height));
@@ -862,7 +860,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort DistanceSquare = GetHypotSquare(Pos.X - x, Pos.Y - y);
+	ushort DistanceSquare = HypotSquare(Pos.X - x, Pos.Y - y);
 
 	if(DistanceSquare <= RadiusSquare)
 	  {

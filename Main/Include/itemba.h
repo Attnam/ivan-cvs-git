@@ -352,6 +352,7 @@ class item : public object
   virtual void ReceiveFluidSpill(material*) {}
   virtual char GetEnchantment() const { return 0; }
   virtual ulong GetEnchantedPrice(char) const;
+  virtual void Fix();
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

@@ -620,3 +620,15 @@ ulong item::GetEnchantedPrice(char Enchantment) const
 {
   return !PriceIsProportionalToEnchantment() ? item::GetPrice() : Max(item::GetPrice() * Enchantment, 0UL);
 }
+
+void item::Fix()
+{
+  if(IsBroken())
+    {
+      item* Fixed = RawDuplicate();
+      Fixed->SetConfig(GetConfig() ^ BROKEN);
+      Fixed->SetSize(Fixed->GetSize() << 1);
+      GetSlot()->DonateTo(Fixed);
+      SendToHell();
+    }
+}

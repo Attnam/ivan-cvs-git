@@ -340,7 +340,7 @@ void game::InitLuxTable()
       for(long c = 0; c < 0x100; ++c)
 	for(long x = 0; x < 33; ++x)
 	  for(long y = 0; y < 33; ++y)
-	    LuxTable[c][x][y] = ushort(c / (float(GetHypotSquare(x - 16, y - 16)) / 128 + 1));
+	    LuxTable[c][x][y] = ushort(c / (float(HypotSquare(x - 16, y - 16)) / 128 + 1));
 
       atexit(game::DeInitLuxTable);
     }

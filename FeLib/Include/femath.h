@@ -12,12 +12,13 @@
 
 #define RAND femath::Rand
 
-template <class type> inline type GetHypotSquare(const type& X, const type& Y) { return X * X + Y * Y; }
+template <class type> inline type HypotSquare(const type& X, const type& Y) { return X * X + Y * Y; }
 template <class type> inline const type& Max(const type& X, const type& Y) { return X > Y ? X : Y; }
 template <class type> inline const type& Max(const type& X, const type& Y, const type& Z) { return Max(Max(X, Y), Z); }
 template <class type> inline const type& Min(const type& X, const type& Y) { return X < Y ? X : Y; }
 template <class type> inline const type& Min(const type& X, const type& Y, const type& Z) { return Min(Min(X, Y), Z); }
 template <class type> inline const type& Limit(const type& Value, const type& Minimum, const type& Maximum) { return Min(Max(Value, Minimum), Maximum); }
+template <class f, class type> inline type Recurse(f F, type Value, ushort Amount) { return Amount ? Recurse(F, F(Value), Amount - 1) : Value; }
 
 /* This allows ordering of POD objects whose structure members are not aligned */
 

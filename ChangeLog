@@ -1,10 +1,21 @@
+October 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Sign added to olterrain.pcx by Kahvi
+	* Ostrich added finally to char.pcx by Kahvi! VICTORY!
+	* Strong-box added to item.pcx by Kahvi
+	* Flail head and broken flail added to item.pcx by Kahvi
+	  (he had done them months ago but I'd forgotten to commit them)
+	* Fix function added for items, though I didn't test it
+	* Added inline tool function template Recurse() to femath.h,
+	  which isn't and probably won't ever be used, but it's guru
+
 October 14 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Compiles again on linux
 	* added imperialist and banana grower classes
 	* added rough outline of New Attnam
 	* added boulder
-	
+
 October 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Underscores now separate the words of all macros in the game

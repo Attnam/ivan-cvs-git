@@ -91,7 +91,7 @@ void area::UpdateLOS()
 
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+      if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	femath::DoLine(Pos.X, Pos.Y, x, y, LOSHandler);
 
   game::RemoveLOSUpdateRequest();

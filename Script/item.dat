@@ -1531,6 +1531,7 @@ chest
 		Possibility = 50;
 		MaxGeneratedContainedItems = 5;
 	}
+
 	Config LARGE_CHEST;
 	{
 		Adjective = "large";
