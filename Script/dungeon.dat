@@ -2688,7 +2688,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			Square, Pos 5,5;
 			{
 				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
-				EntryIndex = 100;
+				EntryIndex = STAIRS_DOWN + 1;
 			}
 
 			Square, Pos 5,0;
@@ -2831,7 +2831,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random IN_ROOM; /* this *must* be last currently */
 		{
-		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = 100; }
+		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = STAIRS_DOWN + 1; }
 		    EntryIndex = 200;
 		}
 	}
