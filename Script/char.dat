@@ -2481,7 +2481,7 @@ kamikazedwarf
 	DeathMessage = "@Dd dies smiling.";
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 60;
-	Frequency = 200;
+	Frequency = 300;
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
 	AttachedGod = NONE;
 	WieldedPosition = -1, -2;
@@ -3877,7 +3877,6 @@ bunny
 	FleshMaterial = MUTANT_BUNNY_FLESH;
 	AttachedGod = SILVA;
 	IsAbstract = true;
-	DangerModifier = 25;
 	CanOpen = false;
 
 	Config BABY_MALE;

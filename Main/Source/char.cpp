@@ -2558,9 +2558,6 @@ void character::GoOn(go* Go, bool FirstStep)
 
 void character::SetTeam(team* What)
 {
-  if(Team)
-    int esko = 2;
-
   Team = What;
   SetTeamIterator(What->Add(this));
 }

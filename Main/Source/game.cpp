@@ -123,25 +123,9 @@ uchar game::MoveType;
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
-void game::AddItemID(item* Item, ulong ID) {
-item* Esko;
-if(ItemIDMap.find(ID) != ItemIDMap.end())
-  Esko = ItemIDMap.find(ID)->second;
-
-ItemIDMap.insert(std::pair<ulong, item*>(ID, Item)); }
-void game::RemoveItemID(ulong ID) { if(ID) {
-
-if(ItemIDMap.find(ID) == ItemIDMap.end())
-  int esko = 2;
-
-ItemIDMap.erase(ItemIDMap.find(ID)); 
-}}
-void game::UpdateItemID(item* Item, ulong ID) {
-
-if(!ID || ItemIDMap.find(ID) == ItemIDMap.end())
-  int esko = 2;
-
-ItemIDMap.find(ID)->second = Item; }
+void game::AddItemID(item* Item, ulong ID) { ItemIDMap.insert(std::pair<ulong, item*>(ID, Item)); }
+void game::RemoveItemID(ulong ID) { if(ID) ItemIDMap.erase(ItemIDMap.find(ID)); }
+void game::UpdateItemID(item* Item, ulong ID) { ItemIDMap.find(ID)->second = Item; }
 const dangermap& game::GetDangerMap() { return DangerMap; }
 
 void game::InitScript()
@@ -190,9 +174,6 @@ bool game::Init(const festring& Name)
 #ifdef __DJGPP__
   mkdir("Bones", S_IWUSR);
 #endif
-
-  if(ItemIDMap.size())
-    int esko = 2;
 
   switch(Load(SaveName(PlayerName)))
     {
@@ -323,17 +304,6 @@ void game::Run()
 	      CurrentLevel->GenerateMonsters(); // Temporary place
 	      Counter = 0;
 	    }
-
-	  /*CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new holybanana);
-	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, WAND));
-	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_POLYMORPH));
-	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_CLONING));
-	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_RESURRECTION));
-	  character* Char = protosystem::CreateMonster(1, 10000);
-	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  Char = protosystem::CreateMonster(1, 10000);
-	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  Char->ChangeTeam(GetTeam(ATTNAM_TEAM));*/
 	}
 
       try

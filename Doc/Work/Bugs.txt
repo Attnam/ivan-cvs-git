@@ -51,4 +51,6 @@ Trying to resurrect a headless player of a bonefile when his ghost is the only l
  give the right message since the soul is temporarily sucked into the corpse and everything is dark.
  Should this be so?
 AOGH can be abused.
+"You look down. You see an active mine." in the dark.
+Border tiles aren't shown in the dark.
 Vladimir doesn't destroy walls on the turn when it is created.
