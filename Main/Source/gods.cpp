@@ -258,6 +258,12 @@ void seges::PrayGoodEffect()
       PLAYER->DeActivateTemporaryState(LEPROSY);
       return;
     }
+
+  if(PLAYER->GetStamina() != PLAYER->GetMaxStamina())
+    {
+      ADD_MESSAGE("You don't feel a bit tired anymore.");
+      PLAYER->RestoreStamina();
+    }
 }
 
 void seges::PrayBadEffect()
@@ -624,6 +630,8 @@ void loricatus::PrayBadEffect()
 
 void cleptia::PrayGoodEffect()
 {
+  PLAYER->RestoreStamina();
+  
   if(!PLAYER->StateIsActivated(HASTE))
     {
       ADD_MESSAGE("%s gives you the talent for speed.", GetName());

@@ -473,3 +473,4 @@ Shops and some other places should close for the night.
 Creation of magpies depends on dangervalues. (maybe a problem)
 When team member doesn't see leader but sees a teammate he/she/it should try to go near the teammate. 
 Levitating mushrooms should be able to move.
+Maybe players with 0 points shouldn't be recoreded in highscores.
