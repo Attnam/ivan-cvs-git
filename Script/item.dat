@@ -752,9 +752,9 @@ bodyarmor /* armor-> */
 		DefaultMainVolume = 2000; 
 		BitmapPos = 16, 96;
 		NameSingular = "chain mail";
-		MainMaterialConfig = { 5, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+                MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		SecondaryMaterialConfig == WOOD;
-		MaterialConfigChances = { 5, 500, 250, 100, 25, 25; }
+                MaterialConfigChances = { 6, 300, 200, 100, 25, 25, 1; }
 		InElasticityPenaltyModifier = 10;
 	}
 
@@ -775,8 +775,8 @@ bodyarmor /* armor-> */
 		Possibility = 250;
 		NameSingular = "plate mail";
 		FlexibleNameSingular = "armor";
-		MainMaterialConfig = { 8, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
-		MaterialConfigChances = { 8, 5000, 2500, 1000, 1000, 250, 100, 25, 10; }
+                MainMaterialConfig = { 10, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
+                MaterialConfigChances = { 10, 5000, 2500, 250, 1000, 100, 1000, 250, 100, 25, 10; }
 		InElasticityPenaltyModifier = 20;
 	}
 
@@ -797,8 +797,8 @@ bodyarmor /* armor-> */
 		Possibility = 10;
 		NameSingular = "armor";
 		PostFix = "of great health";
-		MainMaterialConfig = { 4, LEATHER, HARDENED_LEATHER, TROLL_HIDE, DRAGON_HIDE; }
-		MaterialConfigChances = { 4, 150, 75, 50, 1; }
+                MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
+                MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
 		InElasticityPenaltyModifier = 50;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;

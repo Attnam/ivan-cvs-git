@@ -1944,14 +1944,14 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
+	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
 	  {
 	    ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - GetPos().X), abs((*i)->GetPos().Y - GetPos().Y));
 
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
 
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, !CanWalkThroughWalls()) && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, !CanWalkThroughWalls()))
 	      {
 		NearestChar = *i;
 		NearestDistance = ThisDistance;
@@ -2006,7 +2006,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 		return true;
 
 	      if(MayMoveRandomly && MoveRandomly()) // one has heard that an enemy is near but doesn't know where
-		return true;; 
+		return true;
 	    }
 
 	  return false;
@@ -4679,10 +4679,10 @@ float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
     Danger *= 0.80f;
 
   if(!Enemy->CanBeSeenBy(this, true))
-    Danger *= 0.25f;
+    Danger *= 0.2f;
 
   if(!CanBeSeenBy(Enemy, true))
-    Danger *= 4.0f;
+    Danger *= 5.0f;
 
   return Limit(Danger, -100.0f, 100.0f);
 }

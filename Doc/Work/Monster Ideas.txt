@@ -141,3 +141,7 @@ Wumpus
 Mummy
 
 	With the wrapping.
+
+Spider queen
+
+	Named.

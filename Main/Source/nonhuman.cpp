@@ -230,6 +230,9 @@ bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
+  if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
+    return false;
+
   if(GetBurdenState() == OVER_LOADED)
     {
       if(IsPlayer())
@@ -1022,6 +1025,9 @@ void mushroom::SetSpecies(ushort What)
 bool twoheadedmoose::Hit(character* Enemy, bool ForceHit)
 {
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    return false;
+
+  if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
   if(GetBurdenState() == OVER_LOADED)

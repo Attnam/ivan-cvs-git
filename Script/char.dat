@@ -157,7 +157,6 @@ human
 	TotalSize = 175;
 	CanRead = true;
 	NameSingular = "human";
-	Inventory == encryptedscroll;
 	AttachedGod = SEGES;
 	HostileReplies == "@Dd seems extremely irritated. \"Vanish, you foul mirror image!\"";
 	FriendlyReplies =
@@ -712,7 +711,7 @@ darkknight
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Golgor Dhan";
-		DangerModifier = 6000;
+                DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -1023,7 +1022,7 @@ skeleton
 		NameSingular = "skeleton warlord";
 		IsUnique = true;
 		DefaultName = "Xinroch";
-		DangerModifier = 6000;
+                DangerModifier = 1500;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1129,7 +1128,7 @@ goblin
 		NameSingular = "goblin king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
-		DangerModifier = 8000;
+                DangerModifier = 2000;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1249,7 +1248,7 @@ golem
 	Config SPIDER_SILK;
 	{
 		DefaultName = "experiment ZQ-29";
-		DangerModifier = 6000;
+                DangerModifier = 1500;
 		IsUnique = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
 		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
@@ -1777,6 +1776,7 @@ femaleslave
 	HostileReplies == "\"Yikes!\"";
 	IsAbstract = true;
 	IsExtraCoward = true;
+	CanRead = true;
 
 	Config ATTNAM;
 	{
@@ -2066,7 +2066,7 @@ mistress
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Sherarax";
-		DangerModifier = 4000;
+                DangerModifier = 1000;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -2223,7 +2223,7 @@ kobold
 		NameSingular = "kobold patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 10000;
+                DangerModifier = 2500;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 70000;
@@ -2832,7 +2832,7 @@ orc
 		PanicLevel = 0;
 		IsUnique = true;
 		DefaultName = "Ur-Khan";
-		DangerModifier = 6000;
+                DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -2916,6 +2916,7 @@ bananagrower
 	IsCharmable = false; /* AI will go insane if he leaves New Attnam */
 	HostileReplies == "\"Banana POWER!\"";
 	AttachedGod = SILVA;
+	CanRead = true;
 	FriendlyReplies =
 	{
 		6,
@@ -3122,6 +3123,8 @@ elder
 	DefaultName = "Kaethos";
 	IsCharmable = false;
 	AttachedGod = SOPHOS;
+	CanRead = true;
+	Inventory == holybook(SILVA);
 	HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
 	FriendlyReplies =
 	{

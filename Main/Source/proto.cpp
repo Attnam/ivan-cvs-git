@@ -51,7 +51,7 @@ character* protosystem::BalancedCreateMonster()
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
 	  character* Monster = Proto->Clone(Chosen.Config);
 
-	   if(c >= 100 || ((Monster->GetFrequency() == 10000 || Monster->GetFrequency() > RAND() % 10000) && Monster->GetTimeToKill(PLAYER, true) > 5000 && (Monster->IsUnique() || PLAYER->GetTimeToKill(Monster, true) < 75000)))
+	   if(c >= 100 || ((Monster->GetFrequency() == 10000 || Monster->GetFrequency() > RAND() % 10000) && (Monster->IsUnique() || (Monster->GetTimeToKill(PLAYER, true) > 5000 && PLAYER->GetTimeToKill(Monster, true) < 75000))))
 	    {
 	      game::SignalGeneration(Chosen);
 	      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));

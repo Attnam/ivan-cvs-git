@@ -7,6 +7,20 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug that prevented floating eye avoiding AI from working
+	* Increased the difficulty penalty for being invisible by 25%
+	* Decreased the time needed to read a scroll of teleportation by 75%
+	* Decreased the range of thunder hammer's lightnings from 10 to 3 so they
+	  cannot hit the user (well, unless he is fighting a ghost inside a wall)
+	* Difficulty now cannot decrease even if the player becomes lousier than
+	  before, since this could be abused by running naked around locked rooms
+	  to cheat the monster generation code
+	* Quickdeath prevention system no longer affects unique monsters, and
+	  their danger modifiers have been decreased; these changes seem to make
+	  them appear roughly in the right time
+
 April 18 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Carrots now look better

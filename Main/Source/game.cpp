@@ -129,6 +129,7 @@ void game::InitScript()
 #include "stack.h"*/
 
 #include "confdef.h"
+#include "miscitem.h"
 
 bool game::Init(const festring& Name)
 {
@@ -235,8 +236,9 @@ bool game::Init(const festring& Name)
 	MiscMassacreMap.clear();
 	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
 	DefaultPolymorphTo.Empty();
-
+	Player->GetStack()->AddItem(new encryptedscroll);
 	BaseScore = Player->GetScore();
+
 	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
@@ -1507,10 +1509,18 @@ void game::CalculateNextDanger()
   if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
     {
       character* Char = Proto->Clone(NextDangerId.Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-      DangerIterator->second.NakedDanger = (DangerIterator->second.NakedDanger * 9 + Char->GetRelativeDanger(Player, true)) / 10;
+      float CurrentDanger = Char->GetRelativeDanger(Player, true);
+
+      if(DangerIterator->second.NakedDanger > CurrentDanger)
+	DangerIterator->second.NakedDanger = (DangerIterator->second.NakedDanger * 9 + CurrentDanger) / 10;
+
       delete Char;
       Char = Proto->Clone(NextDangerId.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-      DangerIterator->second.EquippedDanger = (DangerIterator->second.EquippedDanger * 9 + Char->GetRelativeDanger(Player, true)) / 10;
+      CurrentDanger = Char->GetRelativeDanger(Player, true);
+
+      if(DangerIterator->second.EquippedDanger > CurrentDanger)
+	DangerIterator->second.EquippedDanger = (DangerIterator->second.EquippedDanger * 9 + CurrentDanger) / 10;
+
       delete Char;
 
       for(++ConfigIterator; ConfigIterator != Config.end(); ++ConfigIterator)

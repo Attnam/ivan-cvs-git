@@ -1450,7 +1450,7 @@ bool lsquare::Clone(character* Zapper, const festring&, uchar)
 
 bool lsquare::Lightning(character* Zapper, const festring& DeathMsg, uchar Direction)
 {
-  ushort Damage = 25 + RAND() % 6 - RAND() % 6;
+  ushort Damage = 20 + RAND() % 6 - RAND() % 6;
   GetStack()->ReceiveDamage(Zapper, Damage, ELECTRICITY);
   stack* SideStack = GetFirstSideStackUnderAttack(Direction);
 

@@ -31,3 +31,4 @@ It is possible to chat with fainted creatures.
 Wielded items can't be eaten.
 AI monsters don't mind about smokes.
 Panicking monsters can eat.
+Pet ghosts don't gain any strength exp.

@@ -461,7 +461,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       festring DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
-      GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 10);
+      GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 3);
       return true;
     }
   else

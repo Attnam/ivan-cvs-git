@@ -106,7 +106,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
 
 bool scrollofteleportation::Read(character* Reader)
 {
-  Reader->StartReading(this, 200);
+  Reader->StartReading(this, 50);
   return true;
 }
 
@@ -2223,4 +2223,3 @@ void beartrap::Fly(character* Thrower, uchar Direction, ushort Force)
   if(!IsStuck())
     item::Fly(Thrower, Direction, Force);
 }
-
