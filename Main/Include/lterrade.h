@@ -360,9 +360,6 @@ class OLTERRAIN
 (
   doublebed,
   olterrain,
-  //InitMaterials(MAKE_MATERIAL(FABRIC)),
-  /*{
-  },*/
  public:
   virtual std::string DigMessage() const { return "You smash the bed into pieces."; }
   virtual bool SitOn(character*);

@@ -1,5 +1,9 @@
 May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Fountains and default materials work
+
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* The game doesn't crash when you descend into the dungeon
 	* Applying a pick-axe to a monster asks whether you want to hit it
 

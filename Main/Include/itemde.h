@@ -8,7 +8,6 @@
 #include "itemba.h"
 #include "materde.h"
 #include "wskill.h"
-#include "game.h" // remove this
 #include "slot.h"
 
 class ABSTRACT_ITEM

@@ -90,7 +90,6 @@ class material
   virtual void Effect(character*, long);
   virtual void EatEffect(character*, long, float = 1.0);
   virtual void HitEffect(character*);
-  //virtual void MinusAmount(float Amount) { SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
   virtual entity* GetMotherEntity() const { return MotherEntity; }
   virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
@@ -131,7 +130,7 @@ class material
   virtual material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
   virtual material* Clone() const { return GetProtoType()->Clone(Config); }
   virtual ulong GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
-  virtual uchar GetConfig() const { return Config; }
+  virtual ushort GetConfig() const { return Config; }
   static material* MakeMaterial(ushort);
   static material* MakeMaterial(ushort, ulong);
   virtual bool IsFlesh() const { return false; }

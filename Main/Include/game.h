@@ -160,7 +160,6 @@ class game
   static void InitScript();
   static const valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
-  //static void AddGlobalValue(const std::string&, long);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

@@ -459,7 +459,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
   bool UseSorterFunction = SorterFunction ? true : false;
   bool DescDrawn = false;
 
-  for(ushort c = 0; c < item::ItemCategories(); ++c)
+  for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
     {
       bool CatDescDrawn = false;
 
@@ -508,7 +508,7 @@ item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (*
 {
   bool UseSorterFunction = SorterFunction ? true : false;
 
-  for(ushort c = 0; c < item::ItemCategories(); ++c)
+  for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
     for(stackiterator i = Item->begin(); i != Item->end(); ++i)
       if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && Pos++ == Chosen)
 	return ***i;

@@ -134,7 +134,6 @@ class item : public object
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
   virtual void DonateSlotTo(item*);
-  static uchar ItemCategories() { return 18; }
   static std::string ItemCategoryName(uchar);
   static bool ConsumableSorter(item* Item, character* Char) { return Item->IsConsumable(Char); }
   static bool OpenableSorter(item* Item, character* Char) { return Item->IsOpenable(Char); }

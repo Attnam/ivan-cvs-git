@@ -146,6 +146,8 @@
 #define SILHOUETTE_X_SIZE 64
 #define SILHOUETTE_Y_SIZE 64
 
+#define ITEM_CATEGORIES 18
+
 #define HELMET 0
 #define AMULET 1
 #define CLOAK 2
