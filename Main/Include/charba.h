@@ -299,6 +299,8 @@ class character : public type, public entity
   virtual void Teleport();
 
   virtual bool SecretKnowledge();
+  virtual void ReName(std::string What) { AssignedName = What; }
+  virtual bool AssignName();
  protected:
 
   virtual void CreateBodyParts();
@@ -377,6 +379,7 @@ class character : public type, public entity
   uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;
   bodypart** BodyPart;
+  std::string AssignedName;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

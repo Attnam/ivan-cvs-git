@@ -1,3 +1,16 @@
+2002-03-23  Heikki Sairanen  <hex@localhost.localdomain>
+
+	* Main/Source/game.cpp: Added the function key to character's AssignName
+
+	* Main/Source/charba.cpp (AssignName): Function added
+	
+	* Main/Source/game.cpp (PositionQuestion): Function added.
+
+	
+2002-03-22  Heikki Sairanen  <hex@localhost.localdomain>
+
+	* Main/Source/charba.cpp (Look): Deleted odd GetIsPlayer() test
+
 2002-03-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* FELL/Include/felist.h (class felist): DrawDescription moved to .cpp to correct an odd Linux bug.

@@ -1740,15 +1740,15 @@ bool character::Look()
 	    if(short(CursorPos.Y) < 0) 			CursorPos.Y = game::GetCurrentArea()->GetYSize()-1;
 	  }
 
-      if(GetIsPlayer())
-	{
-	  if(CursorPos.X < game::GetCamera().X + 2 || CursorPos.X > game::GetCamera().X + 48)
-	    game::UpdateCameraXWithPos(CursorPos.X);
 
-	  if(CursorPos.Y < game::GetCamera().Y + 2 || CursorPos.Y > game::GetCamera().Y + 27)
-	    game::UpdateCameraYWithPos(CursorPos.Y);
 
-	}
+      if(CursorPos.X < game::GetCamera().X + 2 || CursorPos.X > game::GetCamera().X + 48)
+	game::UpdateCameraXWithPos(CursorPos.X);
+
+      if(CursorPos.Y < game::GetCamera().Y + 2 || CursorPos.Y > game::GetCamera().Y + 27)
+	game::UpdateCameraYWithPos(CursorPos.Y);
+
+
 
       if(game::GetSeeWholeMapCheat())
 	{
@@ -3590,3 +3590,22 @@ bool character::SecretKnowledge()
   List.Draw(false);
   return false;
 }
+
+bool character::AssignName()
+{
+  vector2d Where = game::PositionQuestion("What do you want to name? (choose a square and press space bar or press ESC to quit)", GetPos());
+  if(Where == vector2d(-1,-1) || Where == GetPos())
+    return false;
+  character* Character = game::GetCurrentLevel()->GetLSquare(Where)->GetCharacter();
+  if(Character)
+    {
+      std::string Topic = std::string("What do you want to call this ") + Character->Name(UNARTICLED);
+      std::string Name = game::StringQuestion(Topic, vector2d(7,7), WHITE, 0, 80, true);
+      if(Name != "")
+	Character->ReName(Name);
+      return false;
+    }
+}
+
+
+

@@ -189,6 +189,7 @@ class game
   static bool GetInGetCommand() { return InGetCommand; }
   static std::string GetVerbalPlayerAlignment();
   static void CreateGods();
+  static vector2d PositionQuestion(std::string, vector2d);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

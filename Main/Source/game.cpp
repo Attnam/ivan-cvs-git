@@ -81,6 +81,7 @@ command* game::Command[] = {0,
 			    new command(&character::Look, "look", 'l', true),
 			    new command(&character::LowerStats, "lower stats cheat", '2', true, true),
 			    new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
+			    new command(&character::AssignName, "name", 'n', false),
 			    new command(&character::Offer, "offer", 'O', false),
 			    new command(&character::Open, "open", 'o', false),
 			    new command(&character::OutlineCharacters, "outline characters", 'K', true),
@@ -1286,3 +1287,45 @@ void game::CreateGods()
     God.push_back(protocontainer<god>::GetProto(c)->Clone());
 }
 
+/* 
+   This function gets a position from the current map and then returns it.
+   However, if the player presses ESC then it returns vector2d(-1,-1)
+*/
+vector2d game::PositionQuestion(std::string Question, vector2d CurrentPos)
+{
+  int Key = 0;
+  game::DrawEverythingNoBlit();
+  EMPTY_MESSAGES();
+  ADD_MESSAGE(Question.c_str());
+  DRAW_MESSAGES();
+  
+  while(true)
+    {
+      DOUBLEBUFFER->Fill((CurrentPos.X - game::GetCamera().X) << 4, (CurrentPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
+      graphics::BlitDBToScreen();
+      Key = GETKEY();
+      if(Key == FK_ESC)
+	return vector2d(-1,-1);
+      if(Key == ' ')
+	return CurrentPos;
+
+      vector2d DirectionVector = GetDirectionVectorForKey(Key); 
+
+      if(DirectionVector != vector2d(0,0))
+	{
+	  CurrentPos += DirectionVector;
+	  if(short(CurrentPos.X) > game::GetCurrentArea()->GetXSize()-1) CurrentPos.X = 0;
+	  if(short(CurrentPos.X) < 0) 			CurrentPos.X = game::GetCurrentArea()->GetXSize()-1;
+	  if(short(CurrentPos.Y) > game::GetCurrentArea()->GetYSize()-1) CurrentPos.Y = 0;
+	  if(short(CurrentPos.Y) < 0) 			CurrentPos.Y = game::GetCurrentArea()->GetYSize()-1;
+	}
+      if(CurrentPos.X < game::GetCamera().X + 2 || CurrentPos.X > game::GetCamera().X + 48)
+	game::UpdateCameraXWithPos(CurrentPos.X);
+
+      if(CurrentPos.Y < game::GetCamera().Y + 2 || CurrentPos.Y > game::GetCamera().Y + 27)
+	game::UpdateCameraYWithPos(CurrentPos.Y);
+    }
+	
+
+
+}
