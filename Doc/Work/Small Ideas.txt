@@ -398,4 +398,8 @@ Unlike their colleagues, Nefas's angels should have a groin.
 Priests, Petrus and angels should be able to resurrect dead pets.
 Wand of door creation should create doors to walls.
 Mushrooms in forest. Cause odd effects when eaten.
-(r) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
+(r... damn. I thought I was onto something) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
+When many same kind of items on ground the message should say "5 Xs here" not "...several items here"
+There should be many types of attack damage with physical object (eg blunt, sting, chop)
+Movement modes (walk, run, stealth)
+"No load" mode (if weight of stack < 1 kg)

@@ -130,3 +130,6 @@ Can angry Atavus or Cruentus destroy a quest artifact inside a container?
 Items left on shop floor do not spoil even if the shopkeeper is dead.
 "A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
 Wand of locking doesn't update memorized description correctly.
+Halbert requires too much strength (Weapons experts opinion)
+Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist
+Putting mines in Attnam is considered OK by guards
