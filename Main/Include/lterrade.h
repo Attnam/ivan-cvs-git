@@ -167,4 +167,21 @@ protected:
 	uchar OwnerGod;
 );
 
+class OVERLEVELTERRAIN
+(
+	throne,
+	overlevelterrain,
+	InitMaterials(new gold(1)),
+	{
+		SetIsWalkable(true);
+	},
+public:
+	virtual bool CanBeDigged() const { return false; }
+	virtual std::string DigMessage() { return "The throne resists."; }
+protected:
+	virtual std::string NameSingular() const				{ return "throne"; }
+	virtual std::string NamePlural() const					{ return "thrones"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 304); }
+);
+
 #endif

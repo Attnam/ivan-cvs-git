@@ -59,3 +59,4 @@ Kick should affect only the topmost stacked item.
 Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
 Lookmode of WMode should show square coordinates.
+Multiple material support to script.

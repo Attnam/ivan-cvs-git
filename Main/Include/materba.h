@@ -60,8 +60,6 @@ class material : public typeable
 {
 public: 
 	virtual ~material()					{}
-	virtual uchar GetFleshColor() const			{ return GetItemColor(); }
-	virtual uchar GetItemColor() const = 0;
 	virtual std::string Name(uchar Case = 0) const;
 	virtual ushort GetHitValue() const = 0;
 	virtual uchar GetConsumeType() const			{ return ODD; }
