@@ -21,102 +21,102 @@ tilemap igraph::TileMap;
 #ifdef WIN32
 void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 #else
-void igraph::Init()
+  void igraph::Init()
 #endif
 {
-	static bool AlreadyInstalled = false;
+  static bool AlreadyInstalled = false;
 
-	if(!AlreadyInstalled)
-	{
-		AlreadyInstalled = true;
-		graphics::Init();
+  if(!AlreadyInstalled)
+    {
+      AlreadyInstalled = true;
+      graphics::Init();
 #ifdef WIN32
-		graphics::SetMode(hInst, hWnd, "IVAN 0.310a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
+      graphics::SetMode(hInst, hWnd, "IVAN 0.310a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 #endif
 #ifdef USE_SDL
-		graphics::SetMode("IVAN 0.310a", 800, 600, 16);
+      graphics::SetMode("IVAN 0.310a", 800, 600, 16);
 #endif
 #ifdef __DJGPP__
-		graphics::SetMode(0x114);
+      graphics::SetMode(0x114);
 #endif
-		DOUBLEBUFFER->Fill(0);
-		graphics::BlitDBToScreen();
+      DOUBLEBUFFER->Fill(0);
+      graphics::BlitDBToScreen();
 #ifdef WIN32
-		graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
+      graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
 #endif
-		graphics::LoadDefaultFont((GAME_DIR + "Graphics/Font.pcx").c_str());
+      graphics::LoadDefaultFont((GAME_DIR + "Graphics/Font.pcx").c_str());
 
-		uchar c;
+      uchar c;
 
-		for(c = 0; c < RAW_TYPES; ++c)
-			RawGraphic[c] = new colorizablebitmap((GAME_DIR + std::string(RawGraphicFileName[c])).c_str());
+      for(c = 0; c < RAW_TYPES; ++c)
+	RawGraphic[c] = new colorizablebitmap((GAME_DIR + std::string(RawGraphicFileName[c])).c_str());
 
-		for(c = 0; c < GRAPHIC_TYPES; ++c)
-			Graphic[c] = new bitmap((GAME_DIR + std::string(GraphicFileName[c])).c_str());
+      for(c = 0; c < GRAPHIC_TYPES; ++c)
+	Graphic[c] = new bitmap((GAME_DIR + std::string(GraphicFileName[c])).c_str());
 
-		TileBuffer = new bitmap(16, 16);
-		OutlineBuffer = new bitmap(16, 16);
-	}
+      TileBuffer = new bitmap(16, 16);
+      OutlineBuffer = new bitmap(16, 16);
+    }
 }
 
 void igraph::DeInit()
 {
-	uchar c;
+  uchar c;
 
-	for(c = 0; c < RAW_TYPES; ++c)
-		delete RawGraphic[c];
+  for(c = 0; c < RAW_TYPES; ++c)
+    delete RawGraphic[c];
 
-	for(c = 0; c < GRAPHIC_TYPES; ++c)
-		delete Graphic[c];
+  for(c = 0; c < GRAPHIC_TYPES; ++c)
+    delete Graphic[c];
 
-	delete TileBuffer;
-	delete OutlineBuffer;
+  delete TileBuffer;
+  delete OutlineBuffer;
 }
 
 void igraph::DrawCursor(vector2d Pos)
 {
-	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
+  igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
 }
 
 tile igraph::GetTile(graphic_id GI)
 {
-	tilemap::iterator Iterator = TileMap.find(GI);
+  tilemap::iterator Iterator = TileMap.find(GI);
 
-	if(Iterator == TileMap.end())
-		ABORT("Art stolen!");
+  if(Iterator == TileMap.end())
+    ABORT("Art stolen!");
 
-	return Iterator->second;
+  return Iterator->second;
 }
 
 tile igraph::AddUser(graphic_id GI)
 {
-	tilemap::iterator Iterator = TileMap.find(GI);
+  tilemap::iterator Iterator = TileMap.find(GI);
 
-	if(Iterator != TileMap.end())
-		++Iterator->second.Users;
-	else
-	{
-		bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
+  if(Iterator != TileMap.end())
+    ++Iterator->second.Users;
+  else
+    {
+      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
 
-		tile Tile(Bitmap, 1);
+      tile Tile(Bitmap, 1);
 
-		TileMap[GI] = Tile;
+      TileMap[GI] = Tile;
 
-		return Tile;
-	}
+      return Tile;
+    }
 
-	return Iterator->second;
+  return Iterator->second;
 }
 
 void igraph::RemoveUser(graphic_id GI)
 {
-	tilemap::iterator Iterator = TileMap.find(GI);
+  tilemap::iterator Iterator = TileMap.find(GI);
 
-	if(Iterator != TileMap.end())
-		if(!--Iterator->second.Users)
-		{
-			delete Iterator->second.Bitmap;
-			TileMap.erase(Iterator);
-		}
+  if(Iterator != TileMap.end())
+    if(!--Iterator->second.Users)
+      {
+	delete Iterator->second.Bitmap;
+	TileMap.erase(Iterator);
+      }
 }
 

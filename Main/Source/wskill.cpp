@@ -18,130 +18,130 @@ weaponskill::weaponskill() : Level(0), Hits(0), HitCounter(0), HitMultiplier(1.0
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
-	SaveFile << Level << Hits << HitCounter << HitMultiplier;
+  SaveFile << Level << Hits << HitCounter << HitMultiplier;
 }
 
 void weaponskill::Load(inputfile& SaveFile)
 {
-	SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
+  SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
 }
 
 bool weaponskill::Turn()
 {
-	if(HitCounter++ == GetUnuseTurnMap(Level))
-		return SubHit(GetUnusePenaltyMap(Level));
-	else
-		return false;
+  if(HitCounter++ == GetUnuseTurnMap(Level))
+    return SubHit(GetUnusePenaltyMap(Level));
+  else
+    return false;
 }
 
 bool weaponskill::AddHit()
 {
-	HitCounter = 0;
+  HitCounter = 0;
 
-	if(Hits != 0xFFDC)
-		if(++Hits == ulong(GetLevelMap(Level + 1) * HitMultiplier))
-		{
-			++Level;
+  if(Hits != 0xFFDC)
+    if(++Hits == ulong(GetLevelMap(Level + 1) * HitMultiplier))
+      {
+	++Level;
 
-			return true;
-		}
+	return true;
+      }
 
-	return false;
+  return false;
 }
 
 bool weaponskill::AddHit(ulong AddHits)
 {
-	HitCounter = 0;
+  HitCounter = 0;
 
-	if(Hits <= 0xFFDC - AddHits)
-		Hits += AddHits;
-	else
-		Hits = 0xFFDC;
+  if(Hits <= 0xFFDC - AddHits)
+    Hits += AddHits;
+  else
+    Hits = 0xFFDC;
 
-	uchar OldLevel = Level;
+  uchar OldLevel = Level;
 
-	while(Hits >= ulong(GetLevelMap(Level + 1) * HitMultiplier))
-		++Level;
+  while(Hits >= ulong(GetLevelMap(Level + 1) * HitMultiplier))
+    ++Level;
 
-	if(Level != OldLevel)
-		return true;
-	else
-		return false;
+  if(Level != OldLevel)
+    return true;
+  else
+    return false;
 }
 
 bool weaponskill::SubHit()
 {
-	if(Hits)
+  if(Hits)
+    {
+      --Hits;
+
+      if(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
 	{
-		--Hits;
+	  --Level;
 
-		if(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
-		{
-			--Level;
+	  HitCounter = 0;
 
-			HitCounter = 0;
-
-			return true;
-		}
+	  return true;
 	}
+    }
 
-	return false;
+  return false;
 }
 
 bool weaponskill::SubHit(ulong SubHits)
 {
-	if(Hits >= SubHits)
-		Hits -= SubHits;
-	else
-		Hits = 0;
+  if(Hits >= SubHits)
+    Hits -= SubHits;
+  else
+    Hits = 0;
 
-	uchar OldLevel = Level;
+  uchar OldLevel = Level;
 
-	while(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
-	{
-		--Level;
+  while(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
+    {
+      --Level;
 
-		HitCounter = 0;
-	}
+      HitCounter = 0;
+    }
 
-	if(Level != OldLevel)
-		return true;
-	else
-		return false;
+  if(Level != OldLevel)
+    return true;
+  else
+    return false;
 }
 
 void gweaponskill::AddLevelUpMessage() const
 {
-	ADD_MESSAGE("You advance to skill level %d with %s!", Level, SkillName[Index].c_str());
+  ADD_MESSAGE("You advance to skill level %d with %s!", Level, SkillName[Index].c_str());
 }
 
 void gweaponskill::AddLevelDownMessage() const
 {
-	ADD_MESSAGE("You have not practised enough with %s lately.", SkillName[Index].c_str());
-	ADD_MESSAGE("Your skill level is reduced to %d!", Level);
+  ADD_MESSAGE("You have not practised enough with %s lately.", SkillName[Index].c_str());
+  ADD_MESSAGE("Your skill level is reduced to %d!", Level);
 }
 
 void sweaponskill::AddLevelUpMessage(std::string WeaponName) const
 {
-	ADD_MESSAGE("You advance to skill level %d with your %s!", Level, WeaponName.c_str());
+  ADD_MESSAGE("You advance to skill level %d with your %s!", Level, WeaponName.c_str());
 }
 
 void sweaponskill::AddLevelDownMessage(std::string WeaponName) const
 {
-	ADD_MESSAGE("You have not practised enough with your %s lately.", WeaponName.c_str());
-	ADD_MESSAGE("Your skill level is reduced to %d!", Level);
+  ADD_MESSAGE("You have not practised enough with your %s lately.", WeaponName.c_str());
+  ADD_MESSAGE("Your skill level is reduced to %d!", Level);
 }
 
 void sweaponskill::Save(outputfile& SaveFile) const
 {
-	weaponskill::Save(SaveFile);
+  weaponskill::Save(SaveFile);
 
-	SaveFile << ID;
+  SaveFile << ID;
 }
 
 void sweaponskill::Load(inputfile& SaveFile)
 {
-	weaponskill::Load(SaveFile);
+  weaponskill::Load(SaveFile);
 
-	SaveFile >> ID;
+  SaveFile >> ID;
 }

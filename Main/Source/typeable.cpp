@@ -3,5 +3,5 @@
 
 void typeable::Save(outputfile& SaveFile) const
 {
-	SaveFile << Type();
+  SaveFile << Type();
 }

@@ -20,41 +20,41 @@ class character;
 
 class team
 {
-public:
-	team() : Leader(0) {}
-	team(ushort ID) : Leader(0), ID(ID) {}
-	void SetRelation(team*, uchar);
-	uchar GetRelation(team*);
-	void Hostility(team*);
-	ushort GetID() const { return ID; }
-	void SetID(ushort What) { ID = What; }
-	void Save(outputfile&) const;
-	void Load(inputfile&);
-	void SetLeader(character* What) { Leader = What; }
-	character* GetLeader() const { return Leader; }
-	std::list<character*>::iterator Add(character* Char) { return Member.insert(Member.end(), Char); }
-	void Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
-	std::list<character*>& GetMember() { return Member; }
-private:
-	character* Leader;
-	std::map<ulong, uchar> Relation;
-	std::list<character*> Member;
-	ushort ID;
+ public:
+  team() : Leader(0) {}
+  team(ushort ID) : Leader(0), ID(ID) {}
+  void SetRelation(team*, uchar);
+  uchar GetRelation(team*);
+  void Hostility(team*);
+  ushort GetID() const { return ID; }
+  void SetID(ushort What) { ID = What; }
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  void SetLeader(character* What) { Leader = What; }
+  character* GetLeader() const { return Leader; }
+  std::list<character*>::iterator Add(character* Char) { return Member.insert(Member.end(), Char); }
+  void Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
+  std::list<character*>& GetMember() { return Member; }
+ private:
+  character* Leader;
+  std::map<ulong, uchar> Relation;
+  std::list<character*> Member;
+  ushort ID;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, team* Team)
 {
-	Team->Save(SaveFile);
+  Team->Save(SaveFile);
 
-	return SaveFile;
+  return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, team*& Team)
 {
-	Team = new team;
-	Team->Load(SaveFile);
+  Team = new team;
+  Team->Load(SaveFile);
 
-	return SaveFile;
+  return SaveFile;
 }
 
 #endif

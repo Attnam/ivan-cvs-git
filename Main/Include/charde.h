@@ -1408,8 +1408,18 @@ class CHARACTER
  uchar Alignment;
  );
 
+class CHARACTER
+(
+ genie,
+ character,
+ InitMaterials(new genieflesh)
+{
 
 
+
+}
+
+);
 #endif
 
 

@@ -30,64 +30,64 @@ class inputfile;
 
 class levelterrain : public object
 {
-public:
-	levelterrain(bool AddToPool) : object(AddToPool) {}
-	virtual void Load(inputfile&);
-	virtual bool Open(character* Opener);
-	virtual bool Close(character* Closer);
-	virtual vector2d GetPos() const;
-	virtual bool CanBeOpened() const { return false; }
-	virtual bool CanBeOffered() const { return false; }
-	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
-	virtual bool CanBeDigged() const { return false; }
-	virtual uchar OKVisualEffects() const { return 0; }
-	virtual uchar GetVisualFlags() const { return VisualFlags; }
-	virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
-	virtual void HandleVisualEffects();
-	virtual void Save(outputfile&) const;
-	virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
-	virtual void ReceiveVomit(character*) {}
-	virtual bool CanBeOpenedByAI() { return false; }
-	virtual bool ReceiveStrike() { return false; }
-	virtual bool GetIsLocked() const { return false; }
-	virtual bool Polymorph(character*) { return false; }
-protected:
-	uchar VisualFlags;
+ public:
+  levelterrain(bool AddToPool) : object(AddToPool) {}
+  virtual void Load(inputfile&);
+  virtual bool Open(character* Opener);
+  virtual bool Close(character* Closer);
+  virtual vector2d GetPos() const;
+  virtual bool CanBeOpened() const { return false; }
+  virtual bool CanBeOffered() const { return false; }
+  virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
+  virtual bool CanBeDigged() const { return false; }
+  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetVisualFlags() const { return VisualFlags; }
+  virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
+  virtual void HandleVisualEffects();
+  virtual void Save(outputfile&) const;
+  virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
+  virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
+  virtual void ReceiveVomit(character*) {}
+  virtual bool CanBeOpenedByAI() { return false; }
+  virtual bool ReceiveStrike() { return false; }
+  virtual bool GetIsLocked() const { return false; }
+  virtual bool Polymorph(character*) { return false; }
+ protected:
+  uchar VisualFlags;
 };
 
 class groundlevelterrain : public levelterrain, public groundterrain
 {
-public:
-	groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
-	virtual void DrawToTileBuffer() const;
-	virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
-	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
+ public:
+  groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
+  virtual void DrawToTileBuffer() const;
+  virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
+  virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
 };
 
 class overlevelterrain : public levelterrain, public overterrain
 {
-public:
-	overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
-	virtual void DrawToTileBuffer() const;
-	virtual bool GoUp(character*) const;
-	virtual bool GoDown(character*) const;
-	virtual uchar GetOwnerGod() const { return 0; }
-	virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
-	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
-	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
-	virtual void Kick(ushort, bool, uchar) {}
-	virtual bool IsDoor() const { return false; }
-	virtual void SitOn(character*);
-	virtual bool HasConsumeEffect() const { return false; } 
-	virtual std::string GetConsumeQuestion() const { return std::string("Do you want to consume ") + Name(DEFINITE) + std::string("?"); }
-	virtual void Consume(character*) {}
-	virtual void Lock() {}
+ public:
+  overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
+  virtual void DrawToTileBuffer() const;
+  virtual bool GoUp(character*) const;
+  virtual bool GoDown(character*) const;
+  virtual uchar GetOwnerGod() const { return 0; }
+  virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
+  virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
+  virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
+  virtual void Kick(ushort, bool, uchar) {}
+  virtual bool IsDoor() const { return false; }
+  virtual void SitOn(character*);
+  virtual bool HasConsumeEffect() const { return false; } 
+  virtual std::string GetConsumeQuestion() const { return std::string("Do you want to consume ") + Name(DEFINITE) + std::string("?"); }
+  virtual void Consume(character*) {}
+  virtual void Lock() {}
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
+#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
 	\
 	static class name##_protoinstaller\
 	{\
@@ -107,7 +107,7 @@ public:
 
 #else
 
-	#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
+#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
 
 #endif
 

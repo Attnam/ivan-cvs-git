@@ -11,135 +11,135 @@
 
 bool overlevelterrain::GoUp(character* Who) const // Try to go up
 {
-	if(game::GetCurrent() && game::GetCurrent() != 9 && game::GetWizardMode())
-	{
-		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		game::GetCurrentDungeon()->SaveLevel();
-		game::SetCurrent(game::GetCurrent() - 1);
-		game::GetCurrentDungeon()->PrepareLevel();
-		vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
-		game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
-		game::GetCurrentLevel()->Luxify();
-		game::SendLOSUpdateRequest();
-		game::UpdateCamera();
-		return true;
-	}
-	else
-		if(!game::GetCurrent() && game::GetWizardMode())
-		{
-			if(Who->GetIsPlayer())
-			{
-				std::vector<character*> TempPlayerGroup;
+  if(game::GetCurrent() && game::GetCurrent() != 9 && game::GetWizardMode())
+    {
+      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+      game::GetCurrentDungeon()->SaveLevel();
+      game::SetCurrent(game::GetCurrent() - 1);
+      game::GetCurrentDungeon()->PrepareLevel();
+      vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
+      game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
+      game::GetCurrentLevel()->Luxify();
+      game::SendLOSUpdateRequest();
+      game::UpdateCamera();
+      return true;
+    }
+  else
+    if(!game::GetCurrent() && game::GetWizardMode())
+      {
+	if(Who->GetIsPlayer())
+	  {
+	    std::vector<character*> TempPlayerGroup;
 
-				if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
-					return false;
+	    if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
+	      return false;
 
-				game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
-				game::GetCurrentDungeon()->SaveLevel();
-				game::LoadWorldMap();
+	    game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
+	    game::GetCurrentDungeon()->SaveLevel();
+	    game::LoadWorldMap();
 
-				game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
+	    game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
 
-				game::SetInWilderness(true);
-				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
-				game::SendLOSUpdateRequest();
-				game::UpdateCamera();
-				return true;
-			}
+	    game::SetInWilderness(true);
+	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
+	    game::SendLOSUpdateRequest();
+	    game::UpdateCamera();
+	    return true;
+	  }
 
-			return false;
-		}
-		else
-		{
-			if(Who->GetIsPlayer())
-				ADD_MESSAGE("You can't go up.");
+	return false;
+      }
+    else
+      {
+	if(Who->GetIsPlayer())
+	  ADD_MESSAGE("You can't go up.");
 
-			return false;
-		}
+	return false;
+      }
 }
 
 bool overlevelterrain::GoDown(character* Who) const // Try to go down
 {
-	if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
-	{
-		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		game::GetCurrentDungeon()->SaveLevel();
-		game::SetCurrent(game::GetCurrent() + 1);
-		game::GetCurrentDungeon()->PrepareLevel();
-		vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
-		game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
-		game::GetCurrentLevel()->Luxify();
-		game::SendLOSUpdateRequest();
-		game::UpdateCamera();
-		return true;
-	}
-	else
-	{
-		if(Who->GetIsPlayer())
-			ADD_MESSAGE("You can't go down.");
+  if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
+    {
+      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+      game::GetCurrentDungeon()->SaveLevel();
+      game::SetCurrent(game::GetCurrent() + 1);
+      game::GetCurrentDungeon()->PrepareLevel();
+      vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
+      game::GetCurrentLevel()->FastAddCharacter(Pos, Who);
+      game::GetCurrentLevel()->Luxify();
+      game::SendLOSUpdateRequest();
+      game::UpdateCamera();
+      return true;
+    }
+  else
+    {
+      if(Who->GetIsPlayer())
+	ADD_MESSAGE("You can't go down.");
 
-		return false;
-	}
+      return false;
+    }
 }
 
 void levelterrain::Save(outputfile& SaveFile) const
 {
-	object::Save(SaveFile);
+  object::Save(SaveFile);
 
-	SaveFile << VisualFlags;
+  SaveFile << VisualFlags;
 }
 
 void levelterrain::Load(inputfile& SaveFile)
 {
-	object::Load(SaveFile);
+  object::Load(SaveFile);
 
-	SaveFile >> VisualFlags;
+  SaveFile >> VisualFlags;
 }
 
 void groundlevelterrain::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
+  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
 }
 
 void overlevelterrain::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
+  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
 }
 
 bool levelterrain::Open(character* Opener)
 {
-	if(Opener->GetIsPlayer())
-		ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
+  if(Opener->GetIsPlayer())
+    ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
 
-	return false;
+  return false;
 }
 
 bool levelterrain::Close(character* Closer)
 {
-	if(Closer->GetIsPlayer())
-		ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
+  if(Closer->GetIsPlayer())
+    ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
 
-	return false;
+  return false;
 }
 
 vector2d levelterrain::GetPos() const
 {
-	return GetLevelSquareUnder()->GetPos();
+  return GetLevelSquareUnder()->GetPos();
 }
 
 void levelterrain::HandleVisualEffects()
 {
-	uchar Flags = 0, AcceptedFlags = OKVisualEffects();
+  uchar Flags = 0, AcceptedFlags = OKVisualEffects();
 
-	for(uchar c = 0; c < 8; ++c)
-		if((AcceptedFlags & (1 << c)) && (RAND() % 2))
-			Flags |= 1 << c;
+  for(uchar c = 0; c < 8; ++c)
+    if((AcceptedFlags & (1 << c)) && (RAND() % 2))
+      Flags |= 1 << c;
 
-	SetVisualFlags(Flags);
+  SetVisualFlags(Flags);
 }
 
 void overlevelterrain::SitOn(character* Sitter)
 {
-	if(Sitter->GetIsPlayer())
-		ADD_MESSAGE("You sit for some time. Nothing happens.");
+  if(Sitter->GetIsPlayer())
+    ADD_MESSAGE("You sit for some time. Nothing happens.");
 }

@@ -32,116 +32,116 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
 character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems)
 {
-	for(ushort c = 0;; ++c)
+  for(ushort c = 0;; ++c)
+    {
+      ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+
+      const character* const Proto = protocontainer<character>::GetProto(Chosen);
+
+      if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
 	{
-		ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+	  character* Monster = Proto->Clone(true, true, CreateItems);
 
-		const character* const Proto = protocontainer<character>::GetProto(Chosen);
+	  float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
 
-		if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
-		{
-			character* Monster = Proto->Clone(true, true, CreateItems);
-
-			float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
-
-			if(c >= 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
-			{
-				Monster->SetTeam(game::GetTeam(1));
-				return Monster;
-			}
-			else
-				delete Monster;
-		}
+	  if(c >= 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
+	    {
+	      Monster->SetTeam(game::GetTeam(1));
+	      return Monster;
+	    }
+	  else
+	    delete Monster;
 	}
+    }
 }
 
 item* protosystem::BalancedCreateItem(bool Polymorph)
 {
-	while(true)
-	{
-		ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
+  while(true)
+    {
+      ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
 
-		ushort c;
+      ushort c;
 
-		for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-			SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
+      for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+	SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
 			
-		RandomOne = 1 + RAND() % (SumOfPossibilities);
+      RandomOne = 1 + RAND() % (SumOfPossibilities);
 		
-		for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-		{
-			Counter += protocontainer<item>::GetProto(c)->Possibility();
+      for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+	{
+	  Counter += protocontainer<item>::GetProto(c)->Possibility();
 
-			if(Counter >= RandomOne)
-				if(!Polymorph || protocontainer<item>::GetProto(c)->PolymorphSpawnable())
-					return protocontainer<item>::GetProto(c)->Clone();
-				else
-					break;
-		}
+	  if(Counter >= RandomOne)
+	    if(!Polymorph || protocontainer<item>::GetProto(c)->PolymorphSpawnable())
+	      return protocontainer<item>::GetProto(c)->Clone();
+	    else
+	      break;
 	}
+    }
 }
 
 character* protosystem::CreateMonster(bool CreateItems)
 {
-	while(true)
+  while(true)
+    {
+      ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+
+      if(protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
 	{
-		ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+	  character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
 
-		if(protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
-		{
-			character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
+	  Monster->SetTeam(game::GetTeam(1));
 
-			Monster->SetTeam(game::GetTeam(1));
-
-			return Monster;
-		}
+	  return Monster;
 	}
+    }
 }
 
 item* protosystem::CreateItem(std::string What, bool Output)
 {
-	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-		if(protocontainer<item>::GetProto(c)->GetNameSingular() == What)
-			if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
-				return protocontainer<item>::GetProto(c)->CreateWishedItem();
-			else if(Output)
-			{
-				ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-				return 0;
-			}
+  for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+    if(protocontainer<item>::GetProto(c)->GetNameSingular() == What)
+      if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
+	return protocontainer<item>::GetProto(c)->CreateWishedItem();
+      else if(Output)
+	{
+	  ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+	  return 0;
+	}
 
-	if(Output)
-		ADD_MESSAGE("There is no such item.");
+  if(Output)
+    ADD_MESSAGE("There is no such item.");
 
-	return 0;
+  return 0;
 }
 
 material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Output)
 {
-	for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
-		if(protocontainer<material>::GetProto(c)->Name() == What)
-			if(protocontainer<material>::GetProto(c)->CanBeWished())
-				return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
-			else if(Output)
-			{
-				ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-				return 0;
-			}
+  for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
+    if(protocontainer<material>::GetProto(c)->Name() == What)
+      if(protocontainer<material>::GetProto(c)->CanBeWished())
+	return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
+      else if(Output)
+	{
+	  ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+	  return 0;
+	}
 		
-	if(Output)
-		ADD_MESSAGE("There is no such material.");
+  if(Output)
+    ADD_MESSAGE("There is no such material.");
 
-	return 0;
+  return 0;
 }
 
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
-	for(ushort c = 1 + RAND() % protocontainer<material>::GetProtoAmount();; c = 1 + RAND() % protocontainer<material>::GetProtoAmount())
-		if(protocontainer<material>::GetProto(c)->IsSolid())
-			return protocontainer<material>::GetProto(c)->Clone(Volume);
+  for(ushort c = 1 + RAND() % protocontainer<material>::GetProtoAmount();; c = 1 + RAND() % protocontainer<material>::GetProtoAmount())
+    if(protocontainer<material>::GetProto(c)->IsSolid())
+      return protocontainer<material>::GetProto(c)->Clone(Volume);
 }
 
 material* protosystem::CreateMaterial(ushort Index, ulong Volume)
 {
-	return protocontainer<material>::GetProto(Index)->Clone(Volume);
+  return protocontainer<material>::GetProto(Index)->Clone(Volume);
 }

@@ -56,41 +56,41 @@ graphics::modeinfo graphics::ModeInfo;
 
 void graphics::Init()
 {
-	static bool AlreadyInstalled = false;
+  static bool AlreadyInstalled = false;
 
-	if(!AlreadyInstalled)
-	{
-		AlreadyInstalled = true;
+  if(!AlreadyInstalled)
+    {
+      AlreadyInstalled = true;
 
 #ifdef USE_SDL
-		if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
-			ABORT("Can't initialize SDL.");
+      if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
+	ABORT("Can't initialize SDL.");
 #endif
 
 #ifdef __DJGPP__
-		VesaInfo.Retrieve();
+      VesaInfo.Retrieve();
 #endif
 
-		atexit(graphics::DeInit);
-	}
+      atexit(graphics::DeInit);
+    }
 }
 
 void graphics::DeInit()
 {
-	delete DefaultFont;
-	DefaultFont = 0;
+  delete DefaultFont;
+  DefaultFont = 0;
 
 #ifdef USE_SDL
-	SDL_Quit();
+  SDL_Quit();
 #endif
 
 #ifdef __DJGPP__
-	if(ScreenSelector)
-	{
-		__dpmi_free_ldt_descriptor(ScreenSelector);
-		ScreenSelector = 0;
-		textmode(0x3);
-	}
+  if(ScreenSelector)
+    {
+      __dpmi_free_ldt_descriptor(ScreenSelector);
+      ScreenSelector = 0;
+      textmode(0x3);
+    }
 #endif
 }
 
@@ -98,45 +98,45 @@ void graphics::DeInit()
 
 void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
 {
-	FullScreen = FScreen;
+  FullScreen = FScreen;
 
-	globalwindowhandler::Init(hInst, phWnd, Title, IconName);
+  globalwindowhandler::Init(hInst, phWnd, Title, IconName);
 
-	hWnd = *phWnd;
+  hWnd = *phWnd;
 
-	if(FullScreen)
-		ShowCursor(false);
+  if(FullScreen)
+    ShowCursor(false);
 
-	DXDisplay = new CDisplay();
+  DXDisplay = new CDisplay();
 
-	if(FullScreen)
-	{
-		if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, NewXRes, NewYRes, NewColorDepth)))
-			ABORT("This system does not support %dx%dx%d in fullscreen mode!", NewXRes, NewYRes, NewColorDepth);
-	}
-	else
-		if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewXRes, NewYRes)))
-			ABORT("This system does not support %dx%dx%d in window mode!", NewXRes, NewYRes, NewColorDepth);
+  if(FullScreen)
+    {
+      if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, NewXRes, NewYRes, NewColorDepth)))
+	ABORT("This system does not support %dx%dx%d in fullscreen mode!", NewXRes, NewYRes, NewColorDepth);
+    }
+  else
+    if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewXRes, NewYRes)))
+      ABORT("This system does not support %dx%dx%d in window mode!", NewXRes, NewYRes, NewColorDepth);
 
-	DoubleBuffer = new bitmap(NewXRes, NewYRes);
+  DoubleBuffer = new bitmap(NewXRes, NewYRes);
 
-	XRes = NewXRes;
-	YRes = NewYRes;
-	ColorDepth = NewColorDepth;
+  XRes = NewXRes;
+  YRes = NewYRes;
+  ColorDepth = NewColorDepth;
 
-	if(!FullScreen)
-	{
-		DDPIXELFORMAT DDPixelFormat;
-		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
-		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
+  if(!FullScreen)
+    {
+      DDPIXELFORMAT DDPixelFormat;
+      ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
+      DDPixelFormat.dwSize = sizeof(DDPixelFormat);
 
-		DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
+      DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
 
-		if(DDPixelFormat.dwRGBBitCount != ColorDepth)
-			SwitchMode();
-	}
+      if(DDPixelFormat.dwRGBBitCount != ColorDepth)
+	SwitchMode();
+    }
 
-	globalwindowhandler::SetInitialized(true);
+  globalwindowhandler::SetInitialized(true);
 }
 
 #endif
@@ -147,22 +147,22 @@ void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar 
 {
   //	SDL_Surface *screen;
 
-        screen = SDL_SetVideoMode(NewXRes, NewYRes, NewColorDepth, SDL_SWSURFACE);
-	if ( screen == NULL ) 
-	  ABORT("Couldn't set video mode.");
+  screen = SDL_SetVideoMode(NewXRes, NewYRes, NewColorDepth, SDL_SWSURFACE);
+  if ( screen == NULL ) 
+    ABORT("Couldn't set video mode.");
         
     
 
 
-	globalwindowhandler::Init(Title);
+  globalwindowhandler::Init(Title);
 	
-	DoubleBuffer = new bitmap(NewXRes, NewYRes);
+  DoubleBuffer = new bitmap(NewXRes, NewYRes);
 
-	XRes = NewXRes;
-	YRes = NewYRes;
-	ColorDepth = NewColorDepth;
+  XRes = NewXRes;
+  YRes = NewYRes;
+  ColorDepth = NewColorDepth;
 
-	/*	if(!FullScreen)
+  /*	if(!FullScreen)
 	{
 		DDPIXELFORMAT DDPixelFormat;
 		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
@@ -174,7 +174,7 @@ void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar 
 			SwitchMode();
 			}*/
 
-	globalwindowhandler::SetInitialized(true);
+  globalwindowhandler::SetInitialized(true);
 }
 
 #endif
@@ -183,33 +183,33 @@ void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar 
 
 void graphics::BlitDBToScreen()
 {
-	if(DXDisplay->GetDirectDraw()->RestoreAllSurfaces() == DD_OK)
+  if(DXDisplay->GetDirectDraw()->RestoreAllSurfaces() == DD_OK)
+    {
+      DDSURFACEDESC2 ddsd;
+      ZeroMemory(&ddsd,sizeof(ddsd));
+      ddsd.dwSize = sizeof(ddsd);
+
+      if(FullScreen)
+	DXDisplay->GetFrontBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+      else
+	DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+
+      ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+      ulong TrueDestOffset = ulong(ddsd.lpSurface);
+      ulong TrueDestXMove = ddsd.lPitch - (XRES << 1);
+      ushort Width = XRES;
+      ushort Height = YRES;
+
+      BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
+
+      if(FullScreen)
+	DXDisplay->GetFrontBuffer()->Unlock(NULL);
+      else
 	{
-		DDSURFACEDESC2 ddsd;
-		ZeroMemory(&ddsd,sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-
-		if(FullScreen)
-			DXDisplay->GetFrontBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-		else
-			DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
-
-		ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
-		ulong TrueDestOffset = ulong(ddsd.lpSurface);
-		ulong TrueDestXMove = ddsd.lPitch - (XRES << 1);
-		ushort Width = XRES;
-		ushort Height = YRES;
-
-		BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
-
-		if(FullScreen)
-			DXDisplay->GetFrontBuffer()->Unlock(NULL);
-		else
-		{
-			DXDisplay->GetBackBuffer()->Unlock(NULL);
-			DXDisplay->Present();
-		}
+	  DXDisplay->GetBackBuffer()->Unlock(NULL);
+	  DXDisplay->Present();
 	}
+    }
 }
 
 #endif
@@ -218,26 +218,26 @@ void graphics::BlitDBToScreen()
 
 void graphics::BlitDBToScreen()
 {
-    if ( SDL_MUSTLOCK(screen) ) {
-        if ( SDL_LockSurface(screen) < 0 ) {
-            ABORT("Can't lock screen");
-        }
+  if ( SDL_MUSTLOCK(screen) ) {
+    if ( SDL_LockSurface(screen) < 0 ) {
+      ABORT("Can't lock screen");
     }
+  }
 
-		ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
-		//ulong TrueSourceXMove = 0;
-		ulong TrueDestOffset = ulong(screen->pixels);
-		ulong TrueDestXMove =  screen->pitch - (XRES << 1);
-		ushort Width = XRES;
-		ushort Height = YRES;
+  ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+  //ulong TrueSourceXMove = 0;
+  ulong TrueDestOffset = ulong(screen->pixels);
+  ulong TrueDestXMove =  screen->pitch - (XRES << 1);
+  ushort Width = XRES;
+  ushort Height = YRES;
 
-		BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
+  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
 
 
-    if ( SDL_MUSTLOCK(screen) ) {
-        SDL_UnlockSurface(screen);
-    }
-    SDL_UpdateRect(screen, 0,0,XRES,YRES);
+  if ( SDL_MUSTLOCK(screen) ) {
+    SDL_UnlockSurface(screen);
+  }
+  SDL_UpdateRect(screen, 0,0,XRES,YRES);
 }
 
 #endif
@@ -247,150 +247,150 @@ void graphics::BlitDBToScreen()
 HRESULT CDisplay::CreateFullScreenDisplay( HWND hWnd, DWORD dwWidth,
                                            DWORD dwHeight, DWORD dwBPP )
 {
-	HRESULT hr;
+  HRESULT hr;
 
-	// Cleanup anything from a previous call
-	DestroyObjects();
+  // Cleanup anything from a previous call
+  DestroyObjects();
 
-	// DDraw stuff begins here
-	if( FAILED( hr = DirectDrawCreateEx( NULL, (VOID**)&m_pDD, IID_IDirectDraw7, NULL ) ) )
-		return E_FAIL;
+  // DDraw stuff begins here
+  if( FAILED( hr = DirectDrawCreateEx( NULL, (VOID**)&m_pDD, IID_IDirectDraw7, NULL ) ) )
+    return E_FAIL;
 
-	// Set cooperative level
-	hr = m_pDD->SetCooperativeLevel( hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN );
+  // Set cooperative level
+  hr = m_pDD->SetCooperativeLevel( hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN );
 
-	if( FAILED(hr) )
-		return E_FAIL;
+  if( FAILED(hr) )
+    return E_FAIL;
 
-	// Set the display mode
-	if( FAILED( m_pDD->SetDisplayMode( dwWidth, dwHeight, dwBPP, 0, 0 ) ) )
-		return E_FAIL;
+  // Set the display mode
+  if( FAILED( m_pDD->SetDisplayMode( dwWidth, dwHeight, dwBPP, 0, 0 ) ) )
+    return E_FAIL;
 
-	// Create primary surface (with backbuffer attached)
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd, sizeof( ddsd ) );
-	ddsd.dwSize            = sizeof( ddsd );
-	ddsd.dwFlags           = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-	ddsd.ddsCaps.dwCaps    = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP |
-			     DDSCAPS_COMPLEX | DDSCAPS_3DDEVICE;
-	ddsd.dwBackBufferCount = 1;
+  // Create primary surface (with backbuffer attached)
+  DDSURFACEDESC2 ddsd;
+  ZeroMemory( &ddsd, sizeof( ddsd ) );
+  ddsd.dwSize            = sizeof( ddsd );
+  ddsd.dwFlags           = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+  ddsd.ddsCaps.dwCaps    = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP |
+    DDSCAPS_COMPLEX | DDSCAPS_3DDEVICE;
+  ddsd.dwBackBufferCount = 1;
 
-	if( FAILED( hr = m_pDD->CreateSurface( &ddsd, &m_pddsFrontBuffer, NULL ) ) )
-		return E_FAIL;
+  if( FAILED( hr = m_pDD->CreateSurface( &ddsd, &m_pddsFrontBuffer, NULL ) ) )
+    return E_FAIL;
 
-	// Get a pointer to the back buffer
-	DDSCAPS2 ddscaps;
-	ZeroMemory( &ddscaps, sizeof( ddscaps ) );
-	ddscaps.dwCaps = DDSCAPS_BACKBUFFER;
+  // Get a pointer to the back buffer
+  DDSCAPS2 ddscaps;
+  ZeroMemory( &ddscaps, sizeof( ddscaps ) );
+  ddscaps.dwCaps = DDSCAPS_BACKBUFFER;
 
-	if( FAILED( hr = m_pddsFrontBuffer->GetAttachedSurface( &ddscaps, &m_pddsBackBuffer ) ) )
-		return E_FAIL;
+  if( FAILED( hr = m_pddsFrontBuffer->GetAttachedSurface( &ddscaps, &m_pddsBackBuffer ) ) )
+    return E_FAIL;
 
-	m_pddsBackBuffer->AddRef();
+  m_pddsBackBuffer->AddRef();
 
-	m_hWnd      = hWnd;
-	m_bWindowed = FALSE;
-	UpdateBounds();
+  m_hWnd      = hWnd;
+  m_bWindowed = FALSE;
+  UpdateBounds();
 
-	DWORD dwStyle = GetWindowLong( hWnd, GWL_STYLE );
-	dwStyle |= WS_POPUP;
-	dwStyle &= ~(WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
-	SetWindowLong( hWnd, GWL_STYLE, dwStyle );
+  DWORD dwStyle = GetWindowLong( hWnd, GWL_STYLE );
+  dwStyle |= WS_POPUP;
+  dwStyle &= ~(WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+  SetWindowLong( hWnd, GWL_STYLE, dwStyle );
 
-	return S_OK;
+  return S_OK;
 }
 
 HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeight )
 {
-	HRESULT hr;
+  HRESULT hr;
 
-	// Cleanup anything from a previous call
-	DestroyObjects();
+  // Cleanup anything from a previous call
+  DestroyObjects();
 
-	// DDraw stuff begins here
-	if( FAILED( hr = DirectDrawCreateEx( NULL, (VOID**)&m_pDD, IID_IDirectDraw7, NULL ) ) )
-		return E_FAIL;
+  // DDraw stuff begins here
+  if( FAILED( hr = DirectDrawCreateEx( NULL, (VOID**)&m_pDD, IID_IDirectDraw7, NULL ) ) )
+    return E_FAIL;
 
-	// Set cooperative level
-	hr = m_pDD->SetCooperativeLevel( hWnd, DDSCL_NORMAL );
+  // Set cooperative level
+  hr = m_pDD->SetCooperativeLevel( hWnd, DDSCL_NORMAL );
 
-	if( FAILED(hr) )
-		return E_FAIL;
+  if( FAILED(hr) )
+    return E_FAIL;
 
-	RECT  rcWork;
-	RECT  rc;
-	DWORD dwStyle;
+  RECT  rcWork;
+  RECT  rc;
+  DWORD dwStyle;
 
-	// If we are still a WS_POPUP window we should convert to a normal app
-	// window so we look like a windows app.
-	dwStyle  = GetWindowStyle( hWnd );
-	dwStyle &= ~WS_POPUP;
-	dwStyle |= WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
-	SetWindowLong( hWnd, GWL_STYLE, dwStyle );
+  // If we are still a WS_POPUP window we should convert to a normal app
+  // window so we look like a windows app.
+  dwStyle  = GetWindowStyle( hWnd );
+  dwStyle &= ~WS_POPUP;
+  dwStyle |= WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
+  SetWindowLong( hWnd, GWL_STYLE, dwStyle );
 
-	// Set window size
-	SetRect( &rc, 0, 0, 800, 600 );
+  // Set window size
+  SetRect( &rc, 0, 0, 800, 600 );
 
-	AdjustWindowRectEx( &rc, GetWindowStyle(hWnd), GetMenu(hWnd) != NULL, GetWindowExStyle(hWnd) );
+  AdjustWindowRectEx( &rc, GetWindowStyle(hWnd), GetMenu(hWnd) != NULL, GetWindowExStyle(hWnd) );
 
-	SetWindowPos( hWnd, NULL, 0, 0, rc.right-rc.left, rc.bottom-rc.top,
+  SetWindowPos( hWnd, NULL, 0, 0, rc.right-rc.left, rc.bottom-rc.top,
 		SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE );
 
-	SetWindowPos( hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
+  SetWindowPos( hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
 		SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE );
 
-	// Make sure our window does not hang outside of the work area
-	SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
-	GetWindowRect( hWnd, &rc );
-	if( rc.left < rcWork.left ) rc.left = rcWork.left;
-	if( rc.top  < rcWork.top )  rc.top  = rcWork.top;
-	SetWindowPos( hWnd, NULL, rc.left, rc.top, 0, 0,
-		  SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE );
+  // Make sure our window does not hang outside of the work area
+  SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
+  GetWindowRect( hWnd, &rc );
+  if( rc.left < rcWork.left ) rc.left = rcWork.left;
+  if( rc.top  < rcWork.top )  rc.top  = rcWork.top;
+  SetWindowPos( hWnd, NULL, rc.left, rc.top, 0, 0,
+		SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE );
 
-	LPDIRECTDRAWCLIPPER pcClipper;
+  LPDIRECTDRAWCLIPPER pcClipper;
 
-	// Create the primary surface
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd, sizeof( ddsd ) );
-	ddsd.dwSize         = sizeof( ddsd );
-	ddsd.dwFlags        = DDSD_CAPS;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+  // Create the primary surface
+  DDSURFACEDESC2 ddsd;
+  ZeroMemory( &ddsd, sizeof( ddsd ) );
+  ddsd.dwSize         = sizeof( ddsd );
+  ddsd.dwFlags        = DDSD_CAPS;
+  ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-	if( FAILED( m_pDD->CreateSurface( &ddsd, &m_pddsFrontBuffer, NULL ) ) )
-		return E_FAIL;
+  if( FAILED( m_pDD->CreateSurface( &ddsd, &m_pddsFrontBuffer, NULL ) ) )
+    return E_FAIL;
 
-	// Create the backbuffer surface
-	ddsd.dwFlags        = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;    
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
-	ddsd.dwWidth        = dwWidth;
-	ddsd.dwHeight       = dwHeight;
+  // Create the backbuffer surface
+  ddsd.dwFlags        = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;    
+  ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
+  ddsd.dwWidth        = dwWidth;
+  ddsd.dwHeight       = dwHeight;
 
-	if( FAILED( hr = m_pDD->CreateSurface( &ddsd, &m_pddsBackBuffer, NULL ) ) )
-		return E_FAIL;
+  if( FAILED( hr = m_pDD->CreateSurface( &ddsd, &m_pddsBackBuffer, NULL ) ) )
+    return E_FAIL;
 
-	if( FAILED( hr = m_pDD->CreateClipper( 0, &pcClipper, NULL ) ) )
-		return E_FAIL;
+  if( FAILED( hr = m_pDD->CreateClipper( 0, &pcClipper, NULL ) ) )
+    return E_FAIL;
 
-	if( FAILED( hr = pcClipper->SetHWnd( 0, hWnd ) ) )
-	{
-		pcClipper->Release();
-		return E_FAIL;
-	}
+  if( FAILED( hr = pcClipper->SetHWnd( 0, hWnd ) ) )
+    {
+      pcClipper->Release();
+      return E_FAIL;
+    }
 
-	if( FAILED( hr = m_pddsFrontBuffer->SetClipper( pcClipper ) ) )
-	{
-		pcClipper->Release();
-		return E_FAIL;
-	}
+  if( FAILED( hr = m_pddsFrontBuffer->SetClipper( pcClipper ) ) )
+    {
+      pcClipper->Release();
+      return E_FAIL;
+    }
 
-	// Done with clipper
-	pcClipper->Release();
+  // Done with clipper
+  pcClipper->Release();
 
-	m_hWnd      = hWnd;
-	m_bWindowed = TRUE;
-	UpdateBounds();
+  m_hWnd      = hWnd;
+  m_bWindowed = TRUE;
+  UpdateBounds();
 
-	return S_OK;
+  return S_OK;
 }
 
 #endif
@@ -398,8 +398,8 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 void graphics::UpdateBounds()
 {
 #ifdef WIN32
-	if(DXDisplay)
-		DXDisplay->UpdateBounds();
+  if(DXDisplay)
+    DXDisplay->UpdateBounds();
 #endif
 }
 
@@ -407,154 +407,154 @@ void graphics::UpdateBounds()
 
 void graphics::SwitchMode()
 {
-	globalwindowhandler::SetInitialized(false);
-	BlitDBToScreen();
-	FullScreen = !FullScreen;
+  globalwindowhandler::SetInitialized(false);
+  BlitDBToScreen();
+  FullScreen = !FullScreen;
 
-	if(SwitchModeHandler)
-		SwitchModeHandler();
+  if(SwitchModeHandler)
+    SwitchModeHandler();
 
-	delete DXDisplay;
-	DXDisplay = new CDisplay();
+  delete DXDisplay;
+  DXDisplay = new CDisplay();
 
-	if(FullScreen)
+  if(FullScreen)
+    {
+      if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
+	ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
+
+      BlitDBToScreen();
+
+      ShowCursor(false);
+    }
+  else
+    {
+      if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, XRes, YRes)))
+	ABORT("This system does not support %dx%dx%d in window mode!", XRes, YRes, ColorDepth);
+
+      BlitDBToScreen();
+
+      ShowCursor(true);
+
+      DDPIXELFORMAT DDPixelFormat;
+      ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
+      DDPixelFormat.dwSize = sizeof(DDPixelFormat);
+
+      DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
+
+      if(DDPixelFormat.dwRGBBitCount != ColorDepth)
 	{
-		if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
-			ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
+	  MessageBox(NULL, "This alpha release of IVAN supports only 16-bit color format. Change your monitor settings to it before trying to run the game in windowed mode.", "Incorrect color depth detected!", MB_OK|MB_ICONEXCLAMATION);
 
-		BlitDBToScreen();
+	  FullScreen = !FullScreen;
 
-		ShowCursor(false);
+	  if(SwitchModeHandler)
+	    SwitchModeHandler();
+
+	  delete DXDisplay;
+
+	  DXDisplay = new CDisplay();
+
+	  if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
+	    ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
+
+	  ShowCursor(false);
 	}
-	else
-	{
-		if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, XRes, YRes)))
-			ABORT("This system does not support %dx%dx%d in window mode!", XRes, YRes, ColorDepth);
+    }
 
-		BlitDBToScreen();
-
-		ShowCursor(true);
-
-		DDPIXELFORMAT DDPixelFormat;
-		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
-		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
-
-		DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
-
-		if(DDPixelFormat.dwRGBBitCount != ColorDepth)
-		{
-			MessageBox(NULL, "This alpha release of IVAN supports only 16-bit color format. Change your monitor settings to it before trying to run the game in windowed mode.", "Incorrect color depth detected!", MB_OK|MB_ICONEXCLAMATION);
-
-			FullScreen = !FullScreen;
-
-			if(SwitchModeHandler)
-				SwitchModeHandler();
-
-			delete DXDisplay;
-
-			DXDisplay = new CDisplay();
-
-			if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
-				ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
-
-			ShowCursor(false);
-		}
-	}
-
-	globalwindowhandler::SetInitialized(true);
+  globalwindowhandler::SetInitialized(true);
 }
 
 #endif
 
 void graphics::LoadDefaultFont(std::string FileName)
 {
-	DefaultFont = new colorizablebitmap(FileName);
+  DefaultFont = new colorizablebitmap(FileName);
 }
 
 #ifdef __DJGPP__
 
 void graphics::SetMode(ushort Mode)
 {
-	ModeInfo.Retrieve(Mode);
+  ModeInfo.Retrieve(Mode);
 
-	if(!ModeInfo.CheckSupport())
-		ABORT("Mode 0x%X not supported!", Mode);
+  if(!ModeInfo.CheckSupport())
+    ABORT("Mode 0x%X not supported!", Mode);
 
-	__dpmi_regs Regs;
+  __dpmi_regs Regs;
 
-	Regs.x.ax = 0x4F02;
-        Regs.x.bx = Mode | 0x4000;
+  Regs.x.ax = 0x4F02;
+  Regs.x.bx = Mode | 0x4000;
 
-	__dpmi_int(0x10, &Regs);
+  __dpmi_int(0x10, &Regs);
 
-	XRes =		ModeInfo.Width;
-	YRes =		ModeInfo.Height;
-	/*BitsPerPixel =	ModeInfo.BitsPerPixel;
-	BytesPerLine =	ModeInfo.BytesPerLine;*/
-	BufferSize =	YRes * ModeInfo.BytesPerLine;
+  XRes =		ModeInfo.Width;
+  YRes =		ModeInfo.Height;
+  /*BitsPerPixel =	ModeInfo.BitsPerPixel;
+    BytesPerLine =	ModeInfo.BytesPerLine;*/
+  BufferSize =	YRes * ModeInfo.BytesPerLine;
 
-	//delete Screen;
-	delete DoubleBuffer;
+  //delete Screen;
+  delete DoubleBuffer;
 
-	//Screen = new bitmap(XRes, YRes, BytesPerLine, ModeInfo.PhysicalLFBAddress);
-	DoubleBuffer = new bitmap(XRes, YRes);
+  //Screen = new bitmap(XRes, YRes, BytesPerLine, ModeInfo.PhysicalLFBAddress);
+  DoubleBuffer = new bitmap(XRes, YRes);
 
-	__dpmi_meminfo MemoryInfo;
+  __dpmi_meminfo MemoryInfo;
 
-	MemoryInfo.size = BufferSize;
-	MemoryInfo.address = ModeInfo.PhysicalLFBAddress;
+  MemoryInfo.size = BufferSize;
+  MemoryInfo.address = ModeInfo.PhysicalLFBAddress;
 
-	__dpmi_physical_address_mapping(&MemoryInfo);
-	__dpmi_lock_linear_region(&MemoryInfo);
+  __dpmi_physical_address_mapping(&MemoryInfo);
+  __dpmi_lock_linear_region(&MemoryInfo);
 
-	ScreenSelector = __dpmi_allocate_ldt_descriptors(1);
+  ScreenSelector = __dpmi_allocate_ldt_descriptors(1);
 
-	__dpmi_set_segment_base_address(ScreenSelector, MemoryInfo.address);
-	__dpmi_set_segment_limit(ScreenSelector, BufferSize - 1);
+  __dpmi_set_segment_base_address(ScreenSelector, MemoryInfo.address);
+  __dpmi_set_segment_limit(ScreenSelector, BufferSize - 1);
 }
 
 void graphics::BlitDBToScreen()
 {
-	ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
-	ulong TrueDestOffset = 0;
-	ulong TrueDestXMove = 0;
-	ushort Width = XRES;
-	ushort Height = YRES;
+  ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+  ulong TrueDestOffset = 0;
+  ulong TrueDestXMove = 0;
+  ushort Width = XRES;
+  ushort Height = YRES;
 
-	BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, Width, Height);
+  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, Width, Height);
 }
 
 void graphics::vesainfo::Retrieve(void)
 {
-	Signature = 0x32454256;
+  Signature = 0x32454256;
 
-	dosmemput(this, sizeof(vesainfo), __tb);
+  dosmemput(this, sizeof(vesainfo), __tb);
 
-	__dpmi_regs Regs;
+  __dpmi_regs Regs;
 
-	Regs.x.ax = 0x4F00;
-	Regs.x.di =  __tb       & 0x000F;
-	Regs.x.es = (__tb >> 4) & 0xFFFF;
+  Regs.x.ax = 0x4F00;
+  Regs.x.di =  __tb       & 0x000F;
+  Regs.x.es = (__tb >> 4) & 0xFFFF;
 
-	__dpmi_int(0x10, &Regs);
+  __dpmi_int(0x10, &Regs);
 
-	dosmemget(__tb, sizeof(vesainfo), this);
+  dosmemget(__tb, sizeof(vesainfo), this);
 }
 
 void graphics::modeinfo::Retrieve(ushort Mode)
 {
-	__dpmi_regs Regs;
+  __dpmi_regs Regs;
 
-	Regs.x.ax = 0x4F01;
-	Regs.x.cx = Mode;
-	Regs.x.di =  __tb       & 0x000F;
-	Regs.x.es = (__tb >> 4) & 0xFFFF;
+  Regs.x.ax = 0x4F01;
+  Regs.x.cx = Mode;
+  Regs.x.di =  __tb       & 0x000F;
+  Regs.x.es = (__tb >> 4) & 0xFFFF;
 
-	dosmemput(this, sizeof(modeinfo), __tb);
+  dosmemput(this, sizeof(modeinfo), __tb);
 
-	__dpmi_int(0x10, &Regs);
+  __dpmi_int(0x10, &Regs);
 
-	dosmemget(__tb, sizeof(modeinfo), this);
+  dosmemget(__tb, sizeof(modeinfo), this);
 }
 
 #endif

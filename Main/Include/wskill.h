@@ -30,96 +30,96 @@ class inputfile;
 
 class weaponskill
 {
-public:
-	weaponskill();
-	bool Turn();
-	uchar GetLevel() const { return Level; }
-	ulong GetHits() const { return Hits; }
-	ulong GetHitCounter() const { return HitCounter; }
-	bool AddHit();
-	bool AddHit(ulong);
-	bool SubHit();
-	bool SubHit(ulong);
-	virtual ushort GetLevelMap(ushort Index) const = 0;
-	virtual ushort GetUnuseTurnMap(ushort Index) const = 0;
-	virtual ushort GetUnusePenaltyMap(ushort Index) const = 0;
-	virtual void Save(outputfile&) const;
-	virtual void Load(inputfile&);
-	void SetHitMultiplier(float What) { HitMultiplier = What; }
-	float GetHitMultiplier() const { return HitMultiplier; }
-protected:
-	uchar Level;
-	ushort Hits, HitCounter;
-	float HitMultiplier;
+ public:
+  weaponskill();
+  bool Turn();
+  uchar GetLevel() const { return Level; }
+  ulong GetHits() const { return Hits; }
+  ulong GetHitCounter() const { return HitCounter; }
+  bool AddHit();
+  bool AddHit(ulong);
+  bool SubHit();
+  bool SubHit(ulong);
+  virtual ushort GetLevelMap(ushort Index) const = 0;
+  virtual ushort GetUnuseTurnMap(ushort Index) const = 0;
+  virtual ushort GetUnusePenaltyMap(ushort Index) const = 0;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  void SetHitMultiplier(float What) { HitMultiplier = What; }
+  float GetHitMultiplier() const { return HitMultiplier; }
+ protected:
+  uchar Level;
+  ushort Hits, HitCounter;
+  float HitMultiplier;
 };
 
 class gweaponskill : public weaponskill
 {
-public:
-	gweaponskill(uchar Index) : Index(Index) {}
-	ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-	ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
-	ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
-	std::string Name() const { return SkillName[Index]; }
-	float GetBonus() const { return 1.0f + 0.15f * Level; }
-	void AddLevelUpMessage() const;
-	void AddLevelDownMessage() const;
-private:
-	static ushort LevelMap[];
-	static ushort UnuseTurnMap[];
-	static ushort UnusePenaltyMap[];
-	static std::string SkillName[];
-	uchar Index;
+ public:
+  gweaponskill(uchar Index) : Index(Index) {}
+  ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
+  ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
+  ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
+  std::string Name() const { return SkillName[Index]; }
+  float GetBonus() const { return 1.0f + 0.15f * Level; }
+  void AddLevelUpMessage() const;
+  void AddLevelDownMessage() const;
+ private:
+  static ushort LevelMap[];
+  static ushort UnuseTurnMap[];
+  static ushort UnusePenaltyMap[];
+  static std::string SkillName[];
+  uchar Index;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, gweaponskill* WeaponSkill)
 {
-	WeaponSkill->Save(SaveFile);
+  WeaponSkill->Save(SaveFile);
 
-	return SaveFile;
+  return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, gweaponskill* WeaponSkill)
 {
-	WeaponSkill->Load(SaveFile);
+  WeaponSkill->Load(SaveFile);
 
-	return SaveFile;
+  return SaveFile;
 }
 
 class sweaponskill : public weaponskill
 {
-public:
-	sweaponskill() {}
-	ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-	ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
-	ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
-	float GetBonus() const { return Level ? 1.2f + 0.05f * (Level - 1) : 1.0f; }
-	void AddLevelUpMessage(std::string) const;
-	void AddLevelDownMessage(std::string) const;
-	void Save(outputfile&) const;
-	void Load(inputfile&);
-	void SetID(ulong What) { ID = What; }
-	ulong GetID() const { return ID; }
-private:
-	static ushort LevelMap[];
-	static ushort UnuseTurnMap[];
-	static ushort UnusePenaltyMap[];
-	ulong ID;
+ public:
+  sweaponskill() {}
+  ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
+  ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
+  ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
+  float GetBonus() const { return Level ? 1.2f + 0.05f * (Level - 1) : 1.0f; }
+  void AddLevelUpMessage(std::string) const;
+  void AddLevelDownMessage(std::string) const;
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  void SetID(ulong What) { ID = What; }
+  ulong GetID() const { return ID; }
+ private:
+  static ushort LevelMap[];
+  static ushort UnuseTurnMap[];
+  static ushort UnusePenaltyMap[];
+  ulong ID;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, sweaponskill* WeaponSkill)
 {
-	WeaponSkill->Save(SaveFile);
+  WeaponSkill->Save(SaveFile);
 
-	return SaveFile;
+  return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, sweaponskill*& WeaponSkill)
 {
-	WeaponSkill = new sweaponskill;
-	WeaponSkill->Load(SaveFile);
+  WeaponSkill = new sweaponskill;
+  WeaponSkill->Load(SaveFile);
 
-	return SaveFile;
+  return SaveFile;
 }
 
 #endif

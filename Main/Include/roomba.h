@@ -19,41 +19,41 @@ class levelsquare;
 
 class room : public typeable
 {
-public:
-	room(bool);
-	virtual ~room() {}
-	virtual void Save(outputfile&) const;
-	virtual void Load(inputfile&);
-	virtual void Enter(character*) {}
-	virtual room* Clone() const = 0;
-	virtual vector2d GetPos() const { return Pos; }
-	virtual void SetPos(vector2d What) { Pos = What; }
-	virtual vector2d GetSize() const { return Size; }
-	virtual void SetSize(vector2d What) { Size = What; }
-	virtual void HandleInstantiatedCharacter(character*);
-	virtual void HandleInstantiatedOverLevelTerrain(overlevelterrain*);
-	virtual void SetIndex(uchar What) { Index = What; }
-	virtual uchar GetIndex() const { return Index; }
-	virtual character* GetMaster() const { return Master; }
-	virtual void SetMaster(character* What) { Master = What; }
-	virtual bool PickupItem(character*, item*) { return true; }
-	virtual bool DropItem(character*, item*) { return true; }
-	virtual uchar GetDivineOwner() const { return DivineOwner; }
-	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
-	virtual void KickSquare(character*, levelsquare*) { }
-	virtual bool ConsumeItem(character*, item*) { return true; }
-	virtual bool AllowDropGifts() const { return true; }
-protected:
-	virtual void SetDefaultStats() = 0;
-	std::vector<vector2d> Door;
-	vector2d Pos, Size;
-	character* Master;
-	uchar Index, DivineOwner;
+ public:
+  room(bool);
+  virtual ~room() {}
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void Enter(character*) {}
+  virtual room* Clone() const = 0;
+  virtual vector2d GetPos() const { return Pos; }
+  virtual void SetPos(vector2d What) { Pos = What; }
+  virtual vector2d GetSize() const { return Size; }
+  virtual void SetSize(vector2d What) { Size = What; }
+  virtual void HandleInstantiatedCharacter(character*);
+  virtual void HandleInstantiatedOverLevelTerrain(overlevelterrain*);
+  virtual void SetIndex(uchar What) { Index = What; }
+  virtual uchar GetIndex() const { return Index; }
+  virtual character* GetMaster() const { return Master; }
+  virtual void SetMaster(character* What) { Master = What; }
+  virtual bool PickupItem(character*, item*) { return true; }
+  virtual bool DropItem(character*, item*) { return true; }
+  virtual uchar GetDivineOwner() const { return DivineOwner; }
+  virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
+  virtual void KickSquare(character*, levelsquare*) { }
+  virtual bool ConsumeItem(character*, item*) { return true; }
+  virtual bool AllowDropGifts() const { return true; }
+ protected:
+  virtual void SetDefaultStats() = 0;
+  std::vector<vector2d> Door;
+  vector2d Pos, Size;
+  character* Master;
+  uchar Index, DivineOwner;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define ROOM_PROTOINSTALLER(name, base, setstats)\
+#define ROOM_PROTOINSTALLER(name, base, setstats)\
 	\
 	static class name##_protoinstaller\
 	{\
@@ -71,7 +71,7 @@ protected:
 
 #else
 
-	#define ROOM_PROTOINSTALLER(name, base, setstats)
+#define ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif
 

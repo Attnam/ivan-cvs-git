@@ -19,28 +19,28 @@
 
 class globalerrorhandler
 {
-public:
-	static void Install();
-	static void DeInstall();
-	static void Abort(const char*, ...);
+ public:
+  static void Install();
+  static void DeInstall();
+  static void Abort(const char*, ...);
 #ifdef WIN32
-	static void SetWindow(HWND* NewhWnd) { hWnd = NewhWnd; }
+  static void SetWindow(HWND* NewhWnd) { hWnd = NewhWnd; }
 #endif
-private:
+ private:
 #ifdef VC
-	static int NewHandler(size_t);
-	static int (*OldNewHandler)(size_t);
+  static int NewHandler(size_t);
+  static int (*OldNewHandler)(size_t);
 #else
-	static void NewHandler();
-	static void (*OldNewHandler)();
+  static void NewHandler();
+  static void (*OldNewHandler)();
 #endif
 #ifdef WIN32
-	static HWND* hWnd;
+  static HWND* hWnd;
 #endif
 #ifdef __DJGPP__
-	static void SignalHandler(int);
-	static void (*OldSignal[SIGNALS])(int);
-	static int  Signal[SIGNALS];
+  static void SignalHandler(int);
+  static void (*OldSignal[SIGNALS])(int);
+  static int  Signal[SIGNALS];
 #endif
 };
 

@@ -13,9 +13,9 @@ class character;
 
 class terrain
 {
-public:
-	virtual bool GetIsWalkable() const { return true; }
-	virtual void StepOn(character*) {}
+ public:
+  virtual bool GetIsWalkable() const { return true; }
+  virtual void StepOn(character*) {}
 };
 
 class groundterrain : public terrain
@@ -24,9 +24,9 @@ class groundterrain : public terrain
 
 class overterrain : public terrain
 {
-public:
-	virtual bool GoUp(character*) const = 0;
-	virtual bool GoDown(character*) const = 0;
+ public:
+  virtual bool GoUp(character*) const = 0;
+  virtual bool GoDown(character*) const = 0;
 };
 
 #endif

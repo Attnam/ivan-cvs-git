@@ -14,43 +14,43 @@ class worldmap;
 
 class worldmapterrain : public typeable
 {
-public:
-	worldmapterrain() : WorldMapSquareUnder(0) {}
-	virtual vector2d GetPos() const;
-	virtual worldmapsquare* GetWorldMapSquareUnder() const { return WorldMapSquareUnder; }
-	virtual void SetWorldMapSquareUnder(worldmapsquare* What) { WorldMapSquareUnder = What; }
-	virtual worldmap* GetWorldMapUnder() const;
-	virtual std::string Name(uchar = 0) const;
-	virtual void Load(inputfile&);
-protected:
-	virtual std::string NameStem() const = 0;
-	virtual std::string Article() const { return "a"; }
-	virtual vector2d GetBitmapPos() const = 0;
-	worldmapsquare* WorldMapSquareUnder;
+ public:
+  worldmapterrain() : WorldMapSquareUnder(0) {}
+  virtual vector2d GetPos() const;
+  virtual worldmapsquare* GetWorldMapSquareUnder() const { return WorldMapSquareUnder; }
+  virtual void SetWorldMapSquareUnder(worldmapsquare* What) { WorldMapSquareUnder = What; }
+  virtual worldmap* GetWorldMapUnder() const;
+  virtual std::string Name(uchar = 0) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual std::string NameStem() const = 0;
+  virtual std::string Article() const { return "a"; }
+  virtual vector2d GetBitmapPos() const = 0;
+  worldmapsquare* WorldMapSquareUnder;
 };
 
 class groundworldmapterrain : public worldmapterrain, public groundterrain
 {
-public:
-	groundworldmapterrain(bool = true) {}
-	virtual void DrawToTileBuffer() const;
-	virtual groundworldmapterrain* Clone(bool = true) const = 0;
-	virtual uchar Priority() const = 0;
+ public:
+  groundworldmapterrain(bool = true) {}
+  virtual void DrawToTileBuffer() const;
+  virtual groundworldmapterrain* Clone(bool = true) const = 0;
+  virtual uchar Priority() const = 0;
 };
 
 class overworldmapterrain : public worldmapterrain, public overterrain
 {
-public:
-	overworldmapterrain(bool = true) {}
-	virtual void DrawToTileBuffer() const;
-	virtual overworldmapterrain* Clone(bool = true) const = 0;
-	virtual bool GoUp(character*) const;
-	virtual bool GoDown(character*) const;
+ public:
+  overworldmapterrain(bool = true) {}
+  virtual void DrawToTileBuffer() const;
+  virtual overworldmapterrain* Clone(bool = true) const = 0;
+  virtual bool GoUp(character*) const;
+  virtual bool GoDown(character*) const;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)\
+#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)\
 	\
 	static class name##_protoinstaller\
 	{\
@@ -68,7 +68,7 @@ public:
 
 #else
 
-	#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)
+#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)
 
 #endif
 

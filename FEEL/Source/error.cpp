@@ -33,79 +33,79 @@ HWND* globalerrorhandler::hWnd;
 
 void globalerrorhandler::Install()
 {
-	static bool AlreadyInstalled = false;
+  static bool AlreadyInstalled = false;
 
-	if(!AlreadyInstalled)
-	{
-		AlreadyInstalled = true;
+  if(!AlreadyInstalled)
+    {
+      AlreadyInstalled = true;
 
-		OldNewHandler = set_new_handler(NewHandler);
+      OldNewHandler = set_new_handler(NewHandler);
 
 #ifdef __DJGPP__
-		for(ushort c = 0; c < SIGNALS; c++)
-			OldSignal[c] = signal(Signal[c], SignalHandler);
+      for(ushort c = 0; c < SIGNALS; c++)
+	OldSignal[c] = signal(Signal[c], SignalHandler);
 #endif
 
-		atexit(globalerrorhandler::DeInstall);
-	}
+      atexit(globalerrorhandler::DeInstall);
+    }
 }
 
 void globalerrorhandler::DeInstall()
 {
 #ifdef __DJGPP__
-	for(ushort c = 0; c < SIGNALS; c++)
-		signal(Signal[c], OldSignal[c]);
+  for(ushort c = 0; c < SIGNALS; c++)
+    signal(Signal[c], OldSignal[c]);
 #endif
 
-	set_new_handler(OldNewHandler);
+  set_new_handler(OldNewHandler);
 }
 
 void globalerrorhandler::Abort(const char* Format, ...)
 {
-	char Buffer[256];
+  char Buffer[256];
 
-	va_list AP;
-	va_start(AP, Format);
-	vsprintf(Buffer, Format, AP);
-	va_end(AP);
+  va_list AP;
+  va_start(AP, Format);
+  vsprintf(Buffer, Format, AP);
+  va_end(AP);
 
 #ifdef WIN32
-	ShowWindow(*hWnd, SW_HIDE);
-	MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
+  ShowWindow(*hWnd, SW_HIDE);
+  MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
 #ifdef USE_SDL
-	std::cout << Buffer << std::endl;
+  std::cout << Buffer << std::endl;
 #endif
 #ifdef __DJGPP__
-	graphics::DeInit();
-	std::cout << Buffer << std::endl;
+  graphics::DeInit();
+  std::cout << Buffer << std::endl;
 #endif
 
-	exit(4);
+  exit(4);
 }
 
 #ifdef VC
 int globalerrorhandler::NewHandler(size_t)
 #else
-void globalerrorhandler::NewHandler()
+  void globalerrorhandler::NewHandler()
 #endif
 {
 #ifdef WIN32
-	ShowWindow(*hWnd, SW_HIDE);
-	MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
+  ShowWindow(*hWnd, SW_HIDE);
+  MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
 #endif
 #ifdef USE_SDL
-	std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
+  std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
 #endif
 #ifdef __DJGPP__
-	graphics::DeInit();
-	std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
+  graphics::DeInit();
+  std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
 #endif
 
-	exit(1);
+  exit(1);
 
 #ifdef VC
-	return 0;
+  return 0;
 #endif
 }
 
@@ -113,58 +113,58 @@ void globalerrorhandler::NewHandler()
 
 void globalerrorhandler::SignalHandler(int Signal)
 {
-	static bool AlreadySignalled = false;
+  static bool AlreadySignalled = false;
 
-	if(!AlreadySignalled)
+  if(!AlreadySignalled)
+    {
+      AlreadySignalled = true;
+
+      graphics::DeInit();
+
+      std::cout << "Fatal Error: ";
+
+      switch (Signal)
 	{
-		AlreadySignalled = true;
+	case SIGABRT:
+	  std::cout << "Abort";
+	  break;
 
-		graphics::DeInit();
+	case SIGFPE:
+	  std::cout << "Divide by zero";
+	  break;
 
-		std::cout << "Fatal Error: ";
+	case SIGILL:
+	  std::cout << "Invalid/unknown";
+	  break;
 
-		switch (Signal)
-		{
-		case SIGABRT:
-			std::cout << "Abort";
-			break;
+	case SIGSEGV:
+	  std::cout << "Segmentation violation";
+	  break;
 
-		case SIGFPE:
-			std::cout << "Divide by zero";
-			break;
+	case SIGTERM:
+	  std::cout << "Termination request";
+	  break;
 
-		case SIGILL:
-			std::cout << "Invalid/unknown";
-			break;
+	case SIGINT:
+	  std::cout << "Break interrupt";
+	  break;
 
-		case SIGSEGV:
-			std::cout << "Segmentation violation";
-			break;
+	case SIGKILL:
+	  std::cout << "Kill";
+	  break;
 
-		case SIGTERM:
-			std::cout << "Termination request";
-			break;
+	case SIGQUIT:
+	  std::cout << "Quit";
+	  break;
 
-		case SIGINT:
-			std::cout << "Break interrupt";
-			break;
-
-		case SIGKILL:
-			std::cout << "Kill";
-			break;
-
-		case SIGQUIT:
-			std::cout << "Quit";
-			break;
-
-		default:
-			std::cout << "Unknown";
-		}
-
-		std::cout << " exception signalled." << std::endl;
+	default:
+	  std::cout << "Unknown";
 	}
 
-	exit(2);
+      std::cout << " exception signalled." << std::endl;
+    }
+
+  exit(2);
 }
 
 #endif

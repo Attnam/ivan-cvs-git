@@ -13,1043 +13,1043 @@
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
-	std::string Word = SaveFile.ReadWord();
+  std::string Word = SaveFile.ReadWord();
 
-	if(Word == "Pos")
+  if(Word == "Pos")
+    {
+      Random = false;
+
+      if(!Vector)
+	Vector = new vector2d;
+
+      *Vector = SaveFile.ReadVector2d(ValueMap);
+    }
+
+  if(Word == "Random")
+    {
+      Random = true;
+
+      if(SaveFile.ReadWord() != "{")
+	ABORT("Script error in level script!");
+
+      for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 	{
-		Random = false;
+	  if(Word == "Walkable")
+	    {
+	      if(!IsWalkable)
+		IsWalkable = new bool;
 
-		if(!Vector)
-			Vector = new vector2d;
+	      *IsWalkable = SaveFile.ReadBool();
 
-		*Vector = SaveFile.ReadVector2d(ValueMap);
+	      continue;
+	    }
+
+	  if(Word == "InRoom")
+	    {
+	      if(!IsInRoom)
+		IsInRoom = new bool;
+
+	      *IsInRoom = SaveFile.ReadBool();
+
+	      continue;
+	    }
+	  ABORT("Odd script term %s encountered in position script!", Word.c_str());
 	}
-
-	if(Word == "Random")
-	{
-		Random = true;
-
-		if(SaveFile.ReadWord() != "{")
-			ABORT("Script error in level script!");
-
-		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
-		{
-			if(Word == "Walkable")
-			{
-				if(!IsWalkable)
-					IsWalkable = new bool;
-
-				*IsWalkable = SaveFile.ReadBool();
-
-				continue;
-			}
-
-			if(Word == "InRoom")
-			{
-				if(!IsInRoom)
-					IsInRoom = new bool;
-
-				*IsInRoom = SaveFile.ReadBool();
-
-				continue;
-			}
-			ABORT("Odd script term %s encountered in position script!", Word.c_str());
-		}
-	}
+    }
 }
 
 template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile)
 {
-	std::string Word = SaveFile.ReadWord();
+  std::string Word = SaveFile.ReadWord();
 
-	if(Word == "=")
+  if(Word == "=")
+    Word = SaveFile.ReadWord();
+
+  ushort Index;
+
+  for(ushort c = 0;; ++c)
+    if(Index = protocontainer<material>::SearchCodeName(Word))
+      {
+	if(c < MaterialData.size())
+	  {
+	    *MaterialData[c].first = Index;
+
+	    Word = SaveFile.ReadWord();
+
+	    if(Word == "(")
+	      {
+		*MaterialData[c].second = SaveFile.ReadNumber(ValueMap);
 		Word = SaveFile.ReadWord();
+	      }
+	  }
+	else
+	  {
+	    ushort* NewIndex = new ushort;
+	    ulong* NewVolume = 0;
+	    *NewIndex = Index;
 
-	ushort Index;
+	    Word = SaveFile.ReadWord();
 
-	for(ushort c = 0;; ++c)
-		if(Index = protocontainer<material>::SearchCodeName(Word))
-		{
-			if(c < MaterialData.size())
-			{
-				*MaterialData[c].first = Index;
-
-				Word = SaveFile.ReadWord();
-
-				if(Word == "(")
-				{
-					*MaterialData[c].second = SaveFile.ReadNumber(ValueMap);
-					Word = SaveFile.ReadWord();
-				}
-			}
-			else
-			{
-				ushort* NewIndex = new ushort;
-				ulong* NewVolume = 0;
-				*NewIndex = Index;
-
-				Word = SaveFile.ReadWord();
-
-				if(Word == "(")
-				{
-					NewVolume = new ulong;
-					*NewVolume = SaveFile.ReadNumber(ValueMap);
-					Word = SaveFile.ReadWord();
-				}
-
-				MaterialData.push_back(std::pair<ushort*, ulong*>(NewIndex, NewVolume));
-			}
-		}
-		else
-			break;
-
-	if((Index = protocontainer<type>::SearchCodeName(Word)) || Word == "0")
-	{
-		if(!ContentType)
-			ContentType = new ushort;
-
-		*ContentType = Index;
-
+	    if(Word == "(")
+	      {
+		NewVolume = new ulong;
+		*NewVolume = SaveFile.ReadNumber(ValueMap);
 		Word = SaveFile.ReadWord();
-	}
+	      }
 
-	ReadParameters(SaveFile, Word);
+	    MaterialData.push_back(std::pair<ushort*, ulong*>(NewIndex, NewVolume));
+	  }
+      }
+    else
+      break;
+
+  if((Index = protocontainer<type>::SearchCodeName(Word)) || Word == "0")
+    {
+      if(!ContentType)
+	ContentType = new ushort;
+
+      *ContentType = Index;
+
+      Word = SaveFile.ReadWord();
+    }
+
+  ReadParameters(SaveFile, Word);
 }
 
 template <class type> type* basecontentscript<type>::Instantiate() const
 {
-	if(!ContentType)
-		ABORT("Illegal content script instantiation of %s!", typeid(type).name());
+  if(!ContentType)
+    ABORT("Illegal content script instantiation of %s!", typeid(type).name());
 
-	type* Instance = protocontainer<type>::GetProto(*ContentType)->Clone();
+  type* Instance = protocontainer<type>::GetProto(*ContentType)->Clone();
 
-	for(ushort c = 0; c < MaterialData.size(); ++c)
-		Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialData[c].first)->Clone(MaterialData[c].second ? *MaterialData[c].second : 0));
+  for(ushort c = 0; c < MaterialData.size(); ++c)
+    Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialData[c].first)->Clone(MaterialData[c].second ? *MaterialData[c].second : 0));
 
-	return Instance;
+  return Instance;
 }
 
 template <class type> void basecontentscript<type>::ReadParameters(inputfile&, std::string LastWord)
 {
-	if(LastWord != ";" && LastWord != ",")
-		ABORT("Script error: Odd terminator %s encountered in content script of %s!", LastWord.c_str(), typeid(type).name());
+  if(LastWord != ";" && LastWord != ",")
+    ABORT("Script error: Odd terminator %s encountered in content script of %s!", LastWord.c_str(), typeid(type).name());
 }
 
 template <class type> ushort* basecontentscript<type>::GetMaterialType(ushort Index, bool AOE) const
 {
-	if(Index < MaterialData.size() && MaterialData[Index].first)
-		return MaterialData[Index].first;
-	else
-	{
-		if(AOE)
-			ABORT("Undefined script member MaterialData[%d] sought!", Index);
+  if(Index < MaterialData.size() && MaterialData[Index].first)
+    return MaterialData[Index].first;
+  else
+    {
+      if(AOE)
+	ABORT("Undefined script member MaterialData[%d] sought!", Index);
 
-		return 0;
-	}
+      return 0;
+    }
 }
 
 template <class type> ulong* basecontentscript<type>::GetMaterialVolume(ushort Index, bool AOE) const
 {
-	if(Index < MaterialData.size() && MaterialData[Index].second)
-		return MaterialData[Index].second;
-	else
-	{
-		if(AOE)
-			ABORT("Undefined script member MaterialData[%d] sought!", Index);
+  if(Index < MaterialData.size() && MaterialData[Index].second)
+    return MaterialData[Index].second;
+  else
+    {
+      if(AOE)
+	ABORT("Undefined script member MaterialData[%d] sought!", Index);
 
-		return 0;
-	}
+      return 0;
+    }
 }
 
 void contentscript<character>::ReadParameters(inputfile& SaveFile, std::string LastWord)
 {
-	if(LastWord == "{")
-		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
-		{
-			if(Word == "Team")
-			{
-				if(!Team)
-					Team = new ushort;
+  if(LastWord == "{")
+    for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+      {
+	if(Word == "Team")
+	  {
+	    if(!Team)
+	      Team = new ushort;
 
-				*Team = SaveFile.ReadNumber(ValueMap);
+	    *Team = SaveFile.ReadNumber(ValueMap);
 
-				continue;
-			}
+	    continue;
+	  }
 
-			ABORT("Odd script term %s encountered in character script!", Word.c_str());
-		}
-	else
-		basecontentscript<character>::ReadParameters(SaveFile, LastWord);
+	ABORT("Odd script term %s encountered in character script!", Word.c_str());
+      }
+  else
+    basecontentscript<character>::ReadParameters(SaveFile, LastWord);
 }
 
 character* contentscript<character>::Instantiate() const
 {
-	character* Instance = basecontentscript<character>::Instantiate();
+  character* Instance = basecontentscript<character>::Instantiate();
 
-	if(GetTeam(false))
-		Instance->SetTeam(game::GetTeam(*GetTeam()));
+  if(GetTeam(false))
+    Instance->SetTeam(game::GetTeam(*GetTeam()));
 
-	return Instance;
+  return Instance;
 }
 
 void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
 {
-	if(LastWord == "{")
-		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
-		{
-			if(Word == "Locked")
-			{
-				if(!Locked)
-					Locked = new bool;
+  if(LastWord == "{")
+    for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+      {
+	if(Word == "Locked")
+	  {
+	    if(!Locked)
+	      Locked = new bool;
 
-				*Locked = SaveFile.ReadBool();
+	    *Locked = SaveFile.ReadBool();
 
-				continue;
-			}
+	    continue;
+	  }
 
-			ABORT("Odd script term %s encountered in overlevelterrain script!", Word.c_str());
-		}
-	else
-		basecontentscript<overlevelterrain>::ReadParameters(SaveFile, LastWord);
+	ABORT("Odd script term %s encountered in overlevelterrain script!", Word.c_str());
+      }
+  else
+    basecontentscript<overlevelterrain>::ReadParameters(SaveFile, LastWord);
 }
 
 overlevelterrain* contentscript<overlevelterrain>::Instantiate() const
 {
-	overlevelterrain* Instance = basecontentscript<overlevelterrain>::Instantiate();
+  overlevelterrain* Instance = basecontentscript<overlevelterrain>::Instantiate();
 
-	if(GetLocked(false) && *GetLocked())
-		Instance->Lock();
+  if(GetLocked(false) && *GetLocked())
+    Instance->Lock();
 
-	return Instance;
+  return Instance;
 }
 
 void squarescript::ReadFrom(inputfile& SaveFile)
 {
-	std::string Word = SaveFile.ReadWord();
+  std::string Word = SaveFile.ReadWord();
 
-	if(Word != "=")
+  if(Word != "=")
+    {
+      if(!PosScript)
+	PosScript = new posscript;
+
+      PosScript->SetValueMap(ValueMap);
+      PosScript->ReadFrom(SaveFile);
+
+      if(SaveFile.ReadWord() != "{")
+	ABORT("Bracket missing in square script!");
+
+      for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 	{
-		if(!PosScript)
-			PosScript = new posscript;
+	  if(Word == "Character")
+	    {
+	      if(!Character)
+		Character = new contentscript<character>;
 
-		PosScript->SetValueMap(ValueMap);
-		PosScript->ReadFrom(SaveFile);
+	      Character->SetValueMap(ValueMap);
+	      Character->ReadFrom(SaveFile);
 
-		if(SaveFile.ReadWord() != "{")
-			ABORT("Bracket missing in square script!");
+	      continue;
+	    }
 
-		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
-		{
-			if(Word == "Character")
-			{
-				if(!Character)
-					Character = new contentscript<character>;
+	  if(Word == "Item")
+	    {
+	      if(!Item)
+		Item = new contentscript<item>;
 
-				Character->SetValueMap(ValueMap);
-				Character->ReadFrom(SaveFile);
+	      Item->SetValueMap(ValueMap);
+	      Item->ReadFrom(SaveFile);
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "Item")
-			{
-				if(!Item)
-					Item = new contentscript<item>;
+	  if(Word == "GroundTerrain")
+	    {
+	      if(!GroundTerrain)
+		GroundTerrain = new contentscript<groundlevelterrain>;
 
-				Item->SetValueMap(ValueMap);
-				Item->ReadFrom(SaveFile);
+	      GroundTerrain->SetValueMap(ValueMap);
+	      GroundTerrain->ReadFrom(SaveFile);
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "GroundTerrain")
-			{
-				if(!GroundTerrain)
-					GroundTerrain = new contentscript<groundlevelterrain>;
+	  if(Word == "OverTerrain")
+	    {
+	      if(!OverTerrain)
+		OverTerrain = new contentscript<overlevelterrain>;
 
-				GroundTerrain->SetValueMap(ValueMap);
-				GroundTerrain->ReadFrom(SaveFile);
+	      OverTerrain->SetValueMap(ValueMap);
+	      OverTerrain->ReadFrom(SaveFile);
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "OverTerrain")
-			{
-				if(!OverTerrain)
-					OverTerrain = new contentscript<overlevelterrain>;
+	  if(Word == "IsUpStairs")
+	    {
+	      if(!IsUpStairs)
+		IsUpStairs = new bool;
 
-				OverTerrain->SetValueMap(ValueMap);
-				OverTerrain->ReadFrom(SaveFile);
+	      *IsUpStairs = SaveFile.ReadBool();
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "IsUpStairs")
-			{
-				if(!IsUpStairs)
-					IsUpStairs = new bool;
+	  if(Word == "IsDownStairs")
+	    {
+	      if(!IsDownStairs)
+		IsDownStairs = new bool;
 
-				*IsUpStairs = SaveFile.ReadBool();
+	      *IsDownStairs = SaveFile.ReadBool();
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "IsDownStairs")
-			{
-				if(!IsDownStairs)
-					IsDownStairs = new bool;
+	  if(Word == "IsWorldMapEntry")
+	    {
+	      if(!IsWorldMapEntry)
+		IsWorldMapEntry = new bool;
 
-				*IsDownStairs = SaveFile.ReadBool();
+	      *IsWorldMapEntry = SaveFile.ReadBool();
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "IsWorldMapEntry")
-			{
-				if(!IsWorldMapEntry)
-					IsWorldMapEntry = new bool;
+	  if(Word == "Times")
+	    {
+	      if(!Times)
+		Times = new uchar;
 
-				*IsWorldMapEntry = SaveFile.ReadBool();
+	      *Times = SaveFile.ReadNumber(ValueMap);
 
-				continue;
-			}
+	      continue;
+	    }
 
-			if(Word == "Times")
-			{
-				if(!Times)
-					Times = new uchar;
-
-				*Times = SaveFile.ReadNumber(ValueMap);
-
-				continue;
-			}
-
-			ABORT("Odd script term %s encountered in square script!", Word.c_str());
-		}
+	  ABORT("Odd script term %s encountered in square script!", Word.c_str());
 	}
-	else
-	{
-		if(!GroundTerrain)
-			GroundTerrain = new contentscript<groundlevelterrain>;
+    }
+  else
+    {
+      if(!GroundTerrain)
+	GroundTerrain = new contentscript<groundlevelterrain>;
 
-		GroundTerrain->SetValueMap(ValueMap);
-		GroundTerrain->ReadFrom(SaveFile);
+      GroundTerrain->SetValueMap(ValueMap);
+      GroundTerrain->ReadFrom(SaveFile);
 
-		if(!OverTerrain)
-			OverTerrain = new contentscript<overlevelterrain>;
+      if(!OverTerrain)
+	OverTerrain = new contentscript<overlevelterrain>;
 
-		OverTerrain->SetValueMap(ValueMap);
-		OverTerrain->ReadFrom(SaveFile);
-	}
+      OverTerrain->SetValueMap(ValueMap);
+      OverTerrain->ReadFrom(SaveFile);
+    }
 }
 
 template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 {
-	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in content map script of %s!", typeid(type).name());
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Bracket missing in content map script of %s!", typeid(type).name());
 
-	std::map<char, contentscript<type>*> SymbolMap;
+  std::map<char, contentscript<type>*> SymbolMap;
 
-	SymbolMap['.'] = 0;
+  SymbolMap['.'] = 0;
 
-	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    {
+      if(Word == "Pos")
 	{
-		if(Word == "Pos")
-		{
-			if(!Pos)
-				Pos = new vector2d;
+	  if(!Pos)
+	    Pos = new vector2d;
 
-			*Pos = SaveFile.ReadVector2d(ValueMap);
+	  *Pos = SaveFile.ReadVector2d(ValueMap);
 
-			continue;
-		}
-
-		if(Word == "Size")
-		{
-			if(!Size)
-				Size = new vector2d;
-
-			*Size = SaveFile.ReadVector2d(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "Types")
-		{
-			if(SaveFile.ReadWord() != "{")
-				ABORT("Missing bracket in content map script of %s!", typeid(type).name());
-
-			for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
-			{
-				/* This may cause a memory leak if room's ReCalculate == true!!! */
-
-				contentscript<type>* ContentScript = new contentscript<type>;
-
-				ContentScript->SetValueMap(ValueMap);
-				ContentScript->ReadFrom(SaveFile);
-
-				if(*ContentScript->GetContentType())
-					SymbolMap[Word[0]] = ContentScript;
-				else
-				{
-					SymbolMap[Word[0]] = 0;
-					delete ContentScript;
-				}
-			}
-
-			continue;
-		}
-
-		ABORT("Odd script term %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
+	  continue;
 	}
 
-	if(!ContentScriptMap)
-		Alloc2D(ContentScriptMap, GetSize()->X, GetSize()->Y);
+      if(Word == "Size")
+	{
+	  if(!Size)
+	    Size = new vector2d;
 
-	if(SaveFile.ReadWord() != "{")
-		ABORT("Missing bracket in content map script of %s!", typeid(type).name());
+	  *Size = SaveFile.ReadVector2d(ValueMap);
 
-	for(ushort y = 0; y < GetSize()->Y; ++y)
-		for(ushort x = 0; x < GetSize()->X; ++x)
+	  continue;
+	}
+
+      if(Word == "Types")
+	{
+	  if(SaveFile.ReadWord() != "{")
+	    ABORT("Missing bracket in content map script of %s!", typeid(type).name());
+
+	  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+	    {
+				/* This may cause a memory leak if room's ReCalculate == true!!! */
+
+	      contentscript<type>* ContentScript = new contentscript<type>;
+
+	      ContentScript->SetValueMap(ValueMap);
+	      ContentScript->ReadFrom(SaveFile);
+
+	      if(*ContentScript->GetContentType())
+		SymbolMap[Word[0]] = ContentScript;
+	      else
 		{
-			char Char = SaveFile.ReadLetter();
-
-			std::map<char, contentscript<type>*>::iterator Iterator = SymbolMap.find(Char);
-
-			if(Iterator != SymbolMap.end())
-				ContentScriptMap[x][y] = Iterator->second;
-			else
-				ABORT("Illegal content %c in content map of %s!", Char, typeid(type).name());
+		  SymbolMap[Word[0]] = 0;
+		  delete ContentScript;
 		}
+	    }
 
-	if(SaveFile.ReadWord() != "}")
-		ABORT("Missing bracket in content map script of %s!", typeid(type).name());
+	  continue;
+	}
+
+      ABORT("Odd script term %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
+    }
+
+  if(!ContentScriptMap)
+    Alloc2D(ContentScriptMap, GetSize()->X, GetSize()->Y);
+
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Missing bracket in content map script of %s!", typeid(type).name());
+
+  for(ushort y = 0; y < GetSize()->Y; ++y)
+    for(ushort x = 0; x < GetSize()->X; ++x)
+      {
+	char Char = SaveFile.ReadLetter();
+
+	std::map<char, contentscript<type>*>::iterator Iterator = SymbolMap.find(Char);
+
+	if(Iterator != SymbolMap.end())
+	  ContentScriptMap[x][y] = Iterator->second;
+	else
+	  ABORT("Illegal content %c in content map of %s!", Char, typeid(type).name());
+      }
+
+  if(SaveFile.ReadWord() != "}")
+    ABORT("Missing bracket in content map script of %s!", typeid(type).name());
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
-	if(ReRead)
-	{
-		if(Base)
-			if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
-				Base->ReadFrom(SaveFile, true);
+  if(ReRead)
+    {
+      if(Base)
+	if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
+	  Base->ReadFrom(SaveFile, true);
 
-		if(ReCalculate && *ReCalculate)
-		{
-			SaveFile.ClearFlags();
-			SaveFile.SeekPosBeg(BufferPos);
-		}
-		else
-			return;
+      if(ReCalculate && *ReCalculate)
+	{
+	  SaveFile.ClearFlags();
+	  SaveFile.SeekPosBeg(BufferPos);
 	}
-	else
-		BufferPos = SaveFile.TellPos();
+      else
+	return;
+    }
+  else
+    BufferPos = SaveFile.TellPos();
 
-	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in room script!");
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Bracket missing in room script!");
 
-	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    {
+      if(Word == "Square")
 	{
-		if(Word == "Square")
-		{
-			squarescript* SS = new squarescript;
+	  squarescript* SS = new squarescript;
 
-			SS->SetValueMap(ValueMap);
-			SS->ReadFrom(SaveFile);
+	  SS->SetValueMap(ValueMap);
+	  SS->ReadFrom(SaveFile);
 
-			if(!ReRead)
-				Square.push_back(SS);
-			else
-				delete SS;
+	  if(!ReRead)
+	    Square.push_back(SS);
+	  else
+	    delete SS;
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "CharacterMap")
-		{
-			if(!CharacterMap)
-				CharacterMap = new contentmap<character>;
+      if(Word == "CharacterMap")
+	{
+	  if(!CharacterMap)
+	    CharacterMap = new contentmap<character>;
 
-			CharacterMap->SetValueMap(ValueMap);
-			CharacterMap->ReadFrom(SaveFile);
+	  CharacterMap->SetValueMap(ValueMap);
+	  CharacterMap->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "ItemMap")
-		{
-			if(!ItemMap)
-				ItemMap = new contentmap<item>;
+      if(Word == "ItemMap")
+	{
+	  if(!ItemMap)
+	    ItemMap = new contentmap<item>;
 
-			ItemMap->SetValueMap(ValueMap);
-			ItemMap->ReadFrom(SaveFile);
+	  ItemMap->SetValueMap(ValueMap);
+	  ItemMap->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "GroundTerrainMap")
-		{
-			if(!GroundTerrainMap)
-				GroundTerrainMap = new contentmap<groundlevelterrain>;
+      if(Word == "GroundTerrainMap")
+	{
+	  if(!GroundTerrainMap)
+	    GroundTerrainMap = new contentmap<groundlevelterrain>;
 
-			GroundTerrainMap->SetValueMap(ValueMap);
-			GroundTerrainMap->ReadFrom(SaveFile);
+	  GroundTerrainMap->SetValueMap(ValueMap);
+	  GroundTerrainMap->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "OverTerrainMap")
-		{
-			if(!OverTerrainMap)
-				OverTerrainMap = new contentmap<overlevelterrain>;
+      if(Word == "OverTerrainMap")
+	{
+	  if(!OverTerrainMap)
+	    OverTerrainMap = new contentmap<overlevelterrain>;
 
-			OverTerrainMap->SetValueMap(ValueMap);
-			OverTerrainMap->ReadFrom(SaveFile);
+	  OverTerrainMap->SetValueMap(ValueMap);
+	  OverTerrainMap->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "WallSquare")
-		{
-			if(!WallSquare)
-				WallSquare = new squarescript;
+      if(Word == "WallSquare")
+	{
+	  if(!WallSquare)
+	    WallSquare = new squarescript;
 
-			WallSquare->SetValueMap(ValueMap);
-			WallSquare->ReadFrom(SaveFile);
+	  WallSquare->SetValueMap(ValueMap);
+	  WallSquare->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "FloorSquare")
-		{
-			if(!FloorSquare)
-				FloorSquare = new squarescript;
+      if(Word == "FloorSquare")
+	{
+	  if(!FloorSquare)
+	    FloorSquare = new squarescript;
 
-			FloorSquare->SetValueMap(ValueMap);
-			FloorSquare->ReadFrom(SaveFile);
+	  FloorSquare->SetValueMap(ValueMap);
+	  FloorSquare->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "DoorSquare")
-		{
-			if(!DoorSquare)
-				DoorSquare = new squarescript;
+      if(Word == "DoorSquare")
+	{
+	  if(!DoorSquare)
+	    DoorSquare = new squarescript;
 
-			DoorSquare->SetValueMap(ValueMap);
-			DoorSquare->ReadFrom(SaveFile);
+	  DoorSquare->SetValueMap(ValueMap);
+	  DoorSquare->ReadFrom(SaveFile);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "Size")
-		{
-			if(!Size)
-				Size = new vector2d;
+      if(Word == "Size")
+	{
+	  if(!Size)
+	    Size = new vector2d;
 
-			*Size = SaveFile.ReadVector2d(ValueMap);
+	  *Size = SaveFile.ReadVector2d(ValueMap);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "AltarPossible")
-		{
-			if(!AltarPossible)
-				AltarPossible = new bool;
+      if(Word == "AltarPossible")
+	{
+	  if(!AltarPossible)
+	    AltarPossible = new bool;
 
-			*AltarPossible = SaveFile.ReadBool();
+	  *AltarPossible = SaveFile.ReadBool();
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "GenerateDoor")
-		{
-			if(!GenerateDoor)
-				GenerateDoor = new bool;
+      if(Word == "GenerateDoor")
+	{
+	  if(!GenerateDoor)
+	    GenerateDoor = new bool;
 
-			*GenerateDoor = SaveFile.ReadBool();
+	  *GenerateDoor = SaveFile.ReadBool();
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "Pos")
-		{
-			if(!Pos)
-				Pos = new vector2d;
+      if(Word == "Pos")
+	{
+	  if(!Pos)
+	    Pos = new vector2d;
 
-			*Pos = SaveFile.ReadVector2d(ValueMap);
+	  *Pos = SaveFile.ReadVector2d(ValueMap);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "ReCalculate")
-		{
-			if(!ReCalculate)
-				ReCalculate = new bool;
+      if(Word == "ReCalculate")
+	{
+	  if(!ReCalculate)
+	    ReCalculate = new bool;
 
-			*ReCalculate = SaveFile.ReadBool();
+	  *ReCalculate = SaveFile.ReadBool();
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "GenerateTunnel")
-		{
-			if(!GenerateTunnel)
-				GenerateTunnel = new bool;
+      if(Word == "GenerateTunnel")
+	{
+	  if(!GenerateTunnel)
+	    GenerateTunnel = new bool;
 
-			*GenerateTunnel = SaveFile.ReadBool();
+	  *GenerateTunnel = SaveFile.ReadBool();
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "DivineOwner")
-		{
-			if(!DivineOwner)
-				DivineOwner = new uchar;
+      if(Word == "DivineOwner")
+	{
+	  if(!DivineOwner)
+	    DivineOwner = new uchar;
 
-			*DivineOwner = SaveFile.ReadNumber(ValueMap);
+	  *DivineOwner = SaveFile.ReadNumber(ValueMap);
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "GenerateLanterns")
-		{
-			if(!GenerateLanterns)
-				GenerateLanterns = new bool;
+      if(Word == "GenerateLanterns")
+	{
+	  if(!GenerateLanterns)
+	    GenerateLanterns = new bool;
 
-			*GenerateLanterns = SaveFile.ReadBool();
+	  *GenerateLanterns = SaveFile.ReadBool();
 
-			continue;
-		}
+	  continue;
+	}
 
-		if(Word == "Type")
-		{
-			if(!Type)
-				Type = new ushort;
+      if(Word == "Type")
+	{
+	  if(!Type)
+	    Type = new ushort;
  
-			SaveFile.ReadWord();
-			Word = SaveFile.ReadWord();
-			SaveFile.ReadWord();
+	  SaveFile.ReadWord();
+	  Word = SaveFile.ReadWord();
+	  SaveFile.ReadWord();
 
-			*Type = protocontainer<room>::SearchCodeName(Word);
+	  *Type = protocontainer<room>::SearchCodeName(Word);
 
-			if(!*Type)
-				ABORT("Odd room type %s encountered in room script!", Word.c_str());
+	  if(!*Type)
+	    ABORT("Odd room type %s encountered in room script!", Word.c_str());
 
-			continue;
-		}
-
-		if(Word == "GenerateFountains")
-		{
-			if(!GenerateFountains)
-				GenerateFountains = new bool;
-
-			*GenerateFountains = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		if(Word == "AllowLockedDoors")
-		{
-			if(!AllowLockedDoors)
-				AllowLockedDoors = new bool;
-
-			*AllowLockedDoors = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		ABORT("Odd script term %s encountered in room script!", Word.c_str());
+	  continue;
 	}
+
+      if(Word == "GenerateFountains")
+	{
+	  if(!GenerateFountains)
+	    GenerateFountains = new bool;
+
+	  *GenerateFountains = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      if(Word == "AllowLockedDoors")
+	{
+	  if(!AllowLockedDoors)
+	    AllowLockedDoors = new bool;
+
+	  *AllowLockedDoors = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      ABORT("Odd script term %s encountered in room script!", Word.c_str());
+    }
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
-	if(ReRead)
+  if(ReRead)
+    {
+      if(Base)
+	if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
+	  Base->ReadFrom(SaveFile, true);
+
+      if(ReCalculate && *ReCalculate)
 	{
-		if(Base)
-			if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
-				Base->ReadFrom(SaveFile, true);
-
-		if(ReCalculate && *ReCalculate)
-		{
-			SaveFile.ClearFlags();
-			SaveFile.SeekPosBeg(BufferPos);
-		}
-		else
-			return;
+	  SaveFile.ClearFlags();
+	  SaveFile.SeekPosBeg(BufferPos);
 	}
-	else
-		BufferPos = SaveFile.TellPos();
+      else
+	return;
+    }
+  else
+    BufferPos = SaveFile.TellPos();
 
-	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in level script!");
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Bracket missing in level script!");
 
-	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    {
+      if(Word == "Square")
 	{
-		if(Word == "Square")
-		{
-			squarescript* SS = new squarescript;
+	  squarescript* SS = new squarescript;
 
-			SS->SetValueMap(ValueMap);
-			SS->ReadFrom(SaveFile);
+	  SS->SetValueMap(ValueMap);
+	  SS->ReadFrom(SaveFile);
 
-			if(!ReRead)
-				Square.push_back(SS);
-			else
-				delete SS;
+	  if(!ReRead)
+	    Square.push_back(SS);
+	  else
+	    delete SS;
 
-			continue;
-		}
-
-		if(Word == "Room")
-		{
-			uchar Index = SaveFile.ReadNumber(ValueMap);
-
-			std::map<uchar, roomscript*>::iterator Iterator = Room.find(Index);
-
-			roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
-
-			RS->SetValueMap(ValueMap);
-
-			if(RoomDefault)
-				RS->SetBase(RoomDefault);
-			else
-				if(Base)
-					RS->SetBase(Base->GetRoomDefault(false));
-
-			RS->ReadFrom(SaveFile, ReRead);
-
-			Room[Index] = RS;
-
-			continue;
-		}
-
-		if(Word == "RoomDefault")
-		{
-			if(!RoomDefault)
-				RoomDefault = new roomscript;
-
-			RoomDefault->SetValueMap(ValueMap);
-
-			if(Base)
-				RoomDefault->SetBase(Base->GetRoomDefault(false));
-
-			RoomDefault->ReadFrom(SaveFile, ReRead);
-
-			continue;
-		}
-
-		if(Word == "FillSquare")
-		{
-			if(!FillSquare)
-				FillSquare = new squarescript;
-
-			FillSquare->SetValueMap(ValueMap);
-			FillSquare->ReadFrom(SaveFile);
-
-			continue;
-		}
-
-		if(Word == "LevelMessage")
-		{
-			SaveFile.ReadWord();
-
-			if(!LevelMessage)
-				LevelMessage = new std::string;
-
-			*LevelMessage = SaveFile.ReadWord();
-
-			SaveFile.ReadWord();
-
-			continue;
-		}
-
-		if(Word == "Size")
-		{
-			SaveFile.ReadWord();
-
-			if(!Size)
-				Size = new vector2d;
-
-			*Size = SaveFile.ReadVector2d(ValueMap);
-
-			ValueMap["XSize"] = Size->X;
-			ValueMap["YSize"] = Size->Y;
-
-			continue;
-		}
-
-		if(Word == "Items")
-		{
-			if(!Items)
-				Items = new ushort;
-
-			*Items = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "Rooms")
-		{
-			if(!Rooms)
-				Rooms = new uchar;
-
-			*Rooms = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "GenerateMonsters")
-		{
-			if(!GenerateMonsters)
-				GenerateMonsters = new bool;
-
-			*GenerateMonsters = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		if(Word == "ReCalculate")
-		{
-			if(!ReCalculate)
-				ReCalculate = new bool;
-
-			*ReCalculate = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		if(Word == "GenerateUpStairs")
-		{
-			if(!GenerateUpStairs)
-				GenerateUpStairs = new bool;
-
-			*GenerateUpStairs = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		if(Word == "GenerateDownStairs")
-		{
-			if(!GenerateDownStairs)
-				GenerateDownStairs = new bool;
-
-			*GenerateDownStairs = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		if(Word == "OnGround")
-		{
-			if(!OnGround)
-				OnGround = new bool;
-
-			*OnGround = SaveFile.ReadBool();
-
-			continue;
-		}
-
-		if(Word == "TeamDefault")
-		{
-			if(!TeamDefault)
-				TeamDefault = new uchar;
-
-			*TeamDefault = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "AmbientLight")
-		{
-			if(!AmbientLight)
-				AmbientLight = new ushort;
-
-			*AmbientLight  = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "Description")
-		{
-			SaveFile.ReadWord();
-
-			if(!Description)
-				Description = new std::string;
-
-			*Description = SaveFile.ReadWord();
-
-			SaveFile.ReadWord();
-
-			continue;
-		}
-
-		if(Word == "LOSModifier")
-		{
-			if(!LOSModifier)
-				LOSModifier = new uchar;
-
-			*LOSModifier = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		ABORT("Odd script term %s encountered in level script!", Word.c_str());
+	  continue;
 	}
+
+      if(Word == "Room")
+	{
+	  uchar Index = SaveFile.ReadNumber(ValueMap);
+
+	  std::map<uchar, roomscript*>::iterator Iterator = Room.find(Index);
+
+	  roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
+
+	  RS->SetValueMap(ValueMap);
+
+	  if(RoomDefault)
+	    RS->SetBase(RoomDefault);
+	  else
+	    if(Base)
+	      RS->SetBase(Base->GetRoomDefault(false));
+
+	  RS->ReadFrom(SaveFile, ReRead);
+
+	  Room[Index] = RS;
+
+	  continue;
+	}
+
+      if(Word == "RoomDefault")
+	{
+	  if(!RoomDefault)
+	    RoomDefault = new roomscript;
+
+	  RoomDefault->SetValueMap(ValueMap);
+
+	  if(Base)
+	    RoomDefault->SetBase(Base->GetRoomDefault(false));
+
+	  RoomDefault->ReadFrom(SaveFile, ReRead);
+
+	  continue;
+	}
+
+      if(Word == "FillSquare")
+	{
+	  if(!FillSquare)
+	    FillSquare = new squarescript;
+
+	  FillSquare->SetValueMap(ValueMap);
+	  FillSquare->ReadFrom(SaveFile);
+
+	  continue;
+	}
+
+      if(Word == "LevelMessage")
+	{
+	  SaveFile.ReadWord();
+
+	  if(!LevelMessage)
+	    LevelMessage = new std::string;
+
+	  *LevelMessage = SaveFile.ReadWord();
+
+	  SaveFile.ReadWord();
+
+	  continue;
+	}
+
+      if(Word == "Size")
+	{
+	  SaveFile.ReadWord();
+
+	  if(!Size)
+	    Size = new vector2d;
+
+	  *Size = SaveFile.ReadVector2d(ValueMap);
+
+	  ValueMap["XSize"] = Size->X;
+	  ValueMap["YSize"] = Size->Y;
+
+	  continue;
+	}
+
+      if(Word == "Items")
+	{
+	  if(!Items)
+	    Items = new ushort;
+
+	  *Items = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      if(Word == "Rooms")
+	{
+	  if(!Rooms)
+	    Rooms = new uchar;
+
+	  *Rooms = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      if(Word == "GenerateMonsters")
+	{
+	  if(!GenerateMonsters)
+	    GenerateMonsters = new bool;
+
+	  *GenerateMonsters = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      if(Word == "ReCalculate")
+	{
+	  if(!ReCalculate)
+	    ReCalculate = new bool;
+
+	  *ReCalculate = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      if(Word == "GenerateUpStairs")
+	{
+	  if(!GenerateUpStairs)
+	    GenerateUpStairs = new bool;
+
+	  *GenerateUpStairs = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      if(Word == "GenerateDownStairs")
+	{
+	  if(!GenerateDownStairs)
+	    GenerateDownStairs = new bool;
+
+	  *GenerateDownStairs = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      if(Word == "OnGround")
+	{
+	  if(!OnGround)
+	    OnGround = new bool;
+
+	  *OnGround = SaveFile.ReadBool();
+
+	  continue;
+	}
+
+      if(Word == "TeamDefault")
+	{
+	  if(!TeamDefault)
+	    TeamDefault = new uchar;
+
+	  *TeamDefault = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      if(Word == "AmbientLight")
+	{
+	  if(!AmbientLight)
+	    AmbientLight = new ushort;
+
+	  *AmbientLight  = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      if(Word == "Description")
+	{
+	  SaveFile.ReadWord();
+
+	  if(!Description)
+	    Description = new std::string;
+
+	  *Description = SaveFile.ReadWord();
+
+	  SaveFile.ReadWord();
+
+	  continue;
+	}
+
+      if(Word == "LOSModifier")
+	{
+	  if(!LOSModifier)
+	    LOSModifier = new uchar;
+
+	  *LOSModifier = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      ABORT("Odd script term %s encountered in level script!", Word.c_str());
+    }
 }
 
 void dungeonscript::ReadFrom(inputfile& SaveFile)
 {
-	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in dungeon script!");
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Bracket missing in dungeon script!");
 
-	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    {
+      if(Word == "Level")
 	{
-		if(Word == "Level")
-		{
-			uchar Index = SaveFile.ReadNumber(ValueMap);
+	  uchar Index = SaveFile.ReadNumber(ValueMap);
 
-			std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
+	  std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
 
-			levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
+	  levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
 
-			LS->SetValueMap(ValueMap);
+	  LS->SetValueMap(ValueMap);
 
-			if(LevelDefault)
-				LS->SetBase(LevelDefault);
-			else
-				if(Base)
-					LS->SetBase(Base->GetLevelDefault(false));
+	  if(LevelDefault)
+	    LS->SetBase(LevelDefault);
+	  else
+	    if(Base)
+	      LS->SetBase(Base->GetLevelDefault(false));
 
-			LS->ReadFrom(SaveFile);
+	  LS->ReadFrom(SaveFile);
 
-			Level[Index] = LS;
+	  Level[Index] = LS;
 
-			continue;
-		}
-
-		if(Word == "LevelDefault")
-		{
-			if(!LevelDefault)
-				LevelDefault = new levelscript;
-
-			LevelDefault->SetValueMap(ValueMap);
-
-			if(Base)
-				LevelDefault->SetBase(Base->GetLevelDefault(false));
-
-			LevelDefault->ReadFrom(SaveFile);
-
-			continue;
-		}
-
-		if(Word == "Levels")
-		{
-			if(!Levels)
-				Levels = new uchar;
-
-			*Levels = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		ABORT("Odd script term %s encountered in dungeon script!", Word.c_str());
+	  continue;
 	}
+
+      if(Word == "LevelDefault")
+	{
+	  if(!LevelDefault)
+	    LevelDefault = new levelscript;
+
+	  LevelDefault->SetValueMap(ValueMap);
+
+	  if(Base)
+	    LevelDefault->SetBase(Base->GetLevelDefault(false));
+
+	  LevelDefault->ReadFrom(SaveFile);
+
+	  continue;
+	}
+
+      if(Word == "Levels")
+	{
+	  if(!Levels)
+	    Levels = new uchar;
+
+	  *Levels = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      ABORT("Odd script term %s encountered in dungeon script!", Word.c_str());
+    }
 }
 
 void teamscript::ReadFrom(inputfile& SaveFile)
 {
-	ValueMap["HOSTILE"] = HOSTILE;
-	ValueMap["NEUTRAL"] = NEUTRAL;
-	ValueMap["FRIEND"] = FRIEND;
+  ValueMap["HOSTILE"] = HOSTILE;
+  ValueMap["NEUTRAL"] = NEUTRAL;
+  ValueMap["FRIEND"] = FRIEND;
 
-	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in team script!");
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Bracket missing in team script!");
 
-	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    {
+      if(Word == "Relation")
 	{
-		if(Word == "Relation")
-		{
-			std::pair<uchar, uchar> Rel;
+	  std::pair<uchar, uchar> Rel;
 
-			Rel.first = SaveFile.ReadNumber(ValueMap);
-			Rel.second = SaveFile.ReadNumber(ValueMap);
+	  Rel.first = SaveFile.ReadNumber(ValueMap);
+	  Rel.second = SaveFile.ReadNumber(ValueMap);
 
-			Relation.push_back(Rel);
+	  Relation.push_back(Rel);
 
-			continue;
-		}
-
-		ABORT("Odd script term %s encountered in team script!", Word.c_str());
+	  continue;
 	}
+
+      ABORT("Odd script term %s encountered in team script!", Word.c_str());
+    }
 }
 
 void gamescript::ReadFrom(inputfile& SaveFile)
 {
-	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
+  for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
+    {
+      if(Word == "Dungeon")
 	{
-		if(Word == "Dungeon")
-		{
-			uchar Index = SaveFile.ReadNumber(ValueMap);
+	  uchar Index = SaveFile.ReadNumber(ValueMap);
 
-			std::map<uchar, dungeonscript*>::iterator Iterator = Dungeon.find(Index);
+	  std::map<uchar, dungeonscript*>::iterator Iterator = Dungeon.find(Index);
 
-			dungeonscript* DS = Iterator == Dungeon.end() ? new dungeonscript : Iterator->second;
+	  dungeonscript* DS = Iterator == Dungeon.end() ? new dungeonscript : Iterator->second;
 
-			DS->SetValueMap(ValueMap);
-			DS->SetBase(DungeonDefault);
-			DS->ReadFrom(SaveFile);
+	  DS->SetValueMap(ValueMap);
+	  DS->SetBase(DungeonDefault);
+	  DS->ReadFrom(SaveFile);
 
-			Dungeon[Index] = DS;
+	  Dungeon[Index] = DS;
 
-			continue;
-		}
-
-		if(Word == "DungeonDefault")
-		{
-			if(!DungeonDefault)
-				DungeonDefault = new dungeonscript;
-
-			DungeonDefault->SetValueMap(ValueMap);
-			DungeonDefault->ReadFrom(SaveFile);
-
-			continue;
-		}
-
-		if(Word == "Dungeons")
-		{
-			if(!Dungeons)
-				Dungeons = new uchar;
-
-			*Dungeons = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "Teams")
-		{
-			if(!Teams)
-				Teams = new uchar;
-
-			*Teams = SaveFile.ReadNumber(ValueMap);
-
-			continue;
-		}
-
-		if(Word == "Team")
-		{
-			ushort Index = SaveFile.ReadNumber(ValueMap);
-			teamscript* TS = new teamscript;
-
-			TS->SetValueMap(ValueMap);
-			TS->ReadFrom(SaveFile);
-
-			Team.push_back(std::pair<uchar, teamscript*>(Index, TS));
-
-			continue;
-		}
-
-		ABORT("Odd script term %s encountered in game script!", Word.c_str());
+	  continue;
 	}
+
+      if(Word == "DungeonDefault")
+	{
+	  if(!DungeonDefault)
+	    DungeonDefault = new dungeonscript;
+
+	  DungeonDefault->SetValueMap(ValueMap);
+	  DungeonDefault->ReadFrom(SaveFile);
+
+	  continue;
+	}
+
+      if(Word == "Dungeons")
+	{
+	  if(!Dungeons)
+	    Dungeons = new uchar;
+
+	  *Dungeons = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      if(Word == "Teams")
+	{
+	  if(!Teams)
+	    Teams = new uchar;
+
+	  *Teams = SaveFile.ReadNumber(ValueMap);
+
+	  continue;
+	}
+
+      if(Word == "Team")
+	{
+	  ushort Index = SaveFile.ReadNumber(ValueMap);
+	  teamscript* TS = new teamscript;
+
+	  TS->SetValueMap(ValueMap);
+	  TS->ReadFrom(SaveFile);
+
+	  Team.push_back(std::pair<uchar, teamscript*>(Index, TS));
+
+	  continue;
+	}
+
+      ABORT("Odd script term %s encountered in game script!", Word.c_str());
+    }
 }
 
