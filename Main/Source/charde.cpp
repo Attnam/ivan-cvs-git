@@ -77,7 +77,7 @@ void swatcommando::CreateInitialEquipment()
 	GetStack()->FastAddItem(new chainmail(RAND() % 5 ? (material*)new iron : (material*)new mithril));
 }
 
-void fallenvalpurist::CreateInitialEquipment()
+void skeleton::CreateInitialEquipment()
 {
 	if(RAND() % 10)
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 3 ? (item*)new axe : (item*)new pickaxe)));
@@ -91,12 +91,12 @@ void fallenvalpurist::CreateInitialEquipment()
 	}
 }
 
-void froggoblin::CreateInitialEquipment()
+void goblin::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 3 ? (item*)new spear : (item*)new poleaxe)));
 }
 
-void cityguard::CreateInitialEquipment()
+void guard::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new iron))));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail)));
@@ -210,7 +210,7 @@ void humanoid::DrawToTileBuffer() const
 		igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16);
 }
 
-void fallenvalpurist::CreateCorpse()
+void skeleton::CreateCorpse()
 {
 	ushort Amount = 2 + RAND() % 4;
 
@@ -784,7 +784,7 @@ void farmer::BeTalkedTo(character* Talker)
 	}
 }
 
-void cityguard::BeTalkedTo(character* Talker)
+void guard::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
@@ -904,7 +904,7 @@ void billswill::BeTalkedTo(character*)
 	ADD_MESSAGE("\"Windows XP is coming. You will install it. Resistance is futile. Prepare to be assimilited.\"");
 }
 
-void fallenvalpurist::BeTalkedTo(character* Talker)
+void skeleton::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
 		ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
@@ -912,7 +912,7 @@ void fallenvalpurist::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
-void froggoblin::BeTalkedTo(character* Talker)
+void goblin::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
 		ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");

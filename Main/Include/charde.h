@@ -177,7 +177,7 @@ protected:
 
 class CHARACTER
 (
-	cityguard,
+	guard,
 	human,
 	InitMaterials(new humanflesh),
 	{
@@ -444,7 +444,7 @@ protected:
 
 class CHARACTER
 (
-	fallenvalpurist,
+	skeleton,
 	character,
 	InitMaterials(2, new bone, new leather),
 	{
@@ -473,7 +473,7 @@ protected:
 
 class CHARACTER
 (
-	froggoblin,
+	goblin,
 	character,
 	InitMaterials(2, new goblinoidflesh, new leather),
 	{
@@ -491,7 +491,7 @@ public:
 	virtual void BeTalkedTo(character*);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(144,0)
-	virtual std::string NameSingular() const RET("frog-goblin hybrid")
+	virtual std::string NameSingular() const RET("goblin")
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(2000)
 );
@@ -1084,3 +1084,4 @@ protected:
 );
 
 #endif
+

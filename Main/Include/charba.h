@@ -84,7 +84,7 @@ public:
 	virtual bool Apply();
 	virtual bool Close();
 	virtual bool Consume();
-	virtual bool DecreaseSoftGamma();
+	virtual bool DecreaseSoftContrast();
 	virtual bool Dip();
 	virtual bool DrawMessageHistory();
 	virtual bool Drop();
@@ -93,7 +93,7 @@ public:
 	virtual bool GainAllItems();
 	virtual bool GoDown();
 	virtual bool GoUp();
-	virtual bool IncreaseSoftGamma();
+	virtual bool IncreaseSoftContrast();
 	virtual bool Kick();
 	virtual bool Look();
 	virtual bool LowerStats();
@@ -378,3 +378,4 @@ public:\
 };
 
 #endif
+

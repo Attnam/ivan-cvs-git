@@ -106,8 +106,8 @@ public:
 	static uchar GetGodNumber() { return GodNumber; }
 	static long GetBaseScore() { return BaseScore; }
 	static void Turn(ushort Turn = 1) { Turns += Turn; }
-	static float GetSoftGamma() { return SoftGamma; }
-	static void EditSoftGamma(float E) { SoftGamma += E; if(SoftGamma < 0) SoftGamma = 0; if(SoftGamma > 2) SoftGamma = 2; }
+	static float GetSoftContrast() { return SoftContrast; }
+	static void EditSoftContrast(float E) { SoftContrast += E; if(SoftContrast < 0) SoftContrast = 0; if(SoftContrast > 2) SoftContrast = 2; }
 	static ulong GetTurns() { return Turns; }
 	static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
 	static uchar DirectionQuestion(std::string, uchar = 8, bool = true, bool = false);
@@ -184,7 +184,7 @@ private:
 	static uchar GodNumber;
 	static long BaseScore;
 	static ulong Turns;
-	static float SoftGamma;
+	static float SoftContrast;
 	static std::string AutoSaveFileName;
 	static command* Command[];
 	static bool InWilderness;
@@ -205,3 +205,4 @@ private:
 };
 
 #endif
+

@@ -175,8 +175,8 @@ void levelsquare::Draw()
 
 		if(Luminance >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
 		{
-			ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
-			ushort RealLuminance = game::GetSeeWholeMapCheat() ? GammaLuminance : ushort(Luminance * game::GetSoftGamma());
+			ushort ContrastLuminance = ushort(256 * game::GetSoftContrast());
+			ushort RealLuminance = game::GetSeeWholeMapCheat() ? ContrastLuminance : ushort(Luminance * game::GetSoftContrast());
 
 			if(!game::GetOutlineItems())
 			{
@@ -194,7 +194,7 @@ void levelsquare::Draw()
 						igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
 						if(GetOverTerrain()->GetIsWalkable())
-							igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+							igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 						if(GetCharacter())
 						{
@@ -208,7 +208,7 @@ void levelsquare::Draw()
 					igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
 					if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())	
-						igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+						igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 					if(GetCharacter())
 					{
@@ -218,7 +218,7 @@ void levelsquare::Draw()
 						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
 						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), CHARACTER_OUTLINE_COLOR);
-						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 					}
 				}
 			}
@@ -238,7 +238,7 @@ void levelsquare::Draw()
 					if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
 						igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
 
-					igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+					igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 					if(GetCharacter())
 						igraph::GetTileBuffer()->ClearToColor(0xF81F);
@@ -254,7 +254,7 @@ void levelsquare::Draw()
 					{
 						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), CHARACTER_OUTLINE_COLOR);
-						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 					}
 			}
 		}
@@ -997,3 +997,4 @@ room* levelsquare::GetRoomClass() const
 	else
 		return 0;
 }
+

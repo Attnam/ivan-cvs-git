@@ -56,7 +56,7 @@ void igraph::DeInit()
 
 void igraph::DrawCursor(vector2d Pos)
 {
-	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256 * game::GetSoftGamma()));
+	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256 * game::GetSoftContrast()));
 }
 
 tile igraph::GetTile(graphic_id GI)
@@ -100,3 +100,4 @@ void igraph::RemoveUser(graphic_id GI)
 			TileMap.erase(Iterator);
 		}
 }
+

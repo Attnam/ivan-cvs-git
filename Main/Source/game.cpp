@@ -55,7 +55,7 @@ command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
 				new command(&character::Talk, "chat", 'C', false),
 				new command(&character::Close, "close", 'c', false),
-				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'B', true),
+				new command(&character::DecreaseSoftContrast, "decrease software gamma", 'B', true),
 				new command(&character::Dip, "dip", 'D', true),
 				new command(&character::Drop, "drop", 'd', false),
 				new command(&character::Consume, "eat/drink", 'e', true),
@@ -65,7 +65,7 @@ command* game::Command[] = {	0,
 				new command(&character::Go, "go", 'g', false),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
-				new command(&character::IncreaseSoftGamma, "increase software gamma", 'b', true),
+				new command(&character::IncreaseSoftContrast, "increase software gamma", 'b', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
 				new command(&character::LowerStats, "lower stats cheat", '2', true, true),
@@ -115,7 +115,7 @@ bool KeyIsOK(char);
 std::string game::PlayerName;
 uchar game::GodNumber;
 ulong game::Turns;
-float game::SoftGamma = 0.9f;
+float game::SoftContrast = 0.9f;
 bool game::OutlineItems = false, game::OutlineCharacters = false;
 ushort game::AutosaveInterval = 100;
 
@@ -597,7 +597,7 @@ bool game::Save(std::string SaveName)
 
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftContrast << InWilderness << NextObjectID;
 	SaveFile << OutlineItems << OutlineCharacters << LOSTurns << AutosaveInterval;
 
 	time_t Time = time(0);
@@ -630,7 +630,7 @@ bool game::Load(std::string SaveName)
 
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftContrast >> InWilderness >> NextObjectID;
 	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns >> AutosaveInterval;
 
 	time_t Time;
@@ -1189,3 +1189,4 @@ uchar game::GetDirectionForVector(vector2d Vector)
 
 	return DIRECTION_COMMAND_KEYS;
 }
+

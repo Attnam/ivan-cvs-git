@@ -1526,18 +1526,18 @@ bool character::SeeWholeMap()
 	return false;
 }
 
-bool character::IncreaseSoftGamma()
+bool character::IncreaseSoftContrast()
 {
-	game::EditSoftGamma(0.05f);
+	game::EditSoftContrast(0.05f);
 
 	game::GetCurrentArea()->SendNewDrawRequest();
 
 	return false;
 }
 
-bool character::DecreaseSoftGamma()
+bool character::DecreaseSoftContrast()
 {
-	game::EditSoftGamma(-0.05f);
+	game::EditSoftContrast(-0.05f);
 
 	game::GetCurrentArea()->SendNewDrawRequest();
 
@@ -3097,3 +3097,4 @@ void character::GoHandler(void)
 		TryMove(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
 	}
 }
+

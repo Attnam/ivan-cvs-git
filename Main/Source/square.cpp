@@ -54,7 +54,7 @@ void square::AddCharacter(character* Guy)
 void square::DrawMemorized() const
 {
 	if(GetLastSeen())
-		GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, (GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4, 16, 16, ushort(256 * game::GetSoftGamma()));
+		GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, (GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4, 16, 16, ushort(256 * game::GetSoftContrast()));
 }
 
 void square::RemoveCharacter()
@@ -98,3 +98,4 @@ void square::KickAnyoneStandingHereAway()
 		RemoveCharacter();
 	}
 }
+
