@@ -223,4 +223,3 @@ void dungeon::Load(inputfile& SaveFile)
 			Level[c] = 0;
 	}
 }
-

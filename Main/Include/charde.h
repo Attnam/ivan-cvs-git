@@ -24,7 +24,6 @@ public:
 	virtual uchar GetHeadType() const RET(HeadType)
 	virtual bool CanWield() const RET(true)
 	virtual bool CanWear() const RET(true)
-	//virtual bool WearItem(item* What) { Armor.Torso = What; return true; }
 	virtual bool Apply();
 	virtual void SetArmType(uchar Value) { ArmType = Value; }
 	virtual void SetHeadType(uchar Value) { HeadType = Value; }

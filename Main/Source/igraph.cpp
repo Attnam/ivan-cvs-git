@@ -48,4 +48,3 @@ void igraph::DrawCursor(vector2d Pos)
 
 	igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
-

@@ -255,4 +255,3 @@ void graphics::SwitchMode()
 
 	BlitDBToScreen();
 }
-

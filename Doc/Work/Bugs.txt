@@ -7,3 +7,4 @@ Stringquestion näyttää törkeältä jos se tulee scrollien päälle.
 Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
 Bill's Will dies and player dodges...
+The Lone Black Man of the Mountain Bug.

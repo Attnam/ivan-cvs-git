@@ -36,8 +36,6 @@ uchar game::CurrentDungeon;
 
 bool game::Flag;
 
-//dynarray<character*> game::Hell;
-
 std::string game::AutoSaveFileName = "Save/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
 god* game::God[] = {0, new valpuri, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
@@ -86,7 +84,6 @@ command* game::Command[] = {	0,
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
 const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
 
-//std::string game::LevelMsg[] = {"", "", "", "", "", "", "", "", "", ""};
 game::panel game::Panel;
 
 ushort*** game::LuxTable;
@@ -127,10 +124,6 @@ void game::Init(std::string Name)
 	PolymorphCounter = 0xFFFF;
 	srand(time(0));
 	game::CalculateGodNumber();
-
-	/*LevelMsg[3] = "You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
-	LevelMsg[6] = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-	LevelMsg[9] = "You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";*/
 
 	if(Name == "")
 	{
@@ -195,8 +188,6 @@ void game::DeInit()
 
 	for(uchar c = 0; c < Dungeon.size(); ++c)
 		delete Dungeon[c];
-
-	//BurnHellsContents();
 }
 
 void game::Run()
@@ -210,8 +201,6 @@ void game::Run()
 
 		if(!GetRunning())
 			break;
-
-		//BurnHellsContents();
 	}
 }
 
@@ -550,9 +539,6 @@ bool game::Save(std::string SaveName)
 
 	SaveFile << game::GetPlayer()->GetPos();
 
-	//for(c = 0; c < Dungeon->GetLevels(); ++c)
-	//	SaveFile << LevelMsg[c];
-
 	SaveFile << PlayerBackup;
 
 	return true;
@@ -591,9 +577,6 @@ bool game::Load(std::string SaveName)
 	SaveFile >> Pos;
 
 	SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
-
-	//for(c = 0; c < Dungeon->GetLevels(); ++c)
-	//	SaveFile >> LevelMsg[c];
 
 	SaveFile >> PlayerBackup;
 
@@ -684,21 +667,6 @@ void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good)
 		if(GetGod(c) != CompareTarget)
 			GetGod(c)->AdjustRelation(CompareTarget, Good);
 }
-
-/*void game::BurnHellsContents()
-{
-	while(Hell.Length())
-		delete Hell.Remove(0);
-}
-
-void game::SendToHell(character* PassedAway)
-{
-	for(ushort c = 0; c < Hell.Length(); ++c)
-		if(Hell.Access(c) == PassedAway)
-			return;
-
-	Hell.Add(PassedAway);
-}*/
 
 vector2d game::GetDirectionVectorForKey(ushort Key)
 {
@@ -885,4 +853,3 @@ void game::InitDungeons()
 		Dungeon[c]->SetIndex(c);
 	}
 }
-

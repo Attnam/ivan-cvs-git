@@ -187,7 +187,5 @@ bool item::Polymorph(stack* CurrentStack)
 	CurrentStack->AddItem(protosystem::BalancedCreateItem());
 	CurrentStack->RemoveItem(CurrentStack->SearchItem(this));
 	SetExists(false);
-	//delete this;
 	return true;
 }
-

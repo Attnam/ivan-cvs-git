@@ -627,16 +627,9 @@ DDERR_UNSUPPORTEDMODE };
 
 	sprintf(Buffer, "Alloc bit %d, %d", pddsd->dwWidth, pddsd->dwHeight);
 
-	//MessageBox(NULL, Buffer, "Message from FEP", MB_OK);
-
-	if(pddsd->dwWidth == 800)
-		int esko = 2;
-
     // Create the DDraw surface
     if( FAILED( hr = pDD->CreateSurface( pddsd, &m_pdds, NULL ) ) )
         return hr;
-
-	//MessageBox(NULL, "Ok", "Message from FEP", MB_OK);
 
     // Prepare the DDSURFACEDESC structure
     m_ddsd.dwSize = sizeof(m_ddsd);

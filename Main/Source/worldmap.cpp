@@ -345,4 +345,3 @@ void worldmap::RemoveEmptyContinents()
 					Continent.pop_back();
 				}
 }
-

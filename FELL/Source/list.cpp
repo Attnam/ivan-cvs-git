@@ -103,4 +103,3 @@ void list::AddString(std::string S)
 	if(Maximum && String.Length() > Maximum)
 		String.Remove(0);
 }
-

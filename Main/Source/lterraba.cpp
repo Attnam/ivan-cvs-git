@@ -150,4 +150,3 @@ levelsquare* levelterrain::GetLevelSquareUnder() const
 {
 	return (levelsquare*)SquareUnder;
 }
-

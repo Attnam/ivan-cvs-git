@@ -46,10 +46,6 @@ public:
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
 	virtual bool GoUp(character*) const;
 	virtual bool GoDown(character*) const;
-	/*virtual dungeon* GetLinkedDungeon() { return LinkedDungeon; }
-	virtual void SetLinkedDungeon(dungeon* What) { LinkedDungeon = What; }
-protected:
-	dungeon* LinkedDungeon;*/
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

@@ -181,7 +181,6 @@ void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenbottle);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
-	//delete this;
 	SetExists(false);
 }
 
@@ -338,11 +337,15 @@ bool wandofpolymorph::Zap(vector2d Pos, uchar Direction)
 
 void wand::Save(outputfile& SaveFile) const
 {
+	item::Save(SaveFile);
+
 	SaveFile << Charge;
 }
 
 void wand::Load(inputfile& SaveFile)
 {
+	item::Load(SaveFile);
+
 	SaveFile >> Charge;
 }
 

@@ -67,7 +67,6 @@ public:
 	virtual bool TestForPickup(item*) const;
 	virtual bool ThrowItem(uchar, item*);
 	virtual bool TryMove(vector2d);
-	//virtual bool WearItem(item*) { return false; }
 	virtual bool HasHeadOfElpuri() const;
 	virtual bool HasMaakotkaShirt() const;
 	virtual bool HasPerttusNut() const;
@@ -235,7 +234,6 @@ protected:
 	bool Fainted;
 	ushort EatingCurrently;
 	long APsToBeEaten;
-	//bool Dead;
 	bool IsPlayer;
 };
 

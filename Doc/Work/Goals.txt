@@ -20,7 +20,6 @@ New material color system.
 Space should = esc in the inventory.
 Pickup all.
 Help should be organised.
-Lamppujen pit‰isi menn‰ rikki potkittaessa ja heitoissa.
 Do you really want to pray to somebody.
 Pick-axejen s‰‰teleminen (kesto, expat, valot).
 Mellis abuse.

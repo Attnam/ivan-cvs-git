@@ -120,7 +120,6 @@ class OVERWORLDMAPTERRAIN
 	attnam,
 	overworldmapterrain,
 	{
-		//SetLinkedDungeon(game::GetDungeon(1));
 	},
 	virtual std::string NameStem() const { return "migthy cathedral reaching the clouds"; }
 	virtual vector2d GetBitmapPos() const { return vector2d(0, 48); }
@@ -132,7 +131,6 @@ class OVERWORLDMAPTERRAIN
 	elpuricave,
 	overworldmapterrain,
 	{
-		//SetLinkedDungeon(game::GetDungeon(0));
 	},
 	virtual std::string NameStem() const { return "hideous cave entry radiating pure navastating"; }
 	virtual vector2d GetBitmapPos() const { return vector2d(16, 48); }

@@ -101,4 +101,3 @@ material* protosystem::CreateMaterial(ushort Index, ulong Volume)
 {
 	return protocontainer<material>::GetProto(Index)->Clone(Volume);
 }
-

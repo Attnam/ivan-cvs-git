@@ -390,4 +390,3 @@ bool stack::Polymorph()
 
 	return true;
 }
-

@@ -133,8 +133,6 @@ void levelsquare::Emitate()
 
 	if(GetEmitation() < 64)
 		return;
-	else
-		int esko = 2;
 
 	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
 	             game::GetLuxTableSize()[Emitation] >> 1,
@@ -647,4 +645,3 @@ void levelsquare::DrawCheat()
 		NewDrawRequested = false;
 	}
 }
-

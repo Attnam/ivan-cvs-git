@@ -1168,4 +1168,3 @@ void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface)
 	XSize = ddsd.dwWidth;
 	YSize = ddsd.dwHeight;
 }
-

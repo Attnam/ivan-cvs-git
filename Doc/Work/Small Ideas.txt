@@ -33,7 +33,6 @@ Pitää tehdä ruokamyrkytyksestä joku tila characterille.
 Humanoidin armorkuvat.
 Screenshot toimimaan getkeyn aikanakin, kuten F4.
 Ehkä muitakin näppäimiä?
-Lamppujen pitäisi mennä rikki potkittaessa ja heitoissa.
 Menujen koristelu (pentagrammeja ja ehkä fadeja)
 Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistusongelmia eräillä henkilöillä)
 Kloonaus.
@@ -50,3 +49,4 @@ Blindness of pets.
 Messagebuffer should be reordered.
 Messagebuffer should be saved.
 Particle Trail.
+Increase/decrease god relations as option to WMode.

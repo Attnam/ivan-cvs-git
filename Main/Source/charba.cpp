@@ -237,7 +237,7 @@ void character::Be()
 			if(GetIsPlayer())
 			{
 				static ushort Timer = 0;
-				if(Timer == 0)
+				if(Timer++ == 20)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -274,43 +274,14 @@ bool character::GoUp()
 
 bool character::GoDown()
 {
-	//if(!game::GetInWilderness())
-	//{
-		if(GetSquareUnder()->GetOverTerrain()->GoDown(this))
-		{
-			SetAgilityExperience(GetAgilityExperience() + 25);
-			SetNP(GetNP() - 1);
-			return true;
-		}
-		else
-			return false;
-	/*}
-	else	//gum solution
+	if(GetSquareUnder()->GetOverTerrain()->GoDown(this))
 	{
-		
-		if(GetWorldMapSquareUnder()->GetOverWorldMapTerrain()->GetLinkedDungeon())
-		{
-			GetWorldMapSquareUnder()->GetOverWorldMapTerrain()->GetLinkedDungeon()->GenerateIfNeeded();
-			game::GetCurrentArea()->RemoveCharacter(GetPos());
-			game::SetInWilderness(false);
-			game::SetCurrentDungeon(GetWorldMapSquareUnder()->GetOverWorldMapTerrain()->GetLinkedDungeon()->GetIndex());
-			game::SetCurrent(0);
-			delete game::GetWorldMap();
-			game::SetWorldMap(0);
-			game::GetCurrentDungeon()->LoadLevel();
-			game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
-			game::GetCurrentLevel()->Luxify();
-			game::GetCurrentLevel()->UpdateLOS();
-			game::UpDateCameraX();
-			game::UpDateCameraY();
-			return true;
-		}
-		else
-		{
-			ADD_MESSAGE("There seems to be nothing of interest here.");
-			return false;
-		}
-	}*/
+		SetAgilityExperience(GetAgilityExperience() + 25);
+		SetNP(GetNP() - 1);
+		return true;
+	}
+	else
+		return false;
 }
 
 bool character::Open()
@@ -1601,36 +1572,6 @@ void character::NeutralAICommand()
 
 		return;
 	})
-
-	/*if(GetLevelSquareUnder()->GetStack()->GetItems())
-	{
-		ushort ItemToTry = rand() % GetLevelSquareUnder()->GetStack()->GetItems();
-
-		if(TestForPickup(GetLevelSquareUnder()->GetStack()->GetItem(ItemToTry)))
-			GetLevelSquareUnder()->GetStack()->MoveItem(ItemToTry, GetStack());*/
-
-	/*for(ushort c = 0; c < GetStack()->GetItems(); ++c)
-	{
-		if(CanWield())
-			if(GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength())
-			{
-				SetWielded(GetStack()->GetItem(c));
-				if(SquareUnder->CanBeSeen())
-					ADD_MESSAGE("%s wields %s", Name(DEFINITE), GetStack()->GetItem(c)->Name(DEFINITE));
-				break;
-			}
-
-		if(CanWear() && GetStack()->GetItem(c)->CanBeWorn())
-			if(GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier())
-			{
-				WearItem(GetStack()->GetItem(c));
-				if(SquareUnder->CanBeSeen())
-					ADD_MESSAGE("%s wears %s", Name(DEFINITE), GetStack()->GetItem(c)->Name(DEFINITE));
-				break;
-			}
-		if(GetStack()->GetItem(c)->Consumable(this))
-			delete GetStack()->RemoveItem(c);
-	}*/
 
 	for(c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
 	{

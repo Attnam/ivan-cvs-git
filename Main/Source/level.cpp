@@ -707,4 +707,3 @@ void level::ParticleTrail(vector2d StartPos, vector2d EndPos)
 		ABORT("666th rule of thermodynamics - Particles don't move the way you want them to move.");
 	// NEEDS SOME WORK!
 }
-

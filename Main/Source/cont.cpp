@@ -61,4 +61,3 @@ vector2d continent::GetRandomMember(ushort Type)
 
 	return TypeContainer[rand() % TypeContainer.size()];
 }
-

@@ -86,4 +86,3 @@ void area::SendNewDrawRequest()
 
 	DOUBLEBUFFER->ClearToColor(0, 32, 800, 480);
 }
-

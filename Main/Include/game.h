@@ -11,11 +11,10 @@
 #include <string>
 #include <vector>
 
-#include "command.h"
-
-//#include "dynarray.h"
 #include "typedef.h"
 #include "vector2d.h"
+
+#include "command.h"
 
 class area;
 class material;
@@ -92,8 +91,6 @@ public:
 	static std::string CAlignment(uchar Index) { return Alignment[Index]; }
 	static void ApplyDivineTick(ushort = 1);
 	static void ApplyDivineAlignmentBonuses(god*, bool);
-	//static void SendToHell(character*);
-	//static void BurnHellsContents();
 	static vector2d GetDirectionVectorForKey(ushort);
 	static vector2d AskForDirectionVector(std::string = "");
 	static std::string GetPlayerName() { return PlayerName; }
@@ -135,7 +132,6 @@ public:
 	static void InitDungeons();
 	static bool OnScreen(vector2d);
 private:
-	//static dynarray<character*> Hell;
 	static std::string Alignment[];
 	static god* God[];
 	static ushort Current;
@@ -152,7 +148,6 @@ private:
 	static uchar Gamma;
 	static bool GoThroughWallsCheat;
 	static std::string PlayerName;
-	//static std::string LevelMsg[];
 	static uchar GodNumber;
 	static long BaseScore;
 	static ulong Turns;

@@ -175,4 +175,3 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vec
 }
 
 #endif
-
