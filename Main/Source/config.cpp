@@ -26,13 +26,13 @@
 std::string configuration::DefaultName;
 ushort configuration::AutosaveInterval = 500;
 uchar configuration::Contrast = 100;
-bool configuration::FullScreenMode = false;
-bool configuration::BeepOnCritical = false;
 bool configuration::AutodropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
 ushort configuration::CharacterOutlineColor = BLUE;
 ushort configuration::ItemOutlineColor = GREEN;
+bool configuration::BeepOnCritical = false;
+bool configuration::FullScreenMode = false;
 
 void configuration::Save()
 {
@@ -44,13 +44,13 @@ void configuration::Save()
   SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
   SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
   SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
-  SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
-  SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
   SaveFile << "CharacterOutlineColor = " << GET_RED(CharacterOutlineColor) << ", " << GET_GREEN(CharacterOutlineColor) << ", " << GET_BLUE(CharacterOutlineColor) << ";\n";
   SaveFile << "ItemOutlineColor = " << GET_RED(ItemOutlineColor) << ", " << GET_GREEN(ItemOutlineColor) << ", " << GET_BLUE(ItemOutlineColor) << ";";
+  SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
+  SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
 }
 
 void configuration::Load()
@@ -76,12 +76,6 @@ void configuration::Load()
       if(Word == "Contrast")
 	SetContrast(SaveFile.ReadNumber(ValueMap));
 
-      if(Word == "FullScreenMode")
-	SetFullScreenMode(SaveFile.ReadBool());
-
-      if(Word == "BeepOnCritical")
-	SetBeepOnCritical(SaveFile.ReadBool());
-
       if(Word == "AutodropLeftOvers")
 	SetAutodropLeftOvers(SaveFile.ReadBool());
 
@@ -96,6 +90,12 @@ void configuration::Load()
 
       if(Word == "ItemOutlineColor")
 	SetItemOutlineColor(MAKE_RGB(SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap)));
+
+      if(Word == "BeepOnCritical")
+	SetBeepOnCritical(SaveFile.ReadBool());
+
+      if(Word == "FullScreenMode")
+	SetFullScreenMode(SaveFile.ReadBool());
     }
 }
 
@@ -137,8 +137,8 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), BLUE);
 
 #ifdef WIN32
-      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
       List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), BLUE);
+      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
 #endif
 
       switch(List.Draw(false, !game::GetRunning() && !BoolChange))
@@ -156,7 +156,6 @@ void configuration::ShowConfigScreen()
 	  if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = false;
 	  continue;
-
 	case 3:
 	  SetAutodropLeftOvers(!GetAutodropLeftOvers());
 	  BoolChange = true;
@@ -173,11 +172,11 @@ void configuration::ShowConfigScreen()
 	  continue;
 #ifdef WIN32
 	case 6:
-	  graphics::SwitchMode();
+	  SetBeepOnCritical(!GetBeepOnCritical());
 	  BoolChange = true;
 	  continue;
 	case 7:
-	  SetBeepOnCritical(!GetBeepOnCritical());
+	  graphics::SwitchMode();
 	  BoolChange = true;
 	  continue;
 #endif

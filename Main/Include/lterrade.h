@@ -109,7 +109,7 @@ class OVERLEVELTERRAIN
  public:
   virtual std::string DigMessage() const { return "The square you are trying to dig is empty."; }
  protected:
-  virtual std::string NameSingular() const { return "atmosphere"; }
+  virtual std::string NameSingular() const { return ""; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 480); }
 );
 
@@ -313,22 +313,6 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
 );
 
-class OVERLEVELTERRAIN
-(
-  pool,
-  overlevelterrain,
-  InitMaterials(3, new stone, new marble, new water),
-  {
-  },
- public:
-  virtual std::string DigMessage() const { return "The water splashes a bit."; }
-  virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-  virtual void SitOn(character*);
- protected:
-  virtual std::string NameSingular() const { return "pool"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16, 304); }
-);
-
 class GROUNDLEVELTERRAIN
 (
   tilefloor,
@@ -416,7 +400,46 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 160); }
 );
 
+class GROUNDLEVELTERRAIN
+(
+  pool,
+  groundlevelterrain,
+  InitMaterials(new water),
+  {
+  },
+ public:
+  virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+ protected:
+  virtual std::string NameSingular() const { return "pool"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 224); }
+);
+
+class OVERLEVELTERRAIN
+(
+  poolborder,
+  overlevelterrain,
+  InitMaterials(new marble),
+  {
+  },
+ public:
+  virtual std::string DigMessage() const { return "The water splashes a bit."; }
+ protected:
+  virtual std::string NameSingular() const { return ""; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32, 320); }
+);
+
+class OVERLEVELTERRAIN
+(
+  poolcorner,
+  overlevelterrain,
+  InitMaterials(new marble),
+  {
+  },
+ public:
+  virtual std::string DigMessage() const { return "The water splashes a bit."; }
+ protected:
+  virtual std::string NameSingular() const { return ""; }
+  virtual vector2d GetBitmapPos() const { return vector2d(48, 320); }
+);
+
 #endif
-
-
-

@@ -400,10 +400,10 @@ void couch::SitOn(character*)
   ADD_MESSAGE("The couch is extremely soft and confortable. You relax well.");
 }
 
-void pool::SitOn(character*)
+/*void pool::SitOn(character*)
 {
   ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
-}
+}*/
 
 void stairsup::StepOn(character* Stepper)
 {
@@ -603,14 +603,14 @@ void altar::SitOn(character*)
 
   if(game::GetGod(OwnerGod)->GetRelation() < 500)
     {
-      if(!(RAND() % 5))
+      if(!(RAND() % 20))
 	{
 	  game::GetGod(OwnerGod)->AdjustRelation(2);
 	  game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true, 1);
 	}
     }
   else
-    if(!(RAND() % 10))
+    if(!(RAND() % 2500))
       {
 	character* Angel = game::GetGod(OwnerGod)->CreateAngel();
 

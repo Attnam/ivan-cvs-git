@@ -587,6 +587,7 @@ class MATERIAL
   virtual bool IsSolid() const { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
   virtual bool IsFlexible() const { return true; }
+  virtual bool IsFlammable() const { return true; }
  protected:
   virtual std::string NameStem() const { return "leather"; }
 );

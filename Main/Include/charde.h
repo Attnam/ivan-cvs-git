@@ -204,8 +204,8 @@ class CHARACTER
   {
     SetSize(180);
     SetAgility(15);
-    SetStrength(25);
-    SetEndurance(30);
+    SetStrength(20);
+    SetEndurance(20);
     SetPerception(24);
     SetLegType(4);
     SetTorsoType(8);
@@ -231,8 +231,8 @@ class CHARACTER
   {
     SetSize(160);
     SetAgility(10);
-    SetStrength(25);
-    SetEndurance(40);
+    SetStrength(30);
+    SetEndurance(25);
     SetPerception(30);
     SetLegType(2);
     SetTorsoType(7);

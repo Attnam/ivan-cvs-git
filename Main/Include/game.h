@@ -133,7 +133,7 @@ class game
   static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
   static uchar DirectionQuestion(std::string, uchar = 8, bool = true, bool = false);
   static command* GetCommand(ushort Index) { return Command[Index]; }
-  static void RemoveSaves();
+  static void RemoveSaves(bool = true);
   static bool GetInWilderness() { return InWilderness; }
   static void SetInWilderness(bool What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }

@@ -97,8 +97,8 @@ void guard::CreateInitialEquipment()
   SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new iron))));
   SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail)));
 
-  GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(1000);
-  GetCurrentSingleWeaponSkill()->AddHit(1000);
+  GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
+  GetCurrentSingleWeaponSkill()->AddHit(500);
 }
 
 ushort humanoid::CalculateArmorModifier() const
@@ -654,8 +654,8 @@ void shopkeeper::CreateInitialEquipment()
   SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe(new mithril))));
   SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
 
-  GetCategoryWeaponSkill(AXES)->AddHit(1000);
-  GetCurrentSingleWeaponSkill()->AddHit(1000);
+  GetCategoryWeaponSkill(AXES)->AddHit(5000);
+  GetCurrentSingleWeaponSkill()->AddHit(5000);
 }
 
 void farmer::CreateInitialEquipment()
@@ -668,7 +668,7 @@ void petrus::AddHitMessage(character* Enemy, const bool Critical) const
   /*
    * This function is temporary. It prevents Petrus's hit messages becoming too long,
    * which would at present make the message history quite ugly.
-	 */
+   */
 
   std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? "Petrus" : "something";
   std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
@@ -721,7 +721,7 @@ void petrus::BeTalkedTo(character* Talker)
 	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
 	  ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 
-	  /* Perhaps we could use our material system to actually make his face red ;-) */
+	  /* Perhaps we could here use our material system to actually make his face change color ;-) */
 
 	  Talker->GetTeam()->Hostility(GetTeam());
 	  return;

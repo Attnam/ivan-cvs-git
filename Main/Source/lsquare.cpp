@@ -690,7 +690,7 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 	  {
 	    bool Anything = false;
 
-	    if(GetOverLevelTerrain()->Name(UNARTICLED) != "air atmosphere")
+	    if(GetOverLevelTerrain()->GetNameSingular() != "")
 	      {
 		SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
 		Anything = true;

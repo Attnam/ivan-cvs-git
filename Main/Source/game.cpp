@@ -864,17 +864,23 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 
 }
 
-void game::RemoveSaves()
+void game::RemoveSaves(bool RealSavesAlso)
 {
-  remove((SaveName() + ".sav").c_str());
+  if(RealSavesAlso)
+    {
+      remove((SaveName() + ".sav").c_str());
+      remove((SaveName() + ".wm").c_str());
+    }
+
   remove((AutoSaveFileName + ".sav").c_str());
-  remove((SaveName() + ".wm").c_str());
   remove((AutoSaveFileName + ".wm").c_str());
 
   for(ushort i = 0; i < Dungeon.size(); ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
       {
-	remove((SaveName() + "." + i + c).c_str());
+	if(RealSavesAlso)
+	  remove((SaveName() + "." + i + c).c_str());
+
 	remove((AutoSaveFileName + "." + i + c).c_str());
       }
 }
@@ -1147,34 +1153,34 @@ bool game::HandleQuitMessage()
 #ifndef WIN32
 	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
 #else
-	    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
+	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
-	      {
-	      case IDYES:
-		configuration::Save();
-		Save();
-		break;
-	      case IDCANCEL:
-		GetCurrentArea()->SendNewDrawRequest();
-		return false;
-	      default:
-		configuration::Save();
-		RemoveSaves();
-		break;
-	      }
+	    {
+	    case IDYES:
+	      Save();
+	      game::RemoveSaves(false);
+	      break;
+	    case IDCANCEL:
+#ifndef WIN32
+	      GetCurrentArea()->SendNewDrawRequest();
+#endif
+	      return false;
+	    default:
+	      RemoveSaves();
+	      break;
+	    }
 	}
       else
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	  if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", BLUE, WHITE, false))
+	if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", BLUE, WHITE, false))
 #endif
-	    {
-	      configuration::Save();
-	      RemoveSaves();
-	    }
-	  else
-	    return false;
+	  {
+	    RemoveSaves();
+	  }
+	else
+	  return false;
     }
 
   configuration::Save();

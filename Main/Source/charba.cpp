@@ -1279,6 +1279,7 @@ bool character::Save()
   if(game::BoolQuestion("Dost thee truly wish to save and flee? [y/N]"))
     {
       game::Save();
+      game::RemoveSaves(false);
       game::Quit();
       return true;
     }

@@ -108,12 +108,14 @@ class contentscript<groundlevelterrain> : public basecontentscript<groundlevelte
 class contentscript<overlevelterrain> : public basecontentscript<overlevelterrain>
 {
  public:
-  contentscript<overlevelterrain>() : Locked(0) {}
+  contentscript<overlevelterrain>() : Locked(0), VisualFlags(0) {}
   virtual void ReadParameters(inputfile&, std::string);
   virtual overlevelterrain* Instantiate() const;
   virtual bool* GetLocked(bool AOE = true) const { SCRIPT_RETURN(Locked) }
+  virtual uchar* GetVisualFlags(bool AOE = true) const { SCRIPT_RETURN(VisualFlags) }
  protected:
   bool* Locked;
+  uchar* VisualFlags;
 };
 
 class squarescript : public script

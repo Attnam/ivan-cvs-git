@@ -195,6 +195,10 @@ character* contentscript<character>::Instantiate() const
 
 void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
 {
+  ValueMap["MIRROR"] = 1;
+  ValueMap["FLIP"] = 2;
+  ValueMap["ROTATE"] = 4;
+
   if(LastWord == "{")
     for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
       {
@@ -204,6 +208,16 @@ void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::s
 	      Locked = new bool;
 
 	    *Locked = SaveFile.ReadBool();
+
+	    continue;
+	  }
+
+	if(Word == "VisualFlags")
+	  {
+	    if(!VisualFlags)
+	      VisualFlags = new uchar;
+
+	    *VisualFlags = SaveFile.ReadNumber(ValueMap);
 
 	    continue;
 	  }
@@ -220,6 +234,9 @@ overlevelterrain* contentscript<overlevelterrain>::Instantiate() const
 
   if(GetLocked(false) && *GetLocked())
     Instance->Lock();
+
+  if(GetVisualFlags(false))
+    Instance->SetVisualFlags(*GetVisualFlags());
 
   return Instance;
 }
