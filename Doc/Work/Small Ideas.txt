@@ -28,7 +28,6 @@ Valoja irti sein‰st‰.
 Pick-axejen s‰‰teleminen (kesto, expat, valot).
 Do you really want to pray...
 Attribuuttibonusten expoittaminen.
-Slimetweakit.
 Skripti/editori.
 Asekokemus.
 Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
