@@ -703,7 +703,7 @@ class ITEM
 	InitMaterials(new glass(100)),
 	{
 		SetSize(10);
-		SetCharge(rand() % 6);
+		SetCharge(rand() % 5 + 1);
 	},
 public:
 	virtual ushort Possibility() const RET(3)

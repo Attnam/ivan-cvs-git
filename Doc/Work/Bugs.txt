@@ -14,5 +14,7 @@ Lookmode + F4.
 Fullscreen + F10.
 Ligths go off when polymorph happens.
 Ligths should be updated when terrain changes.
+If a monster is hitting you and your HPs are low (HP < 4) and you try to run back to world map the game crashes.=======
+Ligths should be updated when terrain changes.
 Material volume is undefined in 
 The door material bug.
