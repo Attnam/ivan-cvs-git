@@ -40,7 +40,7 @@ struct material_database
   ushort Density;
   ushort OfferValue;
   ushort Color;
-  ushort PriceModifier;
+  ulong PriceModifier;
   bool IsSolid;
   ushort Emitation;
   bool CanBeWished;
@@ -62,12 +62,12 @@ class material_prototype
   virtual material* CloneAndLoad(inputfile&) const = 0;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  virtual bool GetIsSolid() const = 0;
-  virtual bool GetCanBeWished() const = 0;
+  virtual bool GetIsSolid() const { return GetDataBase().IsSolid; }
+  virtual bool GetCanBeWished() const { return GetDataBase().CanBeWished; }
   /*virtual bool CanBeWished() const = 0;
   virtual material* CreateWishedMaterial(ulong) const = 0;
   virtual bool IsSolid() const = 0;*/
-  virtual material_database* GetDataBase() const = 0;
+  virtual material_database& GetDataBase() const = 0;
  protected:
   ushort Index;
 };
@@ -120,7 +120,25 @@ class material
   virtual void AddConsumeEndMessage(character*) const { }
   virtual long CalculateOfferValue(char GodAlignment) const;
 
-  virtual ushort GetStrengthValue() const { return GetDataBaseStrengthValue(); }
+  virtual ushort GetStrengthValue() const { return GetDataBase().StrengthValue; }
+  virtual ushort GetConsumeType() const { return GetDataBase().ConsumeType; }
+  virtual ushort GetDensity() const { return GetDataBase().Density; }
+  virtual ushort GetOfferValue() const { return GetDataBase().OfferValue; }
+  virtual ushort GetColor() const { return GetDataBase().Color; }
+  virtual ushort GetPriceModifier() const { return GetDataBase().PriceModifier; }
+  virtual bool IsSolid() const { return GetDataBase().IsSolid; }
+  virtual ushort GetEmitation() const { return GetDataBase().Emitation; }
+  virtual bool CanBeWished() const { return GetDataBase().CanBeWished; }
+  virtual uchar GetAlignment() const { return GetDataBase().Alignment; }
+  virtual ushort GetNutritionValue() const { return GetDataBase().NutritionValue; }
+  virtual bool IsAlive() const { return GetDataBase().IsAlive; }
+  virtual bool IsBadFoodForAI() const { return GetDataBase().IsBadFoodForAI; }
+  virtual ushort GetExplosivePower() const { return GetDataBase().ExplosivePower; }
+  virtual bool IsFlammable() const { return GetDataBase().IsFlammable; }
+  virtual bool IsFlexible() const { return GetDataBase().IsFlexible; }
+  virtual bool IsExplosive() const { return GetDataBase().IsExplosive; }
+
+  /*virtual ushort GetStrengthValue() const { return GetDataBaseStrengthValue(); }
   virtual ushort GetConsumeType() const { return GetDataBaseConsumeType(); }
   virtual ushort GetDensity() const { return GetDataBaseDensity(); }
   virtual ushort GetOfferValue() const { return GetDataBaseOfferValue(); }
@@ -136,9 +154,9 @@ class material
   virtual ushort GetExplosivePower() const { return GetDataBaseExplosivePower(); }
   virtual bool GetIsFlammable() const { return GetDataBaseIsFlammable(); }
   virtual bool GetIsFlexible() const { return GetDataBaseIsFlexible(); }
-  virtual bool GetIsExplosive() const { return GetDataBaseIsExplosive(); }
+  virtual bool GetIsExplosive() const { return GetDataBaseIsExplosive(); }*/
 
-  virtual ushort GetDataBaseStrengthValue() const = 0;
+  /*virtual ushort GetDataBaseStrengthValue() const = 0;
   virtual ushort GetDataBaseConsumeType() const = 0;
   virtual ushort GetDataBaseDensity() const = 0;
   virtual ushort GetDataBaseOfferValue() const = 0;
@@ -154,7 +172,9 @@ class material
   virtual ushort GetDataBaseExplosivePower() const = 0;
   virtual bool GetDataBaseIsFlammable() const = 0;
   virtual bool GetDataBaseIsFlexible() const = 0;
-  virtual bool GetDataBaseIsExplosive() const = 0;
+  virtual bool GetDataBaseIsExplosive() const = 0;*/
+
+  virtual const material_database& GetDataBase() const = 0;
 
  protected:
   virtual std::string NameStem() const = 0;
@@ -180,19 +200,18 @@ class material
     virtual material* Clone() const { return new name; }\
     virtual material* CloneAndLoad(inputfile& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
     virtual std::string ClassName() const { return #name; }\
-    virtual bool GetIsSolid() const { return name##_DataBase.IsSolid; }\
-    virtual bool GetCanBeWished() const { return name##_DataBase.CanBeWished; }\
     /*virtual bool CanBeWished() const { return name::CanBeWished(); }\
     virtual material* CreateWishedMaterial(ulong) const;\
     virtual bool IsSolid() const { return name::IsSolid(); }*/\
-    virtual material_database* GetDataBase() const { return &name##_DataBase; }\
+    virtual material_database& GetDataBase() const { return name##_DataBase; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
   const material::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
-  /*material* name##_prototype::CreateWishedMaterial(ulong Volume) const { if(!name::SpecialWishedMaterial()) return Clone(Volume); else return name::CreateWishedMaterial(Volume); }*/\
-  ushort name::GetDataBaseStrengthValue() const { return name##_DataBase.StrengthValue; }\
+  const material_database& name::GetDataBase() const { return name##_DataBase; }
+  /*material* name##_prototype::CreateWishedMaterial(ulong Volume) const { if(!name::SpecialWishedMaterial()) return Clone(Volume); else return name::CreateWishedMaterial(Volume); }*/
+  /*ushort name::GetDataBaseStrengthValue() const { return name##_DataBase.StrengthValue; }\
   ushort name::GetDataBaseConsumeType() const { return name##_DataBase.ConsumeType; }\
   ushort name::GetDataBaseDensity() const { return name##_DataBase.Density; }\
   ushort name::GetDataBaseOfferValue() const { return name##_DataBase.OfferValue; }\
@@ -208,7 +227,7 @@ class material
   ushort name::GetDataBaseExplosivePower() const { return name##_DataBase.ExplosivePower; }\
   bool name::GetDataBaseIsFlammable() const { return name##_DataBase.IsFlammable; }\
   bool name::GetDataBaseIsFlexible() const { return name##_DataBase.IsFlexible; }\
-  bool name::GetDataBaseIsExplosive() const { return name##_DataBase.IsExplosive; }
+  bool name::GetDataBaseIsExplosive() const { return name##_DataBase.IsExplosive; }*/
 
   /*ushort name::GetDataBaseDensity() const { return name##_DataBase.Density; }\
   ushort name::GetDataBaseColor() const { return name##_DataBase.Color; }*/
@@ -230,7 +249,8 @@ name : public base\
   virtual material* Clone() const { return new name; }\
   static ushort StaticType();\
   static const material::prototype* const GetPrototype();\
-  virtual ushort GetDataBaseStrengthValue() const;\
+  virtual const material_database& GetDataBase() const;\
+  /*virtual ushort GetDataBaseStrengthValue() const;\
   virtual ushort GetDataBaseConsumeType() const;\
   virtual ushort GetDataBaseDensity() const;\
   virtual ushort GetDataBaseOfferValue() const;\
@@ -246,7 +266,7 @@ name : public base\
   virtual ushort GetDataBaseExplosivePower() const;\
   virtual bool GetDataBaseIsFlammable() const;\
   virtual bool GetDataBaseIsFlexible() const;\
-  virtual bool GetDataBaseIsExplosive() const;\
+  virtual bool GetDataBaseIsExplosive() const;*/\
  protected:\
   virtual ushort Type() const;\
   data\

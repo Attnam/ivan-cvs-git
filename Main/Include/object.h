@@ -37,8 +37,8 @@ class object : public entity, public id
   virtual ulong GetWeight() const;
   virtual ulong GetVolume() const;
   virtual ushort GetEmitation() const;
-  virtual void SetMainMaterial(material* NewMaterial) { SetMaterial(MainMaterial, NewMaterial, DefaultMainVolume()); }
-  virtual void ChangeMainMaterial(material* NewMaterial) { ChangeMaterial(MainMaterial, NewMaterial, DefaultMainVolume()); }
+  virtual void SetMainMaterial(material* NewMaterial) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
+  virtual void ChangeMainMaterial(material* NewMaterial) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
   virtual void SetSecondaryMaterial(material*);
@@ -52,9 +52,9 @@ class object : public entity, public id
  protected:
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong);
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong);
-  virtual ulong DefaultMainVolume() const { return 0; }
-  virtual ulong DefaultSecondaryVolume() const { return 0; }
-  virtual ulong DefaultContainedVolume() const { return 0; }
+  virtual ulong GetDefaultMainVolume() const { return 0; }
+  virtual ulong GetDefaultSecondaryVolume() const { return 0; }
+  virtual ulong GetDefaultContainedVolume() const { return 0; }
   virtual void InitMaterial(material*&, material*, ulong);
   virtual material* SetMaterial(material*&, material*, ulong);
   virtual void ChangeMaterial(material*&, material*, ulong);

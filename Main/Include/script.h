@@ -314,6 +314,34 @@ class data<item> : public basedata<item>
  public:
   data<item>();
  protected:
+  DATAMEMBER(ushort, Possibility);
+  DATAMEMBER(vector2d, InHandsPic);
+  DATAMEMBER(ulong, OfferModifier);
+  DATAMEMBER(long, Score);
+  DATAMEMBER(bool, IsDestroyable);
+  DATAMEMBER(bool, CanBeWished);
+  DATAMEMBER(bool, IsMaterialChangeable);
+  DATAMEMBER(uchar, WeaponCategory);
+  DATAMEMBER(bool, IsPolymorphSpawnable);
+  DATAMEMBER(bool, IsAutoInitializable);
+  DATAMEMBER(ushort, OneHandedStrengthPenalty);
+  DATAMEMBER(ushort, OneHandedToHitPenalty);
+  DATAMEMBER(uchar, Category);
+  DATAMEMBER(ushort, SoundResistance);
+  DATAMEMBER(ushort, EnergyResistance);
+  DATAMEMBER(ushort, AcidResistance);
+  DATAMEMBER(ushort, FireResistance);
+  DATAMEMBER(ushort, PoisonResistance);
+  DATAMEMBER(ushort, BulimiaResistance);
+  DATAMEMBER(bool, IsStackable);
+  DATAMEMBER(ushort, StrengthModifier);
+  DATAMEMBER(ushort, FormModifier);
+  DATAMEMBER(ulong, NPModifier);
+  DATAMEMBER(ushort, DefaultSize);
+  DATAMEMBER(ulong, DefaultMainVolume);
+  DATAMEMBER(ulong, DefaultSecondaryVolume);
+  DATAMEMBER(ulong, DefaultContainedVolume);
+  DATAMEMBER(vector2d, BitmapPos);
 };
 
 class data<material> : public basedata<material>
@@ -326,7 +354,7 @@ class data<material> : public basedata<material>
   DATAMEMBER(ushort, Density);
   DATAMEMBER(ushort, OfferValue);
   DATAMEMBER(ushort, Color);
-  DATAMEMBER(ushort, PriceModifier);
+  DATAMEMBER(ulong, PriceModifier);
   DATAMEMBER(bool, IsSolid);
   DATAMEMBER(ushort, Emitation);
   DATAMEMBER(bool, CanBeWished);

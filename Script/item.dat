@@ -1,14 +1,47 @@
 /* Numeric item data loaded during game startup */
 
-/*banana
+/* Members (values marked with (*) are obligatory, others are preceded with their default value):
+
+    ushort Possibility; (0)
+    vector2d InHandsPic; (160, 144)
+    ulong OfferModifier; (0)
+    long Score; (0)
+    bool IsDestroyable; (true)
+    bool CanBeWished; (true)
+    bool IsMaterialChangeable; (true)
+    uchar WeaponCategory; (UNCATEGORIZED)
+    bool IsPolymorphSpawnable; (true)
+    bool IsAutoInitializable; (true)
+    ushort OneHandedStrengthPenalty; (0)
+    ushort OneHandedToHitPenalty; (0)
+    uchar Category; (*)
+    ushort SoundResistance; (0)
+    ushort EnergyResistance; (0)
+    ushort AcidResistance; (0)
+    ushort FireResistance; (0)
+    ushort PoisonResistance; (0)
+    ushort BulimiaResistance; (0)
+    bool IsStackable; (true)
+    ushort StrengthModifier; (*)
+    ushort FormModifier; (*)
+    ulong NPModifier; (10000)
+    ushort DefaultSize; (*)
+    ulong DefaultMainVolume; (*)
+    ulong DefaultSecondaryVolume; (0)
+    ulong DefaultContainedVolume; (0)
+    vector2d BitmapPos; (*)
+*/
+
+banana
 {
-	DefaultSize = 20;
 	Possibility = 100;
-	OfferModifier = 1;
-	Color = 56, 56, 56;
-	PriceModifier = 40;
-	StrengthModifier = 50;
-	FormModifier = 50;
+	InHandsPic = 160, 112;
+	WeaponCategory = CLUBS;
 	DefaultMainVolume = 40;
 	DefaultContainedVolume = 150;
-}*/
+	StrengthModifier = 50;
+	Category = FOOD;
+	BitmapPos = 0, 112;
+	FormModifier = 50;
+	DefaultSize = 20;
+}

@@ -33,7 +33,7 @@ void object::Load(inputfile& SaveFile)
 
 void object::InitMaterials(material* FirstMaterial)
 {
-  InitMaterial(MainMaterial, FirstMaterial, DefaultMainVolume());
+  InitMaterial(MainMaterial, FirstMaterial, GetDefaultMainVolume());
   UpdatePictures(false);
 }
 

@@ -1412,7 +1412,7 @@ bool character::LowerStats()
 bool character::GainAllItems()
 {
   for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-    if(protocontainer<item>::GetProto(c)->AutoInitializable())
+    if(protocontainer<item>::GetProto(c)->IsAutoInitializable())
       Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
 
   return false;
@@ -3064,7 +3064,7 @@ bool character::SecretKnowledge()
   List.AddDescription(Buffer);
 
   for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-    if(protocontainer<item>::GetProto(c)->AutoInitializable())
+    if(protocontainer<item>::GetProto(c)->IsAutoInitializable())
       {
 	item* Item = protocontainer<item>::GetProto(c)->Clone();
 	Buffer = Item->Name(INDEFINITE);

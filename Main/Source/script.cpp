@@ -11,6 +11,7 @@
 #include "error.h"
 #include "game.h"
 #include "proto.h"
+#include "wskill.h"
 
 template <class type> datamembertemplate<type>::~datamembertemplate<type>()
 {
@@ -793,6 +794,34 @@ data<character>::data<character>()
 
 data<item>::data<item>()
 {
+  INITMEMBER(Possibility);
+  INITMEMBER(InHandsPic);
+  INITMEMBER(OfferModifier);
+  INITMEMBER(Score);
+  INITMEMBER(IsDestroyable);
+  INITMEMBER(CanBeWished);
+  INITMEMBER(IsMaterialChangeable);
+  INITMEMBER(WeaponCategory);
+  INITMEMBER(IsPolymorphSpawnable);
+  INITMEMBER(IsAutoInitializable);
+  INITMEMBER(OneHandedStrengthPenalty);
+  INITMEMBER(OneHandedToHitPenalty);
+  INITMEMBER(Category);
+  INITMEMBER(SoundResistance);
+  INITMEMBER(EnergyResistance);
+  INITMEMBER(AcidResistance);
+  INITMEMBER(FireResistance);
+  INITMEMBER(PoisonResistance);
+  INITMEMBER(BulimiaResistance);
+  INITMEMBER(IsStackable);
+  INITMEMBER(StrengthModifier);
+  INITMEMBER(FormModifier);
+  INITMEMBER(NPModifier);
+  INITMEMBER(DefaultSize);
+  INITMEMBER(DefaultMainVolume);
+  INITMEMBER(DefaultSecondaryVolume);
+  INITMEMBER(DefaultContainedVolume);
+  INITMEMBER(BitmapPos);
 }
 
 data<material>::data<material>()
@@ -846,6 +875,39 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
   ValueMap["NEUTRAL"] = NEUTRAL;
   ValueMap["EVIL"] = EVIL;
 
+  ValueMap["UNCATEGORIZED"] = UNCATEGORIZED;
+  ValueMap["UNARMED"] = UNARMED;
+  ValueMap["DAGGERS"] = DAGGERS;
+  ValueMap["SMALL_SWORDS"] = SMALL_SWORDS;
+  ValueMap["LARGE_SWORDS"] = LARGE_SWORDS;
+  ValueMap["CLUBS"] = CLUBS;
+  ValueMap["HAMMERS"] = HAMMERS;
+  ValueMap["MACES"] = MACES;
+  ValueMap["FLAILS"] = FLAILS;
+  ValueMap["AXES"] = AXES;
+  ValueMap["HALBERDS"] = HALBERDS;
+  ValueMap["SPEARS"] = SPEARS;
+  ValueMap["WHIPS"] = WHIPS;
+
+  ValueMap["HELMET"] = HELMET;
+  ValueMap["AMULET"] = AMULET;
+  ValueMap["CLOAK"] = CLOAK;
+  ValueMap["BODYARMOR"] = BODYARMOR;
+  ValueMap["WEAPON"] = WEAPON;
+  ValueMap["SHIELD"] = SHIELD;
+  ValueMap["RING"] = RING;
+  ValueMap["GAUNTLET"] = GAUNTLET;
+  ValueMap["BELT"] = BELT;
+  ValueMap["BOOT"] = BOOT;
+  ValueMap["FOOD"] = FOOD;
+  ValueMap["POTION"] = POTION;
+  ValueMap["SCROLL"] = SCROLL;
+  ValueMap["BOOK"] = BOOK;
+  ValueMap["WAND"] = WAND;
+  ValueMap["TOOL"] = TOOL;
+  ValueMap["VALUABLE"] = VALUABLE;
+  ValueMap["MISC"] = MISC;
+
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
       ushort Index = protocontainer<type>::SearchCodeName(Word);
@@ -864,7 +926,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 #define SETDATA(data)\
 {\
   if(DataElement->Get##data(false))\
-    DataBase->data = *DataElement->Get##data();\
+    DataBase.data = *DataElement->Get##data();\
   else\
     ABORT("Obligatory data member " #data " missing!");\
 }
@@ -872,12 +934,82 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 #define SETDATAWITHDEFAULT(data, defaultvalue)\
 {\
   if(DataElement->Get##data(false))\
-    DataBase->data = *DataElement->Get##data();\
+    DataBase.data = *DataElement->Get##data();\
   else\
-    DataBase->data = defaultvalue;\
+    DataBase.data = defaultvalue;\
 }
 
 template <class type> void database<type>::Apply() { }
+
+void database<item>::Apply()
+{
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+    {
+      std::map<std::string, data<item>*>::iterator Iterator = Data.find(protocontainer<item>::GetProto(c)->ClassName());
+
+      if(Iterator != Data.end())
+	{
+	  data<item>* DataElement = Iterator->second;
+	  item_database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
+	  SETDATAWITHDEFAULT(Possibility, 0);
+	  SETDATAWITHDEFAULT(InHandsPic, vector2d(160, 144));
+	  SETDATAWITHDEFAULT(OfferModifier, 0);
+	  SETDATAWITHDEFAULT(Score, 0);
+	  SETDATAWITHDEFAULT(IsDestroyable, true);
+	  SETDATAWITHDEFAULT(CanBeWished, true);
+	  SETDATAWITHDEFAULT(IsMaterialChangeable, true);
+	  SETDATAWITHDEFAULT(WeaponCategory, UNCATEGORIZED);
+	  SETDATAWITHDEFAULT(IsPolymorphSpawnable, true);
+	  SETDATAWITHDEFAULT(IsAutoInitializable, true);
+	  SETDATAWITHDEFAULT(OneHandedStrengthPenalty, 0);
+	  SETDATAWITHDEFAULT(OneHandedToHitPenalty, 0);
+	  SETDATA(Category);
+	  SETDATAWITHDEFAULT(SoundResistance, 0);
+	  SETDATAWITHDEFAULT(EnergyResistance, 0);
+	  SETDATAWITHDEFAULT(AcidResistance, 0);
+	  SETDATAWITHDEFAULT(FireResistance, 0);
+	  SETDATAWITHDEFAULT(PoisonResistance, 0);
+	  SETDATAWITHDEFAULT(BulimiaResistance, 0);
+	  SETDATAWITHDEFAULT(IsStackable, true);
+	  SETDATA(StrengthModifier);
+	  SETDATA(FormModifier);
+	  SETDATAWITHDEFAULT(NPModifier, 10000);
+	  SETDATA(DefaultSize);
+	  SETDATA(DefaultMainVolume);
+	  SETDATAWITHDEFAULT(DefaultSecondaryVolume, 0);
+	  SETDATAWITHDEFAULT(DefaultContainedVolume, 0);
+	  SETDATA(BitmapPos);
+	}
+      else
+	{
+	  /* Remove these! */
+
+	  item_database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
+	  DataBase.Possibility = 0;
+          DataBase.InHandsPic = vector2d(160, 144);
+	  DataBase.OfferModifier = 0;
+	  DataBase.Score = 0;
+	  DataBase.IsDestroyable = true;
+	  DataBase.CanBeWished = true;
+	  DataBase.IsMaterialChangeable = true;
+	  DataBase.WeaponCategory = UNCATEGORIZED;
+	  DataBase.IsPolymorphSpawnable = true;
+	  DataBase.IsAutoInitializable = true;
+	  DataBase.OneHandedStrengthPenalty = 0;
+	  DataBase.OneHandedToHitPenalty = 0;
+	  DataBase.SoundResistance = 0;
+	  DataBase.EnergyResistance = 0;
+	  DataBase.AcidResistance = 0;
+	  DataBase.FireResistance = 0;
+	  DataBase.PoisonResistance = 0;
+	  DataBase.BulimiaResistance = 0;
+	  DataBase.IsStackable = true;
+	  DataBase.NPModifier = 10000;
+	  DataBase.DefaultSecondaryVolume = 0;
+	  DataBase.DefaultContainedVolume = 0;
+	}
+    }
+}
 
 void database<material>::Apply()
 {
@@ -888,7 +1020,7 @@ void database<material>::Apply()
       if(Iterator != Data.end())
 	{
 	  data<material>* DataElement = Iterator->second;
-	  material_database* DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
+	  material_database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
 	  SETDATA(StrengthValue);
 	  SETDATA(ConsumeType);
 	  SETDATA(Density);
@@ -911,19 +1043,19 @@ void database<material>::Apply()
 	{
 	  /* Remove these! */
 
-	  material_database* DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
-	  DataBase->PriceModifier = 0;
-	  DataBase->IsSolid = false;
-	  DataBase->Emitation = 0;
-	  DataBase->CanBeWished = true;
-	  DataBase->Alignment = NEUTRAL;
-	  DataBase->NutritionValue = 0;
-	  DataBase->IsAlive = false;
-	  DataBase->IsBadFoodForAI = false;
-	  DataBase->ExplosivePower = 0;
-	  DataBase->IsFlammable = false;
-	  DataBase->IsFlexible = false;
-	  DataBase->IsExplosive = false;
+	  material_database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
+	  DataBase.PriceModifier = 0;
+	  DataBase.IsSolid = false;
+	  DataBase.Emitation = 0;
+	  DataBase.CanBeWished = true;
+	  DataBase.Alignment = NEUTRAL;
+	  DataBase.NutritionValue = 0;
+	  DataBase.IsAlive = false;
+	  DataBase.IsBadFoodForAI = false;
+	  DataBase.ExplosivePower = 0;
+	  DataBase.IsFlammable = false;
+	  DataBase.IsFlexible = false;
+	  DataBase.IsExplosive = false;
 	}
     }
 }

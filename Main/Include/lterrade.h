@@ -379,16 +379,16 @@ class OLTERRAIN
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return true; }
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
-  virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, DefaultContainedVolume()); }
-  virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, DefaultContainedVolume()); }
-  virtual void InitMaterials(material* M1, material* M2) { ObjectInitMaterials(MainMaterial, M1, DefaultMainVolume(), ContainedMaterial, M2, DefaultContainedVolume()); }
+  virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
+  virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
+  virtual void InitMaterials(material* M1, material* M2) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume()); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }
   virtual material* GetMaterial(ushort) const;
  protected:
   virtual ushort GetMaterialColor1(ushort) const;
-  virtual ulong DefaultContainedVolume() const { return 10000; }
+  virtual ulong GetDefaultContainedVolume() const { return 10000; }
   virtual std::string PostFix() const { return ContainerPostFix(); }
   virtual bool ShowPostFix() const { return GetContainedMaterial() ? true : false; }
   virtual std::string Adjective() const { return "dried out"; }

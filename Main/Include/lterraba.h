@@ -51,7 +51,7 @@ class lterrain : public object
   virtual void SetDivineMaster(uchar) { }
   virtual void DrawToTileBuffer(bool) const;
  protected:
-  virtual ulong DefaultMainVolume() const { return 10000000; }
+  virtual ulong GetDefaultMainVolume() const { return 10000000; }
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRLTERRAIN; }
   virtual bool ShowMaterial() const { return true; }
   uchar VisualFlags;

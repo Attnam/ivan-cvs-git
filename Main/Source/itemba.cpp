@@ -48,7 +48,7 @@ short item::CalculateOfferValue(char GodAlignment) const
     if(GetMaterial(c))
       OfferValue += GetMaterial(c)->CalculateOfferValue(GodAlignment);
 
-  return short(OfferValue * (OfferModifier() / 250));
+  return short(OfferValue * (GetOfferModifier() / 250));
 }
 
 /******************************************
@@ -180,7 +180,7 @@ bool item::Polymorph(stack* CurrentStack)
 
 bool item::Consume(character* Eater, float Amount)
 {
-  GetConsumeMaterial()->EatEffect(Eater, Amount, NPModifier());
+  GetConsumeMaterial()->EatEffect(Eater, Amount, GetNPModifier());
 
   if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     {
@@ -197,7 +197,7 @@ bool item::IsBadFoodForAI(character* Eater) const
   if(Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     return true;
   else
-    return GetConsumeMaterial()->GetIsBadFoodForAI();
+    return GetConsumeMaterial()->IsBadFoodForAI();
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -326,12 +326,12 @@ ushort item::GetResistance(uchar Type) const
   switch(Type)
     {
     case PHYSICALDAMAGE: return GetStrengthValue();
-    case SOUND: return SoundResistance();
-    case ENERGY: return EnergyResistance();
-    case ACID: return AcidResistance();
-    case FIRE: return FireResistance();
-    case POISON: return PoisonResistance();
-    case BULIMIA: return BulimiaResistance();
+    case SOUND: return GetSoundResistance();
+    case ENERGY: return GetEnergyResistance();
+    case ACID: return GetAcidResistance();
+    case FIRE: return GetFireResistance();
+    case POISON: return GetPoisonResistance();
+    case BULIMIA: return GetBulimiaResistance();
     default:
       ABORT("Resistance lack detected!");
       return 0;

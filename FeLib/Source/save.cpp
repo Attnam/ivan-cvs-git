@@ -89,7 +89,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	  Buffer += char(Char);
 	}
 
-      if(ispunct(Char))
+      if(ispunct(Char) && Char != '_')
 	{
 	  if(Char == '/')
 	    {

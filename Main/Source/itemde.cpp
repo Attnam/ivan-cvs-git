@@ -556,7 +556,7 @@ item* can::BetterVersion() const
 
 ushort whip::GetFormModifier() const
 {
-  if(GetMainMaterial()->GetIsFlexible())
+  if(GetMainMaterial()->IsFlexible())
     return 1000;
   else
     return 70;
@@ -564,7 +564,7 @@ ushort whip::GetFormModifier() const
 
 bool backpack::Apply(character* Terrorist)
 {
-  if(GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive())
+  if(GetContainedMaterial() && GetContainedMaterial()->IsExplosive())
     {
       if(Terrorist->GetIsPlayer())
 	ADD_MESSAGE("You light your %s. It explodes!", CHARNAME(UNARTICLED));
@@ -695,7 +695,7 @@ std::string wand::PostFix() const
 
 bool scroll::ReceiveDamage(character*, short, uchar Type)
 {
-  if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->GetIsFlammable())
+  if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->IsFlammable())
     {
       if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
@@ -759,7 +759,7 @@ bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uch
 
 bool holybook::ReceiveDamage(character*, short, uchar Type)
 {
-  if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->GetIsFlammable())
+  if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->IsFlammable())
     {
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
@@ -896,7 +896,7 @@ bool scrollofcharging::Read(character* Reader)
 
   if(Item == this)
     {
-      ADD_MESSAGE("This would cause a rift to appear in the space-time continuum and that wouldn't be nice.");
+      ADD_MESSAGE("This would cause a rift to appear in the space-time continuum which wouldn't be nice.");
       return false;
     }
 
@@ -1045,7 +1045,7 @@ bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, 
 
 ushort bodypart::GetStrengthValue() const
 {
-  if(GetMaster() && GetMainMaterial()->GetIsAlive())
+  if(GetMaster() && GetMainMaterial()->IsAlive())
     return ulong(GetStrengthModifier()) * GetMaster()->GetEndurance() / 1000;
   else
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
@@ -1057,7 +1057,7 @@ short bodypart::GetMaxHP() const
     {
       short HP = 0;
 
-      if(GetMainMaterial()->GetIsAlive())
+      if(GetMainMaterial()->IsAlive())
 	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMaster()->GetEndurance() / 10000;
       else
 	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMainMaterial()->GetStrengthValue() / 10000;
@@ -1497,7 +1497,7 @@ humanoid* bodypart::GetHumanoidMaster() const
 
 ushort belt::GetFormModifier() const
 {
-  if(GetMainMaterial()->GetIsFlexible())
+  if(GetMainMaterial()->IsFlexible())
     return 800;
   else
     return 60;
@@ -1951,7 +1951,7 @@ void corpse::SetDeceased(character* What)
 
 void bodypart::Regenerate(ushort Turns)
 {
-  if(GetMainMaterial()->GetIsAlive())
+  if(GetMainMaterial()->IsAlive())
     {
       ulong RegenerationBonus = GetMaster()->GetEndurance() * Turns;
 
@@ -2175,7 +2175,7 @@ long corpse::Score() const
 
   for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
-      Score += GetDeceased()->GetBodyPart(c)->Score();
+      Score += GetDeceased()->GetBodyPart(c)->GetScore();
 
   return Score;
 }
@@ -2183,7 +2183,7 @@ long corpse::Score() const
 bool corpse::Destroyable() const
 {
   for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->Destroyable())
+    if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->IsDestroyable())
       return false;
 
   return true;

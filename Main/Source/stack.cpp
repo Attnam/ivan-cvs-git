@@ -262,7 +262,7 @@ long stack::Score() const
   long Score = 0;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    Score += (**i)->Score();
+    Score += (**i)->GetScore();
 
   return Score;
 }

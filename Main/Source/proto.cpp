@@ -140,16 +140,16 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
       ushort c;
 
       for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-	SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
+	SumOfPossibilities += protocontainer<item>::GetProto(c)->GetPossibility();
 			
       RandomOne = 1 + RAND() % (SumOfPossibilities);
 		
       for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 	{
-	  Counter += protocontainer<item>::GetProto(c)->Possibility();
+	  Counter += protocontainer<item>::GetProto(c)->GetPossibility();
 
 	  if(Counter >= RandomOne)
-	    if(!Polymorph || protocontainer<item>::GetProto(c)->PolymorphSpawnable())
+	    if(!Polymorph || protocontainer<item>::GetProto(c)->IsPolymorphSpawnable())
 	      return protocontainer<item>::GetProto(c)->Clone();
 	    else
 	      break;
@@ -184,7 +184,8 @@ item* protosystem::CreateItem(const std::string& What, bool Output)
 
       if(Temp->NameSingular() == What)
 	if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
-	  return protocontainer<item>::GetProto(c)->CreateWishedItem();
+	  //return protocontainer<item>::GetProto(c)->CreateWishedItem();
+	  return protocontainer<item>::GetProto(c)->Clone();
 	else if(Output)
 	  {
 	    ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
