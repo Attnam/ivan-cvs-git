@@ -4,7 +4,7 @@
 #include "charba.h"
 #include "graphics.h"
 
-class weaponskill;
+class gweaponskill;
 
 class ABSTRACT_CHARACTER
 (
@@ -37,7 +37,7 @@ public:
 	virtual ushort GetSpeed() const;
 	virtual float GetAttackStrength() const;
 	virtual bool Hit(character*);
-	virtual weaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
+	virtual gweaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
 	virtual void CharacterSpeciality();
 	virtual bool ShowWeaponSkills();
 protected:
@@ -52,7 +52,7 @@ protected:
 		item* Head;
 		item* Feet;
 	} Armor;
-	weaponskill** WeaponSkill;
+	gweaponskill** WeaponSkill;
 	uchar ArmType;
 	uchar HeadType;
 	uchar LegType;
@@ -643,3 +643,4 @@ protected:
 );
 
 #endif
+

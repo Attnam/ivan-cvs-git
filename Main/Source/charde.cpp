@@ -19,10 +19,10 @@
 
 void humanoid::VirtualConstructor()
 {
-	WeaponSkill = new weaponskill*[WEAPON_SKILL_GATEGORIES];
+	WeaponSkill = new gweaponskill*[WEAPON_SKILL_GATEGORIES];
 
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		WeaponSkill[c] = new weaponskill(c);
+		WeaponSkill[c] = new gweaponskill(c);
 }
 
 humanoid::~humanoid()
@@ -589,3 +589,4 @@ bool humanoid::ShowWeaponSkills()
 
 	return false;
 }
+

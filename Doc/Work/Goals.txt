@@ -1,7 +1,7 @@
 ////*Pentagrammi menuun.
 *Monsujen väheneminen.
 ////Change material scroll.
-Syönnin keskeytys kun monsu tulee näköpiiriin.
+////Syönnin keskeytys kun monsu tulee näköpiiriin.
 ////Dark frogeista plussaa kaaottisille jumalille.
 ////Kannibalismi.
 ////Ennerscream hajottamaan potioneita sekä maasta että inventorioista.
@@ -22,7 +22,7 @@ Pimeydelle vaikutuksia.
 ////*Do you really want to pray to somebody.
 Pick-axejen sääteleminen (kesto, expat, valot).
 ////*Mellis abuse.
-%*Alpha blend.
+////%*Alpha blend.
 Rest until fully healed.
 ////Messagebuffer should be reordered.
 ////Messagebuffer should be saved.

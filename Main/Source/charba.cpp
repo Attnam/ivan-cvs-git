@@ -511,7 +511,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 			if(!game::GetInWilderness())
 			{
-				if(GetLevelSquareUnder()->GetLuminance() < 64)
+				if(GetLevelSquareUnder()->GetLuminance() < 64 && !game::GetSeeWholeMapCheat())
 					ADD_MESSAGE("It's dark in here!");
 
 				if(GetLevelSquareUnder()->GetStack()->GetItems() > 0)
@@ -897,7 +897,7 @@ void character::Regenerate(ushort Turns)
 
 bool character::WearArmor()
 {
-	ADD_MESSAGE("This monster type doesn't have armor.");
+	ADD_MESSAGE("This monster type can't use armor.");
 
 	return false;
 }
@@ -945,46 +945,45 @@ void character::BeTalkedTo(character*)
 
 bool character::Talk()
 {
-                int k;
-		ADD_MESSAGE("To whom do you wish to talk to?");
+	int k;
+	ADD_MESSAGE("To whom do you wish to talk to?");
 
-		DRAW_MESSAGES();
+	DRAW_MESSAGES();
 
-		EMPTY_MESSAGES();
+	EMPTY_MESSAGES();
 
-		graphics::BlitDBToScreen();
+	graphics::BlitDBToScreen();
 
-		bool CorrectKey = false;
+	bool CorrectKey = false;
 
-		while(!CorrectKey)
-		{
-			k = GETKEY();
+	while(!CorrectKey)
+	{
+		k = GETKEY();
 
-			if(k == 0x1B)
-				CorrectKey = true;
+		if(k == 0x1B)
+			CorrectKey = true;
 
-			for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-				if(k == game::GetMoveCommandKey(c) || (k ^ 32) == game::GetMoveCommandKey(c))
+		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+			if(k == game::GetMoveCommandKey(c) || (k ^ 32) == game::GetMoveCommandKey(c))
+			{
+				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter())
 				{
-					if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter())
-					{
-						game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter()->BeTalkedTo(this);
+					game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter()->BeTalkedTo(this);
 
-						return true;
-					}
-					else
-					{
-						ADD_MESSAGE("There is no one in that square.");
-
-						return false;
-					}
-
-					CorrectKey = true;
+					return true;
 				}
-		}
+				else
+				{
+					ADD_MESSAGE("There is no one in that square.");
 
-                return false;
+					return false;
+				}
 
+				CorrectKey = true;
+			}
+	}
+
+	return false;
 }
 
 bool character::NOP()
@@ -1000,6 +999,9 @@ void character::ApplyExperience()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You feel you could lift Bill with one hand!");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks stronger.", CNAME(DEFINITE));
 
 		SetStrength(GetStrength() + 1);
 
@@ -1010,6 +1012,9 @@ void character::ApplyExperience()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You collapse under your load.");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks weaker.", CNAME(DEFINITE));
 
 		SetStrength(GetStrength() - 1);
 
@@ -1020,6 +1025,9 @@ void character::ApplyExperience()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You feel Valpuri's toughness around you!");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() + 1);
 
@@ -1030,6 +1038,9 @@ void character::ApplyExperience()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You seem as tough as Jari.");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks less tough.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() - 1);
 
@@ -1040,6 +1051,9 @@ void character::ApplyExperience()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("Your agility challenges even the Valpuri's angels!");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks faster.", CNAME(DEFINITE));
 
 		SetAgility(GetAgility() + 1);
 
@@ -1050,6 +1064,9 @@ void character::ApplyExperience()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You seem as fast as a flat mommo.");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks slower.", CNAME(DEFINITE));
 
 		SetAgility(GetAgility() - 1);
 
@@ -1776,6 +1793,9 @@ void character::ReceiveSchoolFoodEffect(long)
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() + 1 + rand() % 5);
 	}
@@ -1790,6 +1810,9 @@ void character::ReceiveOmleUrineEffect(long)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
+	else
+		if(SquareUnder->CanBeSeen())
+			ADD_MESSAGE("%s looks more powerful.", CNAME(DEFINITE));
 
 	SetStrength(GetStrength() + 1 + rand() % 2);
 	SetHP(GetHP() + 2);
@@ -1811,6 +1834,9 @@ void character::Darkness(long SizeOfEffect)
 	ushort x = 30 + rand() % SizeOfEffect;
 	if(GetIsPlayer())
 		ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");
+	else
+		if(SquareUnder->CanBeSeen())
+			ADD_MESSAGE("Suddenly %s looks like a navastater.", CNAME(DEFINITE));
 	if(GetStrength() - x / 30 > 1) SetStrength(GetStrength() - x / 30); // Old comment was about eating... This
 	else SetStrength(1);                                        // can happen with drinkin, hitting etc.
 	if(GetEndurance() - x / 30 > 1) SetEndurance(GetEndurance() - x / 30);
@@ -2018,6 +2044,9 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You burn.");
+	else
+		if(SquareUnder->CanBeSeen())
+			ADD_MESSAGE("%s is hurt by the fire.", CNAME(DEFINITE));
 
 	SetHP(GetHP() - (rand() % SizeOfEffect + SizeOfEffect));
 }
@@ -2338,6 +2367,9 @@ void character::Faint()
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You faint.");
+	else
+		if(SquareUnder->CanBeSeen())
+			ADD_MESSAGE("%s faints.", CNAME(DEFINITE));
 
 	SetStrengthExperience(GetStrengthExperience() - 100);
 	ActivateState(FAINTED);
@@ -2372,7 +2404,7 @@ void character::EatHandler()
 		game::ApplyDivineTick(ushort(GetAPsToBeEaten() / 1000));
 	}*/
 
-	if(GetConsumingCurrently()->Consume(this, 10000))
+	if(GetConsumingCurrently()->Consume(this, 1000))
 	{
 		//ADD_MESSAGE("The %s .", GetConsumingCurrently()->CNAME(DEFINITE));
 
@@ -2383,7 +2415,7 @@ void character::EatHandler()
 		delete ToBeDeleted;
 	}
 
-	if(!(StateCounter[EATING]--))
+	if(StateIsActivated(EATING) && !(StateCounter[EATING]--))
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You have eaten for a long time now.");
@@ -2404,6 +2436,9 @@ void character::EndFainted()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You wake up.");
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("%s wakes up.", CNAME(DEFINITE));
 
 		DeActivateState(FAINTED);
 	}
@@ -2431,6 +2466,9 @@ void character::EndEating()
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You finish consuming %s.", GetConsumingCurrently()->CNAME(DEFINITE));
+		else
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("%s finishes consuming %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
 
 		DeActivateState(EATING);
 
@@ -2493,7 +2531,9 @@ void character::StruckByWandOfStriking()
 	if(GetIsPlayer())
 		ADD_MESSAGE("The wand hits you.");
 	else
-		if(GetSquareUnder()->CanBeSeen()) ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
+		if(GetSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
+
 	SetHP(GetHP() - 5 - rand() % 3);
 	
 	CheckDeath("killed by a wand of striking");

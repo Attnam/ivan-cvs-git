@@ -2,20 +2,34 @@
 #include "message.h"
 #include "save.h"
 
-ushort weaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 65535 };
-ushort weaponskill::UnuseTurnMap[] = { 65535, 10000, 5000, 4000, 3000, 1500, 1000, 800, 400, 200, 100 };
-ushort weaponskill::UnusePenaltyMap[] = { 0, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
-std::string weaponskill::SkillName[] = { "uncategorized", "unarmed combat", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears" };
+ushort gweaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 65535 };
+ushort gweaponskill::UnuseTurnMap[] = { 65535, 10000, 5000, 4000, 3000, 1500, 1000, 800, 400, 200, 100 };
+ushort gweaponskill::UnusePenaltyMap[] = { 0, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
+std::string gweaponskill::SkillName[] = { "uncategorized", "unarmed combat", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears" };
 
-weaponskill::weaponskill(uchar Index, float HitMultiplier) : Index(Index), Level(0), Hits(0), HitCounter(0), HitMultiplier(HitMultiplier)
+ushort sweaponskill::LevelMap[] = { 0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 65535 };
+ushort sweaponskill::UnuseTurnMap[] = { 65535, 2500, 1500, 1000, 500, 500, 500, 250, 125, 50, 25 };
+ushort sweaponskill::UnusePenaltyMap[] = { 0, 5, 10, 20, 25, 100, 200, 250, 500, 500, 500 };
+
+weaponskill::weaponskill() : Level(0), Hits(0), HitCounter(0), HitMultiplier(1.0f)
 {
+}
+
+void weaponskill::Save(outputfile& SaveFile) const
+{
+	SaveFile << Level << Hits << HitCounter << HitMultiplier;
+}
+
+void weaponskill::Load(inputfile& SaveFile)
+{
+	SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
 }
 
 void weaponskill::Turn(bool AddMsg)
 {
-	if(HitCounter++ == UnuseTurnMap[Level])
+	if(HitCounter++ == GetUnuseTurnMap(Level))
 	{
-		SubHit(UnusePenaltyMap[Level], AddMsg);
+		SubHit(GetUnusePenaltyMap(Level), AddMsg);
 
 		HitCounter = 0;
 	}
@@ -24,12 +38,12 @@ void weaponskill::Turn(bool AddMsg)
 void weaponskill::AddHit(bool AddMsg)
 {
 	if(Hits != 0xFFDC)
-		if(++Hits == ulong(LevelMap[Level + 1] * HitMultiplier))
+		if(++Hits == ulong(GetLevelMap(Level + 1) * HitMultiplier))
 		{
 			++Level;
 
 			if(AddMsg)
-				ADD_MESSAGE("You advance to skill level %d with %s!", Level, SkillName[Index].c_str());
+				AddLevelUpMessage();
 		}
 
 	HitCounter = 0;
@@ -44,11 +58,11 @@ void weaponskill::AddHit(ulong AddHits, bool AddMsg)
 
 	uchar OldLevel = Level;
 
-	while(Hits >= ulong(LevelMap[Level + 1] * HitMultiplier))
+	while(Hits >= ulong(GetLevelMap(Level + 1) * HitMultiplier))
 		++Level;
 
 	if(AddMsg && Level != OldLevel)
-		ADD_MESSAGE("You advance to skill level %d with %s!", Level, SkillName[Index].c_str());
+		AddLevelUpMessage();
 
 	HitCounter = 0;
 }
@@ -59,12 +73,12 @@ void weaponskill::SubHit(bool AddMsg)
 	{
 		--Hits;
 
-		if(Level && Hits < ulong(LevelMap[Level] * HitMultiplier))
+		if(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
 		{
 			--Level;
 
 			if(AddMsg)
-				ADD_MESSAGE("You have not practised enough with %s and your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
+				AddLevelDownMessage();
 		}
 	}
 }
@@ -78,19 +92,31 @@ void weaponskill::SubHit(ulong SubHits, bool AddMsg)
 
 	uchar OldLevel = Level;
 
-	while(Level && Hits < ulong(LevelMap[Level] * HitMultiplier))
+	while(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
 		--Level;
 
 	if(AddMsg && Level != OldLevel)
-		ADD_MESSAGE("You have not practised enough with %s and your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
+		AddLevelDownMessage();
 }
 
-void weaponskill::Save(outputfile& SaveFile) const
+gweaponskill::gweaponskill(uchar Index) : Index(Index)
 {
-	SaveFile << Level << Hits << HitCounter << HitMultiplier;
 }
 
-void weaponskill::Load(inputfile& SaveFile)
+void gweaponskill::AddLevelUpMessage() const
 {
-	SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
+	ADD_MESSAGE("You advance to skill level %d with %s!", Level, SkillName[Index].c_str());
+}
+
+void gweaponskill::AddLevelDownMessage() const
+{
+	ADD_MESSAGE("You have not practised enough with %s and your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
+}
+
+void sweaponskill::AddLevelUpMessage() const
+{
+}
+
+void sweaponskill::AddLevelDownMessage() const
+{
 }

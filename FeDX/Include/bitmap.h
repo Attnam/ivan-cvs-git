@@ -40,6 +40,7 @@ public:
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
+	void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar) const;
 	void FastBlit(bitmap*) const;
 	void FastMaskedBlit(bitmap*) const;
 	void Printf(bitmap*, ushort, ushort, const char*, ...) const;

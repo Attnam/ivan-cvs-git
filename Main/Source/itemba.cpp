@@ -141,8 +141,11 @@ bool item::HitCharacter(character* Dude, float Speed)
 
 	if(Dude->DodgesFlyingItem(this, Speed)) // Insert better formula for dodge
 	{
-		if(Dude->GetSquareUnder()->CanBeSeen())
-			ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
+		if(Dude->GetIsPlayer())
+			ADD_MESSAGE("%s misses you.", CNAME(DEFINITE));
+		else
+			if(Dude->GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
 
 		return false;
 	}

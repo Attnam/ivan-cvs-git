@@ -111,7 +111,7 @@ bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupB
 	HRESULT hr = graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
 
 	if(hr != S_OK)
-		ABORT("Bitmap initialization failed with code 0x%x!", hr);
+		ABORT("Bitmap initialization failed with code 0x%X!", hr);
 
 	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
 	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
@@ -1063,6 +1063,120 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		and ax, 0xFFE0
 		or ax, bx
 		ror ax, 0x05
+		stosw
+		dec cx
+		jnz MaskedLoop2
+		jmp MaskedNextLine
+	MaskSkip:
+		add edi, 0x02
+		dec cx
+		jnz MaskedLoop2
+	MaskedNextLine:
+		add esi, TrueSourceXMove
+		add edi, TrueDestXMove
+		dec Height
+		jnz MaskedLoop1
+		pop es
+		popad
+	}
+
+	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+}
+
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha) const
+{
+	DDSURFACEDESC2 srcddsd;
+	ZeroMemory( &srcddsd,sizeof(srcddsd) );
+	srcddsd.dwSize = sizeof(srcddsd);
+	DXSurface->GetDDrawSurface()->Lock( NULL, &srcddsd, DDLOCK_WAIT, NULL );
+
+	DDSURFACEDESC2 destddsd;
+	ZeroMemory( &destddsd,sizeof(destddsd) );
+	destddsd.dwSize = sizeof(destddsd);
+	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+
+	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
+	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
+	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
+	ulong TrueDestXMove = destddsd.lPitch - (Width << 1);
+
+	ushort SColor, DColor;
+
+	__asm
+	{
+		pushad
+		push es
+		mov ax, ds
+		mov es, ax
+		mov esi, TrueSourceOffset
+		mov edi, TrueDestOffset
+		mov dl, Alpha
+		cld
+
+	MaskedLoop1:
+		mov cx, Width
+	MaskedLoop2:
+		lodsw
+		cmp ax, 0xF81F
+		je MaskSkip
+		mov bx, [edi]
+		mov DColor, bx
+		mov bx, ax
+
+		and ax, 0x1F
+		shl ax, 0x03
+		mul dl
+		mov SColor, ax
+		mov ax, DColor
+		and ax, 0x1F
+		shl ax, 0x03
+		not dl
+		mul dl
+		not dl
+		add ax, SColor
+		shr ax, 0x0B
+		and bx, 0xFFE0
+		or bx, ax
+		ror bx, 0x05
+		ror DColor, 0x05
+		mov ax, bx
+
+		and ax, 0x3F
+		shl ax, 0x02
+		mul dl
+		mov SColor, ax
+		mov ax, DColor
+		and ax, 0x3F
+		shl ax, 0x02
+		not dl
+		mul dl
+		not dl
+		add ax, SColor
+		shr ax, 0x0A
+		and bx, 0xFFC0
+		or bx, ax
+		ror bx, 0x06
+		ror DColor, 0x06
+		mov ax, bx
+
+		and ax, 0x1F
+		shl ax, 0x03
+		mul dl
+		mov SColor, ax
+		mov ax, DColor
+		and ax, 0x1F
+		shl ax, 0x03
+		not dl
+		mul dl
+		not dl
+		add ax, SColor
+		shr ax, 0x0B
+		and bx, 0xFFE0
+		or bx, ax
+		ror bx, 0x05
+		mov ax, bx
+
 		stosw
 		dec cx
 		jnz MaskedLoop2

@@ -13,7 +13,9 @@ object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0)
 		GraphicId.Color[c] = 0;
 
 	if(AddToPool)
+	{
 		SetPoolIterator(objectpool::Add(this));
+	}
 }
 
 object::~object()

@@ -20,7 +20,7 @@ void can::PositionedDrawToTileBuffer(uchar) const
 
 item* can::TryToOpen(stack* Stack)
 {
-	ADD_MESSAGE("You succeed in opening the can!");
+	//ADD_MESSAGE("You succeed in opening the can!");
 
 	item* x = new lump(GetMaterial(1));
 
@@ -100,9 +100,12 @@ bool potion::Consume(character* Eater, float Amount)
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
 	if(!GetMaterial(1)->GetVolume())
+	{
+		Eater->EndEating();
 		ChangeMaterial(1,0);
+	}
 	
-	return GetMaterial(1)->GetVolume() ? false : true;
+	return false;
 }
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
@@ -130,11 +133,14 @@ bool scrollofcreatemonster::Read(character* Reader)
 	{
 		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster());
 
-		if(Reader == game::GetPlayer())
+		if(Reader->GetIsPlayer())
 			ADD_MESSAGE("As you read the scroll a monster appears.");
+		else
+			if(Reader->GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("The %s reads %s. A monster appears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 	}
 	else
-		if(Reader == game::GetPlayer())
+		if(Reader->GetIsPlayer())
 			ADD_MESSAGE("You feel a lost soul fly by you.");
 
 	return true;
@@ -142,15 +148,18 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 bool scrollofteleport::Read(character* Reader)
 {
-	vector2d Pos;
-	for(;;)
+	for(vector2d Pos;;)
 	{
 		Pos = game::GetCurrentLevel()->RandomSquare(true);
 		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter() == 0)
 			break;
 	}
-	if(Reader == game::GetPlayer())
-		ADD_MESSAGE("After you have read the scroll you realise that you have teleported.");
+	if(Reader->GetIsPlayer())
+		ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
+	else
+		if(Reader->GetSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("The %s reads %s and disappears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
+
 	Reader->Move(Pos, true);
 	return true;
 }
@@ -159,7 +168,9 @@ void lump::ReceiveHitEffect(character* Enemy, character*)
 {
 	if(rand() % 2)
 	{
-	ADD_MESSAGE("The %s touches %s.", GetMaterial(0)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
+	if(Enemy->GetSquareUnder()->CanBeSeen())
+		ADD_MESSAGE("The %s touches %s.", GetMaterial(0)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
+
 	GetMaterial(0)->HitEffect(Enemy);
 	}
 }
@@ -168,10 +179,11 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 {
 	if(GetMaterial(2))
 	{
-		if(Enemy == game::GetPlayer())
+		if(Enemy->GetIsPlayer())
 			ADD_MESSAGE("The %s reacts with you!", GetMaterial(2)->CNAME(UNARTICLED));
 		else
-			ADD_MESSAGE("The %s reacts with %s.", GetMaterial(2)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
+			if(Enemy->GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("The %s reacts with %s.", GetMaterial(2)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
 
 		GetMaterial(2)->HitEffect(Enemy);
 	}
@@ -287,7 +299,11 @@ ushort chainmail::GetArmorValue() const
 
 bool wand::Apply(character* StupidPerson)
 {
-	if(StupidPerson == game::GetPlayer()) ADD_MESSAGE("The wand brakes in two and then explodes.");
+	if(StupidPerson->GetIsPlayer())
+		ADD_MESSAGE("The wand brakes in two and then explodes.");
+	else
+		if(StupidPerson->GetSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s brakes a wand in two. It explodes!", StupidPerson->CNAME(DEFINITE));
 
 	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 
@@ -398,8 +414,6 @@ bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 	if(!(rand() % 75) && Strength > 10 + rand() % 10)
 	{
 		ImpactDamage(ushort(Strength), Shown, ItemsStack);
-		if(Shown)
-			ADD_MESSAGE("The lamp is destroyed by the sound.");
 		return true;
 	}
 	return false;
@@ -424,7 +438,7 @@ bool scrollofchangematerial::Read(character* Reader)
 	ushort Index;
 	if(!Reader->CanRead())
 	{
-		ADD_MESSAGE("This monster can not read anything.");
+		ADD_MESSAGE("This monster can't read anything.");
 		return false;
 	}
 	if((Index = Reader->GetStack()->DrawContents("What item do you wish to change?")) == 0xFFFF)
