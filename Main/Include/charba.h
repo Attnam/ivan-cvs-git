@@ -274,7 +274,7 @@ class character : public entity, public id
   virtual bool Polymorph(character*, ushort);
   virtual void BeKicked(character*, item*, float, float, short, bool);
   virtual void FallTo(character*, vector2d);
-  virtual bool CheckCannibalism(ushort) const;
+  virtual bool CheckCannibalism(const material*) const;
   void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
   void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
   void ActivateEquipmentState(ushort What) { EquipmentState |= What; }

@@ -2185,9 +2185,9 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
   // Place code that handles characters bouncing to each other here
 }
 
-bool character::CheckCannibalism(ushort What) const
+bool character::CheckCannibalism(const material* What) const
 { 
-  return GetTorso()->GetConsumeMaterial()->GetType() == What; 
+  return GetTorso()->GetConsumeMaterial()->IsSameAs(What); 
 }
 
 void character::StandIdleAI()
@@ -2352,22 +2352,19 @@ bool character::CheckForDoors()
 
 bool character::CheckForUsefulItemsOnGround()
 {
-  return false;
-
-  /* Check visibility! */
-
   for(stackiterator i = GetStackUnder()->GetBottomSlot(); i != GetStackUnder()->GetSlotAboveTop(); ++i)
-    {
-      if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this) && (**i)->IsPickable(this))
-	if(!GetLSquareUnder()->GetRoom() || GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, ***i))
-	  {
-	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s begins %s %s.", CHARNAME(DEFINITE), (**i)->GetConsumeVerb().c_str(), (**i)->CHARNAME(DEFINITE));
+    if((**i)->CanBeSeenBy(this) && (**i)->IsPickable(this))
+      {
+	if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this))
+	  if(!GetLSquareUnder()->GetRoom() || GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, ***i))
+	    {
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s begins %s %s.", CHARNAME(DEFINITE), (**i)->GetConsumeVerb().c_str(), (**i)->CHARNAME(DEFINITE));
 
-	    ConsumeItem(***i);
-	    return true;
-	  }
-    }
+	      ConsumeItem(***i);
+	      return true;
+	    }
+      }
 
   return false;
 }
@@ -5146,7 +5143,7 @@ void character::SignalEmitationIncrease(ushort EmitationUpdate)
 
 void character::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation)
+  if(EmitationUpdate == Emitation && Emitation)
     {
       CalculateEmitation();
 

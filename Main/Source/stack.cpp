@@ -602,14 +602,17 @@ void stack::SignalEmitationIncrease(ushort EmitationUpdate)
 
 void stack::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation)
+  if(EmitationUpdate == Emitation && Emitation)
     {
       CalculateEmitation();
 
-      if(EmitationUpdate != Emitation && MotherEntity)
-	MotherEntity->SignalEmitationDecrease(EmitationUpdate);
-      else
-	GetLSquareTrulyUnder()->SignalEmitationDecrease(EmitationUpdate);
+      if(EmitationUpdate != Emitation)
+	{
+	  if(MotherEntity)
+	    MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+	  else
+	    GetLSquareTrulyUnder()->SignalEmitationDecrease(EmitationUpdate);
+	}
     }
 }
 

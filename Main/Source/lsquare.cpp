@@ -52,7 +52,7 @@ void lsquare::SignalEmitationIncrease(ushort EmitationUpdate)
 
 void lsquare::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && !game::IsGenerating())
+  if(EmitationUpdate == Emitation && Emitation && !game::IsGenerating())
     {
       CalculateEmitation();
 

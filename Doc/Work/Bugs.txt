@@ -56,4 +56,7 @@ StuckTo bugs; it isn't cleared at least when the bodypart is severed, and saving
 Lamps can be seen through walls in lookmode.
 Oree dies. Oree looks slower.
 Digging doors doesn't work.
-Eating kobolds is evil.
+//Eating kobolds is evil.
+(2x) you wake up.
+Your weak kick has no effect.
+Memorized doesn't update correctly.

@@ -5,6 +5,10 @@ August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 August 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Eating is no longer an evil deed
+
+August 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Added char* festring::IntegerToChar(long) which is a much faster
 	  variant of the nonstandard itoa
 

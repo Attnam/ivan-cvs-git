@@ -239,7 +239,7 @@ void lterrain::SignalEmitationIncrease(ushort EmitationUpdate)
 
 void lterrain::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation)
+  if(EmitationUpdate == Emitation && Emitation)
     {
       CalculateEmitation();
 

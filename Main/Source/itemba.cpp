@@ -168,7 +168,7 @@ bool item::Consume(character* Eater, long Amount)
 {
   GetConsumeMaterial()->EatEffect(Eater, Amount, GetNPModifier());
 
-  if(!Cannibalised && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
+  if(!Cannibalised && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
@@ -180,7 +180,7 @@ bool item::Consume(character* Eater, long Amount)
 
 bool item::IsBadFoodForAI(character* Eater) const
 {
-  if(Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
+  if(Eater->CheckCannibalism(GetConsumeMaterial()))
     return true;
   else
     return GetConsumeMaterial()->IsBadFoodForAI();
@@ -432,7 +432,7 @@ void item::SignalEmitationIncrease(ushort EmitationUpdate)
 
 void item::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation)
+  if(EmitationUpdate == Emitation && Emitation)
     {
       CalculateEmitation();
 

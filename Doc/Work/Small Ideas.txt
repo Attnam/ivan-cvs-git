@@ -280,3 +280,4 @@ Whips should sometimes remove the helmet of the target.
 //*Pictures to Equipment Screen.
 Page up should work correctly in felists.
 If a melee hit is blocker with a weapon, the attacking arm should take damage.
+Poison effect for snake flesh.
