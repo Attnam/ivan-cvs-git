@@ -35,8 +35,8 @@ IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source
            $(IVANDIR)/Source/script.o $(IVANDIR)/Source/square.o $(IVANDIR)/Source/stack.o\
            $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/typeable.o $(IVANDIR)/Source/worldmap.o\
            $(IVANDIR)/Source/wskill.o $(IVANDIR)/Source/wterraba.o $(IVANDIR)/Source/wterrade.o\
-           $(IVANDIR)/Source/config.o
-FLAGS = -IInclude -I$(FeDXDIR)/Include -I$(FEELDIR)/Include -I$(FeFileDIR)/Include -I$(FeIODIR)/Include -I$(FELLDIR)/Include -I$(FeMathDIR)/Include -I$(FeWinDIR)/Include -W -Wall
+           $(IVANDIR)/Source/config.o $(IVANDIR)/Source/terra.o
+FLAGS = -IInclude -I$(FeDXDIR)/Include -I$(FEELDIR)/Include -I$(FeFileDIR)/Include -I$(FeIODIR)/Include -I$(FELLDIR)/Include -I$(FeMathDIR)/Include -I$(FeWinDIR)/Include -s -O3 -ffast-math -W -Wall
 LIBS = -lstdcxx
 
 ivan:	$(IVANBIN)

@@ -1879,7 +1879,7 @@ void genie::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"You know, it's not fun to stay in an oil lamp for three centuries...\"");
 }
 
-bool unicorn::SpecialEnemySightedReaction(character* Enemy)
+bool unicorn::SpecialEnemySightedReaction(character*)
 {
   if((!(RAND() % 3) && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
   {

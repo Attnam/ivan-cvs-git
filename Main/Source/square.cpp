@@ -108,7 +108,7 @@ bool square::GetIsWalkable(character* Char) const
   return GetOverTerrain()->GetIsWalkable() && GetGroundTerrain()->GetIsWalkable(Char);
 }
 
-std::string square::SurviveMessage(character* Char) const
+std::string square::SurviveMessage(character*) const
 {
   if(!GetOverTerrain()->GetIsWalkable())
     return GetOverTerrain()->SurviveMessage();
@@ -116,7 +116,7 @@ std::string square::SurviveMessage(character* Char) const
     return GetGroundTerrain()->SurviveMessage();
 }
 
-std::string square::DeathMessage(character* Char) const
+std::string square::DeathMessage(character*) const
 {
   if(!GetOverTerrain()->GetIsWalkable())
     return GetOverTerrain()->DeathMessage();
@@ -124,7 +124,7 @@ std::string square::DeathMessage(character* Char) const
     return GetGroundTerrain()->DeathMessage();
 }
 
-std::string square::MonsterDeathVerb(character* Char) const
+std::string square::MonsterDeathVerb(character*) const
 {
   if(!GetOverTerrain()->GetIsWalkable())
     return GetOverTerrain()->MonsterDeathVerb();
@@ -132,7 +132,7 @@ std::string square::MonsterDeathVerb(character* Char) const
     return GetGroundTerrain()->MonsterDeathVerb();
 }
 
-std::string square::ScoreEntry(character* Char) const
+std::string square::ScoreEntry(character*) const
 {
   if(!GetOverTerrain()->GetIsWalkable())
     return GetOverTerrain()->ScoreEntry();

@@ -145,7 +145,7 @@ void levelterrain::HandleVisualEffects()
   SetVisualFlags(Flags);
 }
 
-bool groundlevelterrain::SitOn(character* Sitter)
+bool groundlevelterrain::SitOn(character*)
 {
   ADD_MESSAGE("You sit for some time. Nothing happens.");
   return true;
