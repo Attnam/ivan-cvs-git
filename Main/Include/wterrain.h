@@ -187,6 +187,19 @@ class GROUNDWORLDMAPTERRAIN
 	virtual vector GetBitmapPos(void) const { return vector(208, 64); }
 );
 
+
+class GROUNDWORLDMAPTERRAIN
+(
+	steppe,
+	groundworldmapterrain,
+	{
+	},
+	virtual std::string NameStem(void) const { return "steppe"; }
+	virtual std::string Article(void) const { return "a"; }
+	virtual vector GetBitmapPos(void) const { return vector(160, 16); }
+);
+
+
 class OVERWORLDMAPTERRAIN
 (
 	atmosphere,
@@ -197,5 +210,6 @@ class OVERWORLDMAPTERRAIN
 	virtual std::string Article(void) const { return "an"; }
 	virtual vector GetBitmapPos(void) const { return vector(208, 256); }
 );
+
 
 #endif

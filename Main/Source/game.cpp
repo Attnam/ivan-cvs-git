@@ -142,7 +142,8 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
-		WorldMap = new worldmap(36, 36);
+		//WorldMap = new worldmap(128, 128);
+		WorldMap = new worldmap(128, 128);
 		WorldMap->Generate();
 
 		Level = new level*[Levels];
@@ -262,7 +263,7 @@ void game::Run(void)
 	while(GetRunning())
 	{
 		game::GetPlayer()->Act();
-
+ 
 		if(!GetRunning())
 			break;
 
