@@ -888,3 +888,18 @@ ringoffireresistance /* ring-> */
 amuletoflifesaving /* amulet-> */
 {
 }
+
+whistle
+{
+	Category = TOOL;
+	DefaultMainVolume = 50;
+	StrengthModifier = 50;
+	BitmapPos = 0, 416;
+	FormModifier = 85;
+	DefaultSize = 30;
+}
+
+magicalwhistle /* whistle-> */
+{
+	
+}

@@ -383,6 +383,17 @@ material
 		NameStem = "örmöpium";
 		Article = "an";
 	}
+	Config TIN;
+	{
+		StrengthValue = 50;
+		ConsumeType = METAL;
+		Density = 7300; 
+		OfferValue = 8;
+		IsSolid = true;
+		Color = rgb(56, 56, 56);
+		PriceModifier = 15;
+		NameStem = "tin";
+	}
 }
 
 organicsubstance
