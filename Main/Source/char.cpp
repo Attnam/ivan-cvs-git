@@ -8933,7 +8933,7 @@ bool character::TryToUnStickTraps(vector2d Dir)
 	  break;
       }
 
-  return !TrapData;
+  return !TrapData && IsEnabled(); 
 }
 
 struct trapidcomparer

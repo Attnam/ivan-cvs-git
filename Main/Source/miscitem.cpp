@@ -2986,3 +2986,14 @@ void beartrap::RemoveFromSlot()
   TrapData.VictimID = 0;
   item::RemoveFromSlot();
 }
+
+void beartrap::DonateSlotTo(item* Item)
+{
+  character* Char = game::SearchCharacter(GetVictimID());
+
+  if(Char)
+    Char->RemoveTrap(GetTrapID());
+
+  TrapData.VictimID = 0;
+  item::DonateSlotTo(Item);
+}

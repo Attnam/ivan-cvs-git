@@ -567,6 +567,7 @@ class ITEM
   virtual int GetTrapType() const { return GetType() | ITEM_TRAP; }
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
+  virtual void DonateSlotTo(item*);
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);

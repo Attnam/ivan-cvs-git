@@ -4725,6 +4725,9 @@ void oree::GetAICommand()
 
 void oree::CallForMonsters()
 {
+  if(GetDungeon()->GetIndex() != ELPURI_CAVE || GetLevel()->GetIndex() != OREE_LAIR)
+    return;
+
   character* ToBeCalled;
   switch(RAND_N(5))
     {

@@ -1226,7 +1226,7 @@ Dungeon ATTNAM;
 		TeamDefault = ATTNAM_TEAM;
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
-		CanGenerateBone = false;
+		CanGenerateBone = true;
 		DifficultyBase = 150;
 		DifficultyDelta = 0;
 		EnchantmentMinusChanceBase = 0;
@@ -1873,7 +1873,7 @@ Dungeon ATTNAM;
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
-		/*Square, Random;
+		Square, Random;
 		{
 			Character = communist { Team = IVAN_TEAM; }
 			Times = 3;
@@ -1973,7 +1973,13 @@ Dungeon ATTNAM;
 		{
 			Character = skeleton(WAR_LORD) { Team = MONSTER_TEAM; }
 			Times = 3;
-		}*/
+		}
+
+		Square, Random;
+		{
+			Character = spider { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
 	}
 }
 

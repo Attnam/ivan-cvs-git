@@ -411,7 +411,7 @@ class item : public object
   virtual bool IsFixableBySmith(const character*) const { return false; }
   virtual bool IsFixableByTailor(const character*) const { return false; }
   long GetFixPrice() const;
-  void DonateSlotTo(item*);
+  virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
   void ResetSpoiling();
