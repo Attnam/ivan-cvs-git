@@ -167,7 +167,7 @@ class lsquare : public square
   void FinalProcessForBone();
   void SetIsFreezed(bool What) { Freezed = What; }
   bool IsDangerousForAIToBreathe(const character*) const;
-  uchar GetWalkability() const { return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); }
+  uchar GetWalkability() const;
   uchar GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
   virtual uchar GetSquareWalkability() const { return GetWalkability(); }
   void CalculateBorderPartners();

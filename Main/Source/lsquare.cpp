@@ -1804,3 +1804,16 @@ void lsquare::RequestForBorderPartnerUpdates()
 	  }
       }
 }
+
+uchar lsquare::GetWalkability() const
+{
+  if(!GetLevel()->IsOnGround())
+    {
+      if(Pos.X >= 1 && Pos.Y >= 1 && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)
+	return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
+      else
+	return 0;
+    }
+  else
+    return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
+}
