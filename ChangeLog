@@ -1,3 +1,7 @@
+July 21 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Consummos bad pray effect works.
+
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Config screen now shows "disabled" as the autosave interval if it's zero and

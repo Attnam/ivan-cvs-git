@@ -611,6 +611,8 @@ class character : public entity, public id
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
   wsquare* GetWSquareUnder() const { return static_cast<wsquare*>(SquareUnder); }
+  uchar GetRandomNonVitalBodyPart();
+  void TeleportSomePartsAway(ushort);
   virtual void SignalVolumeAndWeightChange();
   void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }

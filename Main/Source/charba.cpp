@@ -4948,6 +4948,69 @@ bool character::CanUseStethoscope(bool PrintReason) const
   return false;
 }
 
+/* 
+ * Effect used by atleast Consummo. 
+ * NOTICE: Doesn't check for death! 
+ */
+void character::TeleportSomePartsAway(ushort NumberToTeleport)
+{
+  for(ushort c = 0; c < NumberToTeleport; ++c)
+    {
+      uchar RandomBodyPart = GetRandomNonVitalBodyPart();
+      if(RandomBodyPart == NONEINDEX)
+	{
+	  for(;c < NumberToTeleport; ++c)
+	    {
+	      GetTorso()->SetHP(GetTorso()->GetHP() - RAND() % 5 - 1);
+	      ulong TorsosVolume = GetTorso()->GetMainMaterial()->GetVolume() / 10;
+	      if(TorsosVolume == 0)
+		break;
+	      
+	      ulong Amount = (RAND() % TorsosVolume) + 1;
+
+	      lump* Lump = new lump(0, false); 
+	      Lump->InitMaterials(GetTorso()->GetMainMaterial()->Clone(Amount));
+	      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() - Amount);
+	      Lump->MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
+	      if(IsPlayer())
+		ADD_MESSAGE("Parts of you teleport away.");
+	      else if(CanBeSeenByPlayer())
+		ADD_MESSAGE("Parts of %s teleport away.", CHARNAME(DEFINITE));
+	    }
+	  return;
+	}
+      else
+	{
+	  bodypart* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
+	  SeveredBodyPart->MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
+	  if(IsPlayer())
+	    ADD_MESSAGE("Your %s teleports away.", SeveredBodyPart->CHARNAME(UNARTICLED));
+	  else
+	    ADD_MESSAGE("%s %s teleports away.", PossessivePronoun().c_str(), SeveredBodyPart->CHARNAME(UNARTICLED));
+	}	
+    }
+}
+
+/* Returns an index of a random bodypart that is not vital. If no non-vital bodypart is found returns NONEINDEX */
+uchar character::GetRandomNonVitalBodyPart()
+{
+  ushort OKBodyPart[MAX_BODYPARTS];
+  ushort OKBodyParts = 0;
+  ushort c;
+  for(c = 0; c < GetBodyParts(); ++c)
+    {
+      if(GetBodyPart(c) && !BodyPartVital(c))
+	{
+	  OKBodyPart[OKBodyParts] = c;
+	  ++OKBodyParts;
+	}
+    }
+  if(OKBodyParts)
+    return OKBodyPart[RAND() % OKBodyParts];
+  else
+    return NONEINDEX;
+}
+
 void character::CalculateVolumeAndWeight()
 {
   Volume = Stack->GetVolume();
@@ -5076,3 +5139,4 @@ bool character::EditAttribute(ushort Identifier, short Value)
   else
     return false;
 }
+

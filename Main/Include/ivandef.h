@@ -101,6 +101,9 @@
 #define FEMALE 2
 #define TRANSSEXUAL 3
 
+/* The maximum bodyparts a character can have */
+#define MAX_BODYPARTS 7
+
 #define HUMANOID_BODYPARTS 7
 
 #define TORSOINDEX 0
@@ -111,7 +114,7 @@
 #define RIGHTLEGINDEX 5
 #define LEFTLEGINDEX 6
 
-#define NONEINDEX 0xFF
+#define NONEINDEX MAX_BODYPARTS
 
 #define DIRECTION_COMMAND_KEYS 8
 #define EXTENDED_DIRECTION_COMMAND_KEYS 9
@@ -461,5 +464,7 @@
 
 /* Sorry about the name. This means how many turns it takes for a angel to attach a bodypart again */
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
+
+
 
 #endif

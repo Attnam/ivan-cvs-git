@@ -31,9 +31,8 @@ void consummo::PrayGoodEffect()
 
 void consummo::PrayBadEffect()
 {
-  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement! Some parts of you teleport away!");
-  //game::GetPlayer()->ReceivePhysicalDamage(5, HEAD, false, RAND() % 8);
-  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());
+  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
+  game::GetPlayer()->TeleportSomePartsAway(RAND() % 2 + 1);
   game::GetPlayer()->CheckDeath("shattered to pieces by the wrath of " + Name());
 }
 
