@@ -1,5 +1,5 @@
-dragonhide				(160/5) flexible and strong, each type should confer some resistance
-meteoric steel (darker than steel)	(150) stronger than steel, weaker than spider silk
-arcanite (orange)			(180) between meteoric steel and mithril
-illithium (white)			(225) between mithril and sapphire/ruby
-adamant (adj: adamantine) (white)	(350) between diamond and valpurium
+//dragonhide				(160/5) flexible and strong, each type should confer some resistance
+//meteoric steel (darker than steel)	(150) stronger than steel, weaker than spider silk
+//arcanite (orange)			(180) between meteoric steel and mithril
+//illithium (white)			(225) between mithril and sapphire/ruby
+//adamant (adj: adamantine) (white)	(350) between diamond and valpurium

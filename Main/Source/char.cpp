@@ -1366,8 +1366,9 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s.", Msg.c_str());
+
       if(GetAction())
-	Die(Msg + GetAction()->GetDeathExplanation());
+	Die(Msg + GetAction()->GetDeathExplanation(), ForceMsg);
       else
 	Die(Msg, ForceMsg);
 

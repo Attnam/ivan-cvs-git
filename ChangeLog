@@ -7,6 +7,41 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Empty and atmosphere terrains have been removed; null pointers are used in
+	  their place
+	* Corrected a fatal bug caused by the flagization of team relations
+	* Fixed a fatal bug in the new explosion code
+	* Explosions now leave smoke
+	* Smoke now blocks light
+	* The patrol guard in the Cathedral's garden replaced by a floating eye
+	* Life saving now resets states
+	* It is now possible to wish for a holy book of a specific god
+	* Wish parser is now less annoying
+	* Go doesn't walk on traps anymore
+	* Added AskKeyPress to trap detection
+	* Balancing of new monsters
+	* New monsters now look somewhat better
+	* Zombies now pick up heads from corpses, too
+	* Frequency system works again correctly
+	* A fatal bug in the corpse cloning code fixed
+	* Exploding wands now cause their specific effect to a certain area instead of
+	  a dull fireball
+	* Staff pic added to item.pcx by me
+	* Added quarterstaff item
+	* Added meteoric steel, dragonhide, arcanite, illithium and adamant materials
+	* Added many new material configurations to weapons and armor etc.
+	* Dark wizard renamed as dark mage and divided to four configs: apprentice dark
+	  mage, dark battlemage, elder dark mage and dark archmage (unique)
+	* Added many new effects and more intelligence to dark mages
+	* Mushrooms reproduce in more interesting patterns
+	* Mutated mushroom renamed as magical mushroom
+	* Added raw magical vapour gas which activates random states when breathed
+	* Magical mushrooms now occasionally release raw magical vapour
+	* Eddys now occasionally engulf items under them and sometimes even themselves
+	* Moose messages work better now
+
 March 12 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added GAS_IMMUNITY state (for skunk)
@@ -18,7 +53,7 @@ March 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 March 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Corrected brain-dead AddDeathExplanation() system
-	
+
 March 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Skunk looks better
