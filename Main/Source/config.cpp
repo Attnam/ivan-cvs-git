@@ -178,7 +178,7 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  break;
 	case 1:
-	  SetDefaultName(iosystem::StringQuestion("Set new default name for the starting pet (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
+	  SetDefaultPetName(iosystem::StringQuestion("Set new default name for the starting pet (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
 	  BoolChange = false;
 	  break;
 
