@@ -42,7 +42,6 @@
 class quitrequest { };
 
 ushort game::CurrentLevelIndex;
-long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
 area* game::AreaInLoad;
@@ -246,7 +245,6 @@ bool game::Init(const festring& Name)
 	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
 	DefaultPolymorphTo.Empty();
 	Player->GetStack()->AddItem(new encryptedscroll);
-	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
@@ -491,7 +489,7 @@ bool game::Save(const festring& SaveName)
   SaveFile << ushort(SAVE_FILE_VERSION);
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
-  SaveFile << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
+  SaveFile << Ticks << InWilderness << NextCharacterID << NextItemID;
   SaveFile << LOSTurns;
   ulong Seed = RAND();
   femath::SetSeed(Seed);
@@ -542,7 +540,7 @@ uchar game::Load(const festring& SaveName)
 
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
   SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
-  SaveFile >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
+  SaveFile >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
   femath::SetSeed(ReadType<ulong>(SaveFile));
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
@@ -709,17 +707,6 @@ vector2d game::GetDirectionVectorForKey(int Key)
 bool game::EyeHandler(long X, long Y)
 {
   return CurrentLSquareMap[X][Y]->IsTransparent();
-}
-
-long game::GodScore()
-{
-  long Score = -1000;
-
-  for(ushort c = 1; c <= GODS; ++c)
-    if(GetGod(c)->GetRelation() > Score)
-      Score = GetGod(c)->GetRelation();
-
-  return Score;
 }
 
 float game::GetMinDifficulty()
@@ -2246,4 +2233,27 @@ int game::GetMoveCommandKey(ushort Index)
     return MoveCommandKeyWithNumberPad[Index];
   else
     return MoveCommandKeyWithoutNumberPad[Index];
+}
+
+long game::GetScore()
+{
+  double Counter = 0;
+  character* Char;
+  massacremap::const_iterator i1;
+  for(i1 = PlayerMassacreMap.begin(); i1 != PlayerMassacreMap.end(); ++i1)
+    {
+      Char = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
+      ushort SumOfAttributes = Char->GetSumOfAttributes();
+      delete Char;
+      Counter += double(SumOfAttributes * SumOfAttributes) * sqrt(i1->second);
+    }
+
+  for(i1 = PetMassacreMap.begin(); i1 != PetMassacreMap.end(); ++i1)
+    {
+      Char = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
+      ushort SumOfAttributes = Char->GetSumOfAttributes();
+      delete Char;
+      Counter += double(SumOfAttributes * SumOfAttributes) * sqrt(i1->second);
+    }
+  return long(0.01 * Counter);
 }

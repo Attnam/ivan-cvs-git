@@ -1668,7 +1668,7 @@ long character::GetStatScore() const
 
 long character::GetScore() const
 {
-  return (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + GetStuffScore() + game::GodScore();
+  return game::GetScore(); // (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + GetStuffScore() + game::GodScore();
 }
 
 void character::AddScoreEntry(const festring& Description, float Multiplier, bool AddEndLevel) const
@@ -1682,7 +1682,7 @@ void character::AddScoreEntry(const festring& Description, float Multiplier, boo
       if(AddEndLevel)
 	Desc << " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()));
 
-      HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc);
+      HScore.Add(long(GetScore() * Multiplier), Desc);
       HScore.Save();
     }
 }
@@ -1716,7 +1716,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 	NewMsg << " while" << PolyMsg;
 
       if(IsPlayer() && game::WizardModeIsActive())
-	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), GetScore() - game::GetBaseScore());
+	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), GetScore());
 
       Die(Murderer, NewMsg, ForceMsg);
       return true;
@@ -4359,9 +4359,8 @@ bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
   bool MayBeESPSeen = !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
   bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
   bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
-
   if((game::IsInWilderness() && Visible)
-  || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare())))
+     || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
@@ -6625,4 +6624,9 @@ void character::SignalStepFrom(lsquare** OldSquareUnder)
   for(c = 0; c < GetSquaresUnder(); ++c)
     if(IsEnabled() && GetLSquareUnder(c) == NewSquareUnder[c])
       NewSquareUnder[c]->StepOn(this, OldSquareUnder);
+}
+
+ulong character::GetSumOfAttributes() const
+{
+  return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + (GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY)) * 2;
 }

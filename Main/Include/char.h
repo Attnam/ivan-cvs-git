@@ -788,6 +788,7 @@ class character : public entity, public id
   square* GetNaturalNeighbourSquare(ushort Index) const { return character::GetNeighbourSquare(Index); }
   lsquare* GetNaturalNeighbourLSquare(ushort Index) const { return character::GetNeighbourLSquare(Index); }
   void SignalStepFrom(lsquare**);
+  virtual ulong GetSumOfAttributes() const;
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;

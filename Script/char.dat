@@ -2533,7 +2533,7 @@ lion
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 200;
 	FleshMaterial = LION_FLESH;
-	DeathMessage = "@Dd growls ans is slain.";
+	DeathMessage = "@Dd growls and is slain.";
 	AttachedGod = SILVA;
 }
 

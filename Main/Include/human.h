@@ -136,6 +136,7 @@ class ABSTRACT_CHARACTER
   virtual ushort GetRandomApplyBodyPart() const;
   virtual void FinalProcessForBone();
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
+  virtual ulong GetSumOfAttributes() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;

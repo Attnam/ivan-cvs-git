@@ -3895,3 +3895,8 @@ bodypart* ennerbeast::MakeBodyPart(ushort Index) const
   else
     return humanoid::MakeBodyPart(Index);
 }
+
+ulong humanoid::GetSumOfAttributes() const
+{
+  return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY) + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
+}

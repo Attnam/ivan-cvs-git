@@ -136,12 +136,10 @@ class game
   static vector2d GetDirectionVectorForKey(int);
   static festring SaveName(const festring& = CONST_S(""));
   static bool EyeHandler(long, long);
-  static long GodScore();
   static void ShowLevelMessage();
   static float GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
-  static long GetBaseScore() { return BaseScore; }
   static void Tick(ushort Tick = 1) { Ticks += Tick; }
   static ulong GetTicks() { return Ticks; }
   static festring GetAutoSaveFileName() { return AutoSaveFileName; }
@@ -281,6 +279,7 @@ class game
   static bool TooGreatDangerFound() { return TooGreatDangerFoundBool; }
   static void SetTooGreatDangerFound(bool What) { TooGreatDangerFoundBool = What; }
   static void CreateBusyAnimationCache();
+  static long GetScore();
  private:
   static const char* const Alignment[];
   static god** God;
@@ -297,7 +296,6 @@ class game
   static bool Running;
   static character* Player;
   static vector2d Camera;
-  static long BaseScore;
   static ulong Ticks;
   static festring AutoSaveFileName;
   static bool InWilderness;

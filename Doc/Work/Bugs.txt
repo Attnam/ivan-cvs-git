@@ -37,5 +37,10 @@ Mistresses like shields more than their whips.
 Headless zombies can eat.
 Broken thunder hammer emits light.
 While in read-mode player can find mines.
+Squares near should be redrawn when digged. (bad edge tiles)
+Creating doors doesn't update the lookmode description.
+Do teleported, activated and seen mines still say seen by player?
+Angels shouldn't eat
 //Squares near should be redrawn when digged. (bad edge tiles)
 Creating doors doesn't update the lookmode description.
+
