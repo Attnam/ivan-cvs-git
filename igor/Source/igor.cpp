@@ -37,10 +37,10 @@ int Main(int, char**)
   while((ch = getchar()) != '\n')
     Directory += ch;
 
-  if(!Directory.length())
+  if(Directory.empty())
     Directory = OldDirectory;
 
-  if(Directory.empty() || Directory[Directory.size() - 1] != '/')
+  if(!Directory.empty() && Directory[Directory.size() - 1] != '/')
     Directory += '/';
 
   std::ofstream OConfigFile("igor.cfg");
@@ -78,7 +78,7 @@ int Main(int, char**)
     }
 
   CBitmap = new colorizablebitmap(Directory + FileName);
-  bitmap CursorBitmap("Graphics/Cursor.pcx");
+  bitmap CursorBitmap(Directory + "Cursor.pcx");
   vector2d Cursor(0, 0);
   int k = 0;
   Selected = 0;

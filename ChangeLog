@@ -7,11 +7,16 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* New eddy animation added to char.pcx by Kahvi
+	* Added makefile for DJGPP port of Igor
+	* Igor now works if the graphics are in the same directory as the binary
+
 February 12 2003 Heikki Sairanen <sonor@phpoint.fi>
 
 	* Wrong version number in configure.in of igor corrected
 
-	
 February 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected some bugs in Igor's Linux port
