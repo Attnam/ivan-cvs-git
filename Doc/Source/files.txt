@@ -17,6 +17,7 @@ FELL.txt - Fatal Error Listing Library (FELL) documentation
 FeWin.txt - Fatal Error Window Operator Library (FeWin) documentation
 files.txt - this file
 general.txt - General Information about IVAN source
+Include.txt - Documentation of miscellaneous shared include files
 item.txt - How to make a new item type tutorial
 LibTest.txt - Fatal Error Library Test (LibTest) documentation
 ligth.txt - IVAN lighting system documentation
