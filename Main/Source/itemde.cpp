@@ -1156,3 +1156,33 @@ bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar Dir
     }
   return false;
 }
+
+bool scrolloftaming::Read(character* Reader)
+{
+  // First find all characters in the squares around Reader
+  std::vector<character*> CharactersNearBy;
+  for(ushort c = 0; c < 8; c++)
+    {
+      vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
+      if(game::IsValidPos(Test))
+	{
+	  character* CharacterInSquare = game::GetCurrentLevel()->GetLevelSquare(Test)->GetCharacter();
+	  if(CharacterInSquare && CharacterInSquare->Charmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
+	    CharactersNearBy.push_back(CharacterInSquare);
+	}
+    }
+  
+  // Then pick one of the characters and set it to the same team as Reader
+  if(CharactersNearBy.empty())
+    {
+      ADD_MESSAGE("The scroll burns, but nothing happens.");
+    }
+  else
+    {
+      character* ToBeTamed = CharactersNearBy[RAND() % CharactersNearBy.size()];
+      ToBeTamed->ChangeTeam(Reader->GetTeam());
+      ADD_MESSAGE("The scroll burns and suddenly %s looks friendly.", ToBeTamed->CNAME(DEFINITE));
+    }
+
+  return true;
+}

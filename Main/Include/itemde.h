@@ -1218,4 +1218,21 @@ class ITEM
   virtual bool BeamEffect(character*, std::string, uchar, levelsquare*);
 );
 
+class ITEM
+(
+  scrolloftaming,
+  scroll,
+  InitMaterials(new parchment),
+  {
+    SetSize(30);
+  },
+ public:
+  virtual ushort Possibility() const { return 5; }
+  virtual std::string NameSingular() const { return "scroll of taming"; }
+  virtual std::string NamePlural() const { return "scrolls of taming"; }
+  virtual float OfferModifier() const { return 5; }
+  virtual bool Read(character*);
+  virtual ulong Price() const { return 350; }
+);
+
 #endif
