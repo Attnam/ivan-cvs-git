@@ -9,3 +9,4 @@ Liian pitkät messaget bugittaa msghistoryssa.
 Bill's Will dies and player dodges...
 The Lone Black Man of the Mountain Bug.
 StringQuestion is drawn over the messages.
+Throwing a lamp at Perttu (most likely any monster) seems to crash the game.
