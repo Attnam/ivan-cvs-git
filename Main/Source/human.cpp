@@ -802,7 +802,7 @@ void communist::BeTalkedTo()
     ChangeTeam(PLAYER->GetTeam());
   }
   else if(GetTeam() != PLAYER->GetTeam() && !(RAND() % 5))
-    ADD_MESSAGE("You weak. Learn killing and come back.");
+    ADD_MESSAGE("\"You weak. Learn killing and come back.\"");
   else
     character::BeTalkedTo();
 }

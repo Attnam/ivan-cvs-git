@@ -86,3 +86,6 @@ Cloak and armor shouldn't protect from broken bottles. (from Ighalli)
 You can bite with an unusable head.
 Petrus says that they have witnessed you leaving the tunnel even if you got here by means of levitation. (from Z)
 Crash : During the reading of a scroll of repair. See forum.
+Leprosy + cathedral bug.
+Mines do not disappear in the cathedral.
+10000/100 HP bug.
