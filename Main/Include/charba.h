@@ -688,6 +688,8 @@ class character : public entity, public id
   bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP; }
   virtual void UpdatePictures();
   virtual bool CanHeal() const;
+  virtual vector2d GetWaypoint() const { return WayPoint; }
+  virtual void SetWayPoint(vector2d What) { WayPoint = What; }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

@@ -1,3 +1,9 @@
+August 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Whistle now sets the waypoint of some creatures to users pos
+	* Displacing monsters that are stuck no longer works
+	* Bug with braking bottles probably fixed
+	
 August 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Equipment is now dropped correctly after Sophos teleport a bodypart away

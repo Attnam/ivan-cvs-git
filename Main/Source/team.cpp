@@ -11,12 +11,12 @@ void team::SetRelation(team* AnotherTeam, uchar Relation)
   this->Relation[AnotherTeam->GetID()] = AnotherTeam->Relation[GetID()] = Relation;
 }
 
-uchar team::GetRelation(team* AnotherTeam)
+uchar team::GetRelation(const team* AnotherTeam) const
 {
   if(AnotherTeam == this)
     return FRIEND;
 
-  std::map<ulong, uchar>::iterator Iterator = Relation.find(AnotherTeam->GetID());
+  std::map<ulong, uchar>::const_iterator Iterator = Relation.find(AnotherTeam->GetID());
 
   if(Iterator == Relation.end())
     ABORT("Team %d dismissed!", AnotherTeam->GetID());
@@ -57,4 +57,13 @@ void team::Save(outputfile& SaveFile) const
 void team::Load(inputfile& SaveFile)
 {
   SaveFile >> ID >> Relation >> AttackEvilness;
+}
+
+bool team::HasEnemy() const
+{
+  for(ushort c = 0; c < game::GetTeams(); ++c)
+    if(!game::GetTeam(c)->GetMember().empty() && GetRelation(game::GetTeam(c)) == HOSTILE)
+      return true;
+      
+  return false;
 }

@@ -20,7 +20,7 @@ class team
   team() : Leader(0) { }
   team(ushort ID) : Leader(0), ID(ID), AttackEvilness(0) { }
   void SetRelation(team*, uchar);
-  uchar GetRelation(team*);
+  uchar GetRelation(const team*) const;
   void Hostility(team*);
   ushort GetID() const { return ID; }
   void SetID(ushort What) { ID = What; }
@@ -33,6 +33,7 @@ class team
   const std::list<character*>& GetMember() const { return Member; }
   ushort GetAttackEvilness() const { return AttackEvilness; }
   void SetAttackEvilness(ushort What) { AttackEvilness = What; }
+  bool HasEnemy() const;
  private:
   character* Leader;
   std::map<ulong, uchar> Relation;

@@ -1922,6 +1922,21 @@ void whistle::BlowEffect(character* Whistler)
     ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHARNAME(DEFINITE));
   else 
     ADD_MESSAGE("You hear a whistle playing.");
+
+  for(ushort c = 0; c < game::GetTeams(); ++c)
+    {
+      if(game::GetTeam(c)->HasEnemy())
+	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	  if((*i)->IsEnabled())
+	    {
+	      ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+
+	      if(ThisDistance <= GetRange())
+		{
+		  (*i)->SetWayPoint(GetPos());
+		}
+	    }
+    }
 }
 
 void magicalwhistle::BlowEffect(character* Whistler)
@@ -3601,9 +3616,8 @@ void potion::Break()
     GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
 
   item* Remains = new brokenbottle(0, NOMATERIALS);
-  Remains->InitMaterials(GetMainMaterial());
+  Remains->InitMaterials(GetMainMaterial()->Clone());
   GetSlot()->DonateTo(Remains);
-  SetMainMaterial(0, NOPICUPDATE);
   SendToHell();
 }
 

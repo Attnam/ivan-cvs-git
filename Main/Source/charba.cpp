@@ -579,7 +579,7 @@ void character::GetAICommand()
 
   EditAP(-1000);
 }
-
+/* TPos = Target Pos */
 bool character::MoveTowards(vector2d TPos)
 {
   vector2d MoveTo[3];
@@ -653,6 +653,9 @@ bool character::MoveTowards(vector2d TPos)
     }
 
   if(TryMove(GetPos() + MoveTo[0])) return true;
+
+  if(GetPos().IsAdjacent(TPos))
+    return false;
 
   if(RAND() & 1)
     {
@@ -2582,7 +2585,7 @@ bool character::Displace(character* Who)
       return true;
     }
 
-  if(GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()))
+  if(GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced() && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHARDESCRIPTION(DEFINITE));

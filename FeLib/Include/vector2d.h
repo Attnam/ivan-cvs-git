@@ -30,6 +30,7 @@ struct vector2d
   vector2d  operator >>  (uchar Shift) const  { return vector2d(X >> Shift, Y >> Shift); }
   vector2d& operator >>= (uchar Shift)	      { X >>= Shift; Y >>= Shift; return *this; }
   ulong Length() const			      { return long(X) * long(X) + long(Y) * long(Y); }
+  bool IsAdjacent(vector2d TPos) const { return TPos.X >= X - 1 && TPos.X <= X + 1 && TPos.Y <= Y + 1 && TPos.Y >= Y - 1; } /* Also returns true if TPos == this */
   short X, Y;
 };
 

@@ -1161,6 +1161,7 @@ class ITEM
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void BlowEffect(character*);
+  virtual ushort GetRange() const { return 20 * 20; }
 );
 
 class ITEM
