@@ -17,6 +17,7 @@
 #include "error.h"
 #include "game.h"
 #include "proto.h"
+#include "save.h"
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0)
 {
@@ -1039,9 +1040,9 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 
 void lsquare::PolymorphEverything(character* Zapper)
 {
-  character* Character;
+  character* Character = GetCharacter();
 
-  if((Character = GetCharacter()))
+  if(Character)
     {
       if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);

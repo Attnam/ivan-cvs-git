@@ -3,6 +3,7 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "colorbit.h"
+#include "save.h"
 
 felist::~felist()
 {
@@ -307,4 +308,29 @@ void felist::Load(inputfile& SaveFile)
 void felist::AddDescription(const std::string& Str, ushort Color)
 {
   Description.push_back(felistdescription(Str, Color)); 
+}
+
+outputfile& operator<<(outputfile& SaveFile, felistentry Entry)
+{
+  SaveFile << Entry.Bitmap << Entry.String << Entry.Color << Entry.Selectable;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
+{
+  Entry.Bitmap = 0;
+  SaveFile >> Entry.Bitmap >> Entry.String >> Entry.Color >> Entry.Selectable;
+  return SaveFile;
+}
+
+outputfile& operator<<(outputfile& SaveFile, felistdescription Desc)
+{
+  SaveFile << Desc.String << Desc.Color;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, felistdescription& Desc)
+{
+  SaveFile >> Desc.String >> Desc.Color;
+  return SaveFile;
 }

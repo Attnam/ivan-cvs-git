@@ -10,6 +10,7 @@
 #include "colorbit.h"
 #include "strover.h"
 #include "error.h"
+#include "save.h"
 
 felist msgsystem::MessageHistory("Message history", WHITE, 200, true);
 std::string msgsystem::LastMessage;

@@ -11,6 +11,15 @@
 #include "proto.h"
 #include "save.h"
 
+#define MAX_TEMPERATURE			27		//increase for more tropical world
+#define LATITUDE_EFFECT			40		//increase for more effect
+#define ALTITUDE_EFFECT			0.02
+
+#define COLD				10
+#define MEDIUM				12
+#define WARM				17
+#define HOT				19
+
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
   Map = (wsquare***)area::Map;
@@ -197,15 +206,6 @@ void worldmap::SmoothAltitude()
 
   delete [] OldAltitudeBuffer;
 }
-
-#define MAX_TEMPERATURE			27		//increase for more tropical world
-#define LATITUDE_EFFECT			40		//increase for more effect
-#define ALTITUDE_EFFECT			0.02
-
-#define COLD				10
-#define MEDIUM				12
-#define WARM				17
-#define HOT				19
 
 void worldmap::GenerateClimate()
 {

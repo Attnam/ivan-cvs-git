@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define NUMBER_OF_LOCK_TYPES 3
-
 #include "lterraba.h"
 #include "materde.h"
 #include "game.h"
@@ -381,7 +379,7 @@ class OLTERRAIN
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
   virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void InitMaterials(material* M1, material* M2) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume()); }
+  virtual void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }

@@ -5,24 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define GOOD 0
-#define NEUTRAL 1
-#define EVIL 2
-
-/* ConsumeTypes */
-
-#define ODD 0
-#define FRUIT 1
-#define MEAT 2
-#define METAL 4
-#define MINERAL 8
-#define LIQUID 16
-#define BONE 32
-#define PROCESSED 64
-#define MISC_ORGANIC 128
-#define GAS 256
-
 #include "typedef.h"
+#include "ivandef.h"
 
 /* Presentation of material class */
 
@@ -100,7 +84,7 @@ class material
   virtual material* Clone() const = 0;
   virtual bool IsType(ushort QType) const { return Type() == QType; }
   //static bool IsSolid() { return false; }
-  virtual ushort GetSkinColor() const { return GetColor(); }
+  virtual ushort GetSkinColor(ushort) const { return GetColor(); }
   //virtual ushort GetColor() const { return GetDataBaseColor(); }
   //static bool CanBeWished() { return true; }
   virtual entity* GetMotherEntity() const { return MotherEntity; }
@@ -120,7 +104,25 @@ class material
   virtual void AddConsumeEndMessage(character*) const { }
   virtual long CalculateOfferValue(char GodAlignment) const;
 
-  virtual ushort GetStrengthValue() const { return GetDataBase().StrengthValue; }
+  DATABASEVALUE(ushort, StrengthValue);
+  DATABASEVALUE(ushort, ConsumeType);
+  DATABASEVALUE(ushort, Density);
+  DATABASEVALUE(ushort, OfferValue);
+  DATABASEVALUE(ushort, Color);
+  DATABASEVALUE(ulong, PriceModifier);
+  DATABASEBOOL(IsSolid);
+  DATABASEVALUE(ushort, Emitation);
+  DATABASEBOOL(CanBeWished);
+  DATABASEVALUE(uchar, Alignment);
+  DATABASEVALUE(ushort, NutritionValue);
+  DATABASEBOOL(IsAlive);
+  DATABASEBOOL(IsBadFoodForAI);
+  DATABASEVALUE(ushort, ExplosivePower);
+  DATABASEBOOL(IsFlammable);
+  DATABASEBOOL(IsFlexible);
+  DATABASEBOOL(IsExplosive);
+
+  /*virtual ushort GetStrengthValue() const { return GetDataBase().StrengthValue; }
   virtual ushort GetConsumeType() const { return GetDataBase().ConsumeType; }
   virtual ushort GetDensity() const { return GetDataBase().Density; }
   virtual ushort GetOfferValue() const { return GetDataBase().OfferValue; }
@@ -136,7 +138,7 @@ class material
   virtual ushort GetExplosivePower() const { return GetDataBase().ExplosivePower; }
   virtual bool IsFlammable() const { return GetDataBase().IsFlammable; }
   virtual bool IsFlexible() const { return GetDataBase().IsFlexible; }
-  virtual bool IsExplosive() const { return GetDataBase().IsExplosive; }
+  virtual bool IsExplosive() const { return GetDataBase().IsExplosive; }*/
 
   /*virtual ushort GetStrengthValue() const { return GetDataBaseStrengthValue(); }
   virtual ushort GetConsumeType() const { return GetDataBaseConsumeType(); }

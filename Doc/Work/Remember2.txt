@@ -15,3 +15,5 @@ Miina.
 Lookmode.
 Alphablit pulloihin.
 Bodypartien ja actioneiden scoret.
+Luut.
+define.h:t

@@ -133,3 +133,15 @@ void organicsubstance::Load(inputfile& SaveFile)
   material::Load(SaveFile);
   SaveFile >> SpoilCounter;
 }
+
+void humanflesh::Save(outputfile& SaveFile) const
+{
+  material::Save(SaveFile);
+  SaveFile << SkinColor;
+}
+
+void humanflesh::Load(inputfile& SaveFile)
+{
+  material::Load(SaveFile);
+  SaveFile >> SkinColor;
+}

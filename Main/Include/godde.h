@@ -6,7 +6,7 @@
 #endif
 
 #include "godba.h"
-#include "graphics.h"
+#include "felibdef.h"
 
 class GOD
 (

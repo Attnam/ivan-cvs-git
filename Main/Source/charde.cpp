@@ -32,6 +32,7 @@ valuemap protocontainer<character>::CodeNameMap;
 #include "slot.h"
 #include "actionde.h"
 #include "colorbit.h"
+#include "save.h"
 
 petrus::~petrus()
 {
@@ -136,7 +137,7 @@ bool ennerbeast::Hit(character*)
 {
   DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
   {
-    character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
+    character* Char = game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetCharacter();
     ushort ScreamStrength = ushort(GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
 
     if(Char && Char != this)
@@ -151,10 +152,10 @@ bool ennerbeast::Hit(character*)
 	Char->CheckDeath("killed by " + Name(INDEFINITE) + "'s scream");
       }
 
-    game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
+    game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
 
     for(ushort x = 0; x < 4; ++x)
-      game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
+      game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
   });
 
   EditStrengthExperience(100);
@@ -201,11 +202,11 @@ void humanoid::Load(inputfile& SaveFile)
     SaveFile >> GetCategoryWeaponSkill(c);
 }
 
-float golem::GetMeleeStrength() const
+/*float golem::GetMeleeStrength() const
 {
-  //return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
+  return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
   return 0;
-}
+}*/
 
 bool golem::MoveRandomly()
 {
@@ -243,7 +244,7 @@ void petrus::GetAICommand()
   character* Char;
 
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			if((Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter()))
+			if((Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter()))
   {
     if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
       {
@@ -455,7 +456,7 @@ arm* humanoid::GetSecondaryWeaponArm() const
 
 void humanoid::MainHit(character* Enemy)
 {
-  switch(Enemy->TakeHit(this, GetMainWielded(), GetMainAttackStrength(), GetMainToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier()))) //there's no breaks and there shouldn't be any
+  switch(Enemy->TakeHit(this, GetMainWielded(), GetMainAttackStrength(), GetMainToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier()))) //there's no breaks and there shouldn't be any
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -479,7 +480,7 @@ void humanoid::MainHit(character* Enemy)
 
 void humanoid::SecondaryHit(character* Enemy)
 {
-  switch(Enemy->TakeHit(this, GetSecondaryWielded(), GetSecondaryAttackStrength(), GetSecondaryToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier()))) //there's no breaks and there shouldn't be any
+  switch(Enemy->TakeHit(this, GetSecondaryWielded(), GetSecondaryAttackStrength(), GetSecondaryToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier()))) //there's no breaks and there shouldn't be any
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -848,7 +849,7 @@ void golem::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
 }
 
-long humanoid::StatScore() const
+long humanoid::GetStatScore() const
 {
   long SkillScore = 0;
   ushort c;
@@ -856,7 +857,7 @@ long humanoid::StatScore() const
   for(c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SkillScore += GetCategoryWeaponSkill(c)->GetHits();
 
-  return (SkillScore >> 2) + character::StatScore();
+  return (SkillScore >> 2) + character::GetStatScore();
 }
 
 void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
@@ -1110,14 +1111,14 @@ bool elpuri::Hit(character* Enemy)
 {
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
-    lsquare* Square = GetLSquareUnder()->GetLevelUnder()->GetLSquare(vector2d(DoX, DoY));
+    lsquare* Square = GetLSquareUnder()->GetLevelUnder()->GetLSquare(DoX, DoY);
     character* ByStander = Square->GetCharacter();
 
     if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
       {
 	Hostility(ByStander);
 
-	switch(ByStander->TakeHit(this, 0, GetAttackStrength(), GetToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier())))
+	switch(ByStander->TakeHit(this, 0, GetAttackStrength(), GetToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier())))
 	  {
 	  case HAS_HIT:
 	  case HAS_BLOCKED:
@@ -1495,13 +1496,13 @@ ulong werewolf::MaxDanger() const
   return 0;
 }
 
-float werewolf::GetMeleeStrength() const
+/*float werewolf::GetMeleeStrength() const
 {
   if(GetIsWolf())
     return 10000;
   else
     return 2000;
-}
+}*/
 
 void werewolf::Save(outputfile& SaveFile) const
 {
@@ -1679,7 +1680,7 @@ bool largecat::Catches(item* Thingy, float)
     return false;
 }
 
-material* unicorn::CreateTorsoFlesh(ulong Volume) const
+material* unicorn::CreateBodyPartFlesh(ushort, ulong Volume) const
 {
   switch(Alignment)
     {
@@ -1766,30 +1767,6 @@ void unicorn::CreateInitialEquipment()
     GetStack()->FastAddItem(new astone);
 }
 
-void humanoid::SetSize(ushort Size)
-{
-  if(GetHead())
-    GetHead()->SetSize(HeadSize(Size));
-
-  if(GetTorso())
-    GetTorso()->SetSize(TorsoSize(Size));
-
-  if(GetGroin())
-    GetGroin()->SetSize(GroinSize(Size));
-
-  if(GetRightArm())
-    GetRightArm()->SetSize(ArmSize(Size));
-
-  if(GetLeftArm())
-    GetLeftArm()->SetSize(ArmSize(Size));
-
-  if(GetRightLeg())
-    GetRightLeg()->SetSize(LegSize(Size));
-
-  if(GetLeftLeg())
-    GetLeftLeg()->SetSize(LegSize(Size));
-}
-
 ushort humanoid::GetSize() const
 {
   ushort Size = 0;
@@ -1812,89 +1789,165 @@ ushort humanoid::GetSize() const
   return Size;
 }
 
-ushort humanoid::HeadSize(ushort) const
+ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize)
+{
+  switch(Index)
+    {
+    case HEADINDEX: return 20;
+    case TORSOINDEX: return (TotalSize - 20) * 2 / 5;
+    case RIGHTARMINDEX:
+    case LEFTARMINDEX: return (TotalSize - 20) * 3 / 5;
+    case GROININDEX: return (TotalSize - 20) / 3;
+    case RIGHTLEGINDEX:
+    case LEFTLEGINDEX: return (TotalSize - 20) * 3 / 5;
+    default:
+      ABORT("Illegal humanoid bodypart size request!");
+      return 0;
+    }
+}
+
+/*ushort humanoid::GetHeadSize(ushort) const
 {
   return 20;
 }
 
-ushort humanoid::TorsoSize(ushort TotalSize) const
+ushort humanoid::GetTorsoSize(ushort TotalSize) const
 {
-  return (TotalSize - HeadSize(TotalSize)) * 2 / 5;
+  return (TotalSize - GetHeadSize(TotalSize)) * 2 / 5;
 }
 
-ushort humanoid::ArmSize(ushort TotalSize) const
+ushort humanoid::GetArmSize(ushort TotalSize) const
 {
-  return (TotalSize - HeadSize(TotalSize)) * 3 / 5;
+  return (TotalSize - GetHeadSize(TotalSize)) * 3 / 5;
 }
 
-ushort humanoid::GroinSize(ushort TotalSize) const
+ushort humanoid::GetGroinSize(ushort TotalSize) const
 {
-  return (TotalSize - HeadSize(TotalSize)) / 3;
+  return (TotalSize - GetHeadSize(TotalSize)) / 3;
 }
 
-ushort humanoid::LegSize(ushort TotalSize) const
+ushort humanoid::GetLegSize(ushort TotalSize) const
 {
-  return (TotalSize - HeadSize(TotalSize)) * 3 / 5;
+  return (TotalSize - GetHeadSize(TotalSize)) * 3 / 5;
+}*/
+
+ulong humanoid::GetBodyPartVolume(ushort Index)
+{
+  switch(Index)
+    {
+    case HEADINDEX: return 4000;
+    case TORSOINDEX: return (GetTotalVolume() - 4000) * 13 / 30;
+    case RIGHTARMINDEX:
+    case LEFTARMINDEX: return (GetTotalVolume() - 4000) / 10;
+    case GROININDEX: return (GetTotalVolume() - 4000) / 10;
+    case RIGHTLEGINDEX:
+    case LEFTLEGINDEX: return (GetTotalVolume() - 4000) * 2 / 15;
+    default:
+      ABORT("Illegal humanoid bodypart volume request!");
+      return 0;
+    }
 }
 
-ulong humanoid::HeadVolume() const
+/*ulong humanoid::GetHeadVolume() const
 {
   return 4000;
 }
 
-ulong humanoid::TorsoVolume() const
+ulong humanoid::GetTorsoVolume() const
 {
-  return TotalVolume() - HeadVolume() - ArmVolume() * 2 - GroinVolume() - LegVolume() * 2;
+  return GetTotalVolume() - GetHeadVolume() - GetArmVolume() * 2 - GetGroinVolume() - GetLegVolume() * 2;
 }
 
-ulong humanoid::ArmVolume() const
+ulong humanoid::GetArmVolume() const
 {
-  return (TotalVolume() - HeadVolume()) / 10;
+  return (GetTotalVolume() - GetHeadVolume()) / 10;
 }
 
-ulong humanoid::GroinVolume() const
+ulong humanoid::GetGroinVolume() const
 {
-  return (TotalVolume() - HeadVolume()) / 10;
+  return (GetTotalVolume() - GetHeadVolume()) / 10;
 }
 
-ulong humanoid::LegVolume() const
+ulong humanoid::GetLegVolume() const
 {
-  return (TotalVolume() - HeadVolume()) * 2 / 15;
+  return (GetTotalVolume() - GetHeadVolume()) * 2 / 15;
+}*/
+
+bodypart* humanoid::MakeBodyPart(ushort Index)
+{
+  switch(Index)
+    {
+    case TORSOINDEX: return new humanoidtorso(false);
+    case HEADINDEX: return new head(false);
+    case RIGHTARMINDEX: return new rightarm(false);
+    case LEFTARMINDEX: return new leftarm(false);
+    case GROININDEX: return new groin(false);
+    case RIGHTLEGINDEX: return new rightleg(false);
+    case LEFTLEGINDEX: return new leftleg(false);
+    default:
+      ABORT("Wierd bodypart to make for a humanoid. It must be your fault!");
+      return 0;
+    }
 }
 
-void humanoid::CreateBodyParts()
+/*material* humanoid::CreateBodyPartFlesh(ushort Index, ulong Volume)
 {
-  /* Create all body parts */
-
-  for(uchar c = 0; c < BodyParts(); ++c) 
-    CreateBodyPart(c);
+  switch(Index)
+    {
+    case TORSOINDEX: return new humanoidtorso(false);
+    case HEADINDEX: return new head(false);
+    case RIGHTARMINDEX: return new rightarm(false);
+    case LEFTARMINDEX: return new leftarm(false);
+    case GROININDEX: return new groin(false);
+    case RIGHTLEGINDEX: return new rightleg(false);
+    case LEFTLEGINDEX: return new leftleg(false);
+    default:
+      ABORT("Wierd bodypart flesh to create for a humanoid. It must be your fault!");
+      return 0;
+    }
 }
 
-void humanoid::RestoreBodyParts()
+material* humanoid::CreateBodyPartBone(ushort Index, ulong Volume)
 {
-  for(uchar c = 0; c < BodyParts(); ++c)
-    if(!GetBodyPart(c))
-      CreateBodyPart(c);
+  switch(Index)
+    {
+    case TORSOINDEX: return new humanoidtorso(false);
+    case HEADINDEX: return new head(false);
+    case RIGHTARMINDEX: return new rightarm(false);
+    case LEFTARMINDEX: return new leftarm(false);
+    case GROININDEX: return new groin(false);
+    case RIGHTLEGINDEX: return new rightleg(false);
+    case LEFTLEGINDEX: return new leftleg(false);
+    default:
+      ABORT("Wierd bodypart bone to create for a humanoid. It must be your fault!");
+      return 0;
+    }
+}*/
+
+uchar humanoid::GetBodyPartBonePercentile(ushort Index)
+{
+  switch(Index)
+    {
+    case TORSOINDEX: return GetTorsoBonePercentile();
+    case HEADINDEX: return GetHeadBonePercentile();
+    case RIGHTARMINDEX: return GetRightArmBonePercentile();
+    case LEFTARMINDEX: return GetLeftArmBonePercentile();
+    case GROININDEX: return GetGroinBonePercentile();
+    case RIGHTLEGINDEX: return GetRightLegBonePercentile();
+    case LEFTLEGINDEX: return GetLeftLegBonePercentile();
+    default:
+      ABORT("Wierd bodypart bone percentile request for a humanoid. It must be your fault!");
+      return 0;
+    }
 }
 
-void humanoid::UpdateBodyPartPictures(bool CallUpdatePictures)
-{
-  UpdateHeadPicture(CallUpdatePictures);
-  UpdateTorsoPicture(CallUpdatePictures);
-  UpdateRightArmPicture(CallUpdatePictures);
-  UpdateLeftArmPicture(CallUpdatePictures);
-  UpdateGroinPicture(CallUpdatePictures);
-  UpdateRightLegPicture(CallUpdatePictures);
-  UpdateLeftLegPicture(CallUpdatePictures);
-}
-
-void humanoid::CreateHead()
+/*void humanoid::CreateHead()
 {
   SetHead(new head(false));
   UpdateHeadPicture(false);
-  GetHead()->InitMaterials(CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+  GetHead()->InitMaterials(CreateHeadFlesh(GetHeadVolume() * (100 - GetHeadBonePercentile()) / 100), CreateHeadBone(GetTorsoVolume() * GetHeadBonePercentile() / 100));
   GetHead()->PlaceToSlot(GetHeadSlot());
-  GetHead()->SetSize(HeadSize(TotalSize()));
+  GetHead()->SetSize(GetHeadSize(GetTotalSize()));
 }
 
 void humanoid::UpdateHeadPicture(bool CallUpdatePictures)
@@ -1903,9 +1956,9 @@ void humanoid::UpdateHeadPicture(bool CallUpdatePictures)
     {
       GetHead()->SetBitmapPos(GetHeadBitmapPos());
       //GetHead()->SetColor(0, SkinColor());
-      GetHead()->SetColor(1, CapColor());
-      GetHead()->SetColor(2, HairColor());
-      GetHead()->SetColor(3, EyeColor());
+      GetHead()->SetColor(1, GetCapColor());
+      GetHead()->SetColor(2, GetHairColor());
+      GetHead()->SetColor(3, GetEyeColor());
 
       if(CallUpdatePictures)
 	GetHead()->UpdatePictures();
@@ -1916,9 +1969,9 @@ void humanoid::CreateTorso()
 {
   SetTorso(new humanoidtorso(false));
   UpdateTorsoPicture(false);
-  GetTorso()->InitMaterials(CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
+  GetTorso()->InitMaterials(CreateTorsoFlesh(GetTorsoVolume() * (100 - GetTorsoBonePercentile()) / 100), CreateTorsoBone(GetTorsoVolume() * GetTorsoBonePercentile() / 100));
   GetTorso()->PlaceToSlot(GetTorsoSlot());
-  GetTorso()->SetSize(TorsoSize(TotalSize()));
+  GetTorso()->SetSize(GetTorsoSize(GetTotalSize()));
 }
 
 void humanoid::UpdateTorsoPicture(bool CallUpdatePictures)
@@ -1927,9 +1980,9 @@ void humanoid::UpdateTorsoPicture(bool CallUpdatePictures)
     {
       GetTorso()->SetBitmapPos(GetTorsoBitmapPos());
       //GetTorso()->SetColor(0, SkinColor());
-      GetTorso()->SetColor(1, TorsoMainColor());
-      GetTorso()->SetColor(2, BeltColor());
-      GetTorso()->SetColor(3, TorsoSpecialColor());
+      GetTorso()->SetColor(1, GetTorsoMainColor());
+      GetTorso()->SetColor(2, GetBeltColor());
+      GetTorso()->SetColor(3, GetTorsoSpecialColor());
 
       if(CallUpdatePictures)
 	GetTorso()->UpdatePictures();
@@ -1940,9 +1993,9 @@ void humanoid::CreateRightArm()
 {
   SetRightArm(new rightarm(false));
   UpdateRightArmPicture(false);
-  GetRightArm()->InitMaterials(CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
+  GetRightArm()->InitMaterials(CreateRightArmFlesh(GetRightArmVolume() * (100 - GetRightArmBonePercentile()) / 100), CreateRightArmBone(GetRightArmVolume() * GetRightArmBonePercentile() / 100));
   GetRightArm()->PlaceToSlot(GetRightArmSlot());
-  GetRightArm()->SetSize(RightArmSize(TotalSize()));
+  GetRightArm()->SetSize(GetRightArmSize(GetTotalSize()));
 }
 
 void humanoid::UpdateRightArmPicture(bool CallUpdatePictures)
@@ -1950,9 +2003,9 @@ void humanoid::UpdateRightArmPicture(bool CallUpdatePictures)
   if(GetRightArm())
     {
       GetRightArm()->SetBitmapPos(GetRightArmBitmapPos());
-      //GetRightArm()->SetColor(0, SkinColor());
-      GetRightArm()->SetColor(1, ArmMainColor());
-      GetRightArm()->SetColor(3, ArmSpecialColor());
+      //GetRightArm()->SetColor(0, GetSkinColor());
+      GetRightArm()->SetColor(1, GetArmMainColor());
+      GetRightArm()->SetColor(3, GetArmSpecialColor());
 
       if(CallUpdatePictures)
 	GetRightArm()->UpdatePictures();
@@ -1963,9 +2016,9 @@ void humanoid::CreateLeftArm()
 {
   SetLeftArm(new leftarm(false));
   UpdateLeftArmPicture(false);
-  GetLeftArm()->InitMaterials(CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
+  GetLeftArm()->InitMaterials(CreateLeftArmFlesh(GetLeftArmVolume() * (100 - GetLeftArmBonePercentile()) / 100), CreateLeftArmBone(GetLeftArmVolume() * GetLeftArmBonePercentile() / 100));
   GetLeftArm()->PlaceToSlot(GetLeftArmSlot());
-  GetLeftArm()->SetSize(LeftArmSize(TotalSize()));
+  GetLeftArm()->SetSize(GetLeftArmSize(GetTotalSize()));
 }
 
 void humanoid::UpdateLeftArmPicture(bool CallUpdatePictures)
@@ -1974,8 +2027,8 @@ void humanoid::UpdateLeftArmPicture(bool CallUpdatePictures)
     {
       GetLeftArm()->SetBitmapPos(GetLeftArmBitmapPos());
       //GetLeftArm()->SetColor(0, SkinColor());
-      GetLeftArm()->SetColor(1, ArmMainColor());
-      GetLeftArm()->SetColor(3, ArmSpecialColor());
+      GetLeftArm()->SetColor(1, GetArmMainColor());
+      GetLeftArm()->SetColor(3, GetArmSpecialColor());
 
       if(CallUpdatePictures)
 	GetLeftArm()->UpdatePictures();
@@ -1986,9 +2039,9 @@ void humanoid::CreateGroin()
 {
   SetGroin(new groin(false));
   UpdateGroinPicture(false);
-  GetGroin()->InitMaterials(CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
+  GetGroin()->InitMaterials(CreateGroinFlesh(GetGroinVolume() * (100 - GetGroinBonePercentile()) / 100), CreateGroinBone(GetGroinVolume() * GetGroinBonePercentile() / 100));
   GetGroin()->PlaceToSlot(GetGroinSlot());
-  GetGroin()->SetSize(GroinSize(TotalSize()));
+  GetGroin()->SetSize(GetGroinSize(GetTotalSize()));
 }
 
 void humanoid::UpdateGroinPicture(bool CallUpdatePictures)
@@ -1997,8 +2050,8 @@ void humanoid::UpdateGroinPicture(bool CallUpdatePictures)
     {
       GetGroin()->SetBitmapPos(GetGroinBitmapPos());
       //GetGroin()->SetColor(0, SkinColor());
-      GetGroin()->SetColor(1, LegMainColor());
-      GetGroin()->SetColor(3, LegSpecialColor());
+      GetGroin()->SetColor(1, GetLegMainColor());
+      GetGroin()->SetColor(3, GetLegSpecialColor());
 
       if(CallUpdatePictures)
 	GetGroin()->UpdatePictures();
@@ -2009,9 +2062,9 @@ void humanoid::CreateRightLeg()
 {
   SetRightLeg(new rightleg(false));
   UpdateRightLegPicture(false);
-  GetRightLeg()->InitMaterials(CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
+  GetRightLeg()->InitMaterials(CreateRightLegFlesh(GetRightLegVolume() * (100 - GetRightLegBonePercentile()) / 100), CreateRightLegBone(GetRightLegVolume() * GetRightLegBonePercentile() / 100));
   GetRightLeg()->PlaceToSlot(GetRightLegSlot());
-  GetRightLeg()->SetSize(RightLegSize(TotalSize()));
+  GetRightLeg()->SetSize(GetRightLegSize(GetTotalSize()));
 }
 
 void humanoid::UpdateRightLegPicture(bool CallUpdatePictures)
@@ -2020,8 +2073,8 @@ void humanoid::UpdateRightLegPicture(bool CallUpdatePictures)
     {
       GetRightLeg()->SetBitmapPos(GetRightLegBitmapPos());
       //GetRightLeg()->SetColor(0, SkinColor());
-      GetRightLeg()->SetColor(1, LegMainColor());
-      GetRightLeg()->SetColor(3, LegSpecialColor());
+      GetRightLeg()->SetColor(1, GetLegMainColor());
+      GetRightLeg()->SetColor(3, GetLegSpecialColor());
 
       if(CallUpdatePictures)
 	GetRightLeg()->UpdatePictures();
@@ -2032,9 +2085,9 @@ void humanoid::CreateLeftLeg()
 {
   SetLeftLeg(new leftleg(false));
   UpdateLeftLegPicture(false);
-  GetLeftLeg()->InitMaterials(CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
+  GetLeftLeg()->InitMaterials(CreateLeftLegFlesh(GetLeftLegVolume() * (100 - GetLeftLegBonePercentile()) / 100), CreateLeftLegBone(GetLeftLegVolume() * GetLeftLegBonePercentile() / 100));
   GetLeftLeg()->PlaceToSlot(GetLeftLegSlot());
-  GetLeftLeg()->SetSize(LeftLegSize(TotalSize()));
+  GetLeftLeg()->SetSize(GetLeftLegSize(GetTotalSize()));
 }
 
 void humanoid::UpdateLeftLegPicture(bool CallUpdatePictures)
@@ -2043,13 +2096,13 @@ void humanoid::UpdateLeftLegPicture(bool CallUpdatePictures)
     {
       GetLeftLeg()->SetBitmapPos(GetLeftLegBitmapPos());
       //GetLeftLeg()->SetColor(0, SkinColor());
-      GetLeftLeg()->SetColor(1, LegMainColor());
-      GetLeftLeg()->SetColor(3, LegSpecialColor());
+      GetLeftLeg()->SetColor(1, GetLegMainColor());
+      GetLeftLeg()->SetColor(3, GetLegSpecialColor());
 
       if(CallUpdatePictures)
 	GetLeftLeg()->UpdatePictures();
     }
-}
+}*/
 
 head* humanoid::GetHead() const { return (head*)GetBodyPart(1); }
 void humanoid::SetHead(head* What) { SetBodyPart(1, What); }
@@ -2207,16 +2260,6 @@ void humanoid::SetSecondaryWielded(item* Item)
     ABORT("Left hand in wrong place!");
 }
 
-bool humanoid::CanWieldInMainHand() const
-{
-  return GetMainArm() ? true : false;
-}
-
-bool humanoid::CanWieldInSecondaryHand() const
-{
-  return GetSecondaryArm() ? true : false;
-}
-
 std::string humanoid::EquipmentName(ushort Index) const
 {
   switch(Index)
@@ -2361,10 +2404,10 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
   dig* Dig = new dig(this);
 
   if(GetRightArm())
-      Dig->SetRightBackup(GetRightArm()->GetWielded());
+      Dig->SetRightBackup(GetRightArm()->GetWielded()); // slot cleared automatically
 
   if(GetLeftArm())
-      Dig->SetRightBackup(GetLeftArm()->GetWielded());
+      Dig->SetRightBackup(GetLeftArm()->GetWielded()); // slot cleared automatically
 
   DigItem->RemoveFromSlot();
   GetMainArm()->SetWielded(DigItem);
@@ -2374,15 +2417,10 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
 
 bool humanoid::CheckKick() const
 {
-  if(!CanKick())
-    {
-      ADD_MESSAGE("This monster type can not kick.");
-      return false;
-    }
-
   if(GetLegs() < 2)
     {
       std::string LegNumber;
+
       switch(GetLegs())
 	{
 	case 0: 
@@ -2392,29 +2430,35 @@ bool humanoid::CheckKick() const
 	  LegNumber = "one leg";
 	  break;
 	}
+
       ADD_MESSAGE("How are you you going to do that with %s?", LegNumber.c_str());
       return false;
     }
+
   return true;
 }
 
 uchar humanoid::GetLegs() const
 {
   ushort Legs = 0;
+
   if(GetRightLeg())
     ++Legs;
   if(GetLeftLeg())
     ++Legs;
+
   return Legs;
 }
 
 uchar humanoid::GetArms() const
 {
   ushort Arms = 0;
+
   if(GetRightArm())
     ++Arms;
   if(GetLeftArm())
     ++Arms;
+
   return Arms;
 }
 
@@ -2493,7 +2537,7 @@ void carnivorousplant::GetAICommand()
 {
   character* Char;
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			if((Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter()))
+			if((Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter()))
   {
     if(GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
       {
@@ -2503,12 +2547,12 @@ void carnivorousplant::GetAICommand()
   })
 }
 
-void carnivorousplant::CreateTorso()
+/*void carnivorousplant::CreateTorso()
 {
   character::CreateTorso();
   GetTorso()->SetColor(1, MAKE_RGB(40 + RAND() % 100, 40 + RAND() % 100, 40 + RAND() % 100));
   GetTorso()->UpdatePictures();
-}
+}*/
 
 bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 {
@@ -2607,12 +2651,12 @@ void humanoid::AddInfo(felist& Info) const
   Info.AddEntry(std::string("Secondary to hit value: ") + ulong(GetSecondaryToHitValue()), LIGHTGRAY);
 }
 
-void ennerbeast::CreateHead()
+/*void ennerbeast::CreateHead()
 {
-  /*SetHead(new headofennerbeast);
+  SetHead(new headofennerbeast);
   GetHead()->PlaceToSlot(GetHeadSlot());
-  GetHead()->SetSize(HeadSize(TotalSize()));*/
-}
+  GetHead()->SetSize(HeadSize(TotalSize()));
+}*/
 
 void humanoid::CompleteRiseFromTheDead()
 {
@@ -2650,47 +2694,86 @@ bool humanoid::HandleNoBodyPart(ushort Index)
 {
   switch(Index)
     {
-    case HEAD_INDEX:
-      if(GetLSquareUnder()->CanBeSeen())
+    case HEADINDEX:
+      if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The headless body of %s vibrates violently.", CHARNAME(DEFINITE));
+
       Die();
       return false;
-
-    case GROIN_INDEX:
-      CreateGroin();
+    case GROININDEX:
+      CreateBodyPart(GROININDEX);
       return true;
-    case TORSO_INDEX:
+    case TORSOINDEX:
       ABORT("The corpse does not have a torso.");
+    default:
+      return false;
     }
-  return false;
 }
 
-void humanoid::CreateBodyPart(ushort Index)
+vector2d humanoid::GetBodyPartBitmapPos(ushort Index, ushort Frame)
 {
   switch(Index)
     {
-    case TORSO_INDEX:
-      CreateTorso();
-      break;
-    case HEAD_INDEX:
-      CreateHead();
-      break;
-    case RIGHT_ARM_INDEX:
-      CreateRightArm();
-      break;
-    case LEFT_ARM_INDEX:
-      CreateLeftArm();
-      break;
-    case GROIN_INDEX:
-      CreateGroin();
-      break;
-    case RIGHT_LEG_INDEX:
-      CreateRightLeg();
-      break;
-    case LEFT_LEG_INDEX:
-      CreateLeftLeg();
-      break;
+    case TORSOINDEX: return GetTorsoBitmapPos(Frame);
+    case HEADINDEX: return GetHeadBitmapPos(Frame);
+    case RIGHTARMINDEX: return GetRightArmBitmapPos(Frame);
+    case LEFTARMINDEX: return GetLeftArmBitmapPos(Frame);
+    case GROININDEX: return GetGroinBitmapPos(Frame);
+    case RIGHTLEGINDEX: return GetRightLegBitmapPos(Frame);
+    case LEFTLEGINDEX: return GetLeftLegBitmapPos(Frame);
     default:
-      ABORT("Wierd bodypart case to create for a humanoid. Sorry.");
+      ABORT("Wierd bodypart BitmapPos request for a humanoid!");
+      return vector2d();
+    }
+}
+
+ushort humanoid::GetBodyPartColor1(ushort Index, ushort Frame)
+{
+  switch(Index)
+    {
+    case TORSOINDEX: return GetTorsoMainColor(Frame);
+    case HEADINDEX: return GetCapColor(Frame);
+    case RIGHTARMINDEX:
+    case LEFTARMINDEX: return GetArmMainColor(Frame);
+    case GROININDEX:
+    case RIGHTLEGINDEX:
+    case LEFTLEGINDEX: return GetLegMainColor(Frame);
+    default:
+      ABORT("Wierd bodypart color 1 request for a humanoid!");
+      return 0;
+    }
+}
+
+ushort humanoid::GetBodyPartColor2(ushort Index, ushort Frame)
+{
+  switch(Index)
+    {
+    case TORSOINDEX: return GetBeltColor(Frame);
+    case HEADINDEX: return GetHairColor(Frame);
+    case RIGHTARMINDEX:
+    case LEFTARMINDEX:
+    case GROININDEX:
+    case RIGHTLEGINDEX:
+    case LEFTLEGINDEX: return 0; // reserved for future use
+    default:
+      ABORT("Wierd bodypart color 2 request for a humanoid!");
+      return 0;
+    }
+}
+
+ushort humanoid::GetBodyPartColor3(ushort Index, ushort Frame)
+{
+  switch(Index)
+    {
+    case TORSOINDEX: return GetTorsoSpecialColor(Frame);
+    case HEADINDEX: return GetEyeColor(Frame);
+    case RIGHTARMINDEX:
+    case LEFTARMINDEX: return GetArmSpecialColor(Frame);
+    case GROININDEX:
+    case RIGHTLEGINDEX:
+    case LEFTLEGINDEX: return GetLegSpecialColor(Frame);
+    default:
+      ABORT("Wierd bodypart color 3 request for a humanoid!");
+      return 0;
     }
 }

@@ -10,6 +10,8 @@
 #include "wterraba.h"
 #include "proto.h"
 #include "game.h"
+#include "save.h"
+#include "igraph.h"
 
 wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0)
 {

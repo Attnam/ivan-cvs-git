@@ -5,6 +5,7 @@
 #include "error.h"
 #include "colorbit.h"
 #include "config.h"
+#include "save.h"
 
 #ifdef WIN32
 #include "resource.h"
@@ -14,8 +15,8 @@ colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
-char* igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
-char* igraph::GraphicFileName[] = { "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx"};
+std::string igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
+std::string igraph::GraphicFileName[] = { "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx"};
 tilemap igraph::TileMap;
 
 #ifdef WIN32
@@ -47,15 +48,15 @@ void igraph::Init()
 #ifdef WIN32
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
 #endif
-      graphics::LoadDefaultFont((GAME_DIR + "Graphics/Font.pcx").c_str());
+      graphics::LoadDefaultFont(GAME_DIR + "Graphics/Font.pcx");
 
       ushort c;
 
       for(c = 0; c < RAW_TYPES; ++c)
-	RawGraphic[c] = new colorizablebitmap((GAME_DIR + std::string(RawGraphicFileName[c])).c_str());
+	RawGraphic[c] = new colorizablebitmap(GAME_DIR + RawGraphicFileName[c]);
 
       for(c = 0; c < GRAPHIC_TYPES; ++c)
-	Graphic[c] = new bitmap((GAME_DIR + std::string(GraphicFileName[c])).c_str());
+	Graphic[c] = new bitmap(GAME_DIR + GraphicFileName[c]);
 
       TileBuffer = new bitmap(16, 16);
       OutlineBuffer = new bitmap(16, 16);

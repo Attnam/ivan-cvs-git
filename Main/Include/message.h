@@ -5,9 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define ADD_MESSAGE msgsystem::AddMessage
-
 #include "typedef.h"
+
+#define ADD_MESSAGE msgsystem::AddMessage
 
 class felist;
 class outputfile;

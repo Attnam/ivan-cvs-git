@@ -28,8 +28,8 @@ class object : public entity, public id
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void InitMaterials(material*);
-  virtual void UpdatePictures(bool = true);
+  virtual void InitMaterials(material*, bool = true);
+  virtual void UpdatePictures();
   virtual material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
   virtual material* GetContainedMaterial() const { return 0; }
@@ -50,8 +50,8 @@ class object : public entity, public id
   virtual bool IsAnimated() const { return false; }
   virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
  protected:
-  virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong);
-  virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong);
+  virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
+  virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual ulong GetDefaultMainVolume() const { return 0; }
   virtual ulong GetDefaultSecondaryVolume() const { return 0; }
   virtual ulong GetDefaultContainedVolume() const { return 0; }
@@ -69,7 +69,7 @@ class object : public entity, public id
   virtual std::string ContainerPostFix() const;
   virtual std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
-  virtual ushort AnimationFrames() const { return 1; }
+  virtual ushort GetAnimationFrames() const { return 1; }
   virtual ushort Type() const = 0;
   material* MainMaterial;
   std::vector<graphic_id> GraphicId;

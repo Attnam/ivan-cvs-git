@@ -19,6 +19,7 @@ valuemap protocontainer<action>::CodeNameMap;;
 #include "error.h"
 #include "game.h"
 #include "lterraba.h"
+#include "materba.h"
 
 void faint::Save(outputfile& SaveFile) const
 {

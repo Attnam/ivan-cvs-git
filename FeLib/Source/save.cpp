@@ -5,6 +5,7 @@
 #include "error.h"
 #include "femath.h"
 #include "graphics.h"
+#include "felibdef.h"
 
 outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
 {

@@ -15,6 +15,8 @@
 #include "game.h"
 #include "proto.h"
 #include "whandler.h"
+#include "materba.h"
+#include "save.h"
 
 item::item(bool CreateMaterials, bool SetStats) : Slot(0), Cannibalised(false)
 {
@@ -27,7 +29,7 @@ item::item(bool CreateMaterials, bool SetStats) : Slot(0), Cannibalised(false)
 void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer());
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer());
   else
     Picture[0]->MaskedBlit(igraph::GetTileBuffer());
 }
@@ -251,7 +253,7 @@ void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
     }
 
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
   else
     Picture[0]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
 }

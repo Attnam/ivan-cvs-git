@@ -10,6 +10,7 @@
 #include "graphics.h"
 #include "proto.h"
 #include "game.h"
+#include "save.h"
 
 square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), MemorizedUpdateRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), AnimatedEntities(0)
 {

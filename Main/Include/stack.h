@@ -5,18 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define DOWN 0
-#define LEFT 1
-#define UP 2
-#define RIGHT 3
-#define CENTER 4
-#define HIDDEN 5
-
 #include <list>
 #include <vector>
 
 #include "typedef.h"
 #include "vector2d.h"
+#include "ivandef.h"
 
 class item;
 class character;

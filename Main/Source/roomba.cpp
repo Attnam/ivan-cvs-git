@@ -3,6 +3,7 @@
 #include "error.h"
 #include "charde.h"
 #include "itemde.h"
+#include "save.h"
 
 room::room(bool SetStats) : Master(0)
 {

@@ -5,29 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define HELMET 0
-#define AMULET 1
-#define CLOAK 2
-#define BODYARMOR 3
-#define WEAPON 4
-#define SHIELD 5
-#define RING 6
-#define GAUNTLET 7
-#define BELT 8
-#define BOOT 9
-#define FOOD 10
-#define POTION 11
-#define SCROLL 12
-#define BOOK 13
-#define WAND 14
-#define TOOL 15
-#define VALUABLE 16
-#define MISC 17
-
 #include "typedef.h"
 #include "vector2d.h"
 #include "object.h"
-#include "igraph.h"
 
 class bitmap;
 class character;
@@ -224,7 +204,37 @@ class item : public object
   virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
   virtual const item_database& GetDataBase() const = 0;
 
-  virtual ushort GetPossibility() const { return GetDataBase().Possibility; }
+  DATABASEVALUE(ushort, Possibility);
+  DATABASEVALUE(vector2d, InHandsPic);
+  DATABASEVALUE(ulong, OfferModifier);
+  DATABASEVALUE(long, Score);
+  DATABASEBOOL(IsDestroyable);
+  DATABASEBOOL(CanBeWished);
+  DATABASEBOOL(IsMaterialChangeable);
+  DATABASEVALUE(uchar, WeaponCategory);
+  DATABASEBOOL(IsPolymorphSpawnable);
+  DATABASEBOOL(IsAutoInitializable);
+  DATABASEVALUEWITHPARAMETER(ushort, OneHandedStrengthPenalty, character*);
+  DATABASEVALUEWITHPARAMETER(ushort, OneHandedToHitPenalty, character*);
+  DATABASEVALUE(uchar, Category);
+  DATABASEVALUE(ushort, SoundResistance);
+  DATABASEVALUE(ushort, EnergyResistance);
+  DATABASEVALUE(ushort, AcidResistance);
+  DATABASEVALUE(ushort, FireResistance);
+  DATABASEVALUE(ushort, PoisonResistance);
+  DATABASEVALUE(ushort, BulimiaResistance);
+  DATABASEBOOL(IsStackable);
+  DATABASEVALUE(ushort, StrengthModifier);
+  DATABASEVALUE(ushort, FormModifier);
+  DATABASEVALUE(ulong, NPModifier);
+  DATABASEVALUE(ushort, DefaultSize);
+  DATABASEVALUE(ulong, DefaultMainVolume);
+  DATABASEVALUE(ulong, DefaultSecondaryVolume);
+  DATABASEVALUE(ulong, DefaultContainedVolume);
+  DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
+  DATABASEVALUE(ulong, Price);
+
+  /*virtual ushort GetPossibility() const { return GetDataBase().Possibility; }
   virtual vector2d GetInHandsPic() const { return GetDataBase().InHandsPic; }
   virtual ulong GetOfferModifier() const { return GetDataBase().OfferModifier; }
   virtual long GetScore() const { return GetDataBase().Score; }
@@ -252,7 +262,7 @@ class item : public object
   virtual ulong GetDefaultSecondaryVolume() const { return GetDataBase().DefaultSecondaryVolume; }
   virtual ulong GetDefaultContainedVolume() const { return GetDataBase().DefaultContainedVolume; }
   virtual vector2d GetBitmapPos(ushort) const { return GetDataBase().BitmapPos; }
-  virtual ulong GetPrice() const { return GetDataBase().Price; }
+  virtual ulong GetPrice() const { return GetDataBase().Price; }*/
 
  protected:
   //virtual ushort GetStrengthModifier() const = 0;

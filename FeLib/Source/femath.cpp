@@ -4,6 +4,7 @@
 
 #include "femath.h"
 #include "error.h"
+#include "felibdef.h"
 
 /* A C-program for MT19937: Integer     version                   */
 /*  genrand() generates one pseudorandom unsigned integer (32bit) */

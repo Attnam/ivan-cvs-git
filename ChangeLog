@@ -1,3 +1,11 @@
+May 12 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The game executes again
+	* The game is totally mad again
+	* Polymorph works again, and better than before
+	* Character database structures added
+	* Define headers added
+
 May 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Price added to item database structure

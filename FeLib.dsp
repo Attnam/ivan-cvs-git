@@ -198,6 +198,10 @@ SOURCE=.\FeLib\Include\feio.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\felibdef.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\felist.h
 # End Source File
 # Begin Source File

@@ -8,8 +8,7 @@
 #include "itemba.h"
 #include "materde.h"
 #include "wskill.h"
-#include "game.h"
-#include "lterrade.h" // this is evil
+#include "game.h" // remove this
 #include "slot.h"
 
 class ABSTRACT_ITEM
@@ -24,7 +23,7 @@ class ABSTRACT_ITEM
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
   virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void InitMaterials(material* M1, material* M2) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume()); }
+  virtual void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual material* GetConsumeMaterial() const { return ContainedMaterial; }
@@ -68,7 +67,7 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual bool IsAnimated() const { return true; }
  protected:
-  virtual ushort AnimationFrames() const { return 20; }
+  virtual ushort GetAnimationFrames() const { return 20; }
   virtual ushort GetMaterialColor0(ushort) const;
   //virtual ulong GetDefaultMainVolume() const { return 40; }
   //virtual ulong GetDefaultContainedVolume() const { return 150; }
@@ -219,7 +218,7 @@ class ABSTRACT_ITEM
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
   virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void InitMaterials(material* M1, material* M2, material* M3) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), ContainedMaterial, M3, GetDefaultContainedVolume()); }
+  virtual void InitMaterials(material* M1, material* M2, material* M3, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), ContainedMaterial, M3, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 3; }
@@ -1666,9 +1665,9 @@ class ABSTRACT_ITEM
   virtual void Load(inputfile&);
   static ushort Possibility() { return 0; }
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 0; default: return 0; } }
-  virtual void SetBitmapPos(vector2d What) { BitmapPos = What; }
+  //virtual void SetBitmapPos(vector2d What) { BitmapPos = What; }
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRHUMANOID; }
-  virtual void SetColor(ushort Index, ushort What) { Color[Index] = What; }
+  //virtual void SetColor(ushort Index, ushort What) { Color[Index] = What; }
   virtual character* GetMaster() const;
   virtual humanoid* GetHumanoidMaster() const;
   static bool AutoInitializable() { return false; }
@@ -1697,20 +1696,32 @@ class ABSTRACT_ITEM
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
+  virtual void SetAnimationFrames(ushort What) { AnimationFrames = What; }
+  virtual bool IsAnimated() const { return AnimationFrames > 1; }
+  virtual std::vector<vector2d>& GetBitmapPosVector() { return BitmapPos; }
+  virtual std::vector<ushort>& GetColor1Vector() { return Color1; }
+  virtual std::vector<ushort>& GetColor2Vector() { return Color2; }
+  virtual std::vector<ushort>& GetColor3Vector() { return Color3; }
  protected:
+  virtual ushort GetAnimationFrames() const { return AnimationFrames; }
   virtual std::string PostFix() const { return GetOwnerDescription(); }
   virtual bool ShowPostFix() const { return !GetMaster(); }
   virtual bool ShowMaterial() const { return false; }
   virtual bool ForceDefiniteArticle() const { return Unique; }
   virtual ushort GetMaterialColor0(ushort) const;
-  virtual ushort GetMaterialColor1(ushort) const { return Color[1]; }
-  virtual ushort GetMaterialColor2(ushort) const { return Color[2]; }
-  virtual ushort GetMaterialColor3(ushort) const { return Color[3]; }
-  virtual vector2d GetBitmapPos(ushort) const { return BitmapPos; }
+  virtual ushort GetMaterialColor1(ushort Frame) const { return Color1[Frame]; }
+  virtual ushort GetMaterialColor2(ushort Frame) const { return Color2[Frame]; }
+  virtual ushort GetMaterialColor3(ushort Frame) const { return Color3[Frame]; }
+  virtual vector2d GetBitmapPos(ushort Frame) const { return BitmapPos[Frame]; }
   virtual float NPModifier() const { return 0.01f; }
   std::string OwnerDescription;
-  vector2d BitmapPos;
-  ushort Color[4];
+  //vector2d BitmapPos;
+  //ushort Color[4];
+  std::vector<vector2d> BitmapPos;
+  std::vector<ushort> Color1;
+  std::vector<ushort> Color2;
+  std::vector<ushort> Color3;
+  ushort AnimationFrames;
   short HP;
   bool Unique;
   ushort RegenerationCounter;

@@ -5,34 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#ifdef __DJGPP__
-#define PACKED __attribute__ ((packed))
-#endif
-
-#define DOUBLEBUFFER	graphics::GetDoubleBuffer()
-#define RES		graphics::GetRes()
-#define FONT		graphics::GetDefaultFont()
-
-#define GET_RED(Color) (((Color) >> 8) & 0xF8)
-#define GET_GREEN(Color) (((Color) >> 3) & 0xFC)
-#define GET_BLUE(Color) (((Color) << 3) & 0xF8)
-
-#define MAKE_RGB(Red, Green, Blue) ((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F)
-#define MAKE_SHADE_COL(Color) MAKE_RGB(GET_RED(Color) / 3, GET_GREEN(Color) / 3, GET_BLUE(Color) / 3)
-
-#define RED	MAKE_RGB(255, 0, 0)
-#define GREEN	MAKE_RGB(0, 255, 0)
-#define BLUE	MAKE_RGB(0, 0, 255)
-
-#define YELLOW	MAKE_RGB(255, 255, 0)
-#define PINK	MAKE_RGB(255, 0, 255)
-#define DEFAULT_TRANSPARENT 0xF81F
-
-#define WHITE	MAKE_RGB(255, 255, 255)
-#define LIGHTGRAY MAKE_RGB(180, 180, 180)
-#define DARKGRAY MAKE_RGB(80, 80, 80)
-#define BLACK	MAKE_RGB(0, 0, 0)
-
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -45,6 +17,14 @@
 
 #include "typedef.h"
 #include "vector2d.h"
+
+#ifdef __DJGPP__
+#define PACKED __attribute__ ((packed))
+#endif
+
+#define DOUBLEBUFFER graphics::GetDoubleBuffer()
+#define RES graphics::GetRes()
+#define FONT graphics::GetDefaultFont()
 
 class bitmap;
 class colorizablebitmap;

@@ -5,10 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define HOSTILE 0
-#define NEUTRAL 1
-#define FRIEND 2
-
 #include <list>
 
 #include "typedef.h"

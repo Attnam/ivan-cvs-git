@@ -39,6 +39,13 @@
 #include "hscore.h"
 #include "error.h"
 #include "command.h"
+#include "save.h"
+
+#define SAVEFILE_VERSION 110 // Increment this if changes make savefiles incompatible
+
+#define LOADED 0
+#define NEWGAME 1
+#define BACK 2
 
 class quitrequest { };
 
@@ -263,7 +270,7 @@ void game::Init(const std::string& Name)
 
 	Ticks = 0;
 
-	BaseScore = Player->Score();
+	BaseScore = Player->GetScore();
 	dog* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);

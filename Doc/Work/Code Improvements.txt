@@ -2,13 +2,14 @@ This file is written in Timo-dialect (a highly modified version
 of the Finnish language), since these tasks are not meant to be
 done (or understood) by anyone else than the writer.
 
-*high priority
-//done
+* high priority
+// done
+/ partly done
 (r) rejected
 (s) suspended
 
 *Funktioiden verkottaminen.
-Assistenttioperaattorien integrointi? (<- osoitinluokat)
+(r) Assistenttioperaattorien integrointi? (<- osoitinluokat)
 *Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 //Tilojen luokittaminen.
 //*Tuonpuoleisen prototyypitys.
@@ -21,12 +22,12 @@ Dynarrayn eliminaatio.
 Osoitinluokat?
 //Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
-Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
+(s) Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
 //Merkkijonoviittausten regularisoiminen.
-Merkkitaulukoiden hävittäminen.
+/(r) Merkkitaulukoiden hävittäminen.
 *Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.
-MS-koodin poisajo grafiikkakirjastosta.
+(s) MS-koodin poisajo grafiikkakirjastosta.
 //Kirjastoniputus.
-Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
+(s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.

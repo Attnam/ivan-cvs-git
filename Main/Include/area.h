@@ -5,11 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define FORBIDDEN		1
-#define ON_POSSIBLE_ROUTE	2
-#define STILL_ON_POSSIBLE_ROUTE	4
-#define PREFERRED		8
-
 #include "typedef.h"
 #include "vector2d.h"
 
@@ -31,7 +26,6 @@ class area
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetFlag(vector2d Pos) const { return FlagMap[Pos.X][Pos.Y]; }
-  virtual square* operator [] (vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   virtual square* GetSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   virtual square* GetSquare(ushort x, ushort y) const { return Map[x][y]; }
   virtual ushort GetXSize() const { return XSize; }

@@ -26,6 +26,7 @@ valuemap protocontainer<item>::CodeNameMap;
 #include "lterrade.h"
 #include "actionba.h"
 #include "felist.h"
+#include "save.h"
 
 item* can::TryToOpen(character* Opener)
 {
@@ -99,7 +100,7 @@ void potion::GenerateLeftOvers(character* Eater)
 
 void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) const
 {
-  bitmap* Bitmap = Animate ? Picture[globalwindowhandler::GetTick() % AnimationFrames()] : Picture[0];
+  bitmap* Bitmap = Animate ? Picture[globalwindowhandler::GetTick() % GetAnimationFrames()] : Picture[0];
 
   switch(LSquarePosition)
     {
@@ -990,7 +991,7 @@ bool scrolloftaming::Read(character* Reader)
       if(game::IsValidPos(Test))
 	{
 	  character* CharacterInSquare = game::GetCurrentLevel()->GetLSquare(Test)->GetCharacter();
-	  if(CharacterInSquare && CharacterInSquare->Charmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
+	  if(CharacterInSquare && CharacterInSquare->IsCharmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
 	    CharactersNearBy.push_back(CharacterInSquare);
 	}
     }
@@ -1013,13 +1014,13 @@ bool scrolloftaming::Read(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << BitmapPos << Color[0] << Color[1] << Color[2] << Color[3] << HP << OwnerDescription << Unique << RegenerationCounter;
+  SaveFile << BitmapPos << Color1 << Color2 << Color3 << HP << OwnerDescription << Unique << RegenerationCounter << AnimationFrames;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3] >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
+  SaveFile >> BitmapPos >> Color1 >> Color2 >> Color3 >> HP >> OwnerDescription >> Unique >> RegenerationCounter >> AnimationFrames;
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1946,7 +1947,7 @@ ushort corpse::GetSize() const
 void corpse::SetDeceased(character* What)
 {
   Deceased = What;
-  UpdatePictures(false);
+  UpdatePictures();
 }
 
 void bodypart::Regenerate(ushort Turns)
@@ -2319,10 +2320,10 @@ ushort meleeweapon::GetMaterialColor1(ushort) const
     return 0;
 }
 
-ushort bodypart::GetMaterialColor0(ushort) const
+ushort bodypart::GetMaterialColor0(ushort Frame) const
 {
   if(GetMainMaterial())
-    return GetMainMaterial()->GetSkinColor();
+    return GetMainMaterial()->GetSkinColor(Frame);
   else
     return 0;
 }
@@ -2374,35 +2375,36 @@ bool corpse::RaiseTheDead(character* Summoner)
 
 bool head::FitsBodyPartIndex(uchar c, character*) const 
 { 
-  return c == HEAD_INDEX; 
+  return c == HEADINDEX; 
 }
 
 bool torso::FitsBodyPartIndex(uchar c, character*) const
 {
-  return c == TORSO_INDEX;
+  return c == TORSOINDEX;
 }
 
 bool rightarm::FitsBodyPartIndex(uchar c, character*) const
 {
-  return c == RIGHT_ARM_INDEX;
+  return c == RIGHTARMINDEX;
 }
 
 bool leftarm::FitsBodyPartIndex(uchar c, character*) const
 {
-  return c == LEFT_ARM_INDEX;
+  return c == LEFTARMINDEX;
 }
 
 bool groin::FitsBodyPartIndex(uchar c, character*) const
 {
-  return c == GROIN_INDEX;
+  return c == GROININDEX;
 }
 
 bool rightleg::FitsBodyPartIndex(uchar c, character*) const
 {
-  return c == RIGHT_LEG_INDEX;
+  return c == RIGHTLEGINDEX;
 }
 
 bool leftleg::FitsBodyPartIndex(uchar c, character*) const
 {
-  return c == LEFT_LEG_INDEX;
+  return c == LEFTLEGINDEX;
 }
+

@@ -7,6 +7,7 @@
 #include "error.h"
 #include "femath.h"
 #include "game.h"
+#include "save.h"
 
 area::area(ushort InitXSize, ushort InitYSize)
 {

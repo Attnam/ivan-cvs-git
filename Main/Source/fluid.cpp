@@ -6,6 +6,7 @@
 #include "lsquare.h"
 #include "materba.h"
 #include "igraph.h"
+#include "save.h"
 
 fluid::fluid() : Picture(0), Material(0)
 {

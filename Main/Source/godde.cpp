@@ -71,10 +71,10 @@ void dulcis::PrayGoodEffect()
 
   DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
-    character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter();
+    character* Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter();
 
     if(Char)
-      if(Char->Charmable())
+      if(Char->IsCharmable())
 	if(Char->CurrentDanger() * 2 < game::GetPlayer()->MaxDanger())
 	  {
 	    if(Char->GetTeam() == game::GetPlayer()->GetTeam())
@@ -180,7 +180,7 @@ void silva::PrayGoodEffect()
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	    {
-	      if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOTerrain()->GetIsWalkable())
+	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->GetIsWalkable())
 		{
 		  Correct = true;
 		  break;
@@ -214,7 +214,7 @@ void silva::PrayGoodEffect()
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	    {
-	      if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOTerrain()->GetIsWalkable())
+	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->GetIsWalkable())
 		++Walkables;
 	    });
 
@@ -268,10 +268,10 @@ void silva::PrayGoodEffect()
       {
 	wolf* Wolf = new wolf;
 
-	if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetIsWalkable(Wolf) && !game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter())
+	if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetIsWalkable(Wolf) && !game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter())
 	  {
 	    Wolf->SetTeam(game::GetPlayer()->GetTeam());
-	    game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->AddCharacter(Wolf);
+	    game::GetCurrentLevel()->GetLSquare(DoX, DoY)->AddCharacter(Wolf);
 	    ++Created;
 	  }
 	else

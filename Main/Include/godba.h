@@ -5,22 +5,10 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define GOD_NAME Name().c_str()
-
-#define ALPP	0   // A = Alignment
-#define ALP	1   // L = Lawful
-#define AL	2   // N = Neutral
-#define ALM	3   // C = Chaotic
-#define ANP	4   // P = Plus
-#define AN	5   // M = Minus
-#define ANM	6
-#define ACP	7
-#define AC	8
-#define ACM	9
-#define ACMM	10
-
 #include "typedef.h"
-#include "materba.h"
+#include "ivandef.h"
+
+#define GOD_NAME Name().c_str()
 
 class item;
 class character;

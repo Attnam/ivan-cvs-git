@@ -14,9 +14,10 @@
 #include "config.h"
 #include "game.h"
 #include "igraph.h"
-#include "graphics.h"
+//#include "graphics.h"
 #include "main.h"
 #include "femath.h"
+#include "felibdef.h"
 
 const bool ValpuriIsAlive = true;
 

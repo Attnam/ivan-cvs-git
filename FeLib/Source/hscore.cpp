@@ -7,6 +7,8 @@
 #include "colorbit.h"
 #include "felist.h"
 
+#define HIGHSCORE_VERSION 110 // Increment this if changes make highscores incompatible
+
 bool highscore::Add(long NewScore, const std::string& NewEntry)
 {
   for(ushort c = 0; c < Score.size(); ++c)

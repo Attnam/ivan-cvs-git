@@ -12,6 +12,8 @@
 #include "game.h"
 #include "proto.h"
 #include "wskill.h"
+#include "save.h"
+#include "materba.h"
 
 template <class type> datamembertemplate<type>::~datamembertemplate<type>()
 {
@@ -790,6 +792,69 @@ template <class type> void basedata<type>::ReadFrom(inputfile& SaveFile)
 
 data<character>::data<character>()
 {
+  INITMEMBER(DefaultAgility);
+  INITMEMBER(DefaultStrength);
+  INITMEMBER(DefaultEndurance);
+  INITMEMBER(DefaultPerception);
+  INITMEMBER(DefaultMoney);
+  INITMEMBER(TotalSize);
+  INITMEMBER(CanRead);
+  INITMEMBER(IsCharmable);
+  INITMEMBER(Sex);
+  INITMEMBER(BloodColor);
+  INITMEMBER(CanBeGenerated);
+  INITMEMBER(HasInfraVision);
+  INITMEMBER(CriticalModifier);
+  INITMEMBER(StandVerb);
+  INITMEMBER(CanOpen);
+  INITMEMBER(CanBeDisplaced);
+  INITMEMBER(Frequency);
+  INITMEMBER(CanWalk);
+  INITMEMBER(CanSwim);
+  INITMEMBER(CanFly);
+  INITMEMBER(PhysicalDamageResistance);
+  INITMEMBER(SoundResistance);
+  INITMEMBER(EnergyResistance);
+  INITMEMBER(AcidResistance);
+  INITMEMBER(FireResistance);
+  INITMEMBER(PoisonResistance);
+  INITMEMBER(BulimiaResistance);
+  INITMEMBER(IsUnique);
+  INITMEMBER(EatFlags);
+  INITMEMBER(TotalVolume);
+  //INITMEMBER(BitmapPos);
+  INITMEMBER(MeleeStrength);
+  INITMEMBER(TalkVerb);
+  INITMEMBER(HeadBitmapPos);
+  INITMEMBER(TorsoBitmapPos);
+  INITMEMBER(ArmBitmapPos);
+  INITMEMBER(LegBitmapPos);
+  INITMEMBER(RightArmBitmapPos);
+  INITMEMBER(LeftArmBitmapPos);
+  INITMEMBER(RightLegBitmapPos);
+  INITMEMBER(LeftLegBitmapPos);
+  INITMEMBER(GroinBitmapPos);
+  INITMEMBER(ClothColor);
+  INITMEMBER(SkinColor);
+  INITMEMBER(CapColor);
+  INITMEMBER(HairColor);
+  INITMEMBER(EyeColor);
+  INITMEMBER(TorsoMainColor);
+  INITMEMBER(BeltColor);
+  INITMEMBER(TorsoSpecialColor);
+  INITMEMBER(ArmMainColor);
+  INITMEMBER(ArmSpecialColor);
+  INITMEMBER(LegMainColor);
+  INITMEMBER(LegSpecialColor);
+  INITMEMBER(HeadBonePercentile);
+  INITMEMBER(TorsoBonePercentile);
+  INITMEMBER(ArmBonePercentile);
+  INITMEMBER(RightArmBonePercentile);
+  INITMEMBER(LeftArmBonePercentile);
+  INITMEMBER(GroinBonePercentile);
+  INITMEMBER(LegBonePercentile);
+  INITMEMBER(RightLegBonePercentile);
+  INITMEMBER(LeftLegBonePercentile);
 }
 
 data<item>::data<item>()
@@ -929,7 +994,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
   if(DataElement->Get##data(false))\
     DataBase.data = *DataElement->Get##data();\
   else\
-    ABORT("Obligatory data member " #data " missing!");\
+    ABORT("Obligatory data member " #data " missing in the database of %s!", Iterator->first.c_str());\
 }
 
 #define SETDATAWITHDEFAULT(data, defaultvalue)\
@@ -940,7 +1005,143 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
     DataBase.data = defaultvalue;\
 }
 
-template <class type> void database<type>::Apply() { }
+void database<character>::Apply()
+{
+  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+    {
+      std::map<std::string, data<character>*>::iterator Iterator = Data.find(protocontainer<character>::GetProto(c)->ClassName());
+
+      if(Iterator != Data.end())
+	{
+	  data<character>* DataElement = Iterator->second;
+	  character_database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
+	  SETDATA(DefaultAgility);
+	  SETDATA(DefaultStrength);
+	  SETDATA(DefaultEndurance);
+	  SETDATA(DefaultPerception);
+	  SETDATAWITHDEFAULT(DefaultMoney, 0);
+	  SETDATA(TotalSize);
+	  SETDATAWITHDEFAULT(CanRead, false);
+	  SETDATAWITHDEFAULT(IsCharmable, true);
+	  SETDATAWITHDEFAULT(Sex, MALE);
+	  SETDATAWITHDEFAULT(BloodColor, MAKE_RGB(75, 0, 0));
+	  SETDATAWITHDEFAULT(CanBeGenerated, true);
+	  SETDATAWITHDEFAULT(HasInfraVision, false);
+	  SETDATAWITHDEFAULT(CriticalModifier, 20);
+	  SETDATAWITHDEFAULT(StandVerb, "standing");
+	  SETDATAWITHDEFAULT(CanOpen, true);
+	  SETDATAWITHDEFAULT(CanBeDisplaced, true);
+	  SETDATAWITHDEFAULT(Frequency, 10000);
+	  SETDATAWITHDEFAULT(CanWalk, true);
+	  SETDATAWITHDEFAULT(CanSwim, false);
+	  SETDATAWITHDEFAULT(CanFly, false);
+	  SETDATAWITHDEFAULT(PhysicalDamageResistance, 0);
+	  SETDATAWITHDEFAULT(SoundResistance, 0);
+	  SETDATAWITHDEFAULT(EnergyResistance, 0);
+	  SETDATAWITHDEFAULT(AcidResistance, 0);
+	  SETDATAWITHDEFAULT(FireResistance, 0);
+	  SETDATAWITHDEFAULT(PoisonResistance, 0);
+	  SETDATAWITHDEFAULT(BulimiaResistance, 0);
+	  SETDATAWITHDEFAULT(IsUnique, false);
+	  SETDATAWITHDEFAULT(EatFlags, FRUIT|MEAT|LIQUID|PROCESSED);
+	  SETDATA(TotalVolume);
+	  SETDATA(MeleeStrength);
+	  SETDATAWITHDEFAULT(TalkVerb, "grunts");
+	  SETDATAWITHDEFAULT(HeadBitmapPos, vector2d(96, 0));
+	  SETDATAWITHDEFAULT(TorsoBitmapPos, vector2d(32, 0));
+	  SETDATAWITHDEFAULT(ArmBitmapPos, vector2d(64, 0));
+	  SETDATAWITHDEFAULT(LegBitmapPos, vector2d(0, 0));
+	  SETDATAWITHDEFAULT(RightArmBitmapPos, DataBase.ArmBitmapPos);
+	  SETDATAWITHDEFAULT(LeftArmBitmapPos, DataBase.ArmBitmapPos);
+	  SETDATAWITHDEFAULT(RightLegBitmapPos, DataBase.LegBitmapPos);
+	  SETDATAWITHDEFAULT(LeftLegBitmapPos, DataBase.LegBitmapPos);
+	  SETDATAWITHDEFAULT(GroinBitmapPos, DataBase.LegBitmapPos);
+	  SETDATAWITHDEFAULT(ClothColor, MAKE_RGB(111, 74, 37));
+	  SETDATAWITHDEFAULT(SkinColor, MAKE_RGB(180, 120, 90));
+	  SETDATAWITHDEFAULT(CapColor, DataBase.ClothColor);
+	  SETDATAWITHDEFAULT(HairColor, MAKE_RGB(160, 80, 0));
+	  SETDATAWITHDEFAULT(EyeColor, MAKE_RGB(112, 72, 42));
+	  SETDATAWITHDEFAULT(TorsoMainColor, DataBase.ClothColor);
+	  SETDATAWITHDEFAULT(BeltColor, MAKE_RGB(48, 48, 48));
+	  SETDATAWITHDEFAULT(TorsoSpecialColor, 0);
+	  SETDATAWITHDEFAULT(ArmMainColor, DataBase.ClothColor);
+	  SETDATAWITHDEFAULT(ArmSpecialColor, 0);
+	  SETDATAWITHDEFAULT(LegMainColor, DataBase.ClothColor);
+	  SETDATAWITHDEFAULT(LegSpecialColor, 0);
+	  SETDATAWITHDEFAULT(HeadBonePercentile, 20);
+	  SETDATAWITHDEFAULT(TorsoBonePercentile, 10);
+	  SETDATAWITHDEFAULT(ArmBonePercentile, 30);
+	  SETDATAWITHDEFAULT(RightArmBonePercentile, DataBase.ArmBonePercentile);
+	  SETDATAWITHDEFAULT(LeftArmBonePercentile, DataBase.ArmBonePercentile);
+	  SETDATAWITHDEFAULT(GroinBonePercentile, 40);
+	  SETDATAWITHDEFAULT(LegBonePercentile, 30);
+	  SETDATAWITHDEFAULT(RightLegBonePercentile, DataBase.LegBonePercentile);
+	  SETDATAWITHDEFAULT(LeftLegBonePercentile, DataBase.LegBonePercentile);
+	}
+      else
+	{
+	  /* Remove these! */
+
+	  character_database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
+
+	  DataBase.DefaultMoney = 0;
+	  DataBase.CanRead = false;
+	  DataBase.IsCharmable = true;
+	  DataBase.Sex = MALE;
+	  DataBase.BloodColor = MAKE_RGB(75, 0, 0);
+	  DataBase.CanBeGenerated = true;
+	  DataBase.HasInfraVision = false;
+	  DataBase.CriticalModifier = 20;
+	  DataBase.StandVerb = "standing";
+	  DataBase.CanOpen = true;
+	  DataBase.CanBeDisplaced = true;
+	  DataBase.Frequency = 10000;
+	  DataBase.CanWalk = true;
+	  DataBase.CanSwim = false;
+	  DataBase.CanFly = false;
+	  DataBase.PhysicalDamageResistance = 0;
+	  DataBase.SoundResistance = 0;
+	  DataBase.EnergyResistance = 0;
+	  DataBase.AcidResistance = 0;
+	  DataBase.FireResistance = 0;
+	  DataBase.PoisonResistance = 0;
+	  DataBase.BulimiaResistance = 0;
+	  DataBase.IsUnique = false;
+	  DataBase.EatFlags = FRUIT|MEAT|LIQUID|PROCESSED;
+	  DataBase.TalkVerb = "grunts";
+	  DataBase.HeadBitmapPos = vector2d(96, 0);
+	  DataBase.TorsoBitmapPos = vector2d(32, 0);
+	  DataBase.ArmBitmapPos = vector2d(64, 0);
+	  DataBase.LegBitmapPos = vector2d(0, 0);
+	  DataBase.RightArmBitmapPos = DataBase.ArmBitmapPos;
+	  DataBase.LeftArmBitmapPos = DataBase.ArmBitmapPos;
+	  DataBase.RightLegBitmapPos = DataBase.LegBitmapPos;
+	  DataBase.LeftLegBitmapPos = DataBase.LegBitmapPos;
+	  DataBase.GroinBitmapPos = DataBase.LegBitmapPos;
+	  DataBase.ClothColor = MAKE_RGB(111, 74, 37);
+	  DataBase.SkinColor = MAKE_RGB(180, 120, 90);
+	  DataBase.CapColor = DataBase.ClothColor;
+	  DataBase.HairColor = MAKE_RGB(160, 80, 0);
+	  DataBase.EyeColor = MAKE_RGB(112, 72, 42);
+	  DataBase.TorsoMainColor = DataBase.ClothColor;
+	  DataBase.BeltColor = MAKE_RGB(48, 48, 48);
+	  DataBase.TorsoSpecialColor = 0;
+	  DataBase.ArmMainColor = DataBase.ClothColor;
+	  DataBase.ArmSpecialColor = 0;
+	  DataBase.LegMainColor = DataBase.ClothColor;
+	  DataBase.LegSpecialColor = 0;
+	  DataBase.HeadBonePercentile = 20;
+	  DataBase.TorsoBonePercentile = 10;
+	  DataBase.ArmBonePercentile = 30;
+	  DataBase.RightArmBonePercentile = DataBase.ArmBonePercentile;
+	  DataBase.LeftArmBonePercentile = DataBase.ArmBonePercentile;
+	  DataBase.GroinBonePercentile = 40;
+	  DataBase.LegBonePercentile = 30;
+	  DataBase.RightLegBonePercentile = DataBase.LegBonePercentile;
+	  DataBase.LeftLegBonePercentile = DataBase.LegBonePercentile;
+	}
+    }
+}
 
 void database<item>::Apply()
 {

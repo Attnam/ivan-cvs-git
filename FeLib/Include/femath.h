@@ -5,13 +5,14 @@
 #pragma warning(disable : 4786)
 #endif
 
-#ifndef PI
-#define PI 3.1415926535897932384626433832795f
-#endif
+#include "typedef.h"
+#include "vector2d.h"
 
 #define RAND femath::Rand
 
 #define N1 624
+
+/* Boy these macros are evil :( */
 
 #define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)\
 {\
@@ -208,9 +209,6 @@
 template <class type> inline type GetHypotSquare(type X, type Y) { return X * X + Y * Y; }
 template <class type> inline type Max(type X, type Y) { return X > Y ? X : Y; }
 template <class type> inline type Min(type X, type Y) { return X < Y ? X : Y; }
-
-#include "typedef.h"
-#include "vector2d.h"
 
 class femath
 {

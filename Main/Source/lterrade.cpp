@@ -27,6 +27,7 @@ valuemap protocontainer<olterrain>::CodeNameMap;
 #include "itemba.h"
 #include "config.h"
 #include "itemde.h"
+#include "save.h"
 
 bool door::Open(character* Opener)
 {
@@ -96,7 +97,7 @@ bool door::Close(character* Closer)
 void altar::DrawToTileBuffer(bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
   else
     Picture[0]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
 

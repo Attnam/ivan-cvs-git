@@ -5,22 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define WEAPON_SKILL_GATEGORIES	13
-
-#define UNCATEGORIZED	0
-#define UNARMED		1
-#define DAGGERS		2
-#define SMALL_SWORDS	3
-#define LARGE_SWORDS	4
-#define CLUBS		5
-#define HAMMERS		6
-#define MACES		7
-#define FLAILS		8
-#define AXES		9
-#define HALBERDS	10
-#define SPEARS		11
-#define WHIPS		12
-
 #include "typedef.h"
 
 class outputfile;

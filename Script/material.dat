@@ -57,6 +57,7 @@ stone
 bananaflesh
 {
 	StrengthValue = 5;
+	Density = 1200;
 	ConsumeType = FRUIT;
 	OfferValue = 10;
 	NutritionValue = 200;
@@ -278,7 +279,9 @@ humanflesh
 	*/
 }
 
-negroidflesh /* Have to hope that his is politically correct. */
+/* Have to hope that his is politically correct. */
+
+/*negroidflesh
 {
 	StrengthValue = 10;
 	ConsumeType = MEAT;
@@ -287,12 +290,12 @@ negroidflesh /* Have to hope that his is politically correct. */
 	NutritionValue = 200;
 	Color = rgb(64,64,64);
 	IsAlive = true;
-	Alignment = EVIL;
+	Alignment = EVIL;*/
 	/* 
 	Possibly missing from this script:
 	SkinColor = rgb(160, 100, 64);
 	*/
-}	
+/*}*/
 
 slime
 {

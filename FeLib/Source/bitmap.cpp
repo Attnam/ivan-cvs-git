@@ -842,3 +842,30 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
       return;
     }
 }
+
+outputfile& operator<<(outputfile& SaveFile, bitmap* Bitmap)
+{
+  if(Bitmap)
+    {
+      SaveFile.Put(1);
+      SaveFile << Bitmap->GetXSize() << Bitmap->GetYSize();
+      Bitmap->Save(SaveFile);
+    }
+  else
+    SaveFile.Put(0);
+
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, bitmap*& Bitmap)
+{
+  if(SaveFile.Get())
+    {
+      ushort XSize, YSize;
+      SaveFile >> XSize >> YSize;
+      Bitmap = new bitmap(XSize, YSize);
+      Bitmap->Load(SaveFile);
+    }
+
+  return SaveFile;
+}

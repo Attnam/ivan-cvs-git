@@ -5,6 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <vector>
+
+#include "typedef.h"
+#include "vector2d.h"
+
 #define DATAMEMBER(type, name)\
  public:\
   type* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
@@ -22,11 +27,6 @@
     name.SetIdentifier(#name);\
     Data.push_back(&name);\
   }
-
-#include <vector>
-
-#include "typedef.h"
-#include "vector2d.h"
 
 class inputfile;
 class glterrain;
@@ -307,6 +307,69 @@ class data<character> : public basedata<character>
  public:
   data<character>();
  protected:
+  DATAMEMBER(ushort, DefaultAgility);
+  DATAMEMBER(ushort, DefaultStrength);
+  DATAMEMBER(ushort, DefaultEndurance);
+  DATAMEMBER(ushort, DefaultPerception);
+  DATAMEMBER(ulong, DefaultMoney);
+  DATAMEMBER(ushort, TotalSize);
+  DATAMEMBER(bool, CanRead);
+  DATAMEMBER(bool, IsCharmable);
+  DATAMEMBER(uchar, Sex);
+  DATAMEMBER(ulong, BloodColor);
+  DATAMEMBER(bool, CanBeGenerated);
+  DATAMEMBER(bool, HasInfraVision);
+  DATAMEMBER(uchar, CriticalModifier);
+  DATAMEMBER(std::string, StandVerb);
+  DATAMEMBER(bool, CanOpen);
+  DATAMEMBER(bool, CanBeDisplaced);
+  DATAMEMBER(ushort, Frequency);
+  DATAMEMBER(bool, CanWalk);
+  DATAMEMBER(bool, CanSwim);
+  DATAMEMBER(bool, CanFly);
+  DATAMEMBER(ushort, PhysicalDamageResistance);
+  DATAMEMBER(ushort, SoundResistance);
+  DATAMEMBER(ushort, EnergyResistance);
+  DATAMEMBER(ushort, AcidResistance);
+  DATAMEMBER(ushort, FireResistance);
+  DATAMEMBER(ushort, PoisonResistance);
+  DATAMEMBER(ushort, BulimiaResistance);
+  DATAMEMBER(bool, IsUnique);
+  DATAMEMBER(ushort, EatFlags);
+  DATAMEMBER(ulong, TotalVolume);
+  //DATAMEMBER(vector2d, BitmapPos);
+  DATAMEMBER(ulong, MeleeStrength);
+  DATAMEMBER(std::string, TalkVerb);
+  DATAMEMBER(vector2d, HeadBitmapPos);
+  DATAMEMBER(vector2d, TorsoBitmapPos);
+  DATAMEMBER(vector2d, ArmBitmapPos);
+  DATAMEMBER(vector2d, LegBitmapPos);
+  DATAMEMBER(vector2d, RightArmBitmapPos);
+  DATAMEMBER(vector2d, LeftArmBitmapPos);
+  DATAMEMBER(vector2d, RightLegBitmapPos);
+  DATAMEMBER(vector2d, LeftLegBitmapPos);
+  DATAMEMBER(vector2d, GroinBitmapPos);
+  DATAMEMBER(ushort, ClothColor);
+  DATAMEMBER(ushort, SkinColor);
+  DATAMEMBER(ushort, CapColor);
+  DATAMEMBER(ushort, HairColor);
+  DATAMEMBER(ushort, EyeColor);
+  DATAMEMBER(ushort, TorsoMainColor);
+  DATAMEMBER(ushort, BeltColor);
+  DATAMEMBER(ushort, TorsoSpecialColor);
+  DATAMEMBER(ushort, ArmMainColor);
+  DATAMEMBER(ushort, ArmSpecialColor);
+  DATAMEMBER(ushort, LegMainColor);
+  DATAMEMBER(ushort, LegSpecialColor);
+  DATAMEMBER(uchar, HeadBonePercentile);
+  DATAMEMBER(uchar, TorsoBonePercentile);
+  DATAMEMBER(uchar, ArmBonePercentile);
+  DATAMEMBER(uchar, RightArmBonePercentile);
+  DATAMEMBER(uchar, LeftArmBonePercentile);
+  DATAMEMBER(uchar, GroinBonePercentile);
+  DATAMEMBER(uchar, LegBonePercentile);
+  DATAMEMBER(uchar, RightLegBonePercentile);
+  DATAMEMBER(uchar, LeftLegBonePercentile);
 };
 
 class data<item> : public basedata<item>

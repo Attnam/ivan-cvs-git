@@ -5,17 +5,17 @@
 #pragma warning(disable : 4786)
 #endif
 
-#ifdef __DJGPP__
-#define SIGNALS 8
-#endif
-
-#define ABORT globalerrorhandler::Abort
-
 #ifdef WIN32
 #include <windows.h>
 #endif
 
 #include "typedef.h"
+
+#define ABORT globalerrorhandler::Abort
+
+#ifdef __DJGPP__
+#define SIGNALS 8
+#endif
 
 class globalerrorhandler
 {
@@ -40,7 +40,7 @@ class globalerrorhandler
 #ifdef __DJGPP__
   static void SignalHandler(int);
   static void (*OldSignal[SIGNALS])(int);
-  static int  Signal[SIGNALS];
+  static int Signal[SIGNALS];
 #endif
 };
 

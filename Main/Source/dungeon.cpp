@@ -4,6 +4,7 @@
 #include "script.h"
 #include "feio.h"
 #include "save.h"
+#include "felibdef.h"
 
 dungeon::dungeon(uchar Index) : Index(Index)
 {

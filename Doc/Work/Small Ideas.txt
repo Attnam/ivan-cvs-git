@@ -232,3 +232,4 @@ Opening a can should be more difficult with less hands.
 Fly function for character!
 Mirrors.
 Item category "rubbish" which would contain bananapeals and roubles.
+Cumulative comments to script.

@@ -6,10 +6,11 @@
 #include "godba.h"
 #include "save.h"
 #include "proto.h"
+#include "materba.h"
 
 object::~object()
 {
-  for(ushort c = 0; c < AnimationFrames(); ++c)
+  for(ushort c = 0; c < GraphicId.size(); ++c)
     igraph::RemoveUser(GraphicId[c]);
 }
 
@@ -27,29 +28,35 @@ void object::Load(inputfile& SaveFile)
 
   Picture.resize(GraphicId.size());
 
-  for(ushort c = 0; c < AnimationFrames(); ++c)
+  for(ushort c = 0; c < GraphicId.size(); ++c)
     Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
 }
 
-void object::InitMaterials(material* FirstMaterial)
+void object::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
 {
   InitMaterial(MainMaterial, FirstMaterial, GetDefaultMainVolume());
-  UpdatePictures(false);
+
+  if(CallUpdatePictures)
+    UpdatePictures();
 }
 
-void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume)
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, bool CallUpdatePictures)
 {
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
-  UpdatePictures(false);
+
+  if(CallUpdatePictures)
+    UpdatePictures();
 }
 
-void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, material*& ThirdMaterial, material* ThirdNewMaterial, ulong ThirdDefaultVolume)
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, material*& ThirdMaterial, material* ThirdNewMaterial, ulong ThirdDefaultVolume, bool CallUpdatePictures)
 {
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
   InitMaterial(ThirdMaterial, ThirdNewMaterial, ThirdDefaultVolume);
-  UpdatePictures(false);
+
+  if(CallUpdatePictures)
+    UpdatePictures();
 }
 
 void object::InitMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
@@ -102,18 +109,16 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
   return OldMaterial;
 }
 
-void object::UpdatePictures(bool RemoveOld)
+void object::UpdatePictures()
 {
-  if(RemoveOld)
-    for(ushort c = 0; c < AnimationFrames(); ++c)
+  if(GraphicId.size())
+    for(ushort c = 0; c < GraphicId.size(); ++c)
       igraph::RemoveUser(GraphicId[c]);
-  else
-    {
-      GraphicId.resize(AnimationFrames());
-      Picture.resize(AnimationFrames());
-    }
 
-  for(ushort c = 0; c < AnimationFrames(); ++c)
+  GraphicId.resize(GetAnimationFrames());
+  Picture.resize(GetAnimationFrames());
+
+  for(ushort c = 0; c < GraphicId.size(); ++c)
     {
       GraphicId[c].Color[0] = GetMaterialColor0(c);
       GraphicId[c].Color[1] = GetMaterialColor1(c);

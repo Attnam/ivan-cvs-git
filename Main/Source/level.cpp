@@ -15,6 +15,13 @@
 #include "message.h"
 #include "actionba.h"
 #include "error.h"
+#include "game.h"
+#include "save.h"
+
+#define FORBIDDEN 1
+#define ON_POSSIBLE_ROUTE 2
+#define STILL_ON_POSSIBLE_ROUTE 4
+#define PREFERRED 8
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -986,7 +993,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
     if(DistanceSquare <= RadiusSquare)
       {
-	lsquare* Square = GetLSquare(vector2d(XPointer, YPointer));
+	lsquare* Square = GetLSquare(XPointer, YPointer);
 	character* Char = Square->GetCharacter();
 	ushort Damage = Strength / (DistanceSquare + 1);
 
@@ -1052,7 +1059,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
   if(!AllowHostiles)
     DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
     {
-      character* Char = GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
+      character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
 
       if(Char)
 	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
@@ -1064,7 +1071,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 
   DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
   {
-    character* Char = GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
+    character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
 
     if(Char)
       if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))

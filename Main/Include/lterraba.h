@@ -5,7 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "bitmap.h"
 #include "object.h"
 #include "terra.h"
 #include "typedef.h"

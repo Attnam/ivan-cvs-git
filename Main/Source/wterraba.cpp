@@ -9,6 +9,8 @@
 #include "wterraba.h"
 #include "game.h"
 #include "strover.h"
+#include "igraph.h"
+#include "save.h"
 
 struct prioritypair
 {

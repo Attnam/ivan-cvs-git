@@ -5,38 +5,13 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define TRANSPARENTCOL 0xF81F // Pink
-
-#define RAW_TYPES	4
-
-#define GRLTERRAIN	0
-#define GRITEM		1
-#define GRCHARACTER	2
-#define GRHUMANOID	3
-
-#define GRAPHIC_TYPES	5
-
-#define GRWTERRAIN	0
-#define GRFOW		1
-#define GRCURSOR	2
-#define GRSYMBOL	3
-#define GRMENU		4
-
-#define STNORMAL	0
-#define STRIGHTARM	1
-#define STLEFTARM	2
-#define STGROIN		3
-#define STRIGHTLEG	4
-#define STLEFTLEG	5
-
-#define SILHOUETTE_X_SIZE 64
-#define SILHOUETTE_Y_SIZE 64
 #ifdef WIN32
 #include <windows.h>
 #endif
 
 #include "typedef.h"
 #include "vector2d.h"
+#include "ivandef.h"
 
 class bitmap;
 class colorizablebitmap;
@@ -118,8 +93,8 @@ class igraph
   static colorizablebitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];
   static bitmap* TileBuffer;
-  static char* RawGraphicFileName[];
-  static char* GraphicFileName[];
+  static std::string RawGraphicFileName[];
+  static std::string GraphicFileName[];
   static tilemap TileMap;
   static bitmap* OutlineBuffer;
 };

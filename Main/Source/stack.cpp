@@ -10,6 +10,7 @@
 #include "femath.h"
 #include "slot.h"
 #include "game.h"
+#include "save.h"
 
 stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition)
 {

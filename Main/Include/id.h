@@ -5,16 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define	UNARTICLED		0	//0000000
-#define	PLURAL			1	//0000001
-#define	ARTICLEBIT		2	//0000010
-#define	DEFINITE		2	//0000010
-#define	INDEFINEBIT		4	//0000100
-#define	INDEFINITE		6	//0000110
+#include "typedef.h"
 
 #define CHARNAME(Case) Name(Case).c_str()
-
-#include "typedef.h"
 
 class id
 {

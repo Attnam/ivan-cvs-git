@@ -388,6 +388,10 @@ SOURCE=.\Main\Include\itemde.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\ivandef.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\level.h
 # End Source File
 # Begin Source File
@@ -490,15 +494,6 @@ SOURCE=.\Main\Resource\Logo.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\main.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # End Target
 # End Project

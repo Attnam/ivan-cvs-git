@@ -7,6 +7,9 @@
 #include "feio.h"
 #include "game.h"
 #include "area.h"
+#include "felibdef.h"
+#include "save.h"
+#include "bitmap.h"
 
 #ifdef WIN32
 #define CONFIG_FILENAME "ivan.cfg"

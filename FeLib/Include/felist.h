@@ -8,13 +8,14 @@
 #include <vector>
 
 #include "typedef.h"
-#include "bitmap.h"
-#include "save.h"
+//#include "bitmap.h"
+//#include "save.h"
 #include "vector2d.h"
 
 class colorizablebitmap;
 class inputfile;
 class outputfile;
+class bitmap;
 
 struct felistentry
 {
@@ -27,18 +28,8 @@ struct felistentry
   bool Selectable;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, felistentry Entry)
-{
-  SaveFile << Entry.Bitmap << Entry.String << Entry.Color << Entry.Selectable;
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
-{
-  Entry.Bitmap = 0;
-  SaveFile >> Entry.Bitmap >> Entry.String >> Entry.Color >> Entry.Selectable;
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, felistentry);
+inputfile& operator>>(inputfile&, felistentry&);
 
 struct felistdescription
 {
@@ -48,17 +39,8 @@ struct felistdescription
   ushort Color;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, felistdescription Desc)
-{
-  SaveFile << Desc.String << Desc.Color;
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, felistdescription& Desc)
-{
-  SaveFile >> Desc.String >> Desc.Color;
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, felistdescription);
+inputfile& operator>>(inputfile&, felistdescription&);
 
 class felist
 {

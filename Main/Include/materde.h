@@ -5,8 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <vector>
+
 #include "materba.h"
-#include "graphics.h"
+//#include "graphics.h"
+#include "felibdef.h"
 
 class ABSTRACT_MATERIAL
 (
@@ -373,13 +376,17 @@ class MATERIAL
  public:
   virtual ushort OfferValue() const { return 30; }
   virtual uchar Alignment() const { return EVIL; }
-  virtual ushort GetSkinColor() const { return MAKE_RGB(180, 120, 90); } // spoiled: MAKE_RGB(0, 120, 120)
-  //virtual ushort GetColor() const { return MAKE_RGB(180, 120, 90); }
+  virtual ushort GetSkinColor(ushort Frame) const { return SkinColor[Frame]; } // spoiled: MAKE_RGB(0, 120, 120)
+  virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual std::vector<ushort>& GetSkinColorVector() { return SkinColor; }
  protected:
   virtual std::string NameStem() const { return "human flesh"; }
+  std::vector<ushort> SkinColor;
 );
 
-class MATERIAL
+/*class MATERIAL
 (
   negroidflesh,
   flesh,
@@ -387,7 +394,7 @@ class MATERIAL
   virtual ushort GetSkinColor() const { return MAKE_RGB(160, 100, 64); } // MAKE_RGB(160, 100, 64), MAKE_RGB(128, 80, 48)
  protected:
   virtual std::string NameStem() const { return "negroid flesh"; }
-);
+);*/
 
 class MATERIAL
 (

@@ -10,6 +10,7 @@
 #include "wterraba.h"
 #include "game.h"
 #include "lterraba.h"
+#include "save.h"
 
 template <class type> ushort protocontainer<type>::Add(prototype* Proto)
 {
@@ -114,7 +115,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	  ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
 	  const character::prototype* const Proto = protocontainer<character>::GetProto(Chosen);
 
-	  if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
+	  if(Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
 	    {
 	      character* Monster = Proto->Clone(true, true, CreateItems);
 	      float Danger = Monster->MaxDanger();

@@ -25,6 +25,7 @@
 #include "actionde.h"
 #include "command.h"
 #include "proto.h"
+#include "save.h"
 
 void (character::*character::StateHandler[STATES])() = { &character::PolymorphHandler, &character::HasteHandler, &character::SlowHandler };
 
@@ -96,7 +97,7 @@ bool character::Hit(character* Enemy)
       return true;
     }
 
-  switch(Enemy->TakeHit(this, 0, GetAttackStrength(), GetToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier()))) //there's no breaks and there shouldn't be any
+  switch(Enemy->TakeHit(this, 0, GetAttackStrength(), GetToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->GetCriticalModifier()))) //there's no breaks and there shouldn't be any
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -222,8 +223,7 @@ void character::Be()
 	}
 
       for(ushort c = 0; c < STATES; ++c)
-	if(StateIsActivated(c))
-	  (this->*StateHandler[c])();
+	(this->*StateHandler[c])();
 
       if(GetAction())
 	GetAction()->Handle();
@@ -789,7 +789,7 @@ void character::Die(bool ForceMsg)
     }
   else
     if(GetLSquareUnder()->CanBeSeen())
-      ADD_MESSAGE(DeathMessage().c_str());
+      ADD_MESSAGE(GetDeathMessage().c_str());
     else
       if(ForceMsg)
 	ADD_MESSAGE("You sense the death of something.");
@@ -933,7 +933,7 @@ void character::AddHitMessage(character* Enemy, item* Weapon, uchar BodyPart, bo
 
 void character::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s %s.", CHARDESCRIPTION(DEFINITE), TalkVerb().c_str());
+  ADD_MESSAGE("%s %s.", CHARDESCRIPTION(DEFINITE), GetTalkVerb().c_str());
 }
 
 bool character::Talk()
@@ -1699,14 +1699,14 @@ bool character::Offer()
   return false;
 }
 
-long character::StatScore() const
+long character::GetStatScore() const
 {
   return GetHP() * 5 + GetEndurance() * 30 + (GetStrength() + GetAgility() + GetPerception()) * 40;
 }
 
-long character::Score() const
+long character::GetScore() const
 {
-  return (game::GetPlayerBackup() ? game::GetPlayerBackup()->StatScore() : StatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
+  return (game::GetPlayerBackup() ? game::GetPlayerBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
 }
 
 void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
@@ -1718,7 +1718,7 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
   if(AddEndLevel)
     Desc += " in " + (game::GetInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()));
 
-  HScore.Add(long((Score() - game::GetBaseScore()) * Multiplier), Desc);
+  HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc);
 
   HScore.Save();
 }
@@ -1955,57 +1955,72 @@ bool character::Zap()
 
 bool character::Polymorph(character* NewForm, ushort Counter)
 {
+  if(GetAction())
+    GetAction()->Terminate(false);
+
+  GetSquareUnder()->RemoveCharacter();
+  GetSquareUnder()->AddCharacter(NewForm);
+  SetSquareUnder(0);
+
   if(GetIsPlayer())
     {
-      if(StateIsActivated(POLYMORPHED))
-	{
-	  ADD_MESSAGE("You shudder.");
-	  delete NewForm;
-	  return true;
-	}
-
-      GetSquareUnder()->RemoveCharacter();
-      GetSquareUnder()->AddCharacter(NewForm);
-      SetSquareUnder(0);
-
       ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CHARNAME(INDEFINITE));
-      game::SetPlayerBackup(this);
       game::SetPlayer(NewForm);
       NewForm->SetAssignedName(GetAssignedName());
       NewForm->ActivateState(POLYMORPHED);
       NewForm->SetStateCounter(POLYMORPHED, Counter);
       game::SendLOSUpdateRequest();
       game::GetCurrentArea()->UpdateLOS();
-      SetHasBe(false);
+
+      if(StateIsActivated(POLYMORPHED))
+	{
+	  SetExists(false);
+	}
+      else
+	{
+	  game::SetPlayerBackup(this);
+	  SetHasBe(false);
+	}
     }
   else
-    {
-      GetSquareUnder()->RemoveCharacter();
-      GetSquareUnder()->AddCharacter(NewForm);
-      SetSquareUnder(0);
-      SetExists(false);
-    }
+    SetExists(false);
 
   while(GetStack()->GetItems())
     GetStack()->MoveItem(GetStack()->GetBottomSlot(), NewForm->GetStack());
 
   NewForm->SetMoney(GetMoney());
 
-  if(NewForm->CanWieldInMainHand())
+  for(ushort c = 0; c < EquipmentSlots(); ++c)
+    {
+      item* Item = GetEquipment(c);
+
+      if(Item)
+	{
+	  if(NewForm->CanUseEquipment(c))
+	    {
+	      Item->RemoveFromSlot();
+	      NewForm->SetEquipment(c, Item);
+	    }
+	  else
+	    Item->MoveTo(NewForm->GetStack());
+	}
+    }
+
+  /*if(NewForm->CanWieldInMainHand())
     NewForm->SetMainWielded(GetMainWielded());
 
   if(NewForm->CanWieldInSecondaryHand())
     NewForm->SetSecondaryWielded(GetSecondaryWielded());
 
   if(NewForm->CanWear())
-    NewForm->SetBodyArmor(GetBodyArmor());
+    NewForm->SetBodyArmor(GetBodyArmor());*/
 
   NewForm->ChangeTeam(GetTeam());
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(NewForm);
 
-  ChangeTeam(0);
+  //ChangeTeam(0);
 
   return true;
 }
@@ -2015,10 +2030,10 @@ wsquare* character::GetWSquareUnder() const
   return (wsquare*)SquareUnder;
 }
 
-ulong character::GetBloodColor() const
+/*ulong character::GetBloodColor() const
 {
   return MAKE_RGB(75,0,0);
-}
+}*/
 
 void character::BeKicked(character* Kicker, ushort KickStrength, uchar Direction)
 {
@@ -2134,48 +2149,71 @@ void character::Faint()
 
 void character::PolymorphHandler()
 {
-  if(!GetStateCounter(POLYMORPHED))
+  if(StateIsActivated(POLYMORPHED))
     {
-      ADD_MESSAGE("You return to your true form.");
-      EndPolymorph();
-    }
+      if(!GetStateCounter(POLYMORPHED))
+	{
+	  ADD_MESSAGE("You return to your true form.");
+	  EndPolymorph();
+	}
 
-  EditStateCounter(POLYMORPHED, -1);
+      EditStateCounter(POLYMORPHED, -1);
+    }
 }
 
 void character::EndPolymorph()
 {
   if(StateIsActivated(POLYMORPHED))
     {
+      if(GetAction())
+	GetAction()->Terminate(false);
+
       SetExists(false);
       GetSquareUnder()->RemoveCharacter();
-      GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
-      game::GetPlayerBackup()->SetHasBe(true);
+      character* Player = game::GetPlayerBackup();
+      GetSquareUnder()->AddCharacter(Player);
+      Player->SetHasBe(true);
       SetSquareUnder(0);
 
       while(GetStack()->GetItems())
-	GetStack()->MoveItem(GetStack()->GetBottomSlot(), game::GetPlayerBackup()->GetStack());
+	GetStack()->MoveItem(GetStack()->GetBottomSlot(), Player->GetStack());
 
-      SetSquareUnder(game::GetPlayerBackup()->GetSquareUnder()); // might be used afterwards
+      SetSquareUnder(Player->GetSquareUnder()); // might be used afterwards
 
-      if(game::GetPlayerBackup()->CanWieldInMainHand())
-	game::GetPlayerBackup()->SetMainWielded(GetMainWielded());
+      for(ushort c = 0; c < EquipmentSlots(); ++c)
+	{
+	  item* Item = GetEquipment(c);
 
-      if(game::GetPlayerBackup()->CanWieldInSecondaryHand())
-	game::GetPlayerBackup()->SetSecondaryWielded(GetSecondaryWielded());
+	  if(Item)
+	    {
+	      if(Player->CanUseEquipment(c))
+		{
+		  Item->RemoveFromSlot();
+		  Player->SetEquipment(c, Item);
+		}
+	      else
+		Item->MoveTo(Player->GetStack());
+	    }
+	}
 
-      if(game::GetPlayerBackup()->CanWear())
-	game::GetPlayerBackup()->SetBodyArmor(GetBodyArmor());
+      /*if(Player->CanWieldInMainHand())
+	Player->SetMainWielded(GetMainWielded());
 
-      game::GetPlayerBackup()->SetMoney(GetMoney());
-      game::SetPlayer(game::GetPlayerBackup());
+      if(Player->CanWieldInSecondaryHand())
+	Player->SetSecondaryWielded(GetSecondaryWielded());
+
+      if(Player->CanWear())
+	Player->SetBodyArmor(GetBodyArmor());*/
+
+      Player->SetMoney(GetMoney());
+      game::SetPlayer(Player);
       game::SetPlayerBackup(0);
-      game::GetPlayer()->ChangeTeam(GetTeam());
+      Player->ChangeTeam(GetTeam());
 
       if(GetTeam()->GetLeader() == this)
-	GetTeam()->SetLeader(game::GetPlayer());
+	GetTeam()->SetLeader(Player);
 
-      game::GetPlayer()->TestWalkability();
+      Player->TestWalkability();
 
       game::SendLOSUpdateRequest();
       game::GetCurrentArea()->UpdateLOS();
@@ -2270,7 +2308,7 @@ bool character::CheckForDoors()
   if(CanOpen())
     {
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			    if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOLTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->Open(this))
+			    if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOLTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLSquare(DoX, DoY)->Open(this))
 			    return true;);
     }
 
@@ -2661,7 +2699,7 @@ bool character::Go()
 
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
-    if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetIsWalkable(this))
+    if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetIsWalkable(this))
       OKDirectionsCounter++;	
   });
 
@@ -2698,7 +2736,7 @@ void character::GoOn(go* Go)
 
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
       {
-	if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetIsWalkable(this))
+	if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetIsWalkable(this))
 	  OKDirectionsCounter++;	
       });
 
@@ -2826,10 +2864,10 @@ ushort character::DangerLevel() const
 void character::DisplayInfo()
 {
   if(GetIsPlayer())
-    ADD_MESSAGE("You are %s here.", StandVerb().c_str());
+    ADD_MESSAGE("You are %s here.", GetStandVerb().c_str());
   else
     {
-      ADD_MESSAGE("%s is %s here.", CHARNAME(INDEFINITE), StandVerb().c_str());
+      ADD_MESSAGE("%s is %s here.", CHARNAME(INDEFINITE), GetStandVerb().c_str());
 
       std::string Msg = PersonalPronoun();
 
@@ -2941,7 +2979,7 @@ void character::TestWalkability()
     }
 }
 
-void character::CreateBodyParts()
+/*void character::CreateBodyParts()
 {
   CreateTorso();
 }
@@ -2950,18 +2988,18 @@ void character::RestoreBodyParts()
 {
   if(!GetTorso())
     CreateTorso();
-}
+}*/
 
-material* character::CreateTorsoBone(ulong Volume) const
+material* character::CreateBodyPartBone(ushort, ulong Volume) const
 {
   return new bone(Volume);
 }
 
-void character::SetSize(ushort Size)
+/*void character::SetSize(ushort Size)
 {
   if(GetTorso())
     GetTorso()->SetSize(Size);
-}
+}*/
 
 ushort character::GetSize() const
 {
@@ -2971,19 +3009,19 @@ ushort character::GetSize() const
     return 0;
 }
 
-ushort character::TorsoSize() const
+/*ushort character::TorsoSize() const
 {
-  return TotalSize();
-}
+  return GetTotalSize();
+}*/
 
-void character::CreateTorso()
+/*void character::CreateTorso()
 {
   SetTorso(new normaltorso(false));
   GetTorso()->SetBitmapPos(GetBitmapPos(0)); // fix this!
-  GetTorso()->InitMaterials(CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
+  GetTorso()->InitMaterials(CreateTorsoFlesh(GetTorsoVolume() * (100 - GetTorsoBonePercentile()) / 100), CreateTorsoBone(GetTorsoVolume() * GetTorsoBonePercentile() / 100));
   GetTorso()->PlaceToSlot(GetTorsoSlot());
   GetTorso()->SetSize(TorsoSize());
-}
+}*/
 
 torso* character::GetTorso() const { return (torso*)GetBodyPart(0); }
 humanoidtorso* character::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(0); }
@@ -3337,11 +3375,12 @@ void character::Haste(ushort Counter)
 
   if(StateIsActivated(SLOW))
     {
-      EndSlow();
       if(GetIsPlayer())
 	ADD_MESSAGE("Time seems to go by at the normal rate now.");
       else
 	ADD_MESSAGE("%s slows down to the normal pace.", CHARNAME(DEFINITE));
+
+      EndSlow();
     }   
   else
     {
@@ -3350,6 +3389,7 @@ void character::Haste(ushort Counter)
       else
 	if(GetLSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("%s looks faster!", CHARNAME(DEFINITE));
+
       ActivateState(HASTE);
       SetStateCounter(HASTE, Counter);
     }
@@ -3357,16 +3397,20 @@ void character::Haste(ushort Counter)
 
 void character::HasteHandler()
 {
-  if(!GetStateCounter(HASTE))
+  if(StateIsActivated(HASTE))
     {
-      if(GetIsPlayer())
-	ADD_MESSAGE("Time seems to go by at the normal rate now.");
-      else if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
-      EndHaste();
-    }
+      if(!GetStateCounter(HASTE))
+      {
+	if(GetIsPlayer())
+	  ADD_MESSAGE("Time seems to go by at the normal rate now.");
+	else if(GetLSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
 
-  EditStateCounter(HASTE, -1);
+	EndHaste();
+      }
+
+      EditStateCounter(HASTE, -1);
+    }
 }
 
 void character::EndHaste()
@@ -3379,13 +3423,15 @@ void character::Slow(ushort Counter)
 {
   if(StateIsActivated(SLOW))
     return;
+
   if(StateIsActivated(HASTE))
     {
-      EndHaste();
       if(GetIsPlayer())
 	ADD_MESSAGE("Time seems to go by at the normal rate now.");
       else
 	ADD_MESSAGE("%s slows down to the normal pace.", CHARNAME(DEFINITE));
+
+      EndHaste();
     }
   else
     {
@@ -3394,6 +3440,7 @@ void character::Slow(ushort Counter)
       else
 	if(GetLSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("%s looks slower!", CHARNAME(DEFINITE));
+
       ActivateState(SLOW);
       SetStateCounter(SLOW, Counter);
     }
@@ -3401,16 +3448,20 @@ void character::Slow(ushort Counter)
 
 void character::SlowHandler()
 {
-  if(!GetStateCounter(SLOW))
+  if(StateIsActivated(SLOW))
     {
-      if(GetIsPlayer())
-	ADD_MESSAGE("Time seems to go by at the normal rate now.");
-      else
-	ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
-      EndHaste();
-    }
+      if(!GetStateCounter(SLOW))
+	{
+	  if(GetIsPlayer())
+	    ADD_MESSAGE("Time seems to go by at the normal rate now.");
+	  else
+	    ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
 
-  EditStateCounter(SLOW, -1);
+	  EndHaste();
+	}
+
+      EditStateCounter(SLOW, -1);
+    }
 }
 
 void character::EndSlow()
@@ -3566,37 +3617,27 @@ ushort character::GetStateCounter(uchar State) const
 
 bool character::CheckKick() const
 {
-  if(!CanKick())
-    {
-      ADD_MESSAGE("This monster type can not kick.");
-      return false;
-    }
-  else
-    return true;
+  ADD_MESSAGE("This monster type can not kick.");
+  return false;
 }
 
 bool character::CheckWearEquipment() const
 {
-  if(!CanUseEquipment())
-    {
-      ADD_MESSAGE("This monster type can not use equipment.");
-      return false;
-    }
-  else
-    return true;
+  ADD_MESSAGE("This monster type can not use equipment.");
+  return false;
 }
 
 ushort character::GetResistance(uchar Type) const
 {
   switch(Type)
     {
-    case PHYSICALDAMAGE: return PhysicalDamageResistance();
-    case SOUND: return SoundResistance();
-    case ENERGY: return EnergyResistance();
-    case ACID: return AcidResistance();
-    case FIRE: return FireResistance();
-    case POISON: return PoisonResistance();
-    case BULIMIA: return BulimiaResistance();
+    case PHYSICALDAMAGE: return GetPhysicalDamageResistance();
+    case SOUND: return GetSoundResistance();
+    case ENERGY: return GetEnergyResistance();
+    case ACID: return GetAcidResistance();
+    case FIRE: return GetFireResistance();
+    case POISON: return GetPoisonResistance();
+    case BULIMIA: return GetBulimiaResistance();
     default:
       ABORT("Resistance lack detected!");
       return 0;
@@ -3886,14 +3927,203 @@ bool character::RaiseTheDead(character*)
   return true;
 }
 
-void character::CreateBodyPart(ushort Index)
+/*void character::CreateBodyPart(ushort Index)
 {
   switch(Index)
     {
-    case TORSO_INDEX:
+    case TORSOINDEX:
       CreateTorso();
       break;
     default:
-      ABORT("Wierd bodypart case to create for a character. Sorry.");
+      ABORT("Wierd bodypart case to create for a character.");
+    }
+}*/
+
+void character::SetSize(ushort Size)
+{
+  for(uchar c = 0; c < BodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->SetSize(GetBodyPartSize(c, Size));
+}
+
+ulong character::GetBodyPartSize(ushort Index, ushort TotalSize)
+{
+  if(Index == TORSOINDEX)
+    return TotalSize;
+  else
+    {
+      ABORT("Wierd bodypart size request for a character!");
+      return 0;
+    }
+}
+
+ulong character::GetBodyPartVolume(ushort Index)
+{
+  if(Index == TORSOINDEX)
+    return GetTotalVolume();
+  else
+    {
+      ABORT("Wierd bodypart volume request for a character!");
+      return 0;
+    }
+}
+
+uchar character::GetBodyPartBonePercentile(ushort Index)
+{
+  if(Index == TORSOINDEX)
+    return GetTorsoBonePercentile();
+  else
+    {
+      ABORT("Wierd bodypart bone percentile request for a character!");
+      return 0;
+    }
+}
+
+void character::CreateBodyParts()
+{
+  /* Create all body parts */
+
+  for(uchar c = 0; c < BodyParts(); ++c) 
+    CreateBodyPart(c);
+}
+
+void character::RestoreBodyParts()
+{
+  for(uchar c = 0; c < BodyParts(); ++c)
+    if(!GetBodyPart(c))
+      CreateBodyPart(c);
+}
+
+void character::UpdateBodyPartPictures()
+{
+  for(ushort c = 0; c < BodyParts(); ++c)
+    UpdateBodyPartPicture(c);
+
+  /*UpdateHeadPicture(CallUpdatePictures);
+  UpdateTorsoPicture(CallUpdatePictures);
+  UpdateRightArmPicture(CallUpdatePictures);
+  UpdateLeftArmPicture(CallUpdatePictures);
+  UpdateGroinPicture(CallUpdatePictures);
+  UpdateRightLegPicture(CallUpdatePictures);
+  UpdateLeftLegPicture(CallUpdatePictures);*/
+}
+
+bodypart* character::MakeBodyPart(ushort Index)
+{
+  if(Index == TORSOINDEX)
+    return new normaltorso(false);
+  else
+    {
+      ABORT("Wierd bodypart to make for a character!");
+      return 0;
+    }
+}
+
+void character::CreateBodyPart(ushort Index)
+{
+  SetBodyPart(Index, MakeBodyPart(Index));
+  GetBodyPart(Index)->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
+  UpdateBodyPartPicture(Index);
+  GetBodyPart(Index)->PlaceToSlot(GetBodyPartSlot(Index));
+  GetBodyPart(Index)->SetSize(GetBodyPartSize(Index, GetTotalSize()));
+}
+
+vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
+{
+  if(Index == TORSOINDEX)
+    return GetTorsoBitmapPos(Frame);
+  else
+    {
+      ABORT("Wierd bodypart BitmapPos request for a character!");
+      return vector2d();
+    }
+}
+
+ushort character::GetBodyPartColor0(ushort Index, ushort Frame)
+{
+  if(Index < BodyParts())
+    return GetSkinColor(Frame);
+  else
+    {
+      ABORT("Wierd bodypart color 0 request for a character!");
+      return 0;
+    }
+}
+
+ushort character::GetBodyPartColor1(ushort Index, ushort Frame)
+{
+  if(Index == TORSOINDEX)
+    return GetTorsoMainColor(Frame);
+  else
+    {
+      ABORT("Wierd bodypart color 1 request for a character!");
+      return 0;
+    }
+}
+
+ushort character::GetBodyPartColor2(ushort Index, ushort Frame)
+{
+  if(Index == TORSOINDEX)
+    return 0; // reserved for future use
+  else
+    {
+      ABORT("Wierd bodypart color 2 request for a character!");
+      return 0;
+    }
+}
+
+ushort character::GetBodyPartColor3(ushort Index, ushort Frame)
+{
+  if(Index == TORSOINDEX)
+    return GetTorsoSpecialColor(Frame);
+  else
+    {
+      ABORT("Wierd bodypart color 3 request for a character!");
+      return 0;
+    }
+}
+
+void character::UpdateBodyPartPicture(ushort Index)
+{
+  if(GetBodyPart(Index))
+    {
+      std::vector<vector2d>& BitmapPos = GetBodyPart(Index)->GetBitmapPosVector();
+      std::vector<ushort>& Color1 = GetBodyPart(Index)->GetColor1Vector();
+      std::vector<ushort>& Color2 = GetBodyPart(Index)->GetColor2Vector();
+      std::vector<ushort>& Color3 = GetBodyPart(Index)->GetColor3Vector();
+
+      BitmapPos.clear();
+      Color1.clear();
+      Color2.clear();
+      Color3.clear();
+
+      for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
+	{
+	  BitmapPos.push_back(GetBodyPartBitmapPos(Index, c));
+	  Color1.push_back(GetBodyPartColor1(Index, c));
+	  Color2.push_back(GetBodyPartColor2(Index, c));
+	  Color3.push_back(GetBodyPartColor3(Index, c));
+	}
+
+      material* Material = GetBodyPart(Index)->GetMainMaterial();
+
+      if(Material->GetType() == humanflesh::StaticType())
+	{
+          std::vector<ushort>& SkinColor = ((humanflesh*)Material)->GetSkinColorVector();
+	  SkinColor.clear();
+
+	  for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
+	    SkinColor.push_back(GetBodyPartColor0(Index, c));
+	}
+
+      GetBodyPart(Index)->SetAnimationFrames(GetBodyPartAnimationFrames(Index));
+
+      /*GetBodyPart(Index)->SetBitmapPos(GetHeadBitmapPos());
+      //GetHead()->SetColor(0, SkinColor());
+      GetBodyPart(Index)->SetColor(1, GetCapColor());
+      GetBodyPart(Index)->SetColor(2, GetHairColor());
+      GetBodyPart(Index)->SetColor(3, GetEyeColor());*/
+
+      GetBodyPart(Index)->UpdatePictures();
     }
 }

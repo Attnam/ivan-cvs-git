@@ -5,17 +5,13 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define NONE 0
-#define MIRROR 1
-#define FLIP 2
-#define ROTATE_90 4
-
 #include <list>
 
 #include "typedef.h"
 #include "vector2d.h"
-#include "save.h"
-#include "graphics.h"
+//#include "save.h"
+//#include "graphics.h"
+#include "felibdef.h"
 
 class outputfile;
 class inputfile;
@@ -163,31 +159,7 @@ class bitmap
   } Data;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, bitmap* Bitmap)
-{
-  if(Bitmap)
-    {
-      SaveFile.Put(1);
-      SaveFile << Bitmap->GetXSize() << Bitmap->GetYSize();
-      Bitmap->Save(SaveFile);
-    }
-  else
-    SaveFile.Put(0);
-
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, bitmap*& Bitmap)
-{
-  if(SaveFile.Get())
-    {
-      ushort XSize, YSize;
-      SaveFile >> XSize >> YSize;
-      Bitmap = new bitmap(XSize, YSize);
-      Bitmap->Load(SaveFile);
-    }
-
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, bitmap*);
+inputfile& operator>>(inputfile&, bitmap*&);
 
 #endif
