@@ -29,6 +29,8 @@ worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
 dungeon* game::Dungeon;
+character* game::PlayerBackup;
+ushort game::PolymorphCounter = 0xFFFF;
 
 bool game::Flag;
 
@@ -1041,7 +1043,7 @@ void game::WhatToLoadMenu(void) // for some _very_ strange reason "LoadMenu" occ
 	game::DeInit();
 }
 
-uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer)
+uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
 {
 	ADD_MESSAGE(Topic.c_str());
 
@@ -1054,7 +1056,8 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 	while(true)
 	{
 		int Key = GETKEY();
-
+		if(AcceptYourself && Key == '.')
+			return '.';
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
 			if(Key == game::GetMoveCommandKey(c))
 				return c;

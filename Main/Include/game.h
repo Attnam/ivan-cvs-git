@@ -118,7 +118,7 @@ public:
 	static void WhatToLoadMenu(void);
 	static ulong GetTurns(void) { return Turns; }
 	static std::string GetAutoSaveFileName(void) { return AutoSaveFileName; }
-	static uchar DirectionQuestion(std::string, uchar = 8, bool = true);
+	static uchar DirectionQuestion(std::string, uchar = 8, bool = true, bool = false);
 	static command* GetCommand(ushort Index) { return Command[Index]; }
 	static void RemoveSaves(void);
 	static bool GetInWilderness(void) { return InWilderness; }
@@ -129,6 +129,10 @@ public:
 	static void SetSquareInLoad(square* What) { SquareInLoad = What; }
 	static area* GetAreaInLoad(void) { return AreaInLoad; }
 	static square* GetSquareInLoad(void) { return SquareInLoad; }
+	static character* GetPlayerBackup(void) { return PlayerBackup; }
+	static void SetPlayerBackup(character* What) { PlayerBackup = What; }
+	static ushort GetPolymorphCounter(void) { return PolymorphCounter; }
+	static void SetPolymorphCounter(ushort What) { PolymorphCounter = What; }
 	static dungeon* GetDungeon(void) { return Dungeon; }
 	static uchar GetLevels(void);
 private:
@@ -162,6 +166,8 @@ private:
 	static worldmap* WorldMap;
 	static area* AreaInLoad;
 	static square* SquareInLoad;
+	static character* PlayerBackup;
+	static ushort PolymorphCounter;
 	static dungeon* Dungeon;
 };
 

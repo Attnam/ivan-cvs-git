@@ -194,12 +194,14 @@ public:
 	virtual void SpillBlood(uchar);
 	virtual void StopEating(void);
 	virtual void Vomit(ushort);
-	virtual void Be(void) { HasActed = false; Act(); }
+	virtual void Be(void) { if(game::GetPlayerBackup() != this) { HasActed = false; Act(); } }
 	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
 	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 	virtual bool Zap(void);
 	virtual bool Polymorph(void);
+	virtual bool SetTorsoArmor(item* What) const RET(false)
+	virtual void ChangeBackToPlayer(void);
 protected:
 	virtual void CreateCorpse(void);
 	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " dies screaming."; }
@@ -313,6 +315,7 @@ public:
 	virtual void DrawToTileBuffer(void) const;
 	virtual bool WearArmor(void);
 	virtual item* GetTorsoArmor(void) const RET(Armor.Torso)
+	virtual bool SetTorsoArmor(item* What) { Armor.Torso = What; return true;}
 	virtual uchar GetSex(void) const RET(MALE)
 	virtual ushort CalculateArmorModifier(void) const;
 	virtual bool Drop(void);
@@ -385,10 +388,10 @@ class CHARACTER
 		SetStrength(80);
 		SetEndurance(80);
 		SetPerception(80);
-		SetArmType(4);
-		SetHeadType(11);
-		SetLegType(2);
-		SetTorsoType(6);
+		SetArmType(3);
+		SetHeadType(10);
+		SetLegType(1);
+		SetTorsoType(5);
 		SetRelations(1);
 		SetHealTimer(100);
 	},
@@ -405,6 +408,7 @@ public:
 	virtual ulong Danger(void) const RET(150000)
 	virtual bool Charmable(void) const RET(false)
 	virtual ushort Possibility(void) const RET(0)
+	virtual bool Polymorph(void) RET(false)
 protected:
 	virtual std::string NameSingular(void) const RET("Perttu, the Überpriest of the Great Frog")
 	virtual std::string NamePlural(void) const RET("Perttus, the Überpriests of the Great Frog")
@@ -435,6 +439,7 @@ public:
 	virtual ushort CalculateArmorModifier(void) const RET(10)
 	virtual ulong Danger(void) const RET(30000)
 	virtual bool Charmable(void) const RET(false)
+	virtual bool Polymorph(void) const RET(false)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(208,0)
 	virtual std::string NameSingular(void) const RET("Oree the Pepsi Daemon King")
@@ -489,6 +494,7 @@ public:
 	virtual bool Hit(character*);
 	virtual ulong Danger(void) const RET(2500);
 	virtual bool Charmable(void) const RET(false)
+	virtual bool Polymorph(void) const RET(false)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(96,0)
 	virtual std::string NameSingular(void) const RET("Enner Beast")
@@ -547,6 +553,7 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual ulong Danger(void) const RET(5000)
 	virtual bool Charmable(void) const RET(false)
+	virtual bool Polymorph(void) const RET(false)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(64,0)
 	virtual std::string NameSingular(void) const RET("Elpuri the Dark Frog")

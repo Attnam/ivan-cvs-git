@@ -472,38 +472,60 @@ bool wand::Apply(character* StupidPerson)
 bool wandofpolymorph::Zap(vector Pos, uchar Direction)
 {
 	vector CurrentPos = Pos;
-	for(ushort Length = 0;Length < 5;Length++)
+	if(!GetCharge())
 	{
-		if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
-		{
-			break;
-		}
-		else
-		{
-			
-			CurrentPos += game::GetMoveVector(Direction);			
-			
-			clock_t StartTime = clock();
-			
-			
-
-			if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
-			{
-				game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->Polymorph();
-			}
-			
-			
-			
-
-		}
+		ADD_MESSAGE("Nothing happens.");
+		return false;
 	}
+	if(Direction != '.')
+		for(ushort Length = 0;Length < 5;Length++)
+		{
+			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
+			{
+				break;
+			}
+			else
+			{
+				
+				CurrentPos += game::GetMoveVector(Direction);			
+				
+				clock_t StartTime = clock();
+				
+				
+
+				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
+					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->Polymorph();
+				
+				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
+					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
+				
+				
+
+			}
+		}
+	else
+	{
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
+			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->Polymorph();
+		
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems())
+			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->Polymorph();
+	}
+
+	SetCharge(GetCharge() - 1);
 	return true;
 }
 
 
 bool item::Zap(vector, uchar)
 {
-	 ADD_MESSAGE("You can't zap this."); 
 	 return false; 
 }
 
+bool item::Polymorph(stack* CurrentStack)
+{
+	CurrentStack->AddItem(prototypesystem::BalancedCreateItem());
+	CurrentStack->RemoveItem(CurrentStack->SearchItem(this));
+	delete this;
+	return true;
+}

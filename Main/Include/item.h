@@ -66,6 +66,8 @@ public:
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
 	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 	virtual bool Zap(vector, uchar);
+	virtual bool CanBeZapped(void) const { return false; }
+	virtual bool Polymorph(stack*);
 protected:
 	virtual void SetDefaultStats(void) = 0;
 	virtual ushort GetFormModifier(void) const { return 0; }
@@ -811,6 +813,11 @@ class ABSTRACT_ITEM
 	item,
 public:
 	virtual bool Apply(character*);
+	virtual bool CanBeZapped(void) const RET(true)
+	virtual uchar GetCharge(void) const { return Charge; } 
+	virtual void SetCharge(uchar What) { Charge = What; } 
+protected:
+	uchar Charge;
 );
 
 class ITEM
@@ -820,6 +827,7 @@ class ITEM
 	InitMaterials(new glass(100)),
 	{
 		SetSize(10);
+		SetCharge(2);
 	},
 public:
 	virtual ushort Possibility(void) const RET(3)

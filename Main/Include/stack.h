@@ -60,6 +60,7 @@ public:
 	ushort MultiselectDrawContents(const char*) const;
 	void Kick(ushort, bool, uchar);
 	long Score(void) const;
+	bool Polymorph(void);
 private:
 	void Optimize(ushort);
 	square* SquareUnder;

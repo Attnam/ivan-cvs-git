@@ -360,3 +360,9 @@ void stack::SetSquareUnder(square* Square)
 	SquareUnder = Square;
 }
 
+bool stack::Polymorph(void)
+{
+	for(ushort c = 0; c < GetItems(); c++)
+		GetItem(c)->Polymorph(this);
+	return true;
+}

@@ -18,7 +18,7 @@
 #include "proto.h"
 #include "message.h"
 #include "dungeon.h"
-
+#include "pool.h"
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
 {
 	SetConsumingCurrently(0xFFFF);
@@ -239,6 +239,18 @@ void character::Act(void)
 {
 	if(!GetHasActed())
 	{
+		if(game::GetPlayer() == this) 
+		{
+			if(!game::GetPolymorphCounter())
+			{
+				ChangeBackToPlayer();
+				game::SetPolymorphCounter(0xFFFF);
+				return;
+			}
+			else if(game::GetPolymorphCounter() != 0xFFFF)
+				game::SetPolymorphCounter(game::GetPolymorphCounter() - 1);
+		}
+			
 		if(!game::Flag)
 		{
 			ApplyExperience();
@@ -2736,7 +2748,12 @@ bool character::Zap(void)
 
 	if(Index < GetStack()->GetItems())
 	{
-		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap?", 8, false);
+		if(!GetStack()->GetItem(Index)->CanBeZapped())
+		{
+			ADD_MESSAGE("You can't zap that!");
+			return false;
+		}
+		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap? Press . to zap yourself.", 8, false, true);
 		if(Answer == 0xFF)
 			return false;
 		return GetStack()->GetItem(Index)->Zap(GetPos(), Answer);
@@ -2750,7 +2767,35 @@ bool character::Zap(void)
 bool character::Polymorph(void)
 {
 	GetSquareUnder()->AddCharacter(prototypesystem::BalancedCreateMonster());
+	while(GetStack()->GetItems())
+		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());
+	SetWielded(0);
+	SetTorsoArmor(0);
+	if(this == game::GetPlayer())
+	{
+		if(game::GetPolymorphCounter() == 0xFFFF)
+		{
+			game::SetPlayerBackup(this);
+			game::SetPlayer(GetSquareUnder()->GetCharacter());
+			game::SetPolymorphCounter(20);
+			return true;
+		}
+		else
+			ADD_MESSAGE("You shudder.");
+	}
+	
 
 	delete this;
 	return true;
+}
+
+
+void character::ChangeBackToPlayer(void)
+{
+	GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
+	while(GetStack()->GetItems())
+		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());
+	game::SetPlayer(GetSquareUnder()->GetCharacter());
+	game::SetPlayerBackup(0);
+	
 }
