@@ -57,15 +57,8 @@ void worldmapsquare::UpdateMemorized()
 {
 	if(MemorizedUpdateRequested)
 	{
+		//ushort Luminance = 256 - ushort(log(1 + abs(GetWorldMapUnder()->GetAltitude(Pos)) / 50) * 25);
 		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
-
-		//log(GetWorldMapUnder()->GetAltitude(Pos))
-
-		if(Luminance < 160)
-			Luminance = 160;
-
-		if(Luminance > 350)
-			Luminance = 350;
 
 		DrawTerrain();
 
@@ -84,12 +77,6 @@ void worldmapsquare::Draw()
 
 		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
 		ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
-
-		if(Luminance < 160)
-			Luminance = 160;
-
-		if(Luminance > 350)
-			Luminance = 350;
 
 		DrawTerrain();
 

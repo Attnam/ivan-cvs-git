@@ -84,10 +84,10 @@ class CHARACTER
 		SetStrength(10 + rand() % 6);
 		SetEndurance(10 + rand() % 6);
 		SetPerception(10 + rand() % 6);
-		SetLegType(rand() % NUMBER_OF_HUMAN_LEGS);
-		SetTorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
-		SetArmType(rand() % NUMBER_OF_HUMAN_ARMS);
-		SetHeadType(rand() % NUMBER_OF_HUMAN_HEADS);
+		SetLegType(rand() % 3);
+		SetTorsoType(0);
+		SetArmType(rand() % 5);
+		SetHeadType(rand() % 15);
 		SetShieldType(0);
 		SetMoney(200 + rand() % 101);
 	},
@@ -112,7 +112,7 @@ class CHARACTER
 		SetLegType(1);
 		SetTorsoType(5);
 		SetArmType(3);
-		SetHeadType(10);
+		SetHeadType(9);
 		SetShieldType(0);
 		SetHealTimer(100);
 		SetStoryState(0);
@@ -245,7 +245,7 @@ class CHARACTER
 		SetLegType(2);
 		SetTorsoType(7);
 		SetArmType(6);
-		SetHeadType(9);
+		SetHeadType(8);
 		SetShieldType(0);
 	},
 public:
@@ -729,7 +729,7 @@ class CHARACTER
 		SetLegType(5);
 		SetTorsoType(9);
 		SetArmType(7);
-		SetHeadType(12);
+		SetHeadType(11);
 		SetShieldType(0);
 	},
 public:
@@ -760,7 +760,7 @@ class CHARACTER
 		SetLegType(6);
 		SetTorsoType(12);
 		SetArmType(8);
-		SetHeadType(13);
+		SetHeadType(12);
 		SetShieldType(0);
 	},
 public:
@@ -854,7 +854,7 @@ class CHARACTER
 		SetLegType(6);
 		SetTorsoType(0);
 		SetArmType(9);
-		SetHeadType(14);
+		SetHeadType(13);
 		SetShieldType(0);
 	},
 public:
@@ -864,6 +864,115 @@ public:
 	virtual void GetAICommand();
 protected:
 	virtual std::string NameSingular() const RET("slave")
+	virtual float GetMeleeStrength() const RET(1000)
+);
+
+class CHARACTER
+(
+	perttuswife,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(24);
+		SetLegType(7);
+		SetTorsoType(10);
+		SetArmType(10);
+		SetHeadType(16 + rand() % 6);
+		SetShieldType(0);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual void BeTalkedTo(character*);
+	virtual uchar GetSex() const RET(FEMALE)
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife")
+	virtual float GetMeleeStrength() const RET(1000)
+);
+
+class CHARACTER
+(
+	housewife,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(24);
+		SetLegType(8);
+		SetTorsoType(11);
+		SetArmType(12);
+		SetHeadType(16 + rand() % 6);
+		SetShieldType(0);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual void BeTalkedTo(character*);
+	virtual uchar GetSex() const RET(FEMALE)
+protected:
+	virtual std::string NameSingular() const RET("housewife")
+	virtual float GetMeleeStrength() const RET(1000)
+);
+
+class CHARACTER
+(
+	femaleslave,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(24);
+		SetLegType(9);
+		SetTorsoType(13);
+		SetArmType(13);
+		SetHeadType(22);
+		SetShieldType(0);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual void BeTalkedTo(character*);
+	virtual void CreateInitialEquipment();
+	virtual uchar GetSex() const RET(FEMALE)
+protected:
+	virtual std::string NameSingular() const RET("female slave")
+	virtual float GetMeleeStrength() const RET(1000)
+);
+
+class CHARACTER
+(
+	librarian,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(24);
+		SetLegType(1);
+		SetTorsoType(1);
+		SetArmType(12);
+		SetHeadType(14);
+		SetShieldType(0);
+	},
+public:
+	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual void BeTalkedTo(character*);
+protected:
+	virtual std::string NameSingular() const RET("librarian")
 	virtual float GetMeleeStrength() const RET(1000)
 );
 

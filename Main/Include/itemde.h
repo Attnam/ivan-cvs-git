@@ -987,7 +987,9 @@ public:
 	virtual std::string NameSingular() const RET("palm branch")
 	virtual float OfferModifier() const RET(0.3f)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
+	virtual vector2d GetInHandsPic() const RET(vector2d(160, 208))
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
+
 #endif

@@ -140,7 +140,7 @@ void humanoid::DrawToTileBuffer() const
 {	
 	vector2d InHandsPic, LegPos, TorsoPos, ArmPos, HeadPos, ShieldPos;
 
-	if(GetLegType() > 16)
+	if(GetLegType() >= 16)
 	{
 		LegPos.X = 16;
 		LegPos.Y = (GetLegType() - 16) << 4;
@@ -151,7 +151,7 @@ void humanoid::DrawToTileBuffer() const
 		LegPos.Y = GetLegType() << 4;
 	}
 
-	if(GetTorsoType() > 16)
+	if(GetTorsoType() >= 16)
 	{
 		TorsoPos.X = 48;
 		TorsoPos.Y = (GetTorsoType() - 16) << 4;
@@ -162,7 +162,7 @@ void humanoid::DrawToTileBuffer() const
 		TorsoPos.Y = GetTorsoType() << 4;
 	}
 
-	if(GetArmType() > 16)
+	if(GetArmType() >= 16)
 	{
 		ArmPos.X = 80;
 		ArmPos.Y = (GetArmType() - 16) << 4;
@@ -173,7 +173,7 @@ void humanoid::DrawToTileBuffer() const
 		ArmPos.Y = GetArmType() << 4;
 	}
 
-	if(GetHeadType() > 16)
+	if(GetHeadType() >= 16)
 	{
 		HeadPos.X = 112;
 		HeadPos.Y = (GetHeadType() - 16) << 4;
@@ -184,7 +184,7 @@ void humanoid::DrawToTileBuffer() const
 		HeadPos.Y = GetHeadType() << 4;
 	}
 
-	if(GetShieldType() > 16)
+	if(GetShieldType() >= 16)
 	{
 		ShieldPos.X = 144;
 		ShieldPos.Y = (GetShieldType() - 16) << 4;
@@ -1179,4 +1179,129 @@ bool elpuri::Hit(character* Enemy)
 	})
 
 	return true;
+}
+
+void perttuswife::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		return;
+	}
+
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
+	{
+	case 0:
+		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		break;
+	case 1:
+		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
+		ADD_MESSAGE("I am now the only child in the family.\"");
+		break;
+	}
+}
+
+void housewife::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		return;
+	}
+
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
+	{
+	case 0:
+		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		break;
+	case 1:
+		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
+		ADD_MESSAGE("I am now the only child in the family.\"");
+		break;
+	}
+}
+
+void femaleslave::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		return;
+	}
+
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
+	{
+	case 0:
+		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		break;
+	case 1:
+		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
+		ADD_MESSAGE("I am now the only child in the family.\"");
+		break;
+	}
+}
+
+void librarian::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		return;
+	}
+
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
+	{
+	case 0:
+		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		break;
+	case 1:
+		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
+		ADD_MESSAGE("I am now the only child in the family.\"");
+		break;
+	}
+}
+
+void femaleslave::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new palmbranch)));
 }
