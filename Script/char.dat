@@ -1638,6 +1638,7 @@ housewife
 	BaseUnarmedStrength = 200;
 	IsExtraCoward = true;
 	HostileReplies == "\"Face my rolling pin! Graah!\"";
+	AttachedGod = SEGES;
 	FriendlyReplies =
 	{
 		5,
@@ -1680,6 +1681,7 @@ femaleslave
 	Config ATTNAM;
 	{
 		NameSingular = "slave";
+		AttachedGod = MELLIS;
 		FriendlyReplies =
 		{
 			5,
@@ -1699,6 +1701,7 @@ femaleslave
 		DefaultWisdom = 30;
 		DefaultCharisma = 20;
 		NameSingular = "servant";
+		AttachedGod = SEGES;
 		FriendlyReplies = 
 		{
 			4,
@@ -1742,6 +1745,7 @@ librarian
 	DefaultName = "Haathbar";
 	IsCharmable = false;
 	IsExtraCoward = true;
+	AttachedGod = SOPHOS;
 }
 
 zombie
@@ -1772,6 +1776,7 @@ zombie
 	BaseUnarmedStrength = 200;
 	/* Replies overridden */
 	DeathMessage = "@Dd is slain (again).";
+	AttachedGod = MORTIFER;
 }
 
 imp
@@ -1801,6 +1806,7 @@ imp
 	BaseUnarmedStrength = 300;
 	FleshMaterial = SULFUR;
 	UsesNutrition = false;
+	AttachedGod = MORTIFER;
 }
 
 bat
@@ -1832,6 +1838,7 @@ bat
 	PanicLevel = 75;
 	FleshMaterial = BAT_FLESH;
 	DangerModifier = 50;
+	AttachedGod = INFUSCOR;
 }
 
 mistress
@@ -1872,6 +1879,7 @@ mistress
 	PanicLevel = 20;
 	Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
 	HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
+	AttachedGod = NEFAS;
 	FriendlyReplies =
 	{
 		3,
@@ -1995,6 +2003,7 @@ werewolfhuman
 	CWeaponSkillHits == 200;
 	BaseUnarmedStrength = 300;
 	FleshMaterial = WERE_WOLF_FLESH;
+	AttachedGod = INFUSCOR;
 }
 
 werewolfwolf
@@ -2030,6 +2039,7 @@ werewolfwolf
 	ClassStates = INFRA_VISION;
 	PanicLevel = 0;
 	FleshMaterial = WERE_WOLF_FLESH;
+	AttachedGod = INFUSCOR;
 }
 
 kobold
@@ -2065,6 +2075,7 @@ kobold
 	PanicLevel = 66;
 	FleshMaterial = KOBOLD_FLESH;
 	DeathMessage = "@Dd dies yelling like a tortured hyena.";
+	AttachedGod = CRUENTUS;
 
 	Config CHIEFTAIN;
 	{
@@ -2150,6 +2161,7 @@ gibberling
 	PanicLevel = 85;
 	BaseUnarmedStrength = 300;
 	FleshMaterial = GIBBERLING_FLESH;
+	AttachedGod = SILVA;
 }
 
 largecat
@@ -2177,6 +2189,7 @@ largecat
 	CWeaponSkillHits == 50;
 	ClassStates = INFRA_VISION;
 	FleshMaterial = CAT_FLESH;
+	AttachedGod = SILVA;
 }
 
 largerat
@@ -2206,6 +2219,7 @@ largerat
 	ClassStates = INFRA_VISION;
 	CanSwim = true;
 	FleshMaterial = RAT_FLESH;
+	AttachedGod = SCABIES;
 }
 
 angel
@@ -2247,6 +2261,7 @@ angel
 	FriendlyReplies == "\"@Gd be with you, mortal.\"";
 	DeathMessage = "@Dd leaves this mortal plane behind.";
 	StandVerb = "flying";
+	AttachedGod = NONE;
 }
 
 kamikazedwarf
@@ -2283,6 +2298,7 @@ kamikazedwarf
 	HPRequirementForGeneration = 80;
 	Frequency = 1000;
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
+	AttachedGod = NONE;
 	FriendlyReplies =
 	{
 		4,
@@ -2320,6 +2336,7 @@ mammoth
 	PanicLevel = 10;
 	CanBeWished = false;
 	FleshMaterial = MAMMOTH_FLESH;
+	AttachedGod = SILVA;
 }
 
 unicorn
@@ -2354,6 +2371,7 @@ unicorn
 		SkinColor = rgb16(200, 200, 200);
 		Adjective = "white";
 		FleshMaterial = WHITE_UNICORN_FLESH;
+		AttachedGod = SEGES;
 	}
 
 	Config NEUTRAL;
@@ -2361,6 +2379,7 @@ unicorn
 		SkinColor = rgb16(144, 144, 144);
 		Adjective = "gray";
 		FleshMaterial = GRAY_UNICORN_FLESH;
+		AttachedGod = SILVA;
 	}
 
 	Config EVIL;
@@ -2368,6 +2387,7 @@ unicorn
 		SkinColor = rgb16(80, 80, 80);
 		Adjective = "black";
 		FleshMaterial = BLACK_UNICORN_FLESH;
+		AttachedGod = MORTIFER;
 	}
 }
 
@@ -2406,6 +2426,7 @@ genie
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
+	AttachedGod = ATAVUS;
 }
 
 lion
@@ -2432,6 +2453,7 @@ lion
 	CWeaponSkillHits == 200;
 	FleshMaterial = LION_FLESH;
 	DeathMessage = "@Dd growls ans is slain.";
+	AttachedGod = SILVA;
 }
 
 carnivorousplant
@@ -2468,6 +2490,7 @@ carnivorousplant
 	DeathMessage = "@Dd is destroyed.";
 	SpillsBlood = false;
 	StandVerb = "rooted";
+	AttachedGod = SILVA;
 
 	Config GREATER;
 	{
@@ -2509,6 +2532,7 @@ buffalo
 	PanicLevel = 10;
 	FleshMaterial = BUFFALO_FLESH;
 	DeathMessage = "@Dd snarls one last time.";
+	AttachedGod = SILVA;
 }
 
 snake
@@ -2539,6 +2563,7 @@ snake
 	FleshMaterial = SNAKE_FLESH;
 	DangerModifier = 33;
 	CanOpen = false;
+	AttachedGod = SILVA;
 }
 
 orc
@@ -2580,6 +2605,7 @@ orc
 	HostileReplies == "\"Nice scalp! Me want it!\"";
 	FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
 	FleshMaterial = ORC_FLESH;
+	AttachedGod = CRUENTUS;
 
 	Config SLAUGHTERER;
 	{
@@ -2732,6 +2758,7 @@ cossack
 	PanicLevel = 10;
 	DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
 	HostileReplies == "%s shouts wildly: \"For Tataria!\"";
+	AttachedGod = SILVA;
 	FriendlyReplies =
 	{
 		4,
@@ -2769,6 +2796,7 @@ bananagrower
 	Inventory = { 10, banana, banana, banana, banana, banana, banana, banana, banana, banana, banana; }
 	IsCharmable = false; /* AI will go insane if he leaves New Attnam */
 	HostileReplies == "\"Banana POWER!\"";
+	AttachedGod = SILVA;
 	FriendlyReplies =
 	{
 		6,
@@ -2825,6 +2853,7 @@ imperialist
 	CriticalModifier = 4;
 	IsCharmable = false;
 	StandVerb = "smiling in a twisted way";
+	AttachedGod = MELLIS;
 	FriendlyReplies =
 	{
 		7,
@@ -2877,6 +2906,7 @@ smith
 	CanBeCloned = false;
 	DefaultName = "Ikiros";
 	IsCharmable = false;
+	AttachedGod = LORICATUS;
 }
 
 genetrixvesana
@@ -2910,6 +2940,7 @@ genetrixvesana
 	DeathMessage = "@Dd is brutally destroyed.";
 	BaseEmitation = rgb24(140, 100, 100);
 	FleshMaterial = MUTANT_PLANT_FIBER;
+	AttachedGod = SCABIES;
 }
 
 ostrich
@@ -2941,6 +2972,7 @@ ostrich
 	DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
 	StandVerb = "floating";
 	IsCharmable = false; /* AI will go insane if it leaves New Attnam */
+	AttachedGod = SILVA;
 }
 
 elder
@@ -2968,6 +3000,7 @@ elder
 	IsUnique = true;
 	DefaultName = "Kaethos";
 	IsCharmable = false;
+	AttachedGod = SILVA;
 	HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
 	FriendlyReplies =
 	{
@@ -3015,6 +3048,7 @@ encourager
 	AttackStyle = USE_ARMS|USE_LEGS;
 	IsCharmable = false;
 	HostileReplies == "\"Ah! Again me kick ye!\"";
+	AttachedGod = MELLIS;
 	FriendlyReplies =
 	{
 		4;
@@ -3053,6 +3087,7 @@ chameleon
 	HPRequirementForGeneration = 80;
 	Frequency = 1000;
 	IsExtraCoward = true;
+	AttachedGod = SCABIES;
 }
 
 floatingeye
@@ -3089,6 +3124,7 @@ floatingeye
 	HasHead = false;
 	UsesNutrition = false;
 	AttackWisdomLimit = 10;
+	AttachedGod = LEGIFER;
 }
 
 eddy
@@ -3124,6 +3160,7 @@ eddy
 	SpillsBlood = false;
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd disappears.";
+	AttachedGod = SOPHOS;
 }
 
 
@@ -3149,6 +3186,7 @@ mushroom
 	FleshMaterial = MUSHROOM_FLESH;
 	SkinColor = rgb16(200,200,200);
 	CanBeGenerated = true;
+	AttachedGod = NEFAS;
 }
 
 mutatedmushroom
@@ -3174,6 +3212,7 @@ mutatedmushroom
 	FleshMaterial = MUSHROOM_FLESH;
 	SkinColor = rgb16(220,190,190);
 	CanBeGenerated = true;
+	AttachedGod = SCABIES;
 }
 
 darkwizard
@@ -3205,4 +3244,5 @@ darkwizard
 	HPRequirementForGeneration = 80;
 	Frequency = 500;
 	IsExtraCoward = true;
+	AttachedGod = INFUSCOR;
 }

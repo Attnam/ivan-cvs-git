@@ -135,7 +135,7 @@ can /* materialcontainer-> */
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
-	MaterialConfigChances = { 2, 75, 5, 10; }
+	MaterialConfigChances = { 3, 75, 5, 10; }
 	Roundness = 60;
 	AttachedGod = NONE;
 }

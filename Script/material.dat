@@ -537,6 +537,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 10;
 		IsAlive = false;
 		IsGolemMaterial = true;
+		AttachedGod = SILVA;
 	}
 
 	Config KIWI_FLESH;
@@ -549,6 +550,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		PriceModifier = 600;
 		NameStem = "kiwi flesh";
 		Flexibility = 5;
+		AttachedGod = SILVA;
 	}
 
 	Config PINEAPPLE_FLESH;
@@ -561,6 +563,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		PriceModifier = 600;
 		NameStem = "pineapple flesh";
 		Flexibility = 5;
+		AttachedGod = SILVA;
 	}
 
 	Config PLANT_FIBER;
@@ -573,6 +576,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NameStem = "plant fiber";
 		Flexibility = 10;
 		SpoilModifier = 20000;
+		AttachedGod = MORTIFER;
 	}
 
 	Config MUTANT_PLANT_FIBER;
@@ -586,6 +590,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 10;
 		SpoilModifier = 10000;
 		Emitation = rgb24(140, 100, 100);
+		AttachedGod = SCABIES;
 	}
 
 	Config BONE;
@@ -598,6 +603,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 100000;
+		AttachedGod = MORTIFER;
 	}
 
 	Config BREAD;
@@ -611,6 +617,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NameStem = "bread";
 		Flexibility = 5;
 		SpoilModifier = 20000;
+		AttachedGod = SEGES;
 	}
 }
 
@@ -628,6 +635,7 @@ gas
 		Article = "an";
 		Alpha = 150;
 		Flexibility = 75;
+		AttachedGod = SILVA;
 	}
 
 	Config MAGICAL_AIR;
@@ -640,6 +648,7 @@ gas
 		Alpha = 150;
 		Flexibility = 75;
 		IsAlive = true;
+		AttachedGod = SOPHOS;
 	}
 }
 
@@ -663,6 +672,7 @@ liquid
 		ConsumeEndMessage = CEM_OMMEL_URINE;
 		HitMessage = HM_OMMEL_URINE;
 		Alpha = 150;
+		AttachedGod = NEFAS;
 	}
 
 	Config PEPSI;
@@ -677,6 +687,7 @@ liquid
 		Effect = EFFECT_PEPSI;
 		ConsumeEndMessage = CEM_PEPSI;
 		HitMessage = HM_PEPSI;
+		AttachedGod = MELLIS;
 	}
 
 	Config WATER;
@@ -686,6 +697,7 @@ liquid
 		Color = rgb16(144, 144, 240);
 		NameStem = "water";
 		Alpha = 150;
+		AttachedGod = SILVA;
 	}
 
 	Config HEALING_LIQUID;
@@ -699,6 +711,7 @@ liquid
 		ConsumeEndMessage = CEM_HEALING_LIQUID;
 		HitMessage = HM_HEALING_LIQUID;
 		Alpha = 150;
+		AttachedGod = SEGES;
 	}
 
 	Config BLOOD;
@@ -711,6 +724,7 @@ liquid
 		NameStem = "blood";
 		Alpha = 175;
 		Flexibility = 40;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROWN_SLIME;
@@ -724,6 +738,7 @@ liquid
 		Alpha = 200;
 		Flexibility = 30;
 		IsAlive = true;
+		AttachedGod = SCABIES;
 	}
 
 	Config POISON_LIQUID;
@@ -737,6 +752,7 @@ liquid
 		Effect = EFFECT_POISON;
 		Alpha = 150;
 		PriceModifier = 500;
+		AttachedGod = SCABIES;
 	}
 
 	Config VALDEMAR;
@@ -752,6 +768,7 @@ liquid
 		IsExplosive = true;
 		ExplosivePower = 4000;
 		PriceModifier = 500;
+		AttachedGod = NEFAS;
 	}
 
 	Config ANTIDOTE_LIQUID;
@@ -767,6 +784,7 @@ liquid
 		Alpha = 170;
 		EffectStrength = 50;
 		PriceModifier = 1000;
+		AttachedGod = SEGES;
 	}
 
 	Config VODKA;
@@ -782,6 +800,7 @@ liquid
 		IsExplosive = true;
 		ExplosivePower = 20000;
 		PriceModifier = 500;
+		AttachedGod = NEFAS;
 	}
 
 	Config TROLL_BLOOD;
@@ -799,6 +818,7 @@ liquid
 		HitMessage = HM_HEALING_LIQUID;
 		EffectStrength = 50;
 		PriceModifier = 500;
+		AttachedGod = SEGES;
 	}
 }
 
@@ -822,6 +842,7 @@ flesh
 		NameStem = "green flesh";
 		NutritionValue = 150;
 		PriceModifier = 400;
+		AttachedGod = MORTIFER;
 	}
 
 	Config PORK;
@@ -831,6 +852,7 @@ flesh
 		SpoilModifier = 20000;
 		PriceModifier = 800;
 		CanHaveParasite = false;
+		AttachedGod = SEGES;
 	}
 
 	Config BEEF;
@@ -840,6 +862,7 @@ flesh
 		SpoilModifier = 20000;
 		PriceModifier = 800;
 		CanHaveParasite = false;
+		AttachedGod = SEGES;
 	}
 
 	Config FROG_FLESH;
@@ -850,6 +873,7 @@ flesh
 		ConsumeEndMessage = CEM_FROG_FLESH;
 		HitMessage = HM_FROG_FLESH;
 		NameStem = "frog flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config ELPURI_FLESH;
@@ -864,33 +888,39 @@ flesh
 		NameStem = "Elpuri's flesh";
 		Article = "an";
 		Color = rgb16(60, 60, 60);
+		AttachedGod = VALPURUS;
 	}
 
 	Config HUMAN_FLESH;
 	{
 		Alignment = EVIL;
 		NameStem = "human flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config DOLPHIN_FLESH;
 	{
 		NameStem = "dolphin flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config POLAR_BEAR_FLESH;
 	{
 		NameStem = "polar bear flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config WOLF_FLESH;
 	{
 		NameStem = "wolf flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config DOG_FLESH;
 	{
 		Alignment = EVIL;
 		NameStem = "dog flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config ENNER_BEAST_FLESH;
@@ -900,17 +930,20 @@ flesh
 		ConsumeWisdomLimit = 0;
 		NameStem = "enner beast flesh";
 		Article = "an";
+		AttachedGod = DULCIS;
 	}
 
 	Config SPIDER_FLESH;
 	{
 		NameStem = "spider flesh";
 		NutritionValue = 100;
+		AttachedGod = MORTIFER;
 	}
 
 	Config JACKAL_FLESH;
 	{
 		NameStem = "jackal flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config MUTANT_ASS_FLESH;
@@ -920,11 +953,13 @@ flesh
 		EffectStrength = 6;
 		Emitation = rgb24(140, 100, 100);
 		ConsumeWisdomLimit = 8;
+		AttachedGod = SCABIES;
 	}
 
 	Config BAT_FLESH;
 	{
 		NameStem = "bat flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config WERE_WOLF_FLESH;
@@ -933,6 +968,7 @@ flesh
 		Effect = EFFECT_LYCANTHROPY;
 		EffectStrength = 10;
 		ConsumeWisdomLimit = 10;
+		AttachedGod = MORTIFER;
 	}
 
 	Config KOBOLD_FLESH;
@@ -944,31 +980,37 @@ flesh
 		ConsumeEndMessage = CEM_KOBOLD_FLESH;
 		HitMessage = HM_KOBOLD_FLESH;
 		PriceModifier = 0;
+		AttachedGod = MORTIFER;
 	}
 
 	Config GIBBERLING_FLESH;
 	{
 		NameStem = "gibberling flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config CAT_FLESH;
 	{
 		NameStem = "cat flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config RAT_FLESH;
 	{
 		NameStem = "rat flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config ANGEL_FLESH;
 	{
 		NameStem = "angel flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config DWARF_FLESH;
 	{
 		NameStem = "dwarf flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config DAEMON_FLESH;
@@ -978,11 +1020,13 @@ flesh
 		Effect = EFFECT_POISON;
 		EffectStrength = 10;
 		ConsumeWisdomLimit = 8;
+		AttachedGod = MORTIFER;
 	}
 
 	Config MAMMOTH_FLESH;
 	{
 		NameStem = "mammoth flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config BLACK_UNICORN_FLESH;
@@ -992,6 +1036,7 @@ flesh
 		Alignment = GOOD;
 		NameStem = "black unicorn flesh";
 		PriceModifier = 1000;
+		AttachedGod = SEGES;
 	}
 
 	Config GRAY_UNICORN_FLESH;
@@ -999,6 +1044,7 @@ flesh
 		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
 		PriceModifier = 1000;
+		AttachedGod = LORICATUS;
 	}
 
 	Config WHITE_UNICORN_FLESH;
@@ -1008,16 +1054,19 @@ flesh
 		Alignment = EVIL;
 		NameStem = "white unicorn flesh";
 		PriceModifier = 1000;
+		AttachedGod = MORTIFER;
 	}
 
 	Config LION_FLESH;
 	{
 		NameStem = "lion flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config BUFFALO_FLESH;
 	{
 		NameStem = "buffalo flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config SNAKE_FLESH;
@@ -1026,16 +1075,19 @@ flesh
 		Effect = EFFECT_POISON;
 		EffectStrength = 15;
 		ConsumeWisdomLimit = 3;
+		AttachedGod = MORTIFER;
 	}
 
 	Config ORC_FLESH;
 	{
 		NameStem = "orc flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config OSTRICH_FLESH;
 	{
 		NameStem = "ostrich flesh";
+		AttachedGod = MORTIFER;
 	}
 
 	Config CHAMELEON_FLESH;
@@ -1044,6 +1096,7 @@ flesh
 		Effect = EFFECT_POLYMORPH;
 		PriceModifier = 1000;
 		ConsumeWisdomLimit = 7;
+		AttachedGod = SCABIES;
 	}
 
 	Config FLOATING_EYE_FLESH;
@@ -1051,6 +1104,7 @@ flesh
 		NameStem = "floating eye flesh";
 		Density = 1000;
 		Effect = EFFECT_ESP;
+		AttachedGod = LEGIFER;
 	}
 	Config MUSHROOM_FLESH;
 	{
@@ -1058,6 +1112,7 @@ flesh
 		Density = 600;
 		Effect = EFFECT_CONFUSE;
 		ConsumeWisdomLimit = 5;
+		AttachedGod = NEFAS;
 	}
 }
 
@@ -1076,6 +1131,7 @@ powder
 		NameStem = "gunpowder";
 		ExplosivePower = 10000;
 		Flexibility = 35;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config SNOW;
@@ -1087,5 +1143,6 @@ powder
 		NameStem = "snow";
 		AdjectiveStem = "snowy";
 		Flexibility = 40;
+		AttachedGod = SILVA;
 	}
 }
