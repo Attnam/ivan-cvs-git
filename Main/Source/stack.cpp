@@ -461,7 +461,7 @@ bool stack::TryKey(item* Key, character* Applier)
   if(!Applier->IsPlayer())
     return false;
 
-  item* ToBeOpened = DrawContents(Applier, "What do you wish to unlock?", 0, &item::HasLockSorter);
+  item* ToBeOpened = DrawContents(Applier, "Where do you wish to use the key?", 0, &item::HasLockSorter);
 
   if(ToBeOpened == 0)
     return false;

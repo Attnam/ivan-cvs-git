@@ -3300,7 +3300,7 @@ vector2d human::GetBodyPartBitmapPos(ushort Index) const
     case TORSO_INDEX: return vector2d(GetBelt() ? 32 : 48, NoChainMailGraphics ? GetCloak() ? 320 : 288 : GetCloak() ? 336 : 304);
     case HEAD_INDEX: return vector2d(96, GetHelmet() ? GetHelmet()->GetConfig()&~BROKEN ? 112 : 160 : 0);
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return vector2d(64, NoChainMailGraphics ? 288 : 304);
+    case LEFT_ARM_INDEX: return vector2d(64, GetBodyArmor() ? NoChainMailGraphics ? 288 : 304 : 0);
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return vector2d(0, NoChainMailGraphics ? 288 : 304);

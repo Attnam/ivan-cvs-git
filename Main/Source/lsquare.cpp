@@ -1303,7 +1303,9 @@ bool lsquare::Strike(character* Zapper, const std::string& DeathMsg, uchar Direc
       else if(Char->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is hit by a burst of energy!", Char->CHAR_NAME(DEFINITE));
 
-      Zapper->Hostility(Char);
+      if(Zapper)
+	Zapper->Hostility(Char);
+
       Char->ReceiveDamage(Zapper, Damage, ENERGY, ALL);
       Char->CheckDeath(DeathMsg, Zapper);
     }
@@ -1422,7 +1424,9 @@ bool lsquare::Lightning(character* Zapper, const std::string& DeathMsg, uchar Di
       else if(Char->CanBeSeenByPlayer())
 	ADD_MESSAGE("A massive burst of electricity runs through %s!", Char->CHAR_NAME(DEFINITE));
 
-      Zapper->Hostility(Char);
+      if(Zapper)
+	Zapper->Hostility(Char);
+
       Char->ReceiveDamage(Zapper, Damage, ELECTRICITY, ALL);
       Char->CheckDeath(DeathMsg, Zapper);
     }
@@ -1439,7 +1443,10 @@ bool lsquare::DoorCreation(character*, const std::string&, uchar)
     {
       door* Door = new door(0, NO_MATERIALS);
       Door->InitMaterials(MAKE_MATERIAL(IRON));
-      Door->Lock();
+
+      if(RAND() % 10)
+	Door->Lock();
+
       ChangeOLTerrainAndUpdateLights(Door);
       return true;
     }
