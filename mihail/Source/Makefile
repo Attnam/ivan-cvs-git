@@ -33,15 +33,15 @@ infodir = ${prefix}/info
 mandir = ${prefix}/man
 includedir = ${prefix}/include
 oldincludedir = /usr/include
-pkgdatadir = $(datadir)/foreign
-pkglibdir = $(libdir)/foreign
-pkgincludedir = $(includedir)/foreign
+pkgdatadir = $(datadir)/mihail
+pkglibdir = $(libdir)/mihail
+pkgincludedir = $(includedir)/mihail
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /home/hex/IvanDev/ivan/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /home/hex/IvanDev/ivan/missing --run autoconf
-AUTOMAKE = ${SHELL} /home/hex/IvanDev/ivan/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /home/hex/IvanDev/ivan/missing --run autoheader
+ACLOCAL = ${SHELL} /home/hex/IvanDev/ivan/mihail/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /home/hex/IvanDev/ivan/mihail/missing --run autoconf
+AUTOMAKE = ${SHELL} /home/hex/IvanDev/ivan/mihail/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /home/hex/IvanDev/ivan/mihail/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -63,7 +63,7 @@ POST_UNINSTALL = :
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /home/hex/IvanDev/ivan/missing --run tar
+AMTAR = ${SHELL} /home/hex/IvanDev/ivan/mihail/missing --run tar
 AWK = gawk
 CC = gcc
 CCAS = $(CC)
@@ -71,37 +71,37 @@ CCASFLAGS = $(CFLAGS)
 CXX = g++
 DEPDIR = .deps
 INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s
-PACKAGE = foreign
+PACKAGE = mihail
 RANLIB = ranlib
 SDL_CFLAGS = -I/usr/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/bin/sdl-config
 SDL_LIBS = -L/usr/lib -Wl,-rpath,/usr/lib -lSDL -lpthread
 STRIP = 
-VERSION = mihail
+VERSION = 0.9
 am__include = include
 am__quote = 
-install_sh = /home/hex/IvanDev/ivan/install-sh
+install_sh = /home/hex/IvanDev/ivan/mihail/install-sh
 bin_PROGRAMS = mihail
-INCLUDES = -I../../FeLib/Include -I../../Main/Include -I../Include
+INCLUDES = -I../FeLib/Include -I../Include
 mihail_SOURCES = mihail.cpp
-mihail_LDADD = ..//../FeLib/Source/libFeLib.a
+mihail_LDADD = ..//FeLib/Source/libFeLib.a
 subdir = Source
-mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = mihail$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_mihail_OBJECTS = mihail.$(OBJEXT)
 mihail_OBJECTS = $(am_mihail_OBJECTS)
-mihail_DEPENDENCIES = ..//../FeLib/Source/libFeLib.a
+mihail_DEPENDENCIES = ..//FeLib/Source/libFeLib.a
 mihail_LDFLAGS =
 
-DEFS = -DPACKAGE_NAME=\"igor\" -DPACKAGE_TARNAME=\"igor\" -DPACKAGE_VERSION=\"0.1\" -DPACKAGE_STRING=\"igor\ 0.1\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"igor\" -DVERSION=\"0.1\" 
+DEFS = -DPACKAGE_NAME=\"mihail\" -DPACKAGE_TARNAME=\"mihail\" -DPACKAGE_VERSION=\"0.9\" -DPACKAGE_STRING=\"mihail\ 0.9\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"mihail\" -DVERSION=\"0.9\" 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
-CPPFLAGS = -I/usr/include/SDL -D_REENTRANT -DLINUX -DUSE_SDL -DGCC
+CPPFLAGS =  -I/usr/include/SDL -D_REENTRANT -DLINUX -DUSE_SDL -DGCC -DLOCAL_STATE_DIR=\"@localstatedir@/ivan/\" -DDATADIR=\"${prefix}/share\"
 LDFLAGS = 
 LIBS =  -L/usr/lib -Wl,-rpath,/usr/lib -lSDL -lpthread
-depcomp = $(SHELL) $(top_srcdir)/../depcomp
+depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 DEP_FILES = ./$(DEPDIR)/mihail.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -109,7 +109,7 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-CXXFLAGS = -g -Wall -ggdb
+CXXFLAGS = -g -O2
 DIST_SOURCES = $(mihail_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
 SOURCES = $(mihail_SOURCES)
@@ -120,7 +120,7 @@ all: all-am
 .SUFFIXES: .cpp .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  Source/Makefile
+	  $(AUTOMAKE) --gnu  Source/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)

@@ -136,3 +136,4 @@ ulong highscore::Find(long AScore, const festring& AEntry, time_t ATime, long AR
 
   return 0;
 }
+

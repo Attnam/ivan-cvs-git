@@ -2,9 +2,8 @@ AC_INIT(mihail,0.9)
 AC_CANONICAL_TARGET
 
 AC_CONFIG_SRCDIR(Source/mihail.cpp)
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE(mihail, 0.9)
 AM_PROG_AS 
-AM_INIT_AUTOMAKE([foreign],mihail,0.9)
 AC_PROG_CC
 
 AC_PROG_CXX
@@ -19,10 +18,10 @@ AM_PATH_SDL($SDL_VERSION,
 CFLAGS="$CFLAGS $SDL_CFLAGS "
 LIBS="$LIBS $SDL_LIBS"
 
-CPPFLAGS="$SDL_CFLAGS -DLINUX -DUSE_SDL -DGCC"
+CPPFLAGS="$CPPFLAGS $SDL_CFLAGS -DLINUX -DUSE_SDL -DGCC -DLOCAL_STATE_DIR=\\\"@localstatedir@/ivan/\\\" -DDATADIR=\\\"$datadir\\\""
 
 AC_PROG_INSTALL
 
 AC_PROG_RANLIB
 
-AC_OUTPUT(Makefile Source/Makefile)
+AC_OUTPUT(Makefile FeLib/Makefile FeLib/Include/Makefile FeLib/Source/Makefile Source/Makefile)

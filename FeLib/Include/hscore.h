@@ -29,6 +29,7 @@ class highscore
   void Save(const festring& = HIGH_SCORE_FILENAME) const;
   void Load(const festring& = HIGH_SCORE_FILENAME);
   bool LastAddFailed() const { return LastAdd == 100; }
+  void AddToFile(highscore*) const;
   bool MergeToFile(highscore*) const;
   ulong Find(long, const festring&, time_t, long);
   const festring& GetEntry(ulong c) const { return Entry[c]; }
