@@ -1815,4 +1815,5 @@ std::string unicorn::NameSingular() const
     case GOOD:
       return "white unicorn";
     }
+  ABORT("Unicorns do not exist.");
 }
