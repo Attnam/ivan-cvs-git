@@ -682,7 +682,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, bool Critical, bool ForceHit)
+bool lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, bool Critical, bool ForceHit)
 {
   if(RoomIndex)
     GetLevel()->GetRoom(RoomIndex)->KickSquare(Kicker, this);
@@ -700,11 +700,16 @@ void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float Ki
   if(SideStack)
     SideStack->BeKicked(Kicker, ushort(KickDamage));
 
-  if(GetCharacter())
-    GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical, ForceHit);
-
   if(GetOLTerrain())
     GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage * (100 + Success) / 100));
+
+  if(GetCharacter())
+    {
+      GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical, ForceHit);
+      return true;
+    }
+  else
+    return false;
 }
 
 bool lsquare::CanBeDug() const
@@ -1367,7 +1372,7 @@ bool lsquare::FireBall(character* Who, const festring& DeathMsg, uchar)
 { 
   if(!IsFlyable() || GetCharacter())
     {
-      GetLevel()->Explosion(Who, DeathMsg, GetPos(), 60 + RAND() % 11 - RAND() % 11);
+      GetLevel()->Explosion(Who, DeathMsg, GetPos(), 70 + RAND() % 21 - RAND() % 21);
       return true;
     }
 

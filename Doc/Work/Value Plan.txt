@@ -54,7 +54,7 @@ Infuscor	goddess of mutations and dark magic		chaos, death
 Cruentus	god of war and violence				death
 Mortifer	god of death, disease and famine		death, nature
 Terra		goddess of the earth				nature
-Silva		goddess	of forests and wildlife			others, nature
+Silva		goddess	of forests and wildlife			nature, others
 Atavus		god of charity and munificence			others
 Legifer		god of truth, law and loyalty			others, order
 

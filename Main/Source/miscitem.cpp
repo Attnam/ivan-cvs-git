@@ -927,8 +927,8 @@ void wand::VirtualConstructor(bool Load)
 {
   if(!Load)
     {
-      SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
-      SetTimesUsed(0);
+      Charges = GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1);
+      TimesUsed = 0;
     }
 }
 
@@ -1422,7 +1422,7 @@ oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
 
 bool wand::Zap(character* Zapper, vector2d, uchar Direction)
 {
-  if(GetCharges() <= GetTimesUsed())
+  if(Charges <= TimesUsed)
     {
       ADD_MESSAGE("Nothing happens.");
       return true;
@@ -1431,7 +1431,7 @@ bool wand::Zap(character* Zapper, vector2d, uchar Direction)
   Zapper->EditExperience(PERCEPTION, 250);
   festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
   (GetLevel()->*level::GetBeam(GetBeamStyle()))(Zapper, DeathMSG, Zapper->GetPos(), GetBeamColor(), GetBeamEffect(), Direction, GetBeamRange());
-  SetTimesUsed(GetTimesUsed() + 1);
+  ++TimesUsed;
   return true;
 }
 
@@ -1974,21 +1974,27 @@ void banana::GenerateLeftOvers(character* Eater)
 void banana::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << Charges;
+  SaveFile << TimesUsed << Charges;
 }
 
 void banana::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> Charges;
+  SaveFile >> TimesUsed >> Charges;
 }
 
 bool banana::Zap(character*, vector2d, uchar)
 {
-  if(Charges)
+  if(IsBroken())
+    {
+      ADD_MESSAGE("This banana is disfunctional.");
+      return false;
+    }
+
+  if(Charges > TimesUsed)
     {
       ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
-      --Charges;
+      ++TimesUsed;
     }
   else
     ADD_MESSAGE("Click!");
@@ -2001,7 +2007,10 @@ void banana::VirtualConstructor(bool Load)
   materialcontainer::VirtualConstructor(Load);
 
   if(!Load)
-    SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
+    {
+      Charges = 6;
+      TimesUsed = 0;
+    }
 }
 
 void banana::SignalSpoil(material* Material)
@@ -2222,4 +2231,95 @@ void beartrap::Fly(character* Thrower, uchar Direction, ushort Force)
 {
   if(!IsStuck())
     item::Fly(Thrower, Direction, Force);
+}
+
+void can::DipInto(material* Material, character* Dipper)
+{
+  /* Add alchemy */
+
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).CStr());
+
+  ChangeContainedMaterial(Material);
+  Dipper->DexterityAction(10);
+}
+
+bool holybanana::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+{
+  bool BaseSuccess = banana::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s banana burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 3), FIRE, BodyPartIndex, Direction) != 0 || BaseSuccess;
+    }
+  else
+    return BaseSuccess;
+}
+
+bool holybanana::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(Charges > TimesUsed)
+    {
+      ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
+      Zapper->EditExperience(PERCEPTION, 250);
+      festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
+      (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Zapper, DeathMSG, Zapper->GetPos(), YELLOW, BEAM_FIRE_BALL, Direction, 50);
+      ++TimesUsed;
+    }
+  else
+    ADD_MESSAGE("Click!");
+
+  return true;
+}
+
+void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+    {
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
+
+      if(!IsBroken())
+	Entry << ", " << GetStrengthValueDescription();
+
+      uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+      uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+      if(CWeaponSkillLevel || SWeaponSkillLevel)
+	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+
+      if(TimesUsed == 1)
+	Entry << ", used 1 time";
+      else if(TimesUsed)
+	Entry << ", used " << TimesUsed << " times";
+
+      Entry << ']';
+    }
+}
+
+bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+{
+  if(TimesUsed != 6 && Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage))))
+    {
+      festring DeathMsg = CONST_S("killed by an explosion of ");
+      AddName(DeathMsg, INDEFINITE);
+
+      if(Damager)
+	DeathMsg << " caused by " << Damager->GetKillName();
+
+      if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+
+      lsquare* Square = GetLSquareUnder();
+      RemoveFromSlot();
+      SendToHell();
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), (6 - TimesUsed) * 100);
+      return true;
+    }
+
+  return false;
 }

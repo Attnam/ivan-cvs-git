@@ -263,7 +263,8 @@
 #define EFFECT_ESP 12
 #define EFFECT_SKUNK_SMELL 13
 #define EFFECT_MAGIC_VAPOUR 14
-#define EFFECT_PERCEPTION_INCREASE 15
+#define EFFECT_TRAIN_PERCEPTION 15
+#define EFFECT_HOLY_BANANA 16
 
 /* CEM = Consume End Message */
 
@@ -276,7 +277,8 @@
 #define CEM_KOBOLD_FLESH 6
 #define CEM_HEALING_LIQUID 7
 #define CEM_ANTIDOTE 8
-#define CEM_ESP 12
+#define CEM_ESP 9
+#define CEM_HOLY_BANANA 10
 
 /* HM = Hit Message */
 
@@ -289,6 +291,7 @@
 #define HM_HEALING_LIQUID 6
 #define HM_ANTIDOTE 7
 #define HM_CONFUSE 8
+#define HM_HOLY_BANANA 9
 
 #define UNARMED_ATTACK 0
 #define WEAPON_ATTACK 1

@@ -127,7 +127,7 @@ bool commandsystem::GoUp(character* Char)
 
   if(Terrain->Enter(true))
     {
-      Char->EditExperience(LEG_STRENGTH, 50);
+      Char->EditExperience(LEG_STRENGTH, 20);
       Char->EditNP(-20);
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(AGILITY)));
       return true;
@@ -162,7 +162,7 @@ bool commandsystem::GoDown(character* Char)
 
   if(Terrain->Enter(false))
     {
-      Char->EditExperience(AGILITY, 25);
+      Char->EditExperience(AGILITY, 10);
       Char->EditNP(-10);
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(AGILITY)));
       return true;
@@ -336,7 +336,7 @@ bool commandsystem::PickUp(character* Char)
 
   if(!VisibleItemsOnGround)
     {
-      ADD_MESSAGE("There is nothing here to pick up, %s!", game::Insult());
+      ADD_MESSAGE("There is nothing here to pick up!");
       return false;
     }
 
@@ -810,8 +810,9 @@ bool commandsystem::Throw(character* Char)
 	return false;
 
       Char->ThrowItem(Answer, Item);
-      Char->EditExperience(ARM_STRENGTH, 25);
-      Char->EditExperience(PERCEPTION, 25);
+      Char->EditExperience(ARM_STRENGTH, 10);
+      Char->EditExperience(DEXTERITY, 10);
+      Char->EditExperience(PERCEPTION, 10);
       Char->EditNP(-50);
       Char->DexterityAction(5);
       return true;

@@ -108,7 +108,7 @@ class ABSTRACT_CHARACTER
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
   virtual void CalculateBattleInfo();
-  leg* GetKickLeg() const;
+  leg* GetRandomLeg() const;
   virtual void CalculateBodyParts();
   virtual void CalculateAllowedWeaponSkillCategories();
   virtual bool HasFeet() const;

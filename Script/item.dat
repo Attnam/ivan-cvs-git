@@ -592,8 +592,7 @@ banana /* materialcontainer-> */
 	Alias == "gun";
 	Roundness = 15;
 	CanBeBroken = true;
-	MaxCharges = 6;
-	MinCharges = 6;
+	/* MinCharges & MaxCharges overridden */
 	CanBePiled = true;
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 320;
@@ -609,10 +608,10 @@ banana /* materialcontainer-> */
 holybanana /* materialcontainer->banana-> */
 {
 	Possibility = 5;
-	DefaultMainVolume = 400;
-	DefaultContainedVolume = 1500;
+	DefaultMainVolume = 100;
+	DefaultContainedVolume = 500;
 	StrengthModifier = 150;
-	FormModifier = 100;
+	FormModifier = 250;
 	DefaultSize = 30;
 	Score = 500;
 	Price = 1000;
@@ -622,15 +621,10 @@ holybanana /* materialcontainer->banana-> */
 	IsPolymorphable = false;
 	Roundness = 20;
 	WieldedBitmapPos = 160, 320;
-
-	Config BROKEN;
-	{
-		Possibility = 0;
-		BitmapPos = 32, 272;
-		Price = 500;
-		Score = 250;
-		WieldedBitmapPos = 176, 320;
-	}
+	CanBePiled = false;
+	CanBeBroken = false;
+	ContainedMaterialConfig == HOLY_BANANA_FLESH;
+	BaseEmitation = rgb24(160, 140, 110);
 }
 
 justifier /* meleeweapon-> */
@@ -667,7 +661,7 @@ justifier /* meleeweapon-> */
 neercseulb /* meleeweapon-> */
 {
 	StrengthModifier = 200;
-	FormModifier = 200;
+	FormModifier = 250;
 	DefaultSize = 100;
 	Possibility = 0;
 	Score = 1000;
@@ -675,7 +669,7 @@ neercseulb /* meleeweapon-> */
 	BitmapPos = 0, 32;
 	WeaponCategory = BLUNT_WEAPONS;
 	IsMaterialChangeable = false;
-	DefaultMainVolume = 800;
+	DefaultMainVolume = 500;
 	DefaultSecondaryVolume = 500;
 	Adjective = "ancient";
 	NameSingular = "mace";
@@ -752,9 +746,9 @@ bodyarmor /* armor-> */
 		DefaultMainVolume = 2000; 
 		BitmapPos = 16, 96;
 		NameSingular = "chain mail";
-                MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+		MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		SecondaryMaterialConfig == WOOD;
-                MaterialConfigChances = { 6, 300, 200, 100, 25, 25, 1; }
+		MaterialConfigChances = { 6, 300, 200, 100, 25, 25, 1; }
 		InElasticityPenaltyModifier = 10;
 	}
 
@@ -775,8 +769,8 @@ bodyarmor /* armor-> */
 		Possibility = 250;
 		NameSingular = "plate mail";
 		FlexibleNameSingular = "armor";
-                MainMaterialConfig = { 10, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
-                MaterialConfigChances = { 10, 5000, 2500, 250, 1000, 100, 1000, 250, 100, 25, 10; }
+		MainMaterialConfig = { 10, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
+		MaterialConfigChances = { 10, 5000, 2500, 250, 1000, 100, 500, 250, 100, 25, 10; }
 		InElasticityPenaltyModifier = 20;
 	}
 
@@ -797,9 +791,9 @@ bodyarmor /* armor-> */
 		Possibility = 10;
 		NameSingular = "armor";
 		PostFix = "of great health";
-                MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
-                MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
-		InElasticityPenaltyModifier = 50;
+		MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
+		MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
+		InElasticityPenaltyModifier = 40;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
 		Price = 250;
@@ -1506,6 +1500,7 @@ shield /* armor-> */
 		DefaultSize = 40;
 		FormModifier = 20;
 		BitmapPos = 48, 224;
+		WieldedBitmapPos = 128, 48;
 	}
 }
 
@@ -2277,13 +2272,13 @@ flamingsword /* meleeweapon-> */
 	DefaultMainVolume = 130;
 	DefaultSecondaryVolume = 45;
 	BitmapPos = 16, 336;
-	FormModifier = 100;
+	FormModifier = 110;
 	StrengthModifier = 100;
 	NameSingular = "sword";
 	Adjective = "flaming";
-	MainMaterialConfig =  { 5, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-	SecondaryMaterialConfig = { 5, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-	MaterialConfigChances = { 5, 100, 75, 50, 25, 10; }
+	MainMaterialConfig =  { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+	SecondaryMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+	MaterialConfigChances = { 6, 100, 75, 50, 25, 10, 1; }
 	Roundness = 10;
 	BaseEmitation = rgb24(150, 120, 90);
 	Price = 250;
@@ -2339,7 +2334,7 @@ vermis /* meleeweapon-> */
 	WeaponCategory = POLE_ARMS;
 	StrengthModifier = 100;
 	BitmapPos = 16, 144;
-	FormModifier = 275;
+	FormModifier = 300;
 	DefaultMainVolume = 60;
 	DefaultSecondaryVolume = 1600;
 	Adjective = "runed";
@@ -2460,7 +2455,7 @@ gorovitshammer
 	DefaultSecondaryVolume = 600;
 	StrengthModifier = 125;
 	BitmapPos = 48, 160;
-	FormModifier = 70;
+	FormModifier = 125;
 	Adjective = "Gorovits family";
 	NameSingular = "hammer";
 	MainMaterialConfig == MITHRIL;
@@ -2485,7 +2480,7 @@ gorovitssickle
 	DefaultMainVolume = 125;
 	DefaultSecondaryVolume = 50;
 	BitmapPos = 48, 144;
-	FormModifier = 60;
+	FormModifier = 110;
 	StrengthModifier = 50;
 	Adjective = "Gorovits family";
 	NameSingular = "sickle";
@@ -2564,8 +2559,9 @@ thunderhammer /* meleeweapon-> */
 	BitmapPos = 48, 160;
 	FormModifier = 110;
 	NameSingular = "thunder hammer";
-	MainMaterialConfig == METEORIC_STEEL;
+	MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 	SecondaryMaterialConfig == WOOD;
+	MaterialConfigChances = { 6, 100, 75, 50, 25, 10, 1; }
 	Roundness = 20;
 	IsTwoHanded = true;
 	CanBeUsedBySmith = true;

@@ -52,7 +52,7 @@ bool ennerbeast::Hit(character*, bool)
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort ScreamStrength = ushort(75 / (HypotSquare(GetPos().X - x, GetPos().Y - y) + 1));
+	ushort ScreamStrength = ushort(100 / (HypotSquare(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(ScreamStrength)
 	  {
@@ -324,22 +324,34 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 	{
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
-	  long RightAPCost = 0, LeftAPCost = 0;
+	  long FirstAPCost = 0, SecondAPCost = 0;
+	  arm* FirstArm, * SecondArm;
 
-	  if(GetRightArm() && GetRightArm()->GetDamage())
+	  if(RAND() & 1)
 	    {
-	      RightAPCost = GetRightArm()->GetAPCost();
-	      GetRightArm()->Hit(Enemy, ForceHit);
+	      FirstArm = GetRightArm();
+	      SecondArm = GetLeftArm();
+	    }
+	  else
+	    {
+	      FirstArm = GetLeftArm();
+	      SecondArm = GetRightArm();
+	    }
+	  
+	  if(FirstArm && FirstArm->GetDamage())
+	    {
+	      FirstAPCost = FirstArm->GetAPCost();
+	      FirstArm->Hit(Enemy, ForceHit);
 	    }
 
-	  if(IsEnabled() && Enemy->IsEnabled() && GetLeftArm() && GetLeftArm()->GetDamage())
+	  if(IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
 	    {
-	      LeftAPCost = GetLeftArm()->GetAPCost();
-	      GetLeftArm()->Hit(Enemy, ForceHit);
+	      SecondAPCost = SecondArm->GetAPCost();
+	      SecondArm->Hit(Enemy, ForceHit);
 	    } 
 
 	  EditNP(-50);
-	  EditAP(-Max(RightAPCost, LeftAPCost));
+	  EditAP(-Max(FirstAPCost, SecondAPCost));
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -1673,18 +1685,21 @@ void humanoid::Bite(character* Enemy, bool ForceHit)
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
-  EditExperience(AGILITY, 50);
+  EditExperience(AGILITY, 30);
   Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
 void humanoid::Kick(lsquare* Square, bool ForceHit)
 {
-  leg* KickLeg = GetKickLeg();
+  leg* KickLeg = GetRandomLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
-  KickLeg->EditExperience(LEG_STRENGTH, 25);
-  KickLeg->EditExperience(AGILITY, 25);
-  Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit);
+
+  if(Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit))
+    {
+      KickLeg->EditExperience(LEG_STRENGTH, 40);
+      KickLeg->EditExperience(AGILITY, 20);
+    }
 }
 
 /* Returns the average number of APs required to kill Enemy */
@@ -1707,8 +1722,11 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingLegs())
     {
-      leg* KickLeg = GetKickLeg();
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(KickLeg->GetKickDamage()) + 1, KickLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * KickLeg->GetKickAPCost());
+      leg* RightLeg = GetRightLeg();
+      leg* LeftLeg = GetLeftLeg();
+      float TimeToDie = Enemy->GetTimeToDie(this, ushort(RightLeg->GetKickDamage()) + 1, RightLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * RightLeg->GetKickAPCost()
+		      + Enemy->GetTimeToDie(this, ushort(LeftLeg->GetKickDamage()) + 1, LeftLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * LeftLeg->GetKickAPCost();
+      Effectivity += 2 / TimeToDie;
       ++AttackStyles;
     }
 
@@ -1803,18 +1821,18 @@ void humanoid::EditExperience(ushort Identifier, long Value)
   else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
     {
       if(GetRightArm())
-	GetRightArm()->EditExperience(Identifier, Value >> 1);
+	GetRightArm()->EditExperience(Identifier, Value, false);
 
       if(GetLeftArm())
-	GetLeftArm()->EditExperience(Identifier, Value >> 1);
+	GetLeftArm()->EditExperience(Identifier, Value, false);
     }
   else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
     {
       if(GetRightLeg())
-	GetRightLeg()->EditExperience(Identifier, Value >> 1);
+	GetRightLeg()->EditExperience(Identifier, Value, false);
 
       if(GetLeftLeg())
-	GetLeftLeg()->EditExperience(Identifier, Value >> 1);
+	GetLeftLeg()->EditExperience(Identifier, Value, false);
     }
   else
     ABORT("Illegal humanoid attribute %d experience edit request!", Identifier);
@@ -2245,9 +2263,12 @@ void humanoid::CalculateBattleInfo()
       GetBodyPart(c)->CalculateAttackInfo();
 }
 
-leg* humanoid::GetKickLeg() const
+leg* humanoid::GetRandomLeg() const
 {
-  return GetRightLeg()->GetKickDamage() >= GetLeftLeg()->GetKickDamage() ? static_cast<leg*>(GetRightLeg()) : static_cast<leg*>(GetLeftLeg());
+  if(RAND() & 1)
+    return GetRightLeg();
+  else
+    return GetLeftLeg();
 }
 
 item* skeleton::SevereBodyPart(ushort BodyPartIndex)
@@ -3410,16 +3431,8 @@ void humanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingLegs())
     {
-      leg* KickLeg = GetKickLeg();
-
-      Entry = CONST_S("   kick attack");
-      Entry.Resize(50, ' ');
-      Entry << KickLeg->GetKickMinDamage() << '-' << KickLeg->GetKickMaxDamage();
-      Entry.Resize(60, ' ');
-      Entry << int(KickLeg->GetKickToHitValue());
-      Entry.Resize(70, ' ');
-      Entry << KickLeg->GetKickAPCost();
-      List.AddEntry(Entry, LIGHT_GRAY);
+      GetRightLeg()->AddAttackInfo(List);
+      GetLeftLeg()->AddAttackInfo(List);
     }
 
   if(IsUsingHead())

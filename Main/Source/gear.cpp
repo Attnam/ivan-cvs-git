@@ -243,7 +243,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       festring DeathMSG = CONST_S("killed by ") + Hitter->GetKillName(); 
-      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 80 + RAND() % 20 - RAND() % 20);
+      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 70 + RAND() % 20 - RAND() % 20);
       return true;
     }
   else
@@ -390,7 +390,7 @@ void meleeweapon::Be()
 
 ulong whipofthievery::GetPrice() const
 {
-  /* If not broken but not flexible enough to work, special thievery bonus must be removed */
+  /* If intact but not flexible enough to work, special thievery bonus must be removed */
 
   return GetMainMaterial()->GetFlexibility() > 5 || IsBroken() ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
 }
@@ -495,7 +495,7 @@ void armor::AddInventoryEntry(const character*, festring& Entry, ushort Amount, 
     }
 
   if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << "]";
+    Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << ']';
 }
 
 void shield::AddInventoryEntry(const character* Viewer, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
@@ -515,7 +515,7 @@ void shield::AddInventoryEntry(const character* Viewer, festring& Entry, ushort,
       if(CWeaponSkillLevel || SWeaponSkillLevel)
 	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
-      Entry << "]";
+      Entry << ']';
     }
 }
 

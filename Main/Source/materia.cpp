@@ -75,7 +75,8 @@ bool material::Effect(character* Eater, ulong Amount)
         Eater->ActivateRandomState(SRC_MAGIC_VAPOUR, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	return true;
       }
-    case EFFECT_PERCEPTION_INCREASE: Eater->EditExperience(PERCEPTION, Amount);
+    case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount); return true;
+    case EFFECT_HOLY_BANANA: Eater->ReceiveHolyBanana(Amount); return true;
     default: return false;
     }
 }
@@ -99,7 +100,8 @@ bool material::HitEffect(character* Enemy)
     case HM_KOBOLD_FLESH: Enemy->AddKoboldFleshHitMessage(); break;
     case HM_HEALING_LIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
     case HM_ANTIDOTE: Enemy->AddAntidoteConsumeEndMessage(); break;
-    case HM_CONFUSE: Enemy->AddConfuseHitMessage();
+    case HM_CONFUSE: Enemy->AddConfuseHitMessage(); break;
+    case HM_HOLY_BANANA: Enemy->AddHolyBananaConsumeEndMessage(); break;
     }
 
   ulong Amount = Min(100UL, GetVolume());
@@ -120,6 +122,7 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_HEALING_LIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;
     case CEM_ANTIDOTE: Eater->AddAntidoteConsumeEndMessage(); break;
     case CEM_ESP: Eater->AddESPConsumeMessage(); break;
+    case CEM_HOLY_BANANA: Eater->AddHolyBananaConsumeEndMessage(); break;
     }
 }
 

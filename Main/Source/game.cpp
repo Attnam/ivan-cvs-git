@@ -30,6 +30,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 #include "save.h"
+#include "miscitem.h"
 
 #define SAVE_FILE_VERSION 113 // Increment this if changes make savefiles incompatible
 
@@ -128,8 +129,7 @@ void game::InitScript()
 #include "item.h"
 #include "stack.h"*/
 
-#include "confdef.h"
-#include "miscitem.h"
+//#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {

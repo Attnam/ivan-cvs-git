@@ -731,6 +731,31 @@ organicsubstance /* substances that spoil but are not flesh */
 		SpoilModifier = 20000;
 		AttachedGod = SEGES;
 	}
+
+	Config HOLY_BANANA_FLESH;
+	{
+		StrengthValue = 3;
+		Density = 1200;
+		ConsumeType = CT_FRUIT;
+		NutritionValue = 20000;
+		Color = rgb16(224, 224, 0);
+		PriceModifier = 600;
+		NameStem = "holy banana flesh";
+		Flexibility = 10;
+		AttachedGod = SILVA;
+		Effect = EFFECT_HOLY_BANANA;
+		ConsumeEndMessage = CEM_HOLY_BANANA;
+		CanBeWished = false;
+	}
+
+	Config CARROT_FLESH;
+	{
+		NameStem = "carrot flesh";
+		Effect = EFFECT_TRAIN_PERCEPTION;
+		EffectStrength = 2000;
+		AttachedGod = SILVA;
+		Color = rgb16(220, 120, 0);
+	}
 }
 
 gas
@@ -1277,15 +1302,6 @@ flesh
 		Effect = EFFECT_POISON;
 		EffectStrength = 5;
 		ConsumeWisdomLimit = 4;
-	}
-
-	Config CARROT_FLESH;
-	{
-		NameStem = "carrot flesh";
-		Effect = EFFECT_PERCEPTION_INCREASE;
-		EffectStrength = 2000;
-		AttachedGod = SILVA;
-		Color = rgb16(220, 120, 0);
 	}
 }
 

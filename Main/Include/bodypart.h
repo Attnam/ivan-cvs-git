@@ -237,7 +237,7 @@ class ABSTRACT_ITEM
   virtual void Hit(character*, bool = false);
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
-  void EditExperience(ushort, long);
+  void EditExperience(ushort, long, bool = true);
   virtual bool ApplyExperience();
   void SetStrength(ushort What) { Strength = What; }
   void SetDexterity(ushort What) { Dexterity = What; }
@@ -365,7 +365,7 @@ class ABSTRACT_ITEM
   ushort GetKickMaxDamage() const;
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
-  void EditExperience(ushort, long);
+  void EditExperience(ushort, long, bool = true);
   virtual bool ApplyExperience();
   void SetStrength(ushort What) { Strength = What; }
   void SetAgility(ushort What) { Agility = What; }
@@ -389,6 +389,7 @@ class ABSTRACT_ITEM
   virtual bool DamageArmor(character*, ushort, ushort);
   virtual void RaiseStats();
   virtual void LowerStats();
+  void AddAttackInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -469,11 +470,12 @@ class ITEM
   virtual bool IsDipDestination(const character*) const;
   virtual material* CreateDipMaterial();
  protected:
-  virtual bool IsSparkling(ushort) const { return false; }
+  virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaA(ushort) const;
+  virtual uchar GetAlphaB(ushort) const;
   virtual bool ShowMaterial() const { return false; }
   virtual void AddPostFix(festring&) const;
   virtual vector2d GetBitmapPos(ushort) const;

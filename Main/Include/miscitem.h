@@ -46,11 +46,9 @@ class ITEM
   materialcontainer,
  public:
   virtual bool Zap(character*, vector2d, uchar);
-  virtual uchar GetCharges() const { return Charges; }
-  virtual void SetCharges(uchar What) { Charges = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void ChargeFully(character*) { SetCharges(6); }
+  virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
   virtual void GenerateLeftOvers(character*);
@@ -58,6 +56,7 @@ class ITEM
   virtual bool IsBanana() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
+  uchar TimesUsed;
   uchar Charges;
 );
 
@@ -66,8 +65,12 @@ class ITEM
   holybanana,
   banana,
  public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool Zap(character*, vector2d, uchar);
   virtual void Be() { }
   virtual ushort GetSpecialFlags() const;
+  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
+  virtual bool ReceiveDamage(character*, ushort, ushort);
 );
 
 class ITEM
@@ -104,6 +107,8 @@ class ITEM
  public:
   virtual item* BetterVersion() const;
   virtual void GenerateLeftOvers(character*);
+  virtual void DipInto(material*, character*);
+  virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
   virtual bool IsDipDestination(const character*) const { return ContainedMaterial != 0; }
   virtual material* CreateDipMaterial();
   virtual bool AllowSpoil() const { return false; } // temporary
@@ -265,11 +270,7 @@ class ITEM
   virtual bool Apply(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetCharges() const { return Charges; }
-  virtual void SetCharges(uchar What) { Charges = What; }
-  virtual uchar GetTimesUsed() const { return TimesUsed; }
-  virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
-  virtual void ChargeFully(character*) { SetTimesUsed(0); }
+  virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }

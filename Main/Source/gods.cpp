@@ -416,7 +416,7 @@ void silva::PrayGoodEffect()
 	    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
 	    character* MonsterHere = Square->GetCharacter();
 
-	    if(!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE)
+	    if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
 	      {
 		Square->ChangeOLTerrainAndUpdateLights(new boulder(1 + (RAND() & 1)));
 

@@ -158,6 +158,7 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	AttachedGod = SEGES;
+	PanicLevel = 50;
 	HostileReplies == "@Dd seems extremely irritated. \"Vanish, you foul mirror image!\"";
 	FriendlyReplies =
 	{
@@ -711,7 +712,7 @@ darkknight
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Golgor Dhan";
-                DangerModifier = 1500;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -1022,7 +1023,7 @@ skeleton
 		NameSingular = "skeleton warlord";
 		IsUnique = true;
 		DefaultName = "Xinroch";
-                DangerModifier = 1500;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1128,7 +1129,7 @@ goblin
 		NameSingular = "goblin king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
-                DangerModifier = 2000;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1248,7 +1249,7 @@ golem
 	Config SPIDER_SILK;
 	{
 		DefaultName = "experiment ZQ-29";
-                DangerModifier = 1500;
+		DangerModifier = 1500;
 		IsUnique = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
 		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
@@ -2066,7 +2067,7 @@ mistress
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Sherarax";
-                DangerModifier = 1000;
+		DangerModifier = 1000;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -2152,7 +2153,7 @@ kobold
 	DefaultArmStrength = 6;
 	DefaultLegStrength = 6;
 	DefaultDexterity = 7;
-	DefaultAgility = 7;
+	DefaultAgility = 9;
 	DefaultEndurance = 9;
 	DefaultPerception = 12;
 	DefaultIntelligence = 4;
@@ -2177,7 +2178,7 @@ kobold
 	KnownCWeaponSkills == POLE_ARMS;
 	CWeaponSkillHits == 5;
 	RightSWeaponSkillHits = 0;
-	PanicLevel = 66;
+	PanicLevel = 75;
 	FleshMaterial = KOBOLD_FLESH;
 	DeathMessage = "@Dd dies yelling like a tortured hyena.";
 	AttachedGod = CRUENTUS;
@@ -2190,7 +2191,7 @@ kobold
 		CWeaponSkillHits == 10;
 		RightSWeaponSkillHits = 5;
 		NameSingular = "kobold chieftain";
-		PanicLevel = 50;
+		PanicLevel = 66;
 		ClothColor = rgb16(100, 100, 48);
 		LegMainColor = rgb16(111, 74, 37);
 	}
@@ -2202,7 +2203,7 @@ kobold
 		CWeaponSkillHits == 20;
 		RightSWeaponSkillHits = 10;
 		NameSingular = "kobold lord";
-		PanicLevel = 33;
+		PanicLevel = 50;
 		ClothColor = rgb16(160, 0, 0);
 		LegMainColor = rgb16(111, 74, 37);
 		Inventory == Random { Category = RING; Chance = 5; }
@@ -2223,11 +2224,11 @@ kobold
 		NameSingular = "kobold patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-                DangerModifier = 2500;
+		DangerModifier = 2500;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 70000;
-		PanicLevel = 10;
+		PanicLevel = 33;
 		TotalSize = 120;
 		ClothColor = rgb16(144, 0, 144);
 		LegMainColor = rgb16(111, 74, 37);
@@ -2832,7 +2833,7 @@ orc
 		PanicLevel = 0;
 		IsUnique = true;
 		DefaultName = "Ur-Khan";
-                DangerModifier = 1500;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -3394,7 +3395,7 @@ darkmage
 		BeltColor = rgb16(80, 80, 80);
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
-		HPRequirementForGeneration = 200;
+		HPRequirementForGeneration = 100;
 		Frequency = 1000;
 		PanicLevel = 75;
 		Inventory == lantern;
@@ -3420,7 +3421,7 @@ darkmage
 		CapColor = rgb16(180, 40, 40);
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
-		HPRequirementForGeneration = 300;
+		HPRequirementForGeneration = 200;
 		Frequency = 750;
 		PanicLevel = 25;
 	}
@@ -3447,7 +3448,7 @@ darkmage
 		CapColor = rgb16(80, 80, 160);
 		Cloak = OMMEL_HAIR cloak { Enchantment = 4; }
 		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 5; MainMaterial = ARCANITE { Volume = 100; } SecondaryMaterial = ARCANITE { Volume = 400; } }
-		HPRequirementForGeneration = 400;
+		HPRequirementForGeneration = 300;
 		Frequency = 500;
 		PanicLevel = 10;
 	}
@@ -3486,7 +3487,7 @@ darkmage
 		RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
 		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 6; MainMaterial = RUBY { Volume = 100; } SecondaryMaterial = RUBY { Volume = 400; } }
 		Inventory = { 8, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR); }
-		HPRequirementForGeneration = 500;
+		HPRequirementForGeneration = 400;
 		PanicLevel = 0;
 		CanBeConfused = false;
 	}

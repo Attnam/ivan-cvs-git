@@ -212,7 +212,8 @@ void nonhumanoid::Bite(character* Enemy, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
-  EditExperience(AGILITY, 50);
+  EditExperience(ARM_STRENGTH, 20);
+  EditExperience(AGILITY, 40);
   Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
@@ -220,9 +221,12 @@ void nonhumanoid::Kick(lsquare* Square, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetKickAPCost());
-  EditExperience(LEG_STRENGTH, 25);
-  EditExperience(AGILITY, 25);
-  Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit);
+
+  if(Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit))
+    {
+      EditExperience(LEG_STRENGTH, 40);
+      EditExperience(AGILITY, 20);
+    }
 }
 
 bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
@@ -305,9 +309,9 @@ void nonhumanoid::UnarmedHit(character* Enemy, bool ForceHit)
     case HAS_BLOCKED:
     case HAS_DIED:
     case DID_NO_DAMAGE:
-      EditExperience(ARM_STRENGTH, 50);
+      EditExperience(ARM_STRENGTH, 40);
     case HAS_DODGED:
-      EditExperience(DEXTERITY, 25);
+      EditExperience(DEXTERITY, 20);
     }
 }
 
@@ -820,6 +824,7 @@ ushort floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float 
     {
       if(!Enemy->IsPlayer())
 	Enemy->EditExperience(WISDOM, 100);
+
       return HAS_FAILED;
     }
   else
@@ -1098,7 +1103,7 @@ void magpie::GetAICommand()
 
 void eddy::GetAICommand()
 {
-  if(!(RAND() % 500))
+  if(!GetLSquareUnder()->GetOLTerrain() && !(RAND() % 500))
     {
       decoration* Couch = new decoration(COUCH);
 

@@ -380,3 +380,4 @@ Ghost should be able to change level anywhere.
 Nymph hair should burn.
 //You should be able to can corpses.
 If one tries to eat the holy banana, there should be a boolquestion to prevent accidents.
+Mistresses should sometimes kick male players in the groin.

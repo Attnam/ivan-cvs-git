@@ -68,7 +68,7 @@ class lsquare : public square
   bool Engrave(const festring& What) { Engraved = What; return true; }
   void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
-  void BeKicked(character*, item*, float, float, short, bool, bool);
+  bool BeKicked(character*, item*, float, float, short, bool, bool);
   uchar GetDivineMaster() const;
   void Draw();
   void UpdateMemorized();

@@ -351,14 +351,26 @@ void character::Hunger()
   if(OldState != STARVING && GetHungerState() == STARVING)
     DeActivateVoluntaryAction(CONST_S("You are getting extremely hungry."));
 
-  if(GetHungerState() == HUNGRY || GetHungerState() == STARVING)
+  switch(GetHungerState())
     {
+    case STARVING:
+      EditExperience(ARM_STRENGTH, -2);
+      EditExperience(LEG_STRENGTH, -2);
+      break;
+    case HUNGRY:
       EditExperience(ARM_STRENGTH, -1);
       EditExperience(LEG_STRENGTH, -1);
+      break;
+    case SATIATED:
+      EditExperience(AGILITY, -1);
+      break;
+    case BLOATED:
+      EditExperience(AGILITY, -2);
+      break;
+    case OVER_FED:
+      EditExperience(AGILITY, -4);
+      break;
     }
-
-  if(GetHungerState() >= BLOATED)
-    EditExperience(AGILITY, -1);
 
   CheckStarvationDeath("starved to death");
 }
@@ -385,8 +397,8 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   if(RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) < 100 && !Critical && !ForceHit)
     {
       Enemy->AddMissMessage(this);
-      EditExperience(AGILITY, 50);
-      EditExperience(PERCEPTION, 25);
+      EditExperience(AGILITY, 20);
+      EditExperience(PERCEPTION, 10);
 
       if(Enemy->CanBeSeenByPlayer())
 	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
@@ -650,7 +662,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 	{
 	  EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()));
 	  EditNP(-10 * GetSquareUnder()->GetEntryDifficulty());
-	  EditExperience(AGILITY, 5 * GetSquareUnder()->GetEntryDifficulty());
+	  EditExperience(AGILITY, 10 * GetSquareUnder()->GetEntryDifficulty());
 	}
     }
   else
@@ -1675,7 +1687,7 @@ void character::GetPlayerCommand()
 	  }
 
       if(!ValidKeyPressed)
-	ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
+	ADD_MESSAGE("Unknown key. Press '?' for a list of commands.", game::Insult());
     }
 }
 
@@ -2132,7 +2144,7 @@ bool character::Displace(character* Who, bool Forced)
 
       EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) - 500);
       EditNP(-10 * GetSquareUnder()->GetEntryDifficulty());
-      EditExperience(AGILITY, 5 * GetSquareUnder()->GetEntryDifficulty());
+      EditExperience(AGILITY, 10 * GetSquareUnder()->GetEntryDifficulty());
       return true;
     }
   else
@@ -2874,7 +2886,7 @@ void character::Regenerate()
 	break;
 
       RegenerationCounter -= 1000000;
-      EditExperience(ENDURANCE, Max(5000 / MaxHP, 1));
+      EditExperience(ENDURANCE, Max(4000 / MaxHP, 1));
     }
 }
 
@@ -3597,8 +3609,16 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
 	      break;
 	    }
 
-	  Arm->EditExperience(ARM_STRENGTH, 25);
-	  Arm->EditExperience(DEXTERITY, 50);
+	  Arm->EditExperience(ARM_STRENGTH, 10);
+	  Arm->EditExperience(DEXTERITY, 20);
+
+	  if(Arm->TwoHandWieldIsActive())
+	    {
+	      arm* PairArm = Arm->GetPairArm();
+	      PairArm->EditExperience(ARM_STRENGTH, 10);
+	      PairArm->EditExperience(DEXTERITY, 20);
+	    }
+
 	  Blocker->WeaponSkillHit();
 	  Blocker->ReceiveDamage(this, Damage, PHYSICAL_DAMAGE);
 
@@ -4567,10 +4587,8 @@ bool character::EditAttribute(ushort Identifier, short Value)
 
 void character::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier == ENDURANCE && !IsAlive())
-    return;
-
-  BaseExperience[Identifier] += Value;
+  if(Identifier != ENDURANCE || IsAlive())
+    BaseExperience[Identifier] += Value;
 }
 
 bool character::ActivateRandomState(ushort Flags, ushort Time, ulong Seed)
@@ -5792,3 +5810,26 @@ void character::DetachBodyPart()
 }
 
 #endif
+
+void character::ReceiveHolyBanana(long Amount)
+{
+  Amount <<= 3;
+  EditExperience(ARM_STRENGTH, Amount);
+  EditExperience(LEG_STRENGTH, Amount);
+  EditExperience(DEXTERITY, Amount);
+  EditExperience(AGILITY, Amount);
+  EditExperience(ENDURANCE, Amount);
+  EditExperience(PERCEPTION, Amount);
+  EditExperience(INTELLIGENCE, Amount);
+  EditExperience(WISDOM, Amount);
+  EditExperience(CHARISMA, Amount);
+  RestoreLivingHP();
+}
+
+void character::AddHolyBananaConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel a mysterious strengthening fire coursing through your body.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("For a moment %s is surrounded by a swirling fire aura.", CHAR_NAME(DEFINITE));
+}

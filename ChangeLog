@@ -7,6 +7,38 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Silva's boulders now destroy neither altars, stairs nor any other important
+	  terrain
+	* Eddies no longer spit couches over irreplacable terrain
+	* Decreased the HP requirement of every mage by 100 since they were so rare;
+	  this change's effect must be tested carefully in game
+	* Corpses made of precious materials now sparkle
+	* Removed the insult for pressing an unrecognized key
+	* Kicking now uses a random leg so that both legs are trained
+	* Hit order using two weapons or fists is now unpredictable
+	* Fixed a rounding error that freezed leg strength when burdened and doubled
+	  agility exp minus
+	* Hitting or blocking with a two-handed weapon now gives strength exp to both
+	  arms
+	* Reduced exp gained in battle to counterbalance these changes
+	* Being satiated (and not moving) again reduces agility exp; I don't know
+	  if this makes agility too difficult to train, but let's test it
+	* Nonhumanoids now gain strength exp from biting
+	* Kicking now gives no exp if there is no character in the kicked square,
+	  since this could be abused
+	* Added many new material configs for thunder hammers
+	* The holy banana of Oily Orpiv is now more accurate, does greater damage,
+	  burns enemies, shoots fireballs when zapped (that's "oily" after all)
+	  and explodes with the power of an atomic bomb when damaged, making it a
+	  fierce weapon of mass destruction
+	* The holy banana now emits bright light
+	* The holy banana now greatly trains all attributes when eaten
+	* Broken shield's wielded picture added to humanoid.pcx by Kahvi and
+	  later integrated
+	* Visible invisible stalker added to char.pcx by Kahvi
+
 April 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a bug that prevented floating eye avoiding AI from working
@@ -20,6 +52,7 @@ April 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Quickdeath prevention system no longer affects unique monsters, and
 	  their danger modifiers have been decreased; these changes seem to make
 	  them appear roughly in the right time
+	* Added several new material configs for armors
 
 April 18 2003 Timo Kiviluoto <sonor@phpoint.fi>
 

@@ -747,6 +747,8 @@ class character : public entity, public id
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
 #endif
+  void ReceiveHolyBanana(long);
+  void AddHolyBananaConsumeEndMessage() const;
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

@@ -552,6 +552,19 @@ ushort corpse::GetMaterialColorB(ushort) const
   return GetDeceased()->GetTorso()->IsAlive() ? GetDeceased()->GetBloodColor() : GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
 }
 
+uchar corpse::GetAlphaB(ushort) const
+{
+  return GetDeceased()->GetTorso()->IsAlive() ? 175 : GetDeceased()->GetTorso()->GetMainMaterial()->GetAlpha();
+}
+
+bool corpse::IsSparkling(ushort Index) const
+{
+  if(!Index)
+    return GetDeceased()->GetTorso()->GetMainMaterial()->IsSparkling();
+  else
+    return GetDeceased()->GetTorso()->IsAlive() ? false : GetDeceased()->GetTorso()->GetMainMaterial()->IsSparkling();
+}
+
 vector2d corpse::GetBitmapPos(ushort) const
 {
   if(GetDeceased()->GetSize() < 50)
@@ -901,9 +914,16 @@ void arm::Hit(character* Enemy, bool ForceHit)
     case HAS_BLOCKED:
     case HAS_DIED:
     case DID_NO_DAMAGE:
-      EditExperience(ARM_STRENGTH, 50);
+      EditExperience(ARM_STRENGTH, 20);
+
+      if(GetWielded() && TwoHandWieldIsActive())
+	GetPairArm()->EditExperience(ARM_STRENGTH, 20);
+
     case HAS_DODGED:
-      EditExperience(DEXTERITY, 25);
+      EditExperience(DEXTERITY, 10);
+
+      if(GetWielded() && TwoHandWieldIsActive())
+	GetPairArm()->EditExperience(DEXTERITY, 10);
     }
 }
 
@@ -943,17 +963,20 @@ bool arm::EditAttribute(ushort Identifier, short Value)
     }
 }
 
-void arm::EditExperience(ushort Identifier, long Value)
+void arm::EditExperience(ushort Identifier, long Value, bool DirectCall)
 {
+  if(DirectCall)
+    Value <<= 1;
+
   if(Identifier == ARM_STRENGTH)
     {
       if(IsAlive())
-	StrengthExperience += Value << 1;
+	StrengthExperience += Value;
     }
   else if(Identifier == DEXTERITY)
     {
       if(IsAlive())
-	DexterityExperience += Value << 1;
+	DexterityExperience += Value;
     }
   else
     ABORT("Illegal arm attribute %d experience edit request!", Identifier);
@@ -995,17 +1018,20 @@ bool leg::EditAttribute(ushort Identifier, short Value)
     }
 }
 
-void leg::EditExperience(ushort Identifier, long Value)
+void leg::EditExperience(ushort Identifier, long Value, bool DirectCall)
 {
+  if(DirectCall)
+    Value <<= 1;
+
   if(Identifier == LEG_STRENGTH)
     {
       if(IsAlive())
-	StrengthExperience += Value << 1;
+	StrengthExperience += Value;
     }
   else if(Identifier == AGILITY)
     {
       if(IsAlive())
-	AgilityExperience += Value << 1;
+	AgilityExperience += Value;
     }
   else
     ABORT("Illegal leg attribute %d experience edit request!", Identifier);
@@ -2220,4 +2246,16 @@ void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAni
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void leg::AddAttackInfo(felist& List) const
+{
+  festring Entry = CONST_S("   kick attack");
+  Entry.Resize(50, ' ');
+  Entry << GetKickMinDamage() << '-' << GetKickMaxDamage();
+  Entry.Resize(60, ' ');
+  Entry << int(GetKickToHitValue());
+  Entry.Resize(70, ' ');
+  Entry << GetKickAPCost();
+  List.AddEntry(Entry, LIGHT_GRAY);
 }
