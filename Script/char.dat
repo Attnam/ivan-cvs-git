@@ -3122,4 +3122,5 @@ eddy
 	UsesNutrition = false;
 	SpillsBlood = false;
 	FleshMaterial = MAGICAL_AIR;
+	DeathMessage = "@Dd disappears.";
 }

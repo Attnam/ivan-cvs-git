@@ -6,6 +6,15 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+February 9 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Igor portated to Linux
+	* Igor added to CVS
+	* Graphics/ can now be in any directory on the machine with igor.
+	
+February 8 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Tweaked eddies in space-time continuum
 
 February 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
