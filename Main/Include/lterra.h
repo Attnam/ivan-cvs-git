@@ -264,7 +264,7 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
   virtual DATA_BASE_VALUE(const festring&, DigMessage);
-  virtual DATA_BASE_BOOL(CanBeDestroyed);
+  virtual bool CanBeDestroyed() const;
   virtual DATA_BASE_VALUE(uchar, RestModifier);
   virtual DATA_BASE_VALUE(const festring&, RestMessage);
   virtual DATA_BASE_BOOL(IsUpLink);

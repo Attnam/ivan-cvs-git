@@ -103,7 +103,7 @@ Butterfly of storms
 
 Hattifattener
 
-	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings.
+	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings. (always moving through the land without carrying about other monster than may or may not be on their way)
 
 Grid feature
 

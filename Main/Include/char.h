@@ -333,7 +333,7 @@ class character : public entity, public id
   virtual void SwitchToDig(item*, vector2d) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }
-  void GoOn(go*);
+  void GoOn(go*, bool = false);
   virtual bool CheckKick() const;
   virtual uchar OpenMultiplier() const { return 2; }
   virtual uchar CloseMultiplier() const { return 2; }

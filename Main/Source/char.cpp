@@ -2329,19 +2329,21 @@ bool character::MoveRandomlyInRoom()
   return false;
 }
 
-void character::GoOn(go* Go)
+void character::GoOn(go* Go, bool FirstStep)
 {
   if(!GetArea()->IsValidPos(GetPos() + game::GetMoveVector(Go->GetDirection())))
     {
       Go->Terminate(false);
       return;
     }
-
   lsquare* MoveToSquare = GetNearLSquare(GetPos() + game::GetMoveVector(Go->GetDirection()));
+
+  ushort OldRoomIndex = GetLSquareUnder()->GetRoomIndex();
+  ushort CurrentRoomIndex = MoveToSquare->GetRoomIndex();
 
   if(!MoveToSquare->IsWalkable(this)
   || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam())
-  ||  MoveToSquare->IsDangerous(this))
+     ||  MoveToSquare->IsDangerous(this) || ((OldRoomIndex && (CurrentRoomIndex != OldRoomIndex)) && !FirstStep))
     {
       Go->Terminate(false);
       return;
@@ -2371,7 +2373,7 @@ void character::GoOn(go* Go)
 
   square* BeginSquare = GetSquareUnder();
 
-  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->IsDark() || GetStackUnder()->GetVisibleItems(this))
+  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->IsDark() || GetStackUnder()->GetVisibleItems(this) || (CurrentRoomIndex && (OldRoomIndex != CurrentRoomIndex)))
     {
       Go->Terminate(false);
       return;
