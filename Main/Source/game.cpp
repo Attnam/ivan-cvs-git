@@ -871,8 +871,8 @@ void game::RemoveSaves()
 	for(ushort i = 0; i < Dungeon.size(); ++i)
 		for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
 		{
-			remove((SaveName() + ".d" + i + "-" + c).c_str());
-			remove((AutoSaveFileName + ".d" + i + "-" + c).c_str());
+			remove((SaveName() + "." + i + c).c_str());
+			remove((AutoSaveFileName + "." + i + c).c_str());
 		}
 }
 

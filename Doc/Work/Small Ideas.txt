@@ -86,3 +86,4 @@ Change material tweaking.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
 *Integration of genies.
+Effect for Venius's firestorm.
