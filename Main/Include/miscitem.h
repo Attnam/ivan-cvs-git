@@ -557,7 +557,7 @@ class ITEM
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
-  int GetBaseDamage() const;
+  int GetBaseTrapDamage() const;
   bool Active;
   int Team;
   std::set<int> DiscoveredByTeam;

@@ -182,6 +182,124 @@ playerkind
 	/*KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 100;*/
 	/*Inventory == potion { Times = 50; }*/
+
+	/*Config 1;
+	{
+		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
+		CWeaponSkillHits = { 3, 500, 250, 250; }
+		AttackStyle = USE_ARMS|USE_LEGS;
+	}
+
+	Config 2;
+	{
+		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 0; }
+		RightBoot = METEORIC_STEEL boot { Enchantment = 0; }
+		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
+		CWeaponSkillHits = { 3, 500, 250, 250; }
+		AttackStyle = USE_ARMS|USE_LEGS;
+	}
+
+	Config 3;
+	{
+		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 1; }
+		RightBoot = METEORIC_STEEL boot { Enchantment = 1; }
+		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
+		CWeaponSkillHits = { 3, 500, 250, 250; }
+		AttackStyle = USE_ARMS|USE_LEGS;
+	}
+
+	Config 4;
+	{
+		RightGauntlet = DRAGON_HIDE gauntlet { Enchantment = 6; }
+		RightBoot = ADAMANT boot(BOOT_OF_KICKING) { Enchantment = 6; }
+		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
+		CWeaponSkillHits = { 3, 1000, 500, 500; }
+		AttackStyle = USE_ARMS|USE_LEGS;
+	}
+
+	Config 5;
+	{
+		RightWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER);
+		LeftWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER);
+		KnownCWeaponSkills = { 1, SMALL_SWORDS; }
+		CWeaponSkillHits = { 1, 500; }
+		RightSWeaponSkillHits = 250;
+		LeftSWeaponSkillHits = 250;
+	}
+
+	Config 6;
+	{
+		RightWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER) { Enchantment = 1; }
+		LeftWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER) { Enchantment = 1; }
+		KnownCWeaponSkills = { 1, SMALL_SWORDS; }
+		CWeaponSkillHits = { 1, 500; }
+		RightSWeaponSkillHits = 250;
+		LeftSWeaponSkillHits = 250;
+	}
+
+	Config 7;
+	{
+		RightWielded = DIAMOND DIAMOND meleeweapon(DAGGER) { Enchantment = 6; }
+		LeftWielded = DIAMOND DIAMOND meleeweapon(DAGGER) { Enchantment = 6; }
+		KnownCWeaponSkills = { 1, SMALL_SWORDS; }
+		CWeaponSkillHits = { 1, 1000; }
+		RightSWeaponSkillHits = 500;
+		LeftSWeaponSkillHits = 500;
+	}
+
+	Config 8;
+	{
+		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD);
+		LeftWielded = STEEL shield;
+		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+		CWeaponSkillHits = { 2, 250, 250; }
+		RightSWeaponSkillHits = 250;
+		LeftSWeaponSkillHits = 250;
+	}
+
+	Config 9;
+	{
+		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
+		LeftWielded = STEEL shield { Enchantment = 1; }
+		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+		CWeaponSkillHits = { 2, 250, 250; }
+		RightSWeaponSkillHits = 250;
+		LeftSWeaponSkillHits = 250;
+	}
+
+	Config 10;
+	{
+		RightWielded = MITHRIL MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 6; }
+		LeftWielded = OCTIRON shield { Enchantment = 6; }
+		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+		CWeaponSkillHits = { 2, 500, 500; }
+		RightSWeaponSkillHits = 500;
+		LeftSWeaponSkillHits = 500;
+	}
+
+	Config 11;
+	{
+		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SCIMITAR);
+		KnownCWeaponSkills = { 1, LARGE_SWORDS; }
+		CWeaponSkillHits = { 1, 250; }
+		RightSWeaponSkillHits = 250;
+	}
+
+	Config 12;
+	{
+		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 1; }
+		KnownCWeaponSkills = { 1, LARGE_SWORDS; }
+		CWeaponSkillHits = { 1, 250; }
+		RightSWeaponSkillHits = 250;
+	}
+
+	Config 13;
+	{
+		RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 6; }
+		KnownCWeaponSkills = { 1, LARGE_SWORDS; }
+		CWeaponSkillHits = { 1, 500; }
+		RightSWeaponSkillHits = 500;
+	}*/
 }
 
 petrus
@@ -4549,3 +4667,45 @@ archangel
 		DefaultName = "Erado";
 	}
 }
+
+/*tailor
+{
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 35;
+	DefaultAgility = 15;
+	DefaultEndurance = 20;
+	DefaultPerception = 27;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 15;
+	DefaultCharisma = 15;
+	DefaultMana = 10;
+	TotalVolume = 70000;
+	TotalSize = 180;
+	NameSingular = "smith";
+	Helmet = STEEL helmet { Enchantment = 1; }
+	Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
+	RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+	RightRing = ring(RING_OF_FIRE_RESISTANCE);
+	LeftRing = ring(RING_OF_FIRE_RESISTANCE);
+	RightBoot = STEEL boot { Enchantment = 1; }
+	KnownCWeaponSkills == BLUNT_WEAPONS;
+	CWeaponSkillHits == 500;
+	RightSWeaponSkillHits = 200;
+	LeftSWeaponSkillHits = 200;
+	TorsoBitmapPos = 48, 48; 
+	HeadBitmapPos = 96, 0;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 0;
+	ClothColor = rgb16(111, 64, 37);
+	CanRead = true;
+	/ Replies overridden /
+	IsUnique = true;
+	IsNameable = false;
+	CanBeCloned = false;
+	DefaultName = "Mirvo";
+	IsCharmable = false;
+	AttachedGod = LORICATUS;
+}*/

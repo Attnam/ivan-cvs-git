@@ -2616,7 +2616,7 @@ helmet
 	FormModifier = 10;
 	NameSingular = "helmet";
 	MainMaterialConfig = { 23, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-	MaterialConfigChances = { 23, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 500, 100, 750, 500, 250, 100, 25, 25, 25, 25, 10, 5; }
+	MaterialConfigChances = { 23, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 100, 100, 750, 500, 250, 100, 25, 25, 25, 25, 10, 5; }
 	Roundness = 60;
 	CanBeBroken = true;
 	WieldedBitmapPos = 160, 128;

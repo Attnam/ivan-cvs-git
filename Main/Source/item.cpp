@@ -21,8 +21,9 @@ bool itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_I
 item::item(donothing) : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0) { }
 bool item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
-int item::GetBaseMinDamage() const { return int(sqrt(GetWeaponStrength() / 20000.) * 0.75); }
-int item::GetBaseMaxDamage() const { return int(sqrt(GetWeaponStrength() / 20000.) * 1.25) + 1; }
+double item::GetBaseDamage() const { return sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus(); }
+int item::GetBaseMinDamage() const { return int(GetBaseDamage() * 0.75); }
+int item::GetBaseMaxDamage() const { return int(GetBaseDamage() * 1.25) + 1; }
 int item::GetBaseToHitValue() const { return int(10000. / (1000 + GetWeight()) + GetTHVBonus()); }
 int item::GetBaseBlockValue() const { return int((10000. / (1000 + GetWeight()) + GetTHVBonus()) * GetBlockModifier() / 10000.); }
 bool item::IsInCorrectSlot(int I) const { return I == RIGHT_WIELDED_INDEX || I == LEFT_WIELDED_INDEX; }
@@ -939,17 +940,7 @@ void item::AddAttackInfo(felist& List) const
   Entry.Resize(60);
   Entry << int(GetStrengthRequirement());
   Entry.Resize(70);
-  Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
-  int DamageBonus = int(GetDamageBonus());
-
-  if(DamageBonus)
-    {
-      if(DamageBonus > 0)
-	Entry << '+';
-
-      Entry << DamageBonus;
-    }
-
+  Entry << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
   List.AddEntry(Entry, LIGHT_GRAY);
 }
 

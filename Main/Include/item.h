@@ -376,6 +376,7 @@ class item : public object
   void SpecialGenerationHandler();
   item* Duplicate(ulong = 0);
   virtual void SetIsActive(bool) { }
+  double GetBaseDamage() const;
   int GetBaseMinDamage() const;
   int GetBaseMaxDamage() const;
   int GetBaseToHitValue() const;

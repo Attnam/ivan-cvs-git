@@ -228,6 +228,8 @@ class ABSTRACT_ITEM
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
   virtual bool AllowFluids() const { return true; }
   virtual void CalculateEnchantment();
+  virtual double GetTHVBonus() const;
+  virtual double GetDamageBonus() const;
  protected:
   virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
@@ -270,7 +272,6 @@ class ITEM
   virtual long GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
   virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
-  virtual double GetTHVBonus() const;
 );
 
 class ITEM

@@ -308,17 +308,30 @@ double arm::GetUnarmedDamage() const
   if(Gauntlet)
     WeaponStrength += Gauntlet->GetWeaponStrength();
 
-  double Damage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH) * WeaponStrength) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
+  double Base = sqrt(5e-5 * WeaponStrength);
 
   if(Gauntlet)
-    Damage += Gauntlet->GetDamageBonus();
+    Base += Gauntlet->GetDamageBonus();
+
+  double Damage = Base * sqrt(1e-7 * GetAttribute(ARM_STRENGTH))
+		* GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
 
   return Damage;
 }
 
 double arm::GetUnarmedToHitValue() const
 {
-  return GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus() * Master->GetMoveEase() / 500000;
+  double BonusMultiplier = 10.;
+  item* Gauntlet = GetGauntlet();
+
+  if(Gauntlet)
+    BonusMultiplier += Gauntlet->GetTHVBonus();
+
+  return GetAttribute(DEXTERITY)
+       * sqrt(2.5 * Master->GetAttribute(PERCEPTION))
+       * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus()
+       * Master->GetMoveEase()
+       * BonusMultiplier / 5000000;
 }
 
 long arm::GetUnarmedAPCost() const
@@ -390,7 +403,9 @@ double arm::GetWieldedDamage() const
     }
 
   if(HitStrength > Requirement)
-    return Wielded->GetDamageBonus() + sqrt(5e-18 * HitStrength * Wielded->GetWeaponStrength()) * GetCurrentSWeaponSkill()->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
+    return Wielded->GetBaseDamage() * sqrt(1e-13 * HitStrength)
+	 * GetCurrentSWeaponSkill()->GetBonus()
+	 * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
   else
     return 0;
 }
@@ -403,7 +418,12 @@ double arm::GetWieldedToHitValue() const
     return 0;
 
   const item* Wielded = GetWielded();
-  double Base = 2e-11 * Min(HitStrength, 10) * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Master->GetMoveEase() * (10000. / (1000 + Wielded->GetWeight()) + Wielded->GetTHVBonus());
+  double Base = 2e-11
+	      * Min(HitStrength, 10)
+	      * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus()
+	      * GetCurrentSWeaponSkill()->GetBonus()
+	      * Master->GetMoveEase()
+	      * (10000. / (1000 + Wielded->GetWeight()) + Wielded->GetTHVBonus());
   double ThisToHit = GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION));
   const arm* PairArm = GetPairArm();
 
@@ -414,10 +434,12 @@ double arm::GetWieldedToHitValue() const
       if(!PairWielded)
 	{
 	  if(Wielded->IsTwoHanded() && !Wielded->IsShield(Master))
-	    return Base * (ThisToHit + PairArm->GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION))) / 2;
+	    return Base * (ThisToHit + PairArm->GetAttribute(DEXTERITY)
+		 * sqrt(2.5 * Master->GetAttribute(PERCEPTION))) / 2;
 	}
       else if(!Wielded->IsShield(Master) && !PairWielded->IsShield(Master))
-	return Base * ThisToHit / (1.0 + (500.0 + PairWielded->GetWeight()) / (1000.0 + (Wielded->GetWeight() << 1)));
+	return Base * ThisToHit / (1.0 + (500.0 + PairWielded->GetWeight())
+	     / (1000.0 + (Wielded->GetWeight() << 1)));
     }
 
   return Base * ThisToHit;
@@ -473,10 +495,13 @@ void leg::CalculateDamage()
   if(Boot)
     WeaponStrength += Boot->GetWeaponStrength();
 
-  KickDamage = sqrt(5e-12 * GetAttribute(LEG_STRENGTH) * WeaponStrength) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus();
+  double Base = sqrt(5e-5 * WeaponStrength);
 
   if(Boot)
-    KickDamage += Boot->GetDamageBonus();
+    Base += Boot->GetDamageBonus();
+
+  KickDamage = Base * sqrt(1e-7 * GetAttribute(LEG_STRENGTH))
+	     * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus();
 }
 
 void leg::CalculateToHitValue()
@@ -484,7 +509,17 @@ void leg::CalculateToHitValue()
   if(!Master)
     return;
 
-  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 1000000;
+  double BonusMultiplier = 10.;
+  item* Boot = GetBoot();
+
+  if(Boot)
+    BonusMultiplier += Boot->GetTHVBonus();
+
+  KickToHitValue = GetAttribute(AGILITY)
+		 * sqrt(2.5 * Master->GetAttribute(PERCEPTION))
+		 * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus()
+		 * Master->GetMoveEase()
+		 * BonusMultiplier / 10000000;
 }
 
 void leg::CalculateAPCost()

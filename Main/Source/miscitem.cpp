@@ -1095,7 +1095,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       return true;
     }
 
-  if(!(RAND() % (GetBaseDamage() << 1)))
+  if(!(RAND() % (GetBaseTrapDamage() << 1)))
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONE_INDEX);
@@ -1109,7 +1109,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       return true;
     }
 
-  if(!(RAND() % (GetBaseDamage() << 2)))
+  if(!(RAND() % (GetBaseTrapDamage() << 2)))
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONE_INDEX);
@@ -1131,7 +1131,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0, GetBaseDamage(), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
+      Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage(), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
       Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
       Victim->EditAP(-1000);
       return false;
@@ -1184,7 +1184,7 @@ void beartrap::StepOnEffect(character* Stepper)
       if(Stepper->IsPlayer())
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
-      Stepper->ReceiveBodyPartDamage(0, GetBaseDamage() << 1, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
       Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0);
     }
 }
@@ -2294,16 +2294,6 @@ void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, int
   if(ShowSpecialInfo)
     {
       Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
-      int DamageBonus = int(GetDamageBonus());
-
-      if(DamageBonus)
-	{
-	  if(DamageBonus > 0)
-	    Entry << '+';
-
-	  Entry << DamageBonus;
-	}
-
       Entry << ", " << GetBaseToHitValueDescription();
 
       if(!IsBroken())
@@ -2694,7 +2684,7 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
   game::SendLOSUpdateRequest();
 }
 
-int beartrap::GetBaseDamage() const
+int beartrap::GetBaseTrapDamage() const
 {
   int Modifier = GetMainMaterial()->GetStrengthValue() / 50;
   Modifier *= Modifier;

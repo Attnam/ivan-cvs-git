@@ -36,6 +36,8 @@ color16 gorovitssickle::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0)
 int thunderhammer::GetSpecialFlags() const { return !IsBroken() ? meleeweapon::GetSpecialFlags()|ST_LIGHTNING : meleeweapon::GetSpecialFlags(); }
 
 int armor::GetCarryingBonus() const { return Enchantment << 1; }
+double armor::GetTHVBonus() const { return Enchantment * .5; }
+double armor::GetDamageBonus() const { return Enchantment; }
 
 long bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 bool bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
@@ -43,9 +45,6 @@ const festring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->G
 const char* bodyarmor::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
 color16 goldeneagleshirt::GetOutlineColor(int) const { return MakeRGB16(0, 255, 255); }
-
-//int shield::GetBonus() const { return 100 + 10 * Enchantment; }
-double shield::GetTHVBonus() const { return Enchantment * .5; }
 
 long cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice(Enchantment); }
 bool cloak::IsInCorrectSlot(int I) const { return I == CLOAK_INDEX; }
@@ -336,16 +335,6 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, festring& Entry, in
   if(ShowSpecialInfo)
     {
       Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
-      int DamageBonus = int(GetDamageBonus());
-
-      if(DamageBonus)
-	{
-	  if(DamageBonus > 0)
-	    Entry << '+';
-
-	  Entry << DamageBonus;
-	}
-
       Entry << ", " << GetBaseToHitValueDescription();
 
       if(!IsBroken() && !IsWhip())

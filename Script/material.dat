@@ -89,9 +89,9 @@ solid
 
 	Config STONE;
 	{
-		StrengthValue = 60;
+		StrengthValue = 40;
 		ConsumeType = CT_MINERAL; 
-		Density = 3000;
+		Density = 4000;
 		IsGolemMaterial = true; 
 		Color = rgb16(80, 80, 80);
 		NameStem = "stone";
@@ -647,6 +647,7 @@ solid
 		AttachedGod = SILVA;
 		Flexibility = 2;
 		NaturalForm = stick;
+		HardenedMaterial = PINE_WOOD;
 		IntelligenceRequirement = 5;
 	}
 
@@ -660,6 +661,7 @@ solid
 		NameStem = "pine";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		HardenedMaterial = FIR_WOOD;
 		IntelligenceRequirement = 5;
 	}
 
@@ -673,6 +675,7 @@ solid
 		NameStem = "fir";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		HardenedMaterial = BIRCH_WOOD;
 		IntelligenceRequirement = 5;
 	}
 
@@ -686,6 +689,7 @@ solid
 		NameStem = "birch";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		HardenedMaterial = OAK_WOOD;
 		IntelligenceRequirement = 5;
 	}
 
@@ -700,6 +704,7 @@ solid
 		NameStem = "oak";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		HardenedMaterial = TEAK_WOOD;
 		IntelligenceRequirement = 10;
 	}
 
@@ -713,6 +718,7 @@ solid
 		NameStem = "teak";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		HardenedMaterial = EBONY_WOOD;
 		IntelligenceRequirement = 10;
 	}
 
