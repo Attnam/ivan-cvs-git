@@ -262,7 +262,7 @@ bool game::Init(const festring& Name)
 	InitScript();
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new darkknight(ELITE));
+	SetPlayer(new playerkind);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -380,7 +380,7 @@ void game::Run()
 
 	      GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
 
-	      {
+	      /*{
 		item* Item;
 
 		if(!RAND_N(2))
@@ -471,7 +471,7 @@ void game::Run()
 
 		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
 		  Char->SetTeam(GetTeam(RAND() % Teams));
-		}
+		}*/
 	    }
 	}
 
@@ -1799,14 +1799,14 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
       if(New && CurrentDungeonIndex == ATTNAM && Area == 0)
 	{
-	  GlobalRainLiquid = new liquid(SULPHURIC_ACID);
+	  GlobalRainLiquid = new powder(SNOW);
 	  GlobalRainSpeed = vector2d(-64, 128);
 	  CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
 	}
 
       if(New && CurrentDungeonIndex == NEW_ATTNAM && Area == 0)
 	{
-	  GlobalRainLiquid = new liquid(SULPHURIC_ACID);
+	  GlobalRainLiquid = new liquid(WATER);
 	  GlobalRainSpeed = vector2d(256, 512);
 	  CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
 	}

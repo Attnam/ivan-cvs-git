@@ -59,7 +59,6 @@ class ABSTRACT_ITEM
   void RandomizePosition();
   void ResetPosition() { SpecialFlags &= ~0x7; }
   virtual void SignalSpoil(material*);
-  bool IsVeryCloseToSpoiling() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
   bool IsAlive() const;
   virtual long GetTruePrice() const;
@@ -110,7 +109,6 @@ class ABSTRACT_ITEM
   virtual material* RemoveMaterial(material*);
   virtual void CopyAttributes(const bodypart*) { }
   virtual void DestroyBodyPart(stack*);
-  bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   virtual void SetLifeExpectancy(int, int);
  protected:
   virtual bool AllowFluids() const { return true; }

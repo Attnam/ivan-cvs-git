@@ -471,6 +471,8 @@ class item : public object
   virtual void DestroyBodyPart(stack*) { SendToHell(); }
   virtual void SetLifeExpectancy(int, int);
   int NeedsBe() const { return !!LifeExpectancy; }
+  bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
+  bool IsVeryCloseToSpoiling() const;
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;

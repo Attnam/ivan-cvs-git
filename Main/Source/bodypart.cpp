@@ -1621,19 +1621,14 @@ void bodypart::SignalSpoil(material* Material)
     item::SignalSpoil(Material);
 }
 
-bool bodypart::IsVeryCloseToSpoiling() const
-{
-  return MainMaterial->IsVeryCloseToSpoiling();
-}
-
 void corpse::SignalSpoil(material*)
 {
-  GetDeceased()->Disappear(this, "spoil", &bodypart::IsVeryCloseToSpoiling);
+  GetDeceased()->Disappear(this, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
 void corpse::SignalDisappearance()
 {
-  GetDeceased()->Disappear(this, "disappear", &bodypart::IsVeryCloseToDisappearance);
+  GetDeceased()->Disappear(this, "disappear", &item::IsVeryCloseToDisappearance);
 }
 
 bool bodypart::CanBePiledWith(const item* Item, const character* Viewer) const

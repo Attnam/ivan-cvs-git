@@ -5428,7 +5428,7 @@ void character::SignalSpoil()
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoil(0);
   else
-    Disappear(0, "spoil", &bodypart::IsVeryCloseToSpoiling);
+    Disappear(0, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
 bool character::CanHeal() const
@@ -7666,10 +7666,11 @@ void character::DuplicateEquipment(character* Receiver, ulong Flags)
     }
 }
 
-void character::Disappear(corpse* Corpse, const char* Verb, bool (bodypart::*ClosePredicate)() const)
+void character::Disappear(corpse* Corpse, const char* Verb, bool (item::*ClosePredicate)() const)
 {
   bool TorsoDisappeared = false;
   bool CanBeSeen = Corpse ? Corpse->CanBeSeenByPlayer() : IsPlayer() || CanBeSeenByPlayer();
+  int c;
 
   if((GetTorso()->*ClosePredicate)())
     {
@@ -7682,9 +7683,30 @@ void character::Disappear(corpse* Corpse, const char* Verb, bool (bodypart::*Clo
 	  ADD_MESSAGE("%s %ss.", CHAR_NAME(DEFINITE), Verb);
 
       TorsoDisappeared = true;
+
+      for(c = 0; c < GetEquipmentSlots(); ++c)
+	{
+	  item* Equipment = GetEquipment(c);
+
+	  if(Equipment && (Equipment->*ClosePredicate)())
+	    {
+	      Equipment->RemoveFromSlot();
+	      Equipment->SendToHell();
+	    }
+	}
+
+      itemvector ItemVector;
+      GetStack()->FillItemVector(ItemVector);
+
+      for(c = 0; c < ItemVector.size(); ++c)
+	if(ItemVector[c] && (ItemVector[c]->*ClosePredicate)())
+	  {
+	    ItemVector[c]->RemoveFromSlot();
+	    ItemVector[c]->SendToHell();
+	  }
     }
 
-  for(int c = 1; c < GetBodyParts(); ++c)
+  for(c = 1; c < GetBodyParts(); ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -7737,5 +7759,5 @@ void character::SignalDisappearance()
   if(GetMotherEntity())
     GetMotherEntity()->SignalDisappearance();
   else
-    Disappear(0, "disappear", &bodypart::IsVeryCloseToDisappearance);
+    Disappear(0, "disappear", &item::IsVeryCloseToDisappearance);
 }

@@ -812,7 +812,7 @@ class character : public entity, public id
   ulong GetLastAcidMsgMin() const { return LastAcidMsgMin; }
   void SetLastAcidMsgMin(ulong What) { LastAcidMsgMin = What; }
   virtual bool AllowSpoil() const { return false; }
-  void Disappear(corpse*, const char*, bool (bodypart::*)() const);
+  void Disappear(corpse*, const char*, bool (item::*)() const);
   void ResetSpoiling();
   virtual character* GetLeader() const;
   int GetMoveType() const;

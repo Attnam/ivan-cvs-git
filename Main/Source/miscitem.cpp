@@ -2717,7 +2717,7 @@ ulong wand::GetSpecialParameters() const
   switch(GetConfig())
     {
     case WAND_OF_MIRRORING:
-      return MIRROR_IMAGE|(2000 << LE_BASE_SHIFT);//MIRROR_IMAGE|(10000 << LE_BASE_SHIFT)|(10000 << LE_RAND_SHIFT);
+      return MIRROR_IMAGE|(10000 << LE_BASE_SHIFT)|(10000 << LE_RAND_SHIFT);
     }
 
   return 0;

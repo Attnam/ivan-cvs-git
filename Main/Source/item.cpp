@@ -1376,3 +1376,12 @@ void item::SetLifeExpectancy(int Base, int RandPlus)
   LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
   Enable();
 }
+
+bool item::IsVeryCloseToSpoiling() const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToSpoiling())
+      return false;
+
+  return true;
+}
