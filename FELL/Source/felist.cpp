@@ -15,6 +15,8 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 
 	DrawDescription();
 
+	ushort Return;
+
 	for(ushort Min = 0, c = 0;; ++c)
 	{
 		DOUBLEBUFFER->ClearToColor(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
@@ -38,42 +40,32 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 
 			if(Pressed > 64 && Pressed < 91)
 			{
-				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				if(BlitBackroundAfterwards)
-					graphics::BlitDBToScreen();
-				return Pressed - 65 + Min < Entry.size() ? Pressed - 65 + Min : 0xFFFF;
+				Return = Pressed - 65 + Min < Entry.size() ? Pressed - 65 + Min : 0xFFFF;
+				break;
 			}
 
 			if(Pressed > 96 && Pressed < 123)
 			{
-				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				if(BlitBackroundAfterwards)
-					graphics::BlitDBToScreen();
-				return Pressed - 97 + Min < Entry.size() ? Pressed - 97 + Min : 0xFFFF;
+				Return = Pressed - 97 + Min < Entry.size() ? Pressed - 97 + Min : 0xFFFF;
+				break;
 			}
 
 			if(Pressed == '-')
 			{
-				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				if(BlitBackroundAfterwards)
-					graphics::BlitDBToScreen();
-				return 0xFFFE;
+				Return = 0xFFFE;
+				break;
 			}
 
 			if(Pressed == 0x1B || (Pressed == 0x20 && c == Entry.size() - 1))
 			{
-				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				if(BlitBackroundAfterwards)
-					graphics::BlitDBToScreen();
-				return 0xFFFD;
+				Return = 0xFFFD;
+				break;
 			}
 
 			if(c == Entry.size() - 1)
 			{
-				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				if(BlitBackroundAfterwards)
-					graphics::BlitDBToScreen();
-				return 0xFFFF;
+				Return = 0xFFFF;
+				break;
 			}
 			else
 			{
@@ -84,6 +76,13 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 			}
 		}
 	}
+
+	BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+
+	if(BlitBackroundAfterwards)
+		graphics::BlitDBToScreen();
+
+	return Return;
 }
 
 void felist::DrawDescription() const

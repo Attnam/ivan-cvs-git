@@ -1008,3 +1008,28 @@ void levelsquare::StepOn(character* Stepper, square* ComingFrom)
 	GetOverLevelTerrain()->StepOn(Stepper);
 	GetStack()->CheckForStepOnEffect(Stepper);
 }
+
+void levelsquare::SwapCharacter(levelsquare* With)
+{
+	if(Character)
+		if(!With->Character)
+			MoveCharacter(With);
+		else
+		{
+			character* MoveeOne = Character, * MoveeTwo = With->Character;;
+			ushort EmitOne = MoveeOne->GetEmitation(), EmitTwo = MoveeTwo->GetEmitation();
+			SetCharacter(MoveeTwo);
+			With->SetCharacter(MoveeOne);
+			MoveeTwo->SetSquareUnder(this);
+			MoveeOne->SetSquareUnder(With);
+			SignalEmitationIncrease(EmitTwo);
+			With->SignalEmitationIncrease(EmitOne);
+			SignalEmitationIncrease(EmitOne);
+			With->SignalEmitationIncrease(EmitTwo);
+			NewDrawRequested = true;
+			With->NewDrawRequested = true;
+		}
+	else
+		if(With->Character)
+			With->MoveCharacter(this);
+}

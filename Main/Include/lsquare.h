@@ -90,6 +90,7 @@ public:
 	virtual void StepOn(character*, square*);
 	virtual uchar GetRoom() const { return Room; }
 	virtual void SetRoom(uchar What) { Room = What; }
+	virtual void SwapCharacter(levelsquare*);
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

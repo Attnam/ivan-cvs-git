@@ -61,3 +61,8 @@ Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 Cannibalism and navastating should have relation effect limits.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
+A special weaponskill to bow.
+Thrown items should also increase weaponskills, or they they should have own weaponskill(s).
+Kicking should increase Unarmed weapon skill.
+Bow shots should be far more powerful.
+"You displace the dog." !!!

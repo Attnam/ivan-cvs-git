@@ -123,7 +123,7 @@ bool humanoid::Drop()
 		else if(GetStack()->GetItem(Index) == Armor.Torso)
 			ADD_MESSAGE("You can't drop something you wear!");
 		else
-			if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index)))
+			if(!GetLevelSquareUnder()->GetRoom() || (GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index))))
 			{
 				GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
 

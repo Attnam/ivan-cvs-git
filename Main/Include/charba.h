@@ -236,6 +236,7 @@ public:
 	virtual void SetMoney(ulong What) { Money = What; }
 	virtual void SetHomeRoom(uchar What) { HomeRoom = What; }
 	virtual uchar GetHomeRoom() const { return HomeRoom; }
+	virtual bool Displace(character*);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

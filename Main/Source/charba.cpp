@@ -343,7 +343,7 @@ bool character::Drop()
 		if(GetStack()->GetItem(Index) == GetWielded())
 			ADD_MESSAGE("You can't drop something you wield!");
 		else
-			if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index)))
+			if(!GetLevelSquareUnder()->GetRoom() || (GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index))))
 			{
 				GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
 
@@ -672,11 +672,29 @@ bool character::TryMove(vector2d MoveTo)
 {
 	if(!game::GetInWilderness())
 		if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
-			if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter())
-				if(GetIsPlayer() || GetTeam()->GetRelation(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()->GetTeam()) == HOSTILE)
-					return Hit(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter());
+		{
+			character* Character;
+
+			if(Character = game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter())
+				if(GetIsPlayer())
+					if(GetTeam() != Character->GetTeam())
+						return Hit(Character);
+					else
+					{
+						Displace(Character);
+						return true;
+					}
 				else
-					return false;
+					if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
+						return Hit(Character);
+					else
+						if(GetTeam() == Character->GetTeam())
+						{
+							Displace(Character);
+							return true;
+						}
+						else
+							return false;
 			else
 				if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->GetIsWalkable() || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
 				{
@@ -694,6 +712,7 @@ bool character::TryMove(vector2d MoveTo)
 							return false;
 					else
 						return false;
+		}
 		else
 		{
 			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround())
@@ -720,9 +739,7 @@ bool character::TryMove(vector2d MoveTo)
 				game::GetCurrentArea()->RemoveCharacter(GetPos());
 				game::GetCurrentDungeon()->SaveLevel();
 				game::LoadWorldMap();
-
 				game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
-
 				game::SetInWilderness(true);
 				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
 				game::SendLOSUpdateRequest();
@@ -734,7 +751,7 @@ bool character::TryMove(vector2d MoveTo)
 		}
 	else
 		if(MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
-			if(game::GetCurrentArea()->GetSquare(MoveTo)->GetGroundTerrain()->GetIsWalkable() || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
+			if(game::GetCurrentArea()->GetSquare(MoveTo)->GetGroundTerrain()->GetIsWalkable() || game::GetGoThroughWallsCheat())
 			{
 				Move(MoveTo);
 				return true;
@@ -768,7 +785,7 @@ bool character::PickUp()
 
 				if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 					if(GetLevelSquareUnder()->GetStack()->GetItem(Index))
-						if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(Index)))
+						if(!GetLevelSquareUnder()->GetRoom() || (GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(Index))))
 						{
 							ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(Index)->CNAME(INDEFINITE));
 							GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack())->CheckPickUpEffect(this);
@@ -783,7 +800,7 @@ bool character::PickUp()
 		}
 		else
 		{
-			if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(0)))
+			if(!GetLevelSquareUnder()->GetRoom() || (GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(0))))
 			{
 				ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
 				GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack())->CheckPickUpEffect(this);
@@ -2658,7 +2675,7 @@ float character::GetDodgeValue() const
 
 ulong character::Danger() const
 {
-	return ulong(GetAttackStrength() * GetStrength() * GetEndurance() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+	return ulong(GetAttackStrength() * GetStrength() * GetHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
 }
 
 bool character::RaiseGodRelations()
@@ -2710,4 +2727,29 @@ bool character::GainDivineKnowledge()
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 
 	return false;
+}
+
+bool character::Displace(character* Who)
+{
+	if(Danger() > Who->Danger() && !Who->StateIsActivated(EATING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You displace %s!", Who->CNAME(DEFINITE));
+		else
+			if(Who->GetIsPlayer())
+				ADD_MESSAGE("%s displaces you!", CNAME(DEFINITE));
+			else
+				if(GetSquareUnder()->CanBeSeen() || Who->GetSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s displaces %s!", CNAME(DEFINITE), Who->CNAME(DEFINITE));
+
+		GetLevelSquareUnder()->SwapCharacter(Who->GetLevelSquareUnder());
+		return true;
+	}
+	else
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("%s resists!", Who->CNAME(DEFINITE));
+
+		return false;
+	}
 }
