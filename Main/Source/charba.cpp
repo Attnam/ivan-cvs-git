@@ -3132,16 +3132,13 @@ bool character::ShowConfigScreen()
 void character::SetTeam(team* What)
 {
 	Team = What;
-
 	SetTeamIterator(GetTeam()->Add(this));
 }
 
 void character::ChangeTeam(team* What)
 {
 	GetTeam()->Remove(GetTeamIterator());
-
 	Team = What;
-
 	SetTeamIterator(GetTeam()->Add(this));
 }
 

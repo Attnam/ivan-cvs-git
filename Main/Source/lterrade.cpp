@@ -24,12 +24,10 @@ bool door::Open(character* Opener)
 	else
 	{
 		if(Opener == game::GetPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
-
 		return false;
 	}
 
 	MakeWalkable();
-
 	return true;
 }
 
@@ -41,12 +39,10 @@ bool door::Close(character* Closer)
 		else
 		{
 			ADD_MESSAGE("The door is already closed, %s.", game::Insult());
-
 			return false;
 		}
 
 	MakeNotWalkable();
-
 	return true;
 }
 
@@ -181,7 +177,8 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 	{
 		if(game::GetCurrent() == 8)
 		{
-			ADD_MESSAGE("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further.");
+			ADD_MESSAGE("A great evil power seems to tremble under your feet.");
+			ADD_MESSAGE("You feel you shouldn't wander any further.");
 
 			if(!game::BoolQuestion("Continue anyway? [y/N]"))
 				return false;
@@ -412,4 +409,3 @@ void doublebed::SitOn(character*)
 {
 	ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
 }
-
