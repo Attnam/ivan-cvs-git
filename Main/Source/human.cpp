@@ -4956,16 +4956,18 @@ void kamikazedwarf::SingRandomSong()
 {
   festring Song;
 
-  switch(RAND_N(9)) {
+  switch(RAND_N(9)) { 
   case 0:
     Song = festring("On the palm of ") + GetMasterGod()->GetName() 
       + festring(" everybody fears everything");
     break;
-  case 1:    
-    festring Title = GetMasterGod()->GetSex() == MALE ? "King" : "Queen";
-    Song = festring("Joy to the world, ") + GetMasterGod()->GetName() 
-      + festring(" is come! Let all above Valpurus receive her ") + Title;
-    break;
+  case 1:
+    {
+      festring Title = GetMasterGod()->GetSex() == MALE ? "King" : "Queen";
+      Song = festring("Joy to the world, ") + GetMasterGod()->GetName() 
+	+ festring(" is come! Let all above Valpurus receive her ") + Title;
+      break;
+    }
   case 2:
     Song = festring("Hark the herald angels sing. Glory to ") + GetMasterGod()->GetName() 
       + festring("!");
