@@ -1455,3 +1455,16 @@ void skunk::GetAICommand()
 
   nonhumanoid::GetAICommand();
 }
+
+ushort unicorn::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+{
+  ushort Return = nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+
+  if(Return != HAS_DIED)
+    {
+      if((RAND() % 4 && IsInBadCondition()) || !(RAND() % 7))
+	TeleportRandomly();
+    }
+
+  return Return;
+}

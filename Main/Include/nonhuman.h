@@ -224,6 +224,7 @@ class CHARACTER
   unicorn,
   nonhumanoid,
  public:
+  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
 );
 

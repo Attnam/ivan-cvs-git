@@ -6,7 +6,10 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+March 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Unicorn sometimes teleport when they take hits (so that killing them when invisible isn't too easy)
+	
 March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Throwing healing liquid or some other good potion to people doesn't make them
