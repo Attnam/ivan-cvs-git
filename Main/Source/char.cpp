@@ -3465,6 +3465,9 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
   if(!Attribute)
     return false;
 
+  if(!IsPlayer())
+    Experience <<= 2;
+
   bool Effect = false;
 
   while(true)
@@ -3498,6 +3501,9 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
 
       break;
     }
+
+  if(!IsPlayer())
+    Experience >>= 2;
 
   return Effect;
 }

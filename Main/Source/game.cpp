@@ -226,7 +226,7 @@ bool game::Init(const festring& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new guard(MASTER));
+	SetPlayer(new orc);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);

@@ -15,6 +15,7 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 
 #undef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
 
+#include <algorithm>
 #include <ctime>
 
 #include "char.h"

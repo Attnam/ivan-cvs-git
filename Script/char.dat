@@ -3361,6 +3361,7 @@ magicmushroom
 	BaseUnarmedStrength = 300;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 20;
+	Frequency = 5000;
 }
 
 darkmage

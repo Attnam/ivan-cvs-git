@@ -948,6 +948,14 @@ void whistle::BlowEffect(character* Whistler)
   game::CallForAttention(GetPos(), GetRange());
 }
 
+struct distancepair
+{
+  distancepair(ulong Distance, character* Char) : Distance(Distance), Char(Char) { }
+  bool operator<(const distancepair& D) { return Distance > D.Distance; }
+  ulong Distance;
+  character* Char;
+};
+
 void magicalwhistle::BlowEffect(character* Whistler)
 {
   if(LastUsed != 0 && game::GetTicks() - LastUsed < 2500)
@@ -966,10 +974,18 @@ void magicalwhistle::BlowEffect(character* Whistler)
     ADD_MESSAGE("You hear a strange tune playing.");
 
   const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
+  std::vector<distancepair> ToSort;
+  vector2d Pos = Whistler->GetPos();
 
   for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
     if((*i)->IsEnabled() && Whistler != *i)
-      (*i)->TeleportNear(Whistler);
+      ToSort.push_back(distancepair((Pos - (*i)->GetPos()).GetLengthSquare(), *i));
+
+  if(ToSort.size() > 10)
+    std::sort(ToSort.begin(), ToSort.end());
+
+  for(ushort c = 0; c < 10 && c < ToSort.size(); ++c)
+    ToSort[c].Char->TeleportNear(Whistler);
 
   game::CallForAttention(GetPos(), GetRange());
 }

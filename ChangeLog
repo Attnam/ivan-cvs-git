@@ -7,7 +7,13 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
-May 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Magical whistle now teleports only up to 10 monsters
+	* NPC:s now get four times more exp
+	* All team members now follow from (New) Attnam if the town isn't hostile
+
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Bill's wills' psi waves and ghosts' touches no longer damage armor
 	* Bill's wills are now immune to gas and can walk through walls
