@@ -32,12 +32,15 @@ public:
 	void SetIndex(uchar What) { Index = What; }
 	uchar GetIndex() { return Index; }
 	levelscript* GetLevelScript(ushort);
+	vector2d GetWorldMapPos() { return WorldMapPos; }
+	void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
 private:
 	void Initialize();
 	dungeonscript* DungeonScript;
 	level** Level;
 	uchar Index;
 	bool* Generated;
+	vector2d WorldMapPos;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)

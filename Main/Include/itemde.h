@@ -782,7 +782,7 @@ public:
 	virtual std::string NameSingular() const RET("scroll of change material")
 	virtual std::string NamePlural() const RET("scrolls of change material")
 	virtual float OfferModifier() const RET(40)
-	virtual vector2d GetBitmapPos() const RETV(144,176)
+	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
 );
 #endif

@@ -9,6 +9,8 @@ class area;
 class square;
 class outputfile;
 class inputfile;
+class level;
+class levelsquare;
 
 class typeable
 {
@@ -21,6 +23,10 @@ public:
 	virtual void SetAreaUnder(area* What) { AreaUnder = What; }
 	virtual square* GetSquareUnder() const { return SquareUnder; }
 	virtual void SetSquareUnder(square* What) { SquareUnder = What; }
+	virtual level* GetLevelUnder() const;
+	virtual void SetLevelUnder(level*);
+	virtual levelsquare* GetLevelSquareUnder() const;
+	virtual void SetLevelSquareUnder(levelsquare*);
 	virtual ushort GetType() { return Type(); }
 	virtual std::string ClassName() const = 0;
 protected:

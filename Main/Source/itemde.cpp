@@ -380,9 +380,9 @@ void lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 vector2d can::GetBitmapPos() const
 {
 	if(GetMaterial(1)) 
-		RETV(144,288)	
+		RETV(16,288)	
 	else
-		RETV(144,304)
+		RETV(16,304)
 }
 
 bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)

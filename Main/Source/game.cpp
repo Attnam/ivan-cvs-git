@@ -171,8 +171,8 @@ void game::Init(std::string Name)
 
 		InWilderness = true;
 
-		UpDateCameraX();
-		UpDateCameraY();
+		UpdateCameraX();
+		UpdateCameraY();
 
 		GetCurrentArea()->UpdateLOS();
 		GetCurrentArea()->SendNewDrawRequest();
@@ -410,7 +410,7 @@ void game::panel::Draw() const
 	}
 }
 
-void game::UpDateCameraX()
+void game::UpdateCameraX()
 {
 	if(Player->GetPos().X < 25)
 		Camera.X = 0;
@@ -420,7 +420,7 @@ void game::UpDateCameraX()
 	GetCurrentArea()->SendNewDrawRequest();
 }
 
-void game::UpDateCameraY()
+void game::UpdateCameraY()
 {
 	if(Player->GetPos().Y < 18)
 		Camera.Y = 0;

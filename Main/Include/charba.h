@@ -117,7 +117,6 @@ public:
 	virtual float GetDifficulty() const;
 	virtual item* GetTorsoArmor() const				{ return 0; }
 	virtual item* GetWielded() const				{ return Wielded; }
-	virtual levelsquare* GetLevelSquareUnder() const;
 	virtual worldmapsquare* GetWorldMapSquareUnder() const;
 	virtual long GetAgilityExperience() const { return AgilityExperience; }
 	virtual long GetAP() const { return AP; }

@@ -58,8 +58,8 @@ public:
 	static character* GetPlayer() { return Player; }
 	static void SetPlayer(character*);
 	static vector2d GetCamera() { return Camera; }
-	static void UpDateCameraX();
-	static void UpDateCameraY();
+	static void UpdateCameraX();
+	static void UpdateCameraY();
 	static bool Flag;
 	static level* GetLevel(ushort);
 	static void InitLuxTable();
@@ -139,6 +139,7 @@ public:
 	static void InitScript();
 	static void SaveWorldMap(std::string = SaveName(), bool = false);
 	static void LoadWorldMap(std::string = SaveName());
+	static void UpdateCamera() { UpdateCameraX(); UpdateCameraY(); }
 private:
 	static std::string Alignment[];
 	static god* God[];

@@ -19,6 +19,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
 		game::GetCurrentLevel()->SendNewDrawRequest();
+		game::UpdateCamera();
 		return true;
 	}
 	else
@@ -43,6 +44,7 @@ bool overlevelterrain::GoDown(character* Who) const // Try to go down
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
 		game::GetCurrentLevel()->SendNewDrawRequest();
+		game::UpdateCamera();
 		return true;
 	}
 	else
@@ -146,7 +148,3 @@ void levelterrain::HandleVisualEffects()
 	SetVisualFlags(Flags);
 }
 
-levelsquare* levelterrain::GetLevelSquareUnder() const
-{
-	return (levelsquare*)SquareUnder;
-}

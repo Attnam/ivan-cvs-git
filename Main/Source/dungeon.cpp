@@ -112,7 +112,7 @@ void dungeon::LoadLevel(std::string SaveName, ushort Number)
 
 void dungeon::Save(outputfile& SaveFile) const
 {
-	SaveFile << Index;
+	SaveFile << Index << WorldMapPos;
 
 	for(uchar c = 0; c < GetLevels(); ++c)
 		SaveFile << Generated[c];
@@ -120,7 +120,7 @@ void dungeon::Save(outputfile& SaveFile) const
 
 void dungeon::Load(inputfile& SaveFile)
 {
-	SaveFile >> Index;
+	SaveFile >> Index >> WorldMapPos;
 
 	Initialize();
 

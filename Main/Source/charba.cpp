@@ -503,10 +503,10 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 		if(GetIsPlayer())
 		{
 			if(GetPos().X < game::GetCamera().X + 2 || GetPos().X > game::GetCamera().X + 48)
-				game::UpDateCameraX();
+				game::UpdateCameraX();
 
 			if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + 27)
-				game::UpDateCameraY();
+				game::UpdateCameraY();
 
 			game::GetCurrentArea()->UpdateLOS();
 
@@ -697,7 +697,21 @@ bool character::TryMove(vector2d MoveTo)
 					else
 						return false;
 		else
+		{
+			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround())
+			{
+				game::GetCurrentArea()->RemoveCharacter(GetPos());
+				game::GetCurrentDungeon()->SaveLevel();
+				game::LoadWorldMap();
+				game::SetInWilderness(true);
+				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
+				game::GetCurrentArea()->SendNewDrawRequest();
+				game::UpdateCamera();
+				return true;
+			}
+
 			return false;
+		}
 	else
 		if(MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
 			if(true || (game::GetGoThroughWallsCheat() && GetIsPlayer())) //The player must not be the only son!
@@ -2180,11 +2194,6 @@ void character::ChangeBackToPlayer()
 
 	game::SetPlayer(game::GetPlayerBackup());
 	game::SetPlayerBackup(0);	
-}
-
-levelsquare* character::GetLevelSquareUnder() const
-{
-	return (levelsquare*)SquareUnder;
 }
 
 worldmapsquare* character::GetWorldMapSquareUnder() const

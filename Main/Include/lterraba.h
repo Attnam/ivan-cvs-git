@@ -32,7 +32,6 @@ public:
 	virtual bool Open(character* Opener);
 	virtual bool Close(character* Closer);
 	virtual vector2d GetPos() const;
-	virtual levelsquare* GetLevelSquareUnder() const;
 	virtual bool CanBeOpened() const { return false; }
 	virtual bool CanBeOffered() const { return false; }
 	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }

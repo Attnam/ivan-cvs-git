@@ -12,7 +12,6 @@
 
 bool door::Open(character* Opener)
 {
-
 	if(!GetIsWalkable())
 	{
 		if(Opener == game::GetPlayer())
@@ -103,11 +102,26 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
 		game::GetCurrentLevel()->SendNewDrawRequest();
+		game::UpdateCamera();
 		return true;
 	}
 	else
 	{
 		if(Who == game::GetPlayer())
+		{
+			game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
+			game::GetCurrentDungeon()->SaveLevel();
+			game::LoadWorldMap();
+			game::SetInWilderness(true);
+			game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
+			game::GetCurrentArea()->SendNewDrawRequest();
+			game::UpdateCamera();
+			return true;
+		}
+
+		return false;
+
+		/*if(Who == game::GetPlayer())
 			if(Who->HasPerttusNut())
 			{
 				if(Who->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
@@ -154,7 +168,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 				return true;
 			}
 
-		return false;
+		return false;*/
 	}
 }
 
@@ -179,6 +193,7 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 		game::GetCurrentLevel()->UpdateLOS();
 		game::GetCurrentLevel()->SendNewDrawRequest();
 		game::ShowLevelMessage();
+		game::UpdateCamera();
 		return true;
 	}
 	else
