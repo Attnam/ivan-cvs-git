@@ -3454,7 +3454,7 @@ void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool A
 
 void snake::SpecialBiteEffect(character* Char)
 {
-  Char->BeginTemporaryState(POISONED, 100);
+  Char->BeginTemporaryState(POISONED, 500);
 }
 
 ushort angel::GetTorsoMainColor(ushort) const
@@ -3481,4 +3481,9 @@ void genie::CreateBodyPart(ushort Index)
     SetBodyPart(Index, 0);
   else
     character::CreateBodyPart(Index);
+}
+
+void spider::SpecialBiteEffect(character* Char)
+{
+  Char->BeginTemporaryState(POISONED, 50);
 }

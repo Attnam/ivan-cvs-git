@@ -650,6 +650,7 @@ class CHARACTER
   virtual void CreateCorpse() { SendToHell(); }
   virtual std::string TalkVerb() const { return "says nothing"; }
   virtual ushort TotalSize() const { return 10; }
+  virtual void SpecialBiteEffect(character*);
 );
 
 class CHARACTER

@@ -36,11 +36,11 @@
  * enter zero if the state doesn't need one.
  */
 
-void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage };
-void (character::*character::PrintEndStateMessage[])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage };
-void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP };
-void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP };
-void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0 };
+void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage };
+void (character::*character::PrintEndStateMessage[])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage };
+void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0 };
+void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0 };
+void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler };
 std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
@@ -3732,6 +3732,10 @@ void character::ReceivePoison(long SizeOfEffect)
 
       EditAttribute(ENDURANCE, SizeOfEffect / 500);
     }
+  if((SizeOfEffect > 500 || !(RAND() % (505 - SizeOfEffect))))
+    {
+      BeginTemporaryState(POISONED, 200);
+    }
 }
 
 void character::AddSchoolFoodConsumeEndMessage() const
@@ -4760,7 +4764,14 @@ void character::PoisonedHandler()
 {
   if(!(RAND() % 100))
     Vomit(3); 
-  if(!(RAND() % 20))
+
+  ushort Used = 0;
+  while(Used + 100 <= TemporaryStateCounter[POISONED])
+    {
+	character::ReceiveDamage(this, 1, POISON, ALL, 0, false, true, false);
+	Used += 100;
+    }
+  if(Used != TemporaryStateCounter[POISONED] && !(RAND() % (100 - (TemporaryStateCounter[POISONED] - Used))))
     character::ReceiveDamage(this, 1, POISON, ALL, 0, false, true, false);
 }
 
