@@ -4372,7 +4372,7 @@ veterankamikazedwarf
 	AttributeBonus = 50;
 	Adjective = "veteran";
 	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
-	HPRequirementForGeneration = 120;
+	HPRequirementForGeneration = 160; 
 	Frequency = 200;
 	IsAbstract = true;
 	CreateDivineConfigurations = true;
