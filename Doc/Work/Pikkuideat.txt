@@ -1,5 +1,4 @@
 Characterin funktioiden paloittelu.
-Kuvien flippailu.
 Avatut cannit.
 Lowscore.
 Teamit.
