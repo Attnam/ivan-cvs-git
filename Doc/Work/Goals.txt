@@ -1,5 +1,4 @@
 Pentagrammi menuun.
-Ei alttareita ekalle levelille.
 Monsujen väheneminen.
 Change material scroll.
 Syönnin keskeytys kun monsu tulee näköpiiriin.

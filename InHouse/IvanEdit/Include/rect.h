@@ -6,7 +6,7 @@ class rectangle
 {
  public:
   long Top, Left, Right, Bottom;
-  rectangle operator = (rectangle& What) { Top = What.Top; Left = What.Left; Right = What.Right; Bottom = What.Bottom; return *this;}
+  rectangle& operator = (const rectangle& What) { Top = What.Top; Left = What.Left; Right = What.Right; Bottom = What.Bottom; return *this;}
   rectangle operator = (rectangle* What) { Top = What->Top; Left = What->Left; Right = What->Right; Bottom = What->Bottom; return *this;}
   rectangle(long Top, long Left, long Right, long Bottom) : Top(Top), Left(Left), Right(Right), Bottom(Bottom) {}
   rectangle() {}

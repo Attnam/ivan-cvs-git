@@ -12,23 +12,11 @@ void program::Init(void)
  windowhandler::Init();
  install_keyboard();
  install_mouse();
-/* vector<std::string> Names;
-
- Names.insert(Names.end(), "Heikki Joonas Valter Sairanen");
- Names.insert(Names.end(), "Min„");
- Names.insert(Names.end(), "Sin„");
-
- vector<unsigned int> Numbers;
-
- Numbers.insert(Numbers.end(), 2);
- Numbers.insert(Numbers.end(), 3);
- Numbers.insert(Numbers.end(), 120);
- windowhandler::CreateWindow(new window(rectangle(0,0,300,200), makecol(255,0,0), makecol(0,0,255), makecol(25,25,25)));
- windowhandler::CreateWindow(new resultwindow(rectangle(200,20,400,600), Names, Numbers, Numbers));
-// windowhandler::CreateWindow(new editor(rectangle(300, 200, 700, 500), "item.pcx"));
-*/
-// windowhandler::CreateWindow(new editpersonwindow(rectangle(16, 10, 700, 500)));
- windowhandler::CreateWindow(new whattoedit);
+ toolwindow* JustSomething = new toolwindow(rectangle(100,500, 564, 200));
+ windowhandler::CreateWindow(JustSomething);
+ editorwindow* JustCreated = new editorwindow(rectangle(20,20,400,400), rectangle(0,16,32,16), JustSomething);
+ windowhandler::CreateWindow(JustCreated);
+ windowhandler::CreateWindow(new chooserwindow(rectangle(420,20,420,600), JustCreated));
 }
 
 void program::DeInit(void)
@@ -61,4 +49,9 @@ std::string program::ReadNextWord(ifstream* From)
  }
  return Buffer;
 }
+<<<<<<< program.cc
 
+
+=======
+
+>>>>>>> 1.2

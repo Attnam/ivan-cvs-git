@@ -15,6 +15,7 @@ void graphics::Init(void)
  set_gfx_mode(GFX_AUTODETECT, 800, 600, 0,0);
  DoubleBuffer = create_bitmap(800,600);
  ToolGraphics = load_pcx("tools.pcx", Palette);
+ Data = load_pcx("item.pcx", Palette);
 }
 
 void graphics::DeInit(void)
@@ -64,3 +65,27 @@ void graphics::DrawText(std::string Text, vector2d Where)
 {
  textout(DoubleBuffer, font, (char*)(Text.c_str()), Where.X, Where.Y, makecol(255,0,0));
 }
+
+void graphics::DrawStretched(rectangle To, BITMAP* From)
+{
+ stretch_blit(From, DoubleBuffer,
+ 0, 0, From->w, From->h,
+ To.Left, To.Top, To.Right - To.Left, To.Bottom - To.Top);
+}
+
+void graphics::BlitData(rectangle From, rectangle To)
+{
+ blit(Data, DoubleBuffer, From.Left, From.Top, To.Left, To.Top, To.Right - To.Left, To.Bottom - To.Top);
+}
+
+void graphics::BlitToolTo(rectangle Pos, BITMAP* Where)
+{
+ blit(ToolGraphics, Where, Pos.Left, Pos.Top, 0, 0, Pos.Right - Pos.Left, Pos.Bottom - Pos.Top);
+}
+
+void graphics::DrawPixelOnData(vector2d What, unsigned short Color)
+{
+ putpixel(Data, What.X, What.Y, Color);
+}
+
+

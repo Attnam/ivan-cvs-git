@@ -5,6 +5,7 @@
 #include "windowh.h"
 #include "strover.h"
 #include "cursor.h"
+#include "window.h"
 void button::Draw(void)
 {
  graphics::DrawTool(Pos, GetBitmapPos(), GetSize());
@@ -68,4 +69,24 @@ void edittextbox::Draw(void)
 void functionbutton::Click(void)
 {
  Function(Caller);
+}
+
+void toolbutton::Click(void)
+{
+ Activate();
+}
+
+void toolbutton::Activate(void)
+{
+ if(MainWindow->GetActive() != ToolNumber)
+ {
+  MainWindow->SetActive(ToolNumber);
+  BitmapPos.Y += 16;
+ }
+}
+
+void toolbutton::DeActivate(void)
+{
+ BitmapPos.Y -= 16;
+ MainWindow->SetActive(0);
 }

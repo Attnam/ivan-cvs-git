@@ -9,32 +9,17 @@
 #include "windowh.h"
 #include "rect.h"
 #include "program.h"
+
 void window::Draw(void)
 {
  DrawBackground();
+ DrawButtons();
 }
 void window::DrawBackground(void)
 {
- graphics::DrawFilledRectangle(rectangle(Pos.Top, Pos.Left, Pos.Right, Pos.Top + 20), BarColor);
- graphics::DrawFilledRectangle(rectangle(Pos.Top + 20, Pos.Left, Pos.Right, Pos.Bottom), BackgroundColor);
+ graphics::DrawFilledRectangle(rectangle(Pos.Top, Pos.Left, Pos.Right, Pos.Top + 16), BarColor);
+ graphics::DrawFilledRectangle(rectangle(Pos.Top + 16, Pos.Left, Pos.Right, Pos.Bottom), BackgroundColor);
  graphics::DrawRectangle(Pos, BorderColor);
-}
-void window::Click(vector2d ClickPos)
-{
- BringOnTop();
- if(rectangle(Pos.Top, Pos.Left, Pos.Right, Pos.Top + 20).IsIn(ClickPos))
- {
-  vector2d LastPos = vector2d(mouse_x, mouse_y);
-  vector2d PositionOnWindow = vector2d(ClickPos.X - Pos.Left, ClickPos.Y - Pos.Top);
-  while(mouse_b & 1)
-  {
-   rectangle Temp(mouse_y - PositionOnWindow.Y, mouse_x - PositionOnWindow.X, mouse_x + Pos.Right - Pos.Left - PositionOnWindow.X, mouse_y + Pos.Bottom - Pos.Top - PositionOnWindow.Y);
-   MoveTo(Temp);
-   graphics::Clear();
-   windowhandler::Draw();
-   graphics::BlitDoubleBuffer();
-  }
- }
 }
 
 void window::BringOnTop(void)
@@ -43,136 +28,180 @@ void window::BringOnTop(void)
 }
 
 
-editor::editor(rectangle Rect,char* FileName)
+
+void window::Close(window* Caller)
 {
- BackgroundColor = makecol(255,255,255);
- BorderColor = makecol(150,150,150);
- BarColor = makecol(20,20,200);
- Pos = Rect;
- rectangle Temp(0,0,16,16);
- BitmapPos = Temp;
+ windowhandler::GetWindowList().erase(find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller));
+ delete Caller;
 }
 
-editor::~editor(void)
-{
 
-}
-
-void editor::Draw(void)
+void window::Click(vector2d Where)
 {
- DrawBackground();
- graphics::DrawStretchData(BitmapPos, rectangle(Pos.Top + 20, Pos.Left, Pos.Right, Pos.Bottom));
-// graphics::DrawRectangle(Pos, BackgroundColor);
-}
-
-resultwindow::resultwindow(rectangle What, vector<string> Names, vector<unsigned int> Strokes, vector<unsigned int> Bogi)
-{
- Pos = What;
- BackgroundColor = makecol(10,10,10);
- BorderColor = makecol(0,0,200);
- BarColor = makecol(0,0,200);
- for(int x = 0; x < Names.size(); x++)
-  TextBoxList.insert(TextBoxList.end(), new textbox(Names[x], vector2d(What.Left + 10, What.Top + x * 10 + 30)));
-}
-
-void resultwindow::Draw(void)
-{
- DrawBackground();
- for(int x = 0; x < TextBoxList.size(); x++)
-  TextBoxList[x]->Draw();
-}
- 
-
-void resultwindow::MoveTo(rectangle Where)
-{
- for(int x = 0; x < TextBoxList.size(); x++)
-  TextBoxList[x]->SetPos(vector2d(Where.Left + (TextBoxList[x]->GetPos().X - Pos.Left), Where.Top + (TextBoxList[x]->GetPos().Y - Pos.Top)));
- Pos = Where;
-}
-
-resultwindow::~resultwindow(void)
-{
- while(TextBoxList.size())
+ BringOnTop();
+ if(Where.Y < Pos.Top + 16)
  {
-  delete TextBoxList[0];
-  TextBoxList.erase(0);
+  vector2d PosInWindow(short(mouse_x) - GetPos().Left, short(mouse_y) - GetPos().Top);
+  while(mouse_b & 1)
+  {
+   MoveTo(vector2d(mouse_x - PosInWindow.X, mouse_y - PosInWindow.Y));
+   graphics::Clear();
+   windowhandler::Draw();
+
+   graphics::BlitDoubleBuffer();
+  }
  }
-}
-
-void editpersonwindow::Load(ifstream* From)
-{
- program::ReadNextWord(From);
- for(int x = 0; x < 16; x++)
-  TextBoxList[x]->SetText(program::ReadNextWord(From));
-}
-editpersonwindow::editpersonwindow(rectangle What)
-{
- Pos = What;
- TextBoxList.insert(TextBoxList.end(), new textbox("Nimi", vector2d(Pos.Left + 5, Pos.Top + 30)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 30, Pos.Left + 110, Pos.Left + 500, Pos.Top + 39)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Tasoitus", vector2d(Pos.Left + 5, Pos.Top + 45)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 45, Pos.Left + 110, Pos.Left + 500, Pos.Top + 54)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Jyv„skyl„ sc", vector2d(Pos.Left + 5, Pos.Top + 60)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 60, Pos.Left + 110, Pos.Left + 500, Pos.Top + 69)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Jyv„skyl„ pb", vector2d(Pos.Left + 5, Pos.Top + 75)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 75, Pos.Left + 110, Pos.Left + 500, Pos.Top + 84)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Virrat sc", vector2d(Pos.Left + 5, Pos.Top + 90)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 90, Pos.Left + 110, Pos.Left + 500, Pos.Top + 99)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Virrat pb", vector2d(Pos.Left + 5, Pos.Top + 105)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 105, Pos.Left + 110, Pos.Left + 500, Pos.Top + 114)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Vammala sc", vector2d(Pos.Left + 5, Pos.Top + 120)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 120, Pos.Left + 110, Pos.Left + 500, Pos.Top + 129)));
- TextBoxList.insert(TextBoxList.end(), new textbox("Vammala pb", vector2d(Pos.Left + 5, Pos.Top + 135)));
- TextBoxList.insert(TextBoxList.end(), new edittextbox(rectangle(Pos.Top + 135, Pos.Left + 110, Pos.Left + 500, Pos.Top + 144)));
-
- OKButton = new functionbutton(&Save, this, vector2d(Pos.Left + 100, Pos.Bottom - 100));
- BackgroundColor = makecol(255,255,255);
- BarColor = makecol(0,0,200);
- BorderColor = makecol(100,100,100);
- std::ifstream Temp("jes.txt");
- Load(&Temp);
- Temp.close();
-}
-
-void editpersonwindow::Click(vector2d Where)
-{
- for(int x = 0; x < TextBoxList.size(); x++)
+ for(int x = 0; x < GetWindowObjectList().size(); x++)
  {
-  if(TextBoxList[x]->IsIn(Where))
-   TextBoxList[x]->Click();
+  if(GetWindowObjectList()[x]->IsIn(Where))
+   GetWindowObjectList()[x]->Click();
  }
- if(OKButton->IsIn(Where))
-  OKButton->Click();
+ if(Where.X > Pos.Right - 5 && Where.X < Pos.Right + 5 && Where.Y < Pos.Bottom + 5 && Where.Y > Pos.Bottom - 5)
+  while(mouse_b & 1)
+  {
+   TryResize(vector2d(mouse_x, mouse_y));
+   windowhandler::Draw();
+   graphics::BlitDoubleBuffer();
+   graphics::Clear();
+  }
 }
 
-void editpersonwindow::Save(window* Window)
+
+editorwindow::editorwindow(rectangle xPos, rectangle xEditorPos, toolwindow* xLinkedTools)
 {
- std::ofstream to(Window->GetSaveName().c_str());
- std::string Buffer;
- for(int x = 0; x < Window->GetTextBoxList().size(); x++)
-  Buffer += std::string(",") + Window->GetTextBoxList()[x]->GetText();
- Buffer += std::string(",");
- for(int x = 0; x < Buffer.length(); x++)
-  to.put(Buffer[x]);
-
+ Pos = xPos;
+ BitmapPos = xEditorPos;
+ LinkedTools = xLinkedTools;
+ BackgroundColor = makecol(255,255,255);
+ BorderColor = makecol(0,255,255);
+ BarColor = makecol(0,0,255);
+ Data = create_bitmap(16,16);
+ UpdateGraphics();
 }
 
-editpersonwindow::~editpersonwindow(void)
-{
- delete OKButton;
-}
-
-void editpersonwindow::Draw(void)
+void editorwindow::Draw(void)
 {
  DrawBackground();
- for(int x = 0; x < TextBoxList.size(); x++)
-  TextBoxList[x]->Draw();
- OKButton->Draw();
+ graphics::DrawStretched(rectangle(Pos.Top + 17, Pos.Left + 1, Pos.Right - 1, Pos.Bottom - 1), Data);
+ DrawButtons();
+}
+
+void editorwindow::Click(vector2d Where)
+{
+ if(Where.Y - Pos.Top > 16 && Where.X > Pos.Left)
+  switch(LinkedTools->GetActive())
+  {
+   case 1:
+    DrawPixel(Where);
+   default:
+   break;
+  }
+
+
+ window::Click(Where);
+
+
+}
+void window::DrawButtons(void)
+{
+ for(int x = 0; x < WindowObjectList.size(); x++)
+  WindowObjectList[x]->Draw();
+}
+
+void window::TryResize(vector2d ToWhat)
+{
+ vector2d Largest(24,40);
+ long Temp;
+ for(int x = 0; x < WindowObjectList.size(); x++)
+ {
+  if((Temp = WindowObjectList[x]->GetRectangle().Right) > Largest.X) Largest.X = Temp;
+  if((Temp = WindowObjectList[x]->GetRectangle().Bottom) > Largest.Y) Largest.Y = Temp;
+ }
+ if(ToWhat.X > Largest.X + 8 + Pos.Left && ToWhat.Y > Largest.Y + 8 + Pos.Top)
+  SetPos(rectangle(Pos.Top, Pos.Left, ToWhat.X, ToWhat.Y));
+}
+
+void chooserwindow::Draw(void)
+{
+ DrawBackground();
+ graphics::BlitData(rectangle(Scroll.Y, Scroll.X,Pos.Right - Pos.Left, Pos.Bottom - Pos.Top), rectangle(Pos.Top + 16, Pos.Left + 1, Pos.Right - 16, Pos.Bottom - 1));
+ graphics::DrawStretched(rectangle(Pos.Top, Pos.Right - 16, Pos.Right, Pos.Bottom), ScrollBar);
+ rectangle Temp(Selected.Top + 16 + Pos.Top - Scroll.Y, Selected.Left + 1 + Pos.Left - Scroll.X, Selected.Right + 1 + Pos.Left - Scroll.X, Selected.Bottom + 16 + Pos.Top - Scroll.Y);
+ if(Temp.Left >= Pos.Left && Temp.Right <= Pos.Right - 16 && Temp.Top >= Pos.Top + 16 && Temp.Bottom <= Pos.Bottom)
+  graphics::DrawRectangle(Temp, makecol(0,255,0));
 
 }
 
-std::string editpersonwindow::GetSaveName(void)
+chooserwindow::chooserwindow(rectangle xPos, editorwindow* xLinked)
 {
+ SetScroll(vector2d(0,0));
+ Pos = xPos;
+ BackgroundColor = makecol(255,255,255);
+ BarColor = makecol(0,0,255);
+ BorderColor = makecol(0,0,255);
+ Linked = xLinked;
+ ScrollBar = create_bitmap(16,62);
+ graphics::BlitToolTo(rectangle(18,0,16,80), ScrollBar);
+}
+
+void chooserwindow::Click(vector2d Where)
+{
+ BringOnTop();
+ if(Where.X > Pos.Right - 16 && Where.Y < Pos.Bottom - 10)
+ {
+  if((Where.Y - Pos.Top) * 2 + Pos.Top > Pos.Bottom)
+   ScrollDown();
+  else
+   ScrollUp();
+ }
+ else if(Where.X <= Pos.Right - 16 && !(Pos.Top + 16 > Where.Y))
+ {
+  vector2d RealPictureStart(Pos.Left + 1 - Scroll.X, Pos.Top + 16 - Scroll.Y);
+  vector2d Temp = Where;
+  Temp =  Temp - RealPictureStart;
+  rectangle Temp2 = rectangle(Temp.Y - Temp.Y % 16, Temp.X - Temp.X % 16, Temp.X + 16 - Temp.X % 16, Temp.Y + 16 - Temp.Y % 16);
+  Linked->SetBitmapPos(Temp2);
+  SetSelected(Temp2);
+ }
+ window::Click(Where);
+}
+
+editorwindow::~editorwindow(void)
+{
+ destroy_bitmap(Data);
+}
+
+void editorwindow::SetBitmapPos(rectangle What)
+{
+ BitmapPos = What;
+ blit(graphics::GetData(), Data, BitmapPos.Left,BitmapPos.Top,0,0,BitmapPos.Right - BitmapPos.Left,BitmapPos.Bottom - BitmapPos.Top);
+}
+
+toolwindow::toolwindow(rectangle xPos)
+{
+ Pos = xPos;
+ BackgroundColor = makecol(255,255,255);
+ BorderColor = makecol(255,0,0);
+ BarColor = makecol(0,0,255);
+ WindowObjectList.insert(WindowObjectList.begin(), new toolbutton(WindowObjectList.size()+1, this, vector2d(Pos.Left + 3, Pos.Top + 32), vector2d(16,16)));
+ WindowObjectList.insert(WindowObjectList.end(), new toolbutton(WindowObjectList.size()+1, this, vector2d(Pos.Left + 20, Pos.Top + 32), vector2d(16,16)));
+ Active = 0;
+}
+
+void window::MoveTo(vector2d What)
+{
+ vector2d Movement = What - vector2d(Pos.Left, Pos.Top);
+ Pos = rectangle(Pos.Top + Movement.Y, Pos.Left + Movement.X, Pos.Right + Movement.X, Pos.Bottom + Movement.Y);
+ if(Movement != vector2d(0,0))
+  for(int x = 0; x < WindowObjectList.size(); x++)
+   WindowObjectList[x]->Move(Movement);
+}
+
+void toolwindow::SetActive(unsigned char What)
+{
+<<<<<<< window.cc
+ if(!What)
+=======
  std::string Buffer = TextBoxList[1]->GetText();
  Buffer.resize(8);
 
@@ -180,7 +209,12 @@ std::string editpersonwindow::GetSaveName(void)
   if(Buffer[x] == ' ') Buffer[x] = '_';
  Buffer += ".gol";
  for(int x = 0; x < 10; x++)
+>>>>>>> 1.3
  {
+<<<<<<< window.cc
+  Active = 0;
+  return;
+=======
   Buffer[7] = char(x + 48);
   ifstream Temp(Buffer.c_str());
   if(!Temp.is_open())
@@ -196,23 +230,22 @@ std::string editpersonwindow::GetSaveName(void)
     break;
    Temp.close();
   }
+>>>>>>> 1.3
  }
-
- return Buffer;
+ if(Active)
+  WindowObjectList[Active - 1]->DeActivate();
+ Active = What;
 }
 
-whattoedit::whattoedit(void)
+void editorwindow::DrawPixel(vector2d Where)
 {
- BackgroundColor = makecol(0,0,0);
- BarColor = makecol(0,0,255);
- BorderColor = makecol(255,255,255);
- rectangle Temp = rectangle(100, 100, 600, 600);
- Pos = Temp;
- TextBox = new textbox("Kenen tiedot haluat n„hd„?", vector2d(Pos.Top + 50, Pos.Left + 100));
- OKButton = new functionbutton(&Close, this, vector2d(Pos.Top + 150, Pos.Left + 130));
- EditTextBox = new edittextbox(rectangle(Pos.Top + 110, Pos.Left + 100, Pos.Left + 400, Pos.Top + 120));
-}
+ float MultX = float(Pos.Right - Pos.Left - 2) / 16, MultY = float(Pos.Bottom - Pos.Top - 17) / 16;
 
+<<<<<<< window.cc
+ vector2d RealClickPos((1/MultX)*(Where.X - Pos.Left - 2) + BitmapPos.Left, (1/MultY)*(Where.Y - Pos.Top - 17) + BitmapPos.Top);
+ graphics::DrawPixelOnData(RealClickPos, 2);
+ UpdateGraphics();
+=======
 void whattoedit::Draw(void)
 {
  DrawBackground();
@@ -227,12 +260,10 @@ void window::Close(window* Caller)
  //windowhandler::GetWindowList().clear();
  windowhandler::GetWindowList().erase(find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller));
  delete Caller;
+>>>>>>> 1.3
 }
 
-void whattoedit::Click(vector2d Where)
+void editorwindow::UpdateGraphics(void)
 {
-  if(EditTextBox->IsIn(Where))
-   EditTextBox->Click();
-  if(OKButton->IsIn(Where))
-   OKButton->Click();
+ blit(graphics::GetData(), Data, BitmapPos.Left,BitmapPos.Top,0,0,BitmapPos.Right - BitmapPos.Left,BitmapPos.Bottom - BitmapPos.Top);
 }

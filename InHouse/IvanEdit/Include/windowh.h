@@ -16,7 +16,12 @@ class windowhandler
   static void Click(vector2d2d2d);
   static vector2d2d<window*>& GetWindowList() { return WindowList; }
   static void BringOnTop(window*);
+<<<<<<< windowh.h
+  static cursor* GetCursor(void) { return Cursor; }
+  static void LoadPerson(window*);
+=======
   static cursor* GetCursor() { return Cursor; }
+>>>>>>> 1.3
  protected:
   static vector2d2d<window*> WindowList;
   static cursor* Cursor;
