@@ -29,7 +29,7 @@ void room::DestroyTerrain(character* Who)
   if(Who && MasterIsActive())
     Who->Hostility(GetMaster());
 
-  if(DivineMaster)
+  if(Who && Who->IsPlayer() && DivineMaster)
     game::GetGod(DivineMaster)->AdjustRelation(GetGodRelationAdjustment());
 }
 

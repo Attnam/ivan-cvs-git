@@ -673,7 +673,7 @@ void mellis::PrayGoodEffect()
 void mellis::PrayBadEffect()
 {
   for(ushort c = 1; c <= GODS; ++c)
-    if(game::GetGod(c) != this)
+    if(c != GetType())
       game::GetGod(c)->AdjustRelation(-100);
 
   ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GOD_NAME);

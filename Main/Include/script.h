@@ -90,6 +90,46 @@ template <class type> inline datamember<type>& datamember<type>::operator=(const
   return *this;
 }
 
+template <class type> inline void datamember<type>::ReadFrom(inputfile& SaveFile)
+{
+  if(!Member)
+    Member = new type;
+
+  ReadData(*Member, SaveFile);
+}
+
+template <class type> inline void datamember<type>::Replace(datamemberbase& Base)
+{
+  datamember<type>& Data = static_cast<datamember<type>&>(Base);
+
+  if(Data.Member)
+    {
+      delete Member;
+      Member = Data.Member;
+      Data.Member = 0;
+    }
+}
+
+template <class type> inline void datamember<type>::Save(outputfile& SaveFile) const
+{
+  if(Member)
+    {
+      SaveFile.Put(1);
+      SaveFile << *Member;
+    }
+  else
+    SaveFile.Put(0);
+}
+
+template <class type> inline void datamember<type>::Load(inputfile& SaveFile)
+{
+  if(SaveFile.Get())
+    {
+      Member = new type;
+      SaveFile >> *Member;
+    }
+}
+
 class script
 {
  public:
@@ -108,6 +148,8 @@ class script
 };
 
 inline void ReadData(script& Type, inputfile& SaveFile) { Type.ReadFrom(SaveFile); }
+inline outputfile& operator<<(outputfile& SaveFile, const script& Script) { Script.Save(SaveFile); return SaveFile; }
+inline inputfile& operator>>(inputfile& SaveFile, script& Script) { Script.Load(SaveFile); return SaveFile; }
 
 class scriptwithbase : public script
 {
@@ -388,6 +430,8 @@ class dungeonscript : public script
 {
  public:
   typedef dungeonscript scripttype;
+  dungeonscript();
+  virtual ~dungeonscript();
   virtual void ReadFrom(inputfile&);
   const std::map<uchar, levelscript>& GetLevel() const { return Level; }
   void RandomizeLevels();

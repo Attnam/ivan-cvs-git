@@ -133,6 +133,10 @@ human
 	DefaultMana = 10;
 	DefaultMoney = 200;
 	/* BitmapPoses overridden */
+	HeadBitmapPos = 96, 0;
+	TorsoBitmapPos = 32, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 288;
 	TotalVolume = 80000;
 	TotalSize = 175;
 	CanRead = true;

@@ -9,7 +9,7 @@ FeLibOBJ = $(FeLibDIR)/Source/bitmap.o $(FeLibDIR)/Source/colorbit.o $(FeLibDIR)
 IGORDIR  = Igor
 IGORBIN  = Igor.exe
 IGOROBJ  = $(IGORDIR)/Source/igor.o
-FLAGS = -DGCC -IInclude -I$(FeLibDIR)/Include -O3 -ffast-math -s -W -Wall -pedantic -Wno-long-long -ftemplate-depth-99
+FLAGS = -DGCC -IInclude -I$(FeLibDIR)/Include -O3 -ffast-math -s -W -Wall -pedantic
 LIBS = -lstdcxx
 
 all:	$(IGORBIN)

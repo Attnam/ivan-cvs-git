@@ -23,7 +23,7 @@ std::string mommo::ThirdPersonBiteVerb() const { return "vomits acidous slime at
 std::string mommo::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
 std::string mommo::BiteNoun() const { return "slime"; }
 
-uchar dolphin::GetSpecialBodyPartFlags(ushort) const { return RAND() & (MIRROR|ROTATE); }
+uchar dolphin::GetSpecialBodyPartFlags(ushort, bool) const { return RAND() & (MIRROR|ROTATE); }
 
 ushort chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 

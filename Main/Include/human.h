@@ -144,10 +144,10 @@ class ABSTRACT_CHARACTER
   virtual head* Behead();
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBodyPartBitmapPos(ushort) const;
-  virtual ushort GetBodyPartColorB(ushort) const;
-  virtual ushort GetBodyPartColorC(ushort) const;
-  virtual ushort GetBodyPartColorD(ushort) const;
+  virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorB(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorC(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorD(ushort, bool = false) const;
   virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort) const;
@@ -168,10 +168,10 @@ class CHARACTER
   virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBodyPartBitmapPos(ushort) const;
-  virtual ushort GetBodyPartColorA(ushort) const;
-  virtual ushort GetBodyPartColorB(ushort) const;
-  virtual ushort GetBodyPartColorC(ushort) const;
+  virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorA(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorB(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorC(ushort, bool = false) const;
 );
 
 class CHARACTER

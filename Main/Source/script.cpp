@@ -18,46 +18,6 @@ script::datamap dungeonscript::DataMap;
 script::datamap teamscript::DataMap;
 script::datamap gamescript::DataMap;
 
-template <class type> inline void datamember<type>::ReadFrom(inputfile& SaveFile)
-{
-  if(!Member)
-    Member = new type;
-
-  ReadData(*Member, SaveFile);
-}
-
-template <class type> inline void datamember<type>::Replace(datamemberbase& Base)
-{
-  datamember<type>& Data = static_cast<datamember<type>&>(Base);
-
-  if(Data.Member)
-    {
-      delete Member;
-      Member = Data.Member;
-      Data.Member = 0;
-    }
-}
-
-template <class type> inline void datamember<type>::Save(outputfile& SaveFile) const
-{
-  if(Member)
-    {
-      SaveFile.Put(1);
-      SaveFile << *Member;
-    }
-  else
-    SaveFile.Put(0);
-}
-
-template <class type> inline void datamember<type>::Load(inputfile& SaveFile)
-{
-  if(SaveFile.Get())
-    {
-      Member = new type;
-      SaveFile >> *Member;
-    }
-}
-
 bool script::ReadMember(inputfile& SaveFile, const std::string& Word)
 {
   datamemberbase* Data = GetData(Word);
@@ -95,9 +55,6 @@ template<class type, class scripttype> inline void InitMember(script::datamap& D
 }
 
 #define INIT_MEMBER(name) InitMember(DataMap, #name, &scripttype::name##Holder)
-
-inline outputfile& operator<<(outputfile& SaveFile, const script& Script) { Script.Save(SaveFile); return SaveFile; }
-inline inputfile& operator>>(inputfile& SaveFile, script& Script) { Script.Load(SaveFile); return SaveFile; }
 
 void posscript::InitDataMap()
 {
@@ -811,6 +768,9 @@ void levelscript::Load(inputfile& SaveFile)
     for(std::list<roomscript>::iterator i = Room.begin(); i != Room.end(); ++i)
       i->SetBase(RoomDefault);
 }
+
+dungeonscript::dungeonscript() { }
+dungeonscript::~dungeonscript() { }
 
 void dungeonscript::InitDataMap()
 {

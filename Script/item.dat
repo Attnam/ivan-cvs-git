@@ -1502,7 +1502,6 @@ cloak /* armor-> */
 		GearStates = INVISIBLE;
 		PostFix = "of invisibility";
 		Price = 2500;
-		CanBeWished = false;
 	}
 }
 
@@ -1724,7 +1723,6 @@ ring
 		MainMaterialConfig == GOLD;
 		GearStates = INVISIBLE;
 		Price = 2500;
-		CanBeWished = false;
 		AttachedGod = CLEPTIA;
 	}
 
@@ -2578,7 +2576,6 @@ saalthul
 	CanBeCloned = false;
 	Alias == "Saal'thul";
 	AttachedGod = CLEPTIA;
-	CanBeWished = false;
 
 	Config BROKEN;
 	{

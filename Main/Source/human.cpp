@@ -1519,7 +1519,7 @@ bool humanoid::HandleNoBodyPart(ushort Index)
     }
 }
 
-vector2d humanoid::GetBodyPartBitmapPos(ushort Index) const
+vector2d humanoid::GetBodyPartBitmapPos(ushort Index, bool) const
 {
   switch(Index)
     {
@@ -1536,7 +1536,7 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index) const
     }
 }
 
-ushort humanoid::GetBodyPartColorB(ushort Index) const
+ushort humanoid::GetBodyPartColorB(ushort Index, bool) const
 {
   switch(Index)
     {
@@ -1553,7 +1553,7 @@ ushort humanoid::GetBodyPartColorB(ushort Index) const
     }
 }
 
-ushort humanoid::GetBodyPartColorC(ushort Index) const
+ushort humanoid::GetBodyPartColorC(ushort Index, bool) const
 {
   switch(Index)
     {
@@ -1570,7 +1570,7 @@ ushort humanoid::GetBodyPartColorC(ushort Index) const
     }
 }
 
-ushort humanoid::GetBodyPartColorD(ushort Index) const
+ushort humanoid::GetBodyPartColorD(ushort Index, bool) const
 {
   switch(Index)
     {
@@ -3299,8 +3299,11 @@ head* humanoid::Behead()
   return Head;
 }
 
-vector2d human::GetBodyPartBitmapPos(ushort Index) const
+vector2d human::GetBodyPartBitmapPos(ushort Index, bool Severed) const
 {
+  if(Severed)
+    return humanoid::GetBodyPartBitmapPos(Index);
+
   bool NoChainMailGraphics = !GetBodyArmor() || (GetBodyArmor()->GetConfig()&~BROKEN) != CHAIN_MAIL;
 
   switch(Index)
@@ -3318,8 +3321,11 @@ vector2d human::GetBodyPartBitmapPos(ushort Index) const
     }
 }
 
-ushort human::GetBodyPartColorA(ushort Index) const
+ushort human::GetBodyPartColorA(ushort Index, bool Severed) const
 {
+  if(Severed)
+    return humanoid::GetBodyPartColorA(Index);
+
   switch(Index)
     {
     case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
@@ -3335,8 +3341,11 @@ ushort human::GetBodyPartColorA(ushort Index) const
     }
 }
 
-ushort human::GetBodyPartColorB(ushort Index) const
+ushort human::GetBodyPartColorB(ushort Index, bool Severed) const
 {
+  if(Severed)
+    return humanoid::GetBodyPartColorB(Index);
+
   switch(Index)
     {
     case TORSO_INDEX: return GetCloak() ? GetCloak()->GetMainMaterial()->GetColor() : 0;
@@ -3352,8 +3361,11 @@ ushort human::GetBodyPartColorB(ushort Index) const
     }
 }
 
-ushort human::GetBodyPartColorC(ushort Index) const
+ushort human::GetBodyPartColorC(ushort Index, bool Severed) const
 {
+  if(Severed)
+    return humanoid::GetBodyPartColorC(Index);
+
   switch(Index)
     {
     case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->GetColor() : 0;

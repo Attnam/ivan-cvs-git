@@ -90,7 +90,7 @@ std::string character::ThirdPersonCriticalBiteVerb() const { return "critically 
 std::string character::UnarmedHitNoun() const { return "attack"; }
 std::string character::KickNoun() const { return "kick"; }
 std::string character::BiteNoun() const { return "attack"; }
-uchar character::GetSpecialBodyPartFlags(ushort) const { return ST_NORMAL; }
+uchar character::GetSpecialBodyPartFlags(ushort, bool) const { return ST_NORMAL; }
 std::string character::GetEquipmentName(ushort) const { return ""; }
 const std::list<ulong>& character::GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
 wsquare* character::GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(Index); }
@@ -2487,6 +2487,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
     {
       BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
       BodyPart->SetIsUnique(LeftOversAreUnique());
+      UpdateBodyPartPicture(BodyPartIndex, true);
       BodyPart->RemoveFromSlot();
       BodyPart->RandomizePosition();
       CalculateAttributeBonuses();
@@ -2851,7 +2852,7 @@ bodypart* character::CreateBodyPart(ushort Index, ushort SpecialFlags)
   return BodyPart;
 }
 
-vector2d character::GetBodyPartBitmapPos(ushort Index) const
+vector2d character::GetBodyPartBitmapPos(ushort Index, bool) const
 {
   if(Index == TORSO_INDEX)
     return GetTorsoBitmapPos();
@@ -2862,7 +2863,7 @@ vector2d character::GetBodyPartBitmapPos(ushort Index) const
     }
 }
 
-ushort character::GetBodyPartColorA(ushort Index) const
+ushort character::GetBodyPartColorA(ushort Index, bool) const
 {
   if(Index < GetBodyParts())
     return GetSkinColor();
@@ -2873,7 +2874,7 @@ ushort character::GetBodyPartColorA(ushort Index) const
     }
 }
 
-ushort character::GetBodyPartColorB(ushort Index) const
+ushort character::GetBodyPartColorB(ushort Index, bool) const
 {
   if(Index == TORSO_INDEX)
     return GetTorsoMainColor();
@@ -2884,7 +2885,7 @@ ushort character::GetBodyPartColorB(ushort Index) const
     }
 }
 
-ushort character::GetBodyPartColorC(ushort Index) const
+ushort character::GetBodyPartColorC(ushort Index, bool) const
 {
   if(Index == TORSO_INDEX)
     return 0; // reserved for future use
@@ -2895,7 +2896,7 @@ ushort character::GetBodyPartColorC(ushort Index) const
     }
 }
 
-ushort character::GetBodyPartColorD(ushort Index) const
+ushort character::GetBodyPartColorD(ushort Index, bool) const
 {
   if(Index == TORSO_INDEX)
     return GetTorsoSpecialColor();
@@ -2906,18 +2907,18 @@ ushort character::GetBodyPartColorD(ushort Index) const
     }
 }
 
-void character::UpdateBodyPartPicture(ushort Index)
+void character::UpdateBodyPartPicture(ushort Index, bool Severed)
 {
   bodypart* BodyPart = GetBodyPart(Index);
 
   if(BodyPart)
     {
-      BodyPart->SetBitmapPos(GetBodyPartBitmapPos(Index));
-      BodyPart->GetMainMaterial()->SetSkinColor(GetBodyPartColorA(Index));
-      BodyPart->SetMaterialColorB(GetBodyPartColorB(Index));
-      BodyPart->SetMaterialColorC(GetBodyPartColorC(Index));
-      BodyPart->SetMaterialColorD(GetBodyPartColorD(Index));
-      BodyPart->SetSpecialFlags(GetSpecialBodyPartFlags(Index));
+      BodyPart->SetBitmapPos(GetBodyPartBitmapPos(Index, Severed));
+      BodyPart->GetMainMaterial()->SetSkinColor(GetBodyPartColorA(Index, Severed));
+      BodyPart->SetMaterialColorB(GetBodyPartColorB(Index, Severed));
+      BodyPart->SetMaterialColorC(GetBodyPartColorC(Index, Severed));
+      BodyPart->SetMaterialColorD(GetBodyPartColorD(Index, Severed));
+      BodyPart->SetSpecialFlags(GetSpecialBodyPartFlags(Index, Severed));
       BodyPart->UpdatePictures();
     }
 }
@@ -3153,9 +3154,9 @@ void character::AddPepsiConsumeEndMessage() const
 
 void character::ReceiveDarkness(long SizeOfEffect)
 {
-  EditExperience(INTELLIGENCE, -(SizeOfEffect << 6));
-  EditExperience(WISDOM, -(SizeOfEffect << 6));
-  EditExperience(CHARISMA, -(SizeOfEffect << 6));
+  EditExperience(INTELLIGENCE, -(SizeOfEffect << 3));
+  EditExperience(WISDOM, -(SizeOfEffect << 3));
+  EditExperience(CHARISMA, -(SizeOfEffect << 3));
 
   if(IsPlayer())
     game::DoEvilDeed(short(SizeOfEffect / 50));
@@ -4541,10 +4542,10 @@ float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
   float Danger = Enemy->GetTimeToKill(this, UseMaxHP) / GetTimeToKill(Enemy, UseMaxHP);
 
   if(!Enemy->CanBeSeenBy(this, true))
-    Danger *= 0.5f;
+    Danger *= 0.25f;
 
   if(!CanBeSeenBy(Enemy, true))
-    Danger *= 2.0f;
+    Danger *= 4.0f;
 
   return Limit(Danger, -100.0f, 100.0f);
 }

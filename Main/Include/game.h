@@ -135,7 +135,7 @@ class game
   static god* GetGod(ushort Index) { return God[Index]; }
   static const std::string& GetAlignment(ushort Index) { return Alignment[Index]; }
   static void ApplyDivineTick();
-  static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
+  static void ApplyDivineAlignmentBonuses(god*, bool, short = 10);
   static vector2d GetDirectionVectorForKey(int);
   static std::string SaveName(const std::string& = "");
   static bool EyeHandler(long, long);

@@ -415,7 +415,7 @@ bool commandsystem::Talk(character* Char)
   else if(Characters == 1)
     {
       ToTalk->BeTalkedTo();
-      Char->EditExperience(CHARISMA, 10);
+      Char->EditExperience(CHARISMA, 5);
       Char->EditAP(-1000);
       return true;
     }
@@ -439,7 +439,7 @@ bool commandsystem::Talk(character* Char)
       if(Dude)
 	{
 	  Dude->BeTalkedTo();
-	  Char->EditExperience(CHARISMA, 10);
+	  Char->EditExperience(CHARISMA, 5);
 	  Char->EditAP(-1000);
 	  return true;
 	}

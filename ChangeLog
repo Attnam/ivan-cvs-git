@@ -9,6 +9,18 @@ is also provided AS IS and is probably completely unreadable.
 
 March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Severed bodyparts of humans look again correct
+	* The dificulty penalty for being invisible is now insane
+	* Wishing invisiblity-confering items is again allowed
+	* Reduced the penalty for eating frog flesh (it was worse than committing
+	  suicide)
+	* Bunny, large bunny and Vladimir (Vile Lurking Agressive Devourer with Infernal
+	  Muscles Intended to Rampage) the gigantic carnivorous mutant bunny added to
+	  char.pcx by Kahvi
+	* The game now compiles correctly on gcc 2.952 without special switches
+
+March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Gauntlet armor pictures are again shown correctly
 
 March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>

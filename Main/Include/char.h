@@ -727,14 +727,14 @@ class character : public entity, public id
   virtual void VirtualConstructor(bool) { }
   void LoadDataBaseStats();
   void InstallDataBase();
-  virtual vector2d GetBodyPartBitmapPos(ushort) const;
-  virtual ushort GetBodyPartColorA(ushort) const;
-  virtual ushort GetBodyPartColorB(ushort) const;
-  virtual ushort GetBodyPartColorC(ushort) const;
-  virtual ushort GetBodyPartColorD(ushort) const;
+  virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorA(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorB(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorC(ushort, bool = false) const;
+  virtual ushort GetBodyPartColorD(ushort, bool = false) const;
   virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
-  void UpdateBodyPartPicture(ushort);
+  void UpdateBodyPartPicture(ushort, bool = false);
   ushort ChooseBodyPartToReceiveHit(float, float);
   virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartMaterial(ushort, ulong) const;
@@ -765,7 +765,7 @@ class character : public entity, public id
   virtual std::string KickNoun() const;
   virtual std::string BiteNoun() const;
   virtual bool AttackIsBlockable(uchar) const { return true; }
-  virtual uchar GetSpecialBodyPartFlags(ushort) const;
+  virtual uchar GetSpecialBodyPartFlags(ushort, bool = false) const;
   stack* Stack;
   long NP, AP;
   bool Player;
