@@ -1,0 +1,30 @@
+Weapons:
+
+hammer of thunderbolts - lightning animation, electricity damage
+poleaxe of unholy power - energy damage
+wormhole spear - teleports the enemy
+mace of hellfire - causes an explosion
+whip of thievery - disarms the enemy
+
+Armor:
+
+cloak of displacement - when the owner is being hit, this occasionally displaces him
+reflector shield - reverses the direction of beams
+gauntlets of strength - +x arm str
+gauntlets of dexterity - +x dexterity
+armor of great health - +x end
+helm of piercing perception - +x per
+helm of understanding - +x wisdom
+helm of innovation - +x intelligence
+helm of attractivity - +x charisma
+spiked boots - more kicking damage
+sandals of Hermes - flying
+girdle of carrying - +x% carrying strength
+amulet of improbability - causes odd improbabilities
+
+
+Inside jokes:
+
+Blessed Boxer-shorts of Protection from Elpuri
+Holy Toesocks
+Windows 95 Master CD

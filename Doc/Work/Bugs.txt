@@ -48,3 +48,5 @@ new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword wit
 Can one block when fainted?
 Wand of resurrection doesn't work
 DonateSlotTo bugs.
+RestoreBodyParts() may crash.
+AddScoreEntry bugs.
