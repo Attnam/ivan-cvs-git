@@ -33,3 +33,4 @@ Skripti/editori.
 Asekokemus.
 Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
 Humanoidin armorkuvat.
+Ei alttareita ekalle levelille.
