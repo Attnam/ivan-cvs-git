@@ -7,7 +7,7 @@ Kannibalismi.
 Ennerscream hajottamaan potioneita sekä maasta että inventorioista.
 (läheltä huutaminen voisi hajottaa myös plate maileja)
 Pimeydelle vaikutuksia.
-Kickille vielä muutakin käyttöä = ovien potkiminen.
+////Kickille vielä muutakin käyttöä = ovien potkiminen.
 ////Avatut cannit.
 Asetaidot.
 Tiimit.
