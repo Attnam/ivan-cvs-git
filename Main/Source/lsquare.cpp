@@ -1184,7 +1184,7 @@ void lsquare::SpillFluid(character* Spiller, material* Liquid, ushort HitPercent
       if(Spiller)
 	Spiller->Hostility(GetCharacter());
 
-      GetCharacter()->ReceiveFluidSpill(Liquid, RAND() % HitPercent + 1);
+      GetCharacter()->ReceiveFluidSpill(Liquid, (HitPercent >> 1) + RAND() % ((HitPercent >> 1) + 1));
     }
 
   GetStack()->ReceiveFluidSpill(Liquid);

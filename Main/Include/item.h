@@ -394,6 +394,7 @@ class item : public object
   virtual head* Behead() { return 0; }
   virtual bool IsGorovitsFamilyRelic() const { return false; }
   virtual bool HasLock() const { return false; }
+  virtual bool EffectIsGood() const { return false; }
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

@@ -600,7 +600,7 @@ holybanana /* materialcontainer->banana-> */
 	Score = 500;
 	Price = 1000;
 	Adjective = "holy";
-	PostFix = "of Liukas Vipro";
+	PostFix = "of Oily Orpiv";
 	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	Roundness = 20;

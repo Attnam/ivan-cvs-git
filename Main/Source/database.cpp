@@ -424,6 +424,7 @@ template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::
   ANALYZE_DATA(ConsumeWisdomLimit);
   ANALYZE_DATA(AttachedGod);
   ANALYZE_DATA(BreatheMessage);
+  ANALYZE_DATA(EffectIsGood);
 
   return Found;
 }

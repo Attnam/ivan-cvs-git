@@ -38,6 +38,7 @@ material
 	CanHaveParasite = false;
 	/* DigProductMaterial defaults to Config */
 	/* Obligatory: AttachedGod */
+	EffectIsGood = false;
 
 	Config IRON;
 	{
@@ -709,7 +710,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 40;
 		Density = 2000;
 		ConsumeType = CT_BONE;
-		Color = rgb16(180, 180, 180);
+		Color = rgb16(210, 210, 210);
 		NutritionValue = 500;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
@@ -821,6 +822,7 @@ liquid
 		HitMessage = HM_OMMEL_URINE;
 		Alpha = 150;
 		AttachedGod = NEFAS;
+		EffectIsGood = true;
 	}
 
 	Config PEPSI;
@@ -859,6 +861,7 @@ liquid
 		HitMessage = HM_HEALING_LIQUID;
 		Alpha = 150;
 		AttachedGod = SEGES;
+		EffectIsGood = true;
 	}
 
 	Config BLOOD;
@@ -913,6 +916,7 @@ liquid
 		ExplosivePower = 4000;
 		PriceModifier = 500;
 		AttachedGod = NEFAS;
+		EffectIsGood = true;
 	}
 
 	Config ANTIDOTE_LIQUID;
@@ -928,6 +932,7 @@ liquid
 		EffectStrength = 50;
 		PriceModifier = 1000;
 		AttachedGod = SEGES;
+		EffectIsGood = true;
 	}
 
 	Config VODKA;
@@ -944,6 +949,7 @@ liquid
 		ExplosivePower = 20000;
 		PriceModifier = 500;
 		AttachedGod = NEFAS;
+		EffectIsGood = true;
 	}
 
 	Config TROLL_BLOOD;
@@ -961,6 +967,7 @@ liquid
 		EffectStrength = 50;
 		PriceModifier = 500;
 		AttachedGod = CRUENTUS;
+		EffectIsGood = true;
 	}
 }
 
@@ -1238,6 +1245,7 @@ flesh
 		Density = 1000;
 		Effect = EFFECT_ESP;
 		AttachedGod = LEGIFER;
+		EffectIsGood = true;
 	}
 
 	Config MUSHROOM_FLESH;

@@ -1436,7 +1436,9 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
 
   if(Succeeded)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK);
+
   std::string DeathMsg = "killed by a flying " + Thingy->GetName(UNARTICLED);
+
   if(CheckDeath(DeathMsg, Thrower))
     return;
 
@@ -1446,9 +1448,9 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
     DeActivateVoluntaryAction("The attack interupts you.");
 }
 
-bool character::DodgesFlyingItem(item*, float ToHitValue)
+bool character::DodgesFlyingItem(item* Item, float ToHitValue)
 {
-  return RAND() % ushort(100 + ToHitValue / DodgeValue * 100) < 100;
+  return !Item->EffectIsGood() && RAND() % ushort(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
 void character::GetPlayerCommand()

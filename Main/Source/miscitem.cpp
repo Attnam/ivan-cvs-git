@@ -19,6 +19,7 @@ vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMater
 
 bool potion::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
 bool potion::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
+bool potion::EffectIsGood() const { return GetContainedMaterial() && GetContainedMaterial()->EffectIsGood(); }
 
 ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 

@@ -55,6 +55,7 @@ struct materialdatabase
   ushort ConsumeWisdomLimit;
   uchar AttachedGod;
   std::string BreatheMessage;
+  bool EffectIsGood;
 };
 
 class materialprototype
@@ -135,6 +136,7 @@ class material
   DATA_BASE_VALUE(ushort, DigProductMaterial);
   DATA_BASE_VALUE(ushort, ConsumeWisdomLimit);
   DATA_BASE_VALUE(uchar, AttachedGod);
+  DATA_BASE_BOOL(EffectIsGood);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }

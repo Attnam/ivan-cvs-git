@@ -142,6 +142,7 @@ class ITEM
   virtual bool IsExplosive() const;
   virtual bool ReceiveDamage(character*, ushort, ushort);
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
+  virtual bool EffectIsGood() const;
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string&, bool) const;

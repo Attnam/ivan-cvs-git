@@ -114,7 +114,7 @@ uchar item::HitCharacter(character* Thrower, character* Dude, ushort Damage, flo
   if(Dude->Catches(this))
     return CATCHED;
 
-  if(Thrower)
+  if(Thrower && !EffectIsGood())
     Thrower->Hostility(Dude);
 
   if(Dude->DodgesFlyingItem(this, ToHitValue)) 
