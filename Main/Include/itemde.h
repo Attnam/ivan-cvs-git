@@ -1210,6 +1210,24 @@ class ITEM
  virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
  virtual void VirtualConstructor(bool);
 );
+
+class ITEM
+(
+ poleaxeofmjolak,
+ meleeweapon,
+public:
+ virtual void ReceiveHitEffect(character*, character*);
+);
+
+
+class ITEM
+(
+ spearofvermis,
+ meleeweapon,
+public:
+ virtual void ReceiveHitEffect(character*,character*);
+);
+
 #endif
 
 

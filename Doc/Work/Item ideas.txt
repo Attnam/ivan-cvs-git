@@ -1,8 +1,8 @@
 Weapons:
 
 hammer of thunderbolts - lightning animation, electricity damage
-poleaxe of unholy power - energy damage
-wormhole spear - teleports the enemy
+//poleaxe of unholy power - energy damage (renamed to Poleaxe of Mjolak)
+//wormhole spear - teleports the enemy (renamed to Spear of Vermis)
 mace of hellfire - causes an explosion
 whip of thievery - disarms the enemy
 

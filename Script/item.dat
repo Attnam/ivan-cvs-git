@@ -1374,3 +1374,52 @@ flamingsword
 	Roundness = 10;
 	BaseEmitation = 320;
 }
+
+
+poleaxeofmjolak
+{
+	Category = WEAPON;
+	ContainedMaterialConfig == 0;
+	DefaultSize = 225;
+	Possibility = 3;
+	InHandsPic = 160, 176;
+	WeaponCategory = AXES;
+	DefaultMainVolume = 2500;
+	DefaultSecondaryVolume = 2000;
+	StrengthModifier = 150;
+	BitmapPos = 0, 80;
+	FormModifier = 150;
+	MainMaterialConfig = { 2, IRON, MITHRIL; }
+	SecondaryMaterialConfig == BRONZE;
+	MaterialConfigChances = { 2, 50, 10; }
+	Roundness = 20;
+	IsTwoHanded = true;
+	NameSingular = "poleaxe";
+	PostFix = "named Mjolak";
+	ArticleMode = DEFINITEARTICLE;
+	Alias == "Mjolak";
+}
+
+spearofvermis
+{
+	Category = WEAPON;
+	ContainedMaterialConfig == 0;
+	DefaultSize = 200;
+	Possibility = 100;
+	InHandsPic = 160, 96;
+	WeaponCategory = SPEARS;
+	StrengthModifier = 75;
+	BitmapPos = 16, 144;
+	FormModifier = 200;
+	DefaultMainVolume = 200;
+	DefaultSecondaryVolume = 1600;
+	OfferModifier = 10000;
+	NameSingular = "spear";
+	PostFix = "named Vermis";
+	MainMaterialConfig = { 6, WOOD, BONE, COPPER, BRONZE, IRON, MITHRIL; }
+	SecondaryMaterialConfig == WOOD;
+	MaterialConfigChances = { 6, 500, 50, 250, 150, 50, 10; }
+	Roundness = 10;
+	IsTwoHanded = true;
+	Alias == "Vermis";
+}

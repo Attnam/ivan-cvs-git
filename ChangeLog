@@ -1,3 +1,9 @@
+July 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added poleaxe named Mjolak 
+	* Added spear named Vermis 
+	* Both have currently _BAD_ messages. The system is not ready yet.
+	
 July 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added system to estimate the danger of a monster relative to another

@@ -3224,3 +3224,23 @@ meleeweapon::~meleeweapon()
   delete SecondaryMaterial;
   delete ContainedMaterial;
 }
+
+void poleaxeofmjolak::ReceiveHitEffect(character* Enemy, character* Hitter)
+{
+  if(!(RAND() % 5))
+    {
+      if(Enemy->ReceiveDamage(Hitter, 2 + (RAND() & 1), FIRE, ALL))
+	{
+	  ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
+	}
+    }
+}
+
+void spearofvermis::ReceiveHitEffect(character* Enemy, character* Hitter)
+{
+  if(RAND() & 1)
+    {
+      Enemy->TeleportRandomly();
+      ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
+    }
+}
