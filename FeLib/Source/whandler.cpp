@@ -21,9 +21,11 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
       }
 }
 
-void globalwindowhandler::UpdateTick()
+ulong globalwindowhandler::UpdateTick()
 {
   Tick = clock() * 10 / CLOCKS_PER_SEC;
+  return Tick;
+
 }
 
 #ifdef __DJGPP__
