@@ -20,6 +20,8 @@ November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* It is now possible (and necessary) to specify material when polymorphing
 	  into a golem
 	* Leg pictures' MColor 3 is now allocated for boots
+	* Carnivorous plants' color have been adjusted: normal are green, greater blue
+	  and the mother is red
 	* Genetrix vesana no longer creates plants around dead members of the player
 	  team
 	* Magical whistle effect no longer attemps to teleport dead members of the
