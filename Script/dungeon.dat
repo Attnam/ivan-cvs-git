@@ -174,6 +174,11 @@ Dungeon 0;
 			{
 				OverTerrain=pepsi stairsdown;
 			}
+
+			Square, Pos 3,5;
+			{
+				IsDownStairs=true;
+			}
 		}
 	}
 
@@ -199,9 +204,7 @@ Dungeon 0;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineOwner=16;
-
-			/* Altar of Erado should be added once gods are prototyped */
+			DivineOwner=17;
 
 			Square, Pos 3,1;
 			{

@@ -30,7 +30,7 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
 character* protosystem::BalancedCreateMonster(float Multiplier)
 {
-	for(ushort c = 0; ; ++c)
+	for(ushort c = 0;; ++c)
 	{
 		ushort Chosen = 1 + rand() % protocontainer<character>::GetProtoAmount();
 
@@ -41,7 +41,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier)
 
 		float Danger = Monster->Danger(), Difficulty = game::Difficulty();
 
-		if(c == 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
+		if(c == 49 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
 		{
 			Monster->SetTeam(game::GetTeam(1));
 			return Monster;
