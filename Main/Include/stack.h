@@ -64,12 +64,12 @@ class stack
   long Score() const;
   bool Polymorph();
   void ReceiveSound(float);
-  void StruckByWandOfStriking(character*);
+  void StruckByWandOfStriking(character*, std::string);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
   levelsquare* GetLevelSquareTrulyUnder() const { return (levelsquare*)GetSquareTrulyUnder(); }
   void ImpactDamage(ushort, bool);
-  void ReceiveFireDamage(character*, long);
+  void ReceiveFireDamage(character*, std::string, long);
  private:
   void Optimize(ushort);
   square* SquareUnder;

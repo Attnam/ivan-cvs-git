@@ -333,7 +333,15 @@ bool wand::Apply(character* Terrorist, stack* MotherStack)
 
   MotherStack->RemoveItem(MotherStack->SearchItem(this));
   SetExists(false);
-  Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, Terrorist->GetLevelSquareUnder()->GetPos(), 40);
+
+  std::string DeathMsg;
+
+  if(Terrorist->GetIsPlayer())
+    DeathMsg = "exploded himself by breaking a wand";
+  else
+    DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
+
+  Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLevelSquareUnder()->GetPos(), 40);
   return true;
 }
 
@@ -345,7 +353,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
       return true;
     }
 
-  Beam(Zapper, Direction, 5);
+  Beam(Zapper, "killed by a bug in the polymorph code", Direction, 5);
 
   SetTimesUsed(GetTimesUsed() + 1);
   return true;
@@ -496,7 +504,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
       ADD_MESSAGE("Nothing happens.");
       return true;
     }
-  Beam(Zapper, Direction, 15);
+  Beam(Zapper, "killed by a wand of striking", Direction, 15);
 	
   SetTimesUsed(GetTimesUsed() + 1);
 
@@ -679,7 +687,15 @@ bool backpack::Apply(character* Terrorist, stack* MotherStack)
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, Terrorist->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+
+      std::string DeathMsg;
+
+      if(Terrorist->GetIsPlayer())
+	DeathMsg = std::string("exploded himself with ") + Name(INDEFINITE);
+      else
+	DeathMsg = std::string("kamikazed by ") + Terrorist->Name(INDEFINITE);
+
+      Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
       return true;
     }
   else
@@ -734,7 +750,7 @@ bool holybook::Read(character* Reader)
   return false;
 }
 
-bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
+bool wand::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* MotherStack, long)
 {
   if(!(RAND() % 10))
     {
@@ -743,14 +759,14 @@ bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
       return true;
     }
   else
     return false;
 }
 
-bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
+bool backpack::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* MotherStack, long)
 {
   if(!(RAND() % 3))
     {
@@ -759,7 +775,7 @@ bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
       return true;
     }
   else
@@ -776,7 +792,7 @@ std::string wand::Name(uchar Case) const
     return NameWithMaterial(Case) + " (used " + TimesUsed + " times)";
 }
 
-bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long)
+bool scroll::ReceiveFireDamage(character*, std::string, stack* MotherStack, long)
 {
   if(!(RAND() % 10) && GetMaterial(0)->IsFlammable())
     {
@@ -791,7 +807,7 @@ bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long)
     return false;
 }
 
-void wand::Beam(character* Zapper, uchar Direction, uchar Range)
+void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar Range)
 {
   vector2d CurrentPos = Zapper->GetPos();
 
@@ -805,13 +821,13 @@ void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 
 	if(!(Temp->GetOverLevelTerrain()->GetIsWalkable()))
 	  {
-	    BeamEffect(Zapper, Direction, Temp);
+	    BeamEffect(Zapper, DeathMsg, Direction, Temp);
 	    break;
 	  }
 	else
 	  {	
 	    CurrentPos += game::GetMoveVector(Direction);
-	    BeamEffect(Zapper, Direction, Temp);
+	    BeamEffect(Zapper, DeathMsg, Direction, Temp);
 
 	    if(Temp->CanBeSeen(true))
 	      Temp->DrawParticles(GetBeamColor(), Direction);
@@ -820,24 +836,24 @@ void wand::Beam(character* Zapper, uchar Direction, uchar Range)
   else
     {
       levelsquare* Where = Zapper->GetLevelSquareUnder();
-      BeamEffect(Zapper, Direction, Where);
+      BeamEffect(Zapper, DeathMsg, Direction, Where);
 
       if(Where->CanBeSeen(true))
 	Where->DrawParticles(GetBeamColor(), Direction);
     }
 }
 
-void wandofpolymorph::BeamEffect(character* Zapper, uchar, levelsquare* LevelSquare)
+void wandofpolymorph::BeamEffect(character* Zapper, std::string, uchar, levelsquare* LevelSquare)
 {
   LevelSquare->PolymorphEverything(Zapper);
 }
 
-void wandofstriking::BeamEffect(character* Who, uchar Dir, levelsquare* Where) 
+void wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
 { 
-  Where->StrikeEverything(Who, Dir); 
+  Where->StrikeEverything(Who, DeathMsg, Dir); 
 }
 
-bool holybook::ReceiveFireDamage(character*, stack* MotherStack, long)
+bool holybook::ReceiveFireDamage(character*, std::string, stack* MotherStack, long)
 {
   if(!(RAND() % 2) && GetMaterial(0)->IsFlammable())
     {
@@ -852,7 +868,7 @@ bool holybook::ReceiveFireDamage(character*, stack* MotherStack, long)
     return false;
 }
 
-bool wand::StruckByWandOfStriking(character* Striker, stack* MotherStack) 
+bool wand::StruckByWandOfStriking(character* Striker, std::string DeathMsg, stack* MotherStack) 
 { 
   if(!(RAND() % 10))
     {
@@ -861,14 +877,14 @@ bool wand::StruckByWandOfStriking(character* Striker, stack* MotherStack)
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
       return true;
     }
   else
     return false;
 }
 
-bool backpack::StruckByWandOfStriking(character* Striker, stack* MotherStack) 
+bool backpack::StruckByWandOfStriking(character* Striker, std::string DeathMsg, stack* MotherStack) 
 { 
   if(RAND() % 3)
     {
@@ -877,7 +893,7 @@ bool backpack::StruckByWandOfStriking(character* Striker, stack* MotherStack)
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
       return true;
     }
   else

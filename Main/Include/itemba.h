@@ -74,7 +74,7 @@ class item : public object
   virtual void ChangeMainMaterial(material*);
   virtual void CheckPickUpEffect(character*) {}
   virtual uchar GetWeaponCategory() const;
-  virtual bool StruckByWandOfStriking(character*, stack*);
+  virtual bool StruckByWandOfStriking(character*, std::string, stack*);
   virtual float GetThrowStrengthModifier() const { return 1; }
   virtual bool UseThrowStrengthModifier() const { return false; }
   virtual bool GetStepOnEffect(character*) { return false; }
@@ -88,7 +88,7 @@ class item : public object
   virtual std::string GetConsumeVerb() const { return std::string("eating"); }
   virtual bool PolymorphSpawnable() const { return true; }
   virtual bool IsExplosive() const { return false; }
-  virtual bool ReceiveFireDamage(character*, stack*, long) { return false; }
+  virtual bool ReceiveFireDamage(character*, std::string, stack*, long) { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
  protected:
   virtual void SetDefaultStats() = 0;

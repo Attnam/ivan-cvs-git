@@ -71,7 +71,7 @@ class level : public area
   virtual room* GetRoom(uchar) const;
   virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
   virtual void AddRoom(room*);
-  virtual void Explosion(character*, vector2d, ushort);
+  virtual void Explosion(character*, std::string, vector2d, ushort, bool = true);
   virtual bool CollectCreatures(std::vector<character*>&, character*, bool);
   virtual void ApplyLevelSquareScript(squarescript*);
  protected:

@@ -99,7 +99,7 @@ class levelsquare : public square
   virtual void ChangeOverLevelTerrainAndUpdateLights(overlevelterrain*);
   virtual void DrawParticles(ushort, uchar);
   virtual void PolymorphEverything(character*);
-  virtual void StrikeEverything(character*, uchar);
+  virtual void StrikeEverything(character*, std::string, uchar);
  protected:
   groundlevelterrain* GroundLevelTerrain;
   overlevelterrain* OverLevelTerrain;

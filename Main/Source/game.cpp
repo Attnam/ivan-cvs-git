@@ -205,7 +205,7 @@ void game::Init(std::string Name)
       Running = true;
       iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
       CreateTeams();
-      SetPlayer(new genie);
+      SetPlayer(new human);
       Player->SetTeam(GetTeam(0));
       GetTeam(0)->SetLeader(Player);
       Petrus = 0;

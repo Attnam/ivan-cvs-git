@@ -222,7 +222,7 @@ uchar item::GetWeaponCategory() const
   return UNCATEGORIZED;
 }
 
-bool item::StruckByWandOfStriking(character*, stack* What) 
+bool item::StruckByWandOfStriking(character*, std::string, stack* What) 
 { 
   return ImpactDamage(10, What->GetLevelSquareUnder()->CanBeSeen(), What);
 }

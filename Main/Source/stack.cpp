@@ -441,10 +441,10 @@ void stack::ReceiveSound(float Strength)
     GetItem(x)->ReceiveSound(Strength, GetLevelSquareTrulyUnder()->CanBeSeen(), this);
 }
 
-void stack::StruckByWandOfStriking(character* Zapper)
+void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
 {
   for(ushort c = 0; c < GetItems();)
-    if(!GetItem(c)->StruckByWandOfStriking(Zapper, this))
+    if(!GetItem(c)->StruckByWandOfStriking(Zapper, DeathMsg, this))
       ++c;
 
   //for(ushort x = 0; x < GetItems(); ++x)
@@ -499,10 +499,10 @@ void stack::ImpactDamage(ushort Strength, bool ShowOnScreen)
       ++c;
 }
 
-void stack::ReceiveFireDamage(character* Burner, long SizeOfEffect)
+void stack::ReceiveFireDamage(character* Burner, std::string DeathMsg, long SizeOfEffect)
 {
   for(ushort c = 0; c < GetItems();)
-    if(!GetItem(c)->ReceiveFireDamage(Burner, this, SizeOfEffect))
+    if(!GetItem(c)->ReceiveFireDamage(Burner, DeathMsg, this, SizeOfEffect))
       ++c;
 }
 

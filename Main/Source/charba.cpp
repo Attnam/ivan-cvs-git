@@ -2158,7 +2158,7 @@ bool character::DodgesFlyingItem(item*, float Speed)
     return true;
 }
 
-void character::ReceiveFireDamage(character* Burner, long SizeOfEffect)
+void character::ReceiveFireDamage(character* Burner, std::string DeathMsg, long SizeOfEffect)
 {
   if(GetIsPlayer())
     ADD_MESSAGE("You burn.");
@@ -2171,7 +2171,7 @@ void character::ReceiveFireDamage(character* Burner, long SizeOfEffect)
   else
     SetHP(GetHP() - SizeOfEffect);
 
-  GetStack()->ReceiveFireDamage(Burner, SizeOfEffect);
+  GetStack()->ReceiveFireDamage(Burner, DeathMsg, SizeOfEffect);
 }
 
 void character::GetPlayerCommand()
@@ -2630,7 +2630,7 @@ void character::StateAutoDeactivation()
 	  }
 }
 
-void character::StruckByWandOfStriking(character* Zapper)
+void character::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
 {
   if(GetIsPlayer())
     ADD_MESSAGE("The wand hits you.");
@@ -2638,7 +2638,7 @@ void character::StruckByWandOfStriking(character* Zapper)
     if(GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
-  GetStack()->StruckByWandOfStriking(Zapper);
+  GetStack()->StruckByWandOfStriking(Zapper, DeathMsg);
 
   SetHP(GetHP() - 20 - RAND() % 11);
 

@@ -866,7 +866,7 @@ void level::MoveCharacter(vector2d From, vector2d To)
 
 ushort level::GetIdealPopulation() const 
 { 
-  return 10 + (game::GetCurrent() << 2); 
+  return 5 + (game::GetCurrent() * 3);
 }
 
 ushort level::GetLOSModifier() const
@@ -894,7 +894,7 @@ room* level::GetRoom(uchar Index) const
   return Room[Index];
 }
 
-void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
+void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
 {
   ushort EmitChange = 300 + Strength * 2;
 
@@ -990,7 +990,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 	character* Char = Square->GetCharacter();
 	ushort Damage = Strength / (DistanceSquare + 1);
 
-	if(Char)
+	if(Char && (HurtNeutrals || Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE))
 	  if(Char->GetIsPlayer())
 	    {
 	      PlayerDamage = Damage;
@@ -1013,13 +1013,13 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 	      });
 
 	      Char->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
-	      Char->ReceiveFireDamage(Terrorist, Damage);
+	      Char->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 	      Char->CheckGearExistence();
-	      Char->CheckDeath("killed by an explosion");
+	      Char->CheckDeath(DeathMsg);
 	    }
 
 	Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
-	Square->GetStack()->ReceiveFireDamage(Terrorist, Damage);
+	Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
 	if(Damage >= 20 && Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
 	  Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
@@ -1043,9 +1043,9 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
       });
 
       game::GetPlayer()->GetStack()->ImpactDamage(PlayerDamage, true);
-      game::GetPlayer()->ReceiveFireDamage(Terrorist, PlayerDamage);
+      game::GetPlayer()->ReceiveFireDamage(Terrorist, DeathMsg, PlayerDamage);
       game::GetPlayer()->CheckGearExistence();
-      game::GetPlayer()->CheckDeath("killed by an explosion");
+      game::GetPlayer()->CheckDeath(DeathMsg);
     }
 }
 

@@ -149,7 +149,7 @@ class CHARACTER
   virtual void HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() { return HealTimer; }
-  virtual void ReceiveFireDamage(character*, long) {}
+  virtual void ReceiveFireDamage(character*, std::string, long) {}
   virtual void Save(outputfile&) const;
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph() { return false; }

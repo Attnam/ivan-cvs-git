@@ -1044,39 +1044,39 @@ void levelsquare::DrawParticles(ushort Color, uchar)
     while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-void levelsquare::StrikeEverything(character* Zapper, uchar Direction)
+void levelsquare::StrikeEverything(character* Zapper, std::string DeathMsg, uchar Direction)
 {
-  GetStack()->StruckByWandOfStriking(Zapper);
+  GetStack()->StruckByWandOfStriking(Zapper, DeathMsg);
 
   switch(Direction)
     {
     case 0:
-      GetSideStack(UP)->StruckByWandOfStriking(Zapper);
-      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper);
+      GetSideStack(UP)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 1:
-      GetSideStack(UP)->StruckByWandOfStriking(Zapper);
+      GetSideStack(UP)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 2:
-      GetSideStack(UP)->StruckByWandOfStriking(Zapper);
-      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper);
+      GetSideStack(UP)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 3:
-      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper);
+      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 4:
-      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper);
+      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 5:
-      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper);
-      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper);
+      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 6:
-      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper);
+      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     case 7:
-      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper);
-      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper);
+      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper, DeathMsg);
       break;
     }
 
@@ -1084,7 +1084,7 @@ void levelsquare::StrikeEverything(character* Zapper, uchar Direction)
 
   if((Char = GetCharacter()))
     {
-      Char->StruckByWandOfStriking(Zapper);
+      Char->StruckByWandOfStriking(Zapper, DeathMsg);
       Zapper->Hostility(Char);
     }
 

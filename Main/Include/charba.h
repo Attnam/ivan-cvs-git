@@ -166,7 +166,7 @@ class character : public object
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   virtual void ReceiveBulimiaDamage();
-  virtual void ReceiveFireDamage(character*, long);
+  virtual void ReceiveFireDamage(character*, std::string, long);
   virtual void ReceiveNutrition(long);
   virtual void ReceiveOmleUrineEffect(long);
   virtual void ReceivePepsiEffect(long);
@@ -216,7 +216,7 @@ class character : public object
   virtual void EndFainted();
   virtual void EndConsuming();
   virtual void EndPolymorph();
-  virtual void StruckByWandOfStriking(character*);
+  virtual void StruckByWandOfStriking(character*, std::string);
   virtual void StateAutoDeactivation();
   virtual team* GetTeam() const { return Team; }
   virtual void SetTeam(team*);

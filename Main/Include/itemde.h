@@ -483,7 +483,7 @@ class ABSTRACT_ITEM
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } }
   virtual vector2d GetBitmapPos() const { return vector2d(16,176); }
   virtual vector2d GetInHandsPic() const { return vector2d(160,128); }
-  virtual bool ReceiveFireDamage(character*, stack*, long);
+  virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
  protected:
   virtual ushort GetFormModifier() const { return 40; }
 );
@@ -759,16 +759,16 @@ class ABSTRACT_ITEM
   virtual vector2d GetBitmapPos() const { return vector2d(0,288); }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
   virtual bool IsExplosive() const { return true; }
-  virtual bool ReceiveFireDamage(character*, stack*, long);
+  virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
   virtual std::string Name(uchar Case) const;
   virtual uchar GetCharges() const { return Charges; }
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual uchar GetTimesUsed() const { return TimesUsed; }
   virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
-  virtual void Beam(character*, uchar, uchar);
-  virtual void BeamEffect(character*, uchar, levelsquare*) {};
+  virtual void Beam(character*, std::string, uchar, uchar);
+  virtual void BeamEffect(character*, std::string, uchar, levelsquare*) {};
   virtual ushort GetBeamColor() const = 0;
-  virtual bool StruckByWandOfStriking(character*, stack*);
+  virtual bool StruckByWandOfStriking(character*, std::string, stack*);
  protected:
   virtual ushort GetFormModifier() const { return 80; }
   uchar Charges;
@@ -793,7 +793,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
   virtual bool PolymorphSpawnable() const { return false; }
-  virtual void BeamEffect(character*, uchar, levelsquare*);
+  virtual void BeamEffect(character*, std::string, uchar, levelsquare*);
   virtual ushort GetBeamColor() const { return BLUE; }
 );
 
@@ -918,7 +918,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
   virtual ushort GetBeamColor() const { return YELLOW; }
-  virtual void BeamEffect(character*, uchar, levelsquare*);
+  virtual void BeamEffect(character*, std::string, uchar, levelsquare*);
 );
 
 class ITEM
@@ -1060,8 +1060,8 @@ class ITEM
   virtual uchar GetConsumeMaterial() const { return 1; }
   virtual bool Apply(character*, stack*);
   virtual bool IsExplosive() const { return (GetMaterial(1) && GetMaterial(1)->IsExplosive()) ? true : false; }
-  virtual bool ReceiveFireDamage(character*, stack*, long);
-  virtual bool StruckByWandOfStriking(character*, stack*);
+  virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
+  virtual bool StruckByWandOfStriking(character*, std::string, stack*);
  protected:
   virtual std::string NameSingular() const { return "backpack"; }
   virtual ushort GetFormModifier() const { return 20; }
@@ -1089,7 +1089,7 @@ class ITEM
   virtual uchar GetOwnerGod() const { return OwnerGod; }
   virtual void SetOwnerGod(uchar);
   virtual bool Read(character*);
-  virtual bool ReceiveFireDamage(character*, stack*, long);
+  virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
  protected:
   virtual std::string NameSingular() const { return "holy book"; }
   virtual ushort GetFormModifier() const { return 30; }

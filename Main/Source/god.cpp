@@ -172,24 +172,26 @@ void valpurus::PrayBadEffect()
 void venius::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\"");
-  ADD_MESSAGE("A huge divine fire sweeps the surrounding area.");
+  ADD_MESSAGE("A huge firestorm engulf everything around you.");
 
-  DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+  game::GetCurrentLevel()->Explosion(game::GetPlayer(), "killed accidentally by " + Name(), game::GetPlayer()->GetPos(), 40, false);
+
+  /*DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
     character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
 
     if(Char && game::GetPlayer()->GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
       {
-	Char->ReceiveFireDamage(game::GetPlayer(), 20);
+	Char->ReceiveFireDamage(game::GetPlayer(), "killed accidentally by " + Name(), 20);
 	Char->CheckDeath(std::string("burned to death by the wrath of ") + Name());
       }
-  });
+  });*/
 }
 
 void venius::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
-  game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), 20);
+  game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), "killed accidentally by " + Name(), 20);
   game::GetPlayer()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 }
 
