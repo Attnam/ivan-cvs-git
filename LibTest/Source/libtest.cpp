@@ -131,7 +131,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 			return 0;
 	}
 
-	graphics::SwitchMode();
+	//graphics::SwitchMode();
 
 	char Buffer[100];
 

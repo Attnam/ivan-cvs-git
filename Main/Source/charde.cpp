@@ -699,7 +699,6 @@ void petrus::BeTalkedTo(character* Talker)
 		{
 			iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Petrus is happy!\n\nYou are victorious!");
 			game::RemoveSaves();
-			game::Quit();
 
 			if(!game::GetWizardMode())
 			{
@@ -708,6 +707,7 @@ void petrus::BeTalkedTo(character* Talker)
 				HScore.Draw();
 			}
 
+			game::Quit();
 			return;
 		}
 		else
@@ -748,7 +748,6 @@ void petrus::BeTalkedTo(character* Talker)
 
 		iosystem::TextScreen("Thou hast slain Elpuri, and Petrus is happy!\n\nYou are victorious!");
 		game::RemoveSaves();
-		game::Quit();
 
 		if(!game::GetWizardMode())
 		{
@@ -756,6 +755,8 @@ void petrus::BeTalkedTo(character* Talker)
 			highscore HScore;
 			HScore.Draw();
 		}
+
+		game::Quit();
 	}
 	else
 		if(!StoryState)

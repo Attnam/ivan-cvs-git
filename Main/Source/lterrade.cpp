@@ -356,7 +356,6 @@ void throne::SitOn(character* Sitter)
 	{
 		iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
 		game::RemoveSaves();
-		game::Quit();
 
 		if(!game::GetWizardMode())
 		{
@@ -365,6 +364,7 @@ void throne::SitOn(character* Sitter)
 			HScore.Draw();
 		}
 
+		game::Quit();
 		return;
 	}
 

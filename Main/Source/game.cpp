@@ -30,6 +30,8 @@
 #include "config.h"
 #include "femath.h"
 
+class quitrequest {};
+
 ushort game::Current;
 long game::BaseScore;
 bool game::InWilderness = false;
@@ -251,7 +253,9 @@ void game::Run()
 		if(!InWilderness)
 			GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();	// Temporary
 
-		objectpool::Be();
+		try { objectpool::Be(); }
+		catch(quitrequest) { }
+
 		objectpool::BurnTheDead();
 
 		if(!GetRunning())
@@ -319,6 +323,10 @@ void game::DeInitLuxTable()
 void game::Quit()
 {
 	Running = false;
+
+	/* This prevents monster movement etc. after death. */
+
+	throw quitrequest();
 }
 
 bool game::LOSHandler(vector2d Pos, vector2d Origo)

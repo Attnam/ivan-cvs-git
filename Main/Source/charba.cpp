@@ -781,7 +781,6 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 				{
 					iosystem::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
 					game::RemoveSaves();
-					game::Quit();
 
 					if(!game::GetWizardMode())
 					{
@@ -790,6 +789,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 						HScore.Draw();
 					}
 
+					game::Quit();
 					return true;
 				}
 
@@ -899,8 +899,6 @@ bool character::Quit()
 {
 	if(game::BoolQuestion("Thine Holy Quest is not yet compeleted! Really quit? [y/N]"))
 	{
-		game::Quit();
-
 		game::RemoveSaves();
 
 		if(!game::GetWizardMode())
@@ -910,6 +908,7 @@ bool character::Quit()
 			HScore.Draw();
 		}
 
+		game::Quit();
 		return true;
 	}
 	else
@@ -994,8 +993,6 @@ void character::Die(bool ForceMsg)
 
 	if(GetIsPlayer())
 	{
-		game::Quit();
-
 		iosystem::TextScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
 		if(!game::GetWizardMode())
@@ -1003,6 +1000,8 @@ void character::Die(bool ForceMsg)
 			highscore HScore;
 			HScore.Draw();
 		}
+
+		game::Quit();
 	}
 }
 
