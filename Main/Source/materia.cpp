@@ -136,6 +136,21 @@ material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Eater->ReceiveNutrition(GetNutritionValue() * Amount / 50);
+  if(Amount && Volume) 
+  {
+    if(DisablesPanicWhenConsumed() && Eater->TemporaryStateIsActivated(PANIC)) 
+    {
+      if(Eater->IsPlayer())
+      {
+	ADD_MESSAGE("You relax a bit.");
+      }
+      else if(Eater->CanBeSeenByPlayer())
+      {
+	ADD_MESSAGE("%s relaxs a bit.", Eater->CHAR_NAME(DEFINITE));	
+      }
+      Eater->DeActivateTemporaryState(PANIC);
+    }
+  }
 
   if(GetInteractionFlags() & AFFECT_INSIDE)
   {

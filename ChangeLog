@@ -6,6 +6,13 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * integrated code from Atomic:
+  * acid shield
+  * weeping blade
+  * amulet of warding (may not actually function? OR?)	
+	
 April 6 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
   * Corrected "if and ;" bug spotted by TheFallenOne222
 	

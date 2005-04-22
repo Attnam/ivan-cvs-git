@@ -3205,7 +3205,7 @@ void head::SignalPossibleUsabilityChange()
 
   if(!Master->IsInitializing() && HP > 0
      && Flags & BADLY_HURT && !(OldFlags & BADLY_HURT))
-    switch(RAND_N(7))
+    switch(RAND_N(8))
     {
      case 0:
      case 1:
@@ -3236,6 +3236,8 @@ void head::SignalPossibleUsabilityChange()
 	Master->EditExperience(INTELLIGENCE, -60, 1 << 12);
 
       break;
+     case 7:
+      Master->ForgetRandomThing();
     }
 }
 

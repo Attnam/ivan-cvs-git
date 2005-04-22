@@ -342,4 +342,28 @@ ITEM(decosadshirt, bodyarmor)
   ulong EquippedTicks;
 };
 
+ITEM(weepblade, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+};
+
+ITEM(daggerofvenom, meleeweapon)
+{
+ public:
+  daggerofvenom() { Enable(); }
+  virtual void Be();
+protected:
+  virtual truth CalculateHasBe() const { return true; }
+};
+
+
+ITEM(acidshield, armor)
+{
+ public:
+  virtual truth IsShield(const character*) const { return true; }
+  virtual void BlockEffect(character*, character*, item*, int Type);
+}; 
+
+
 #endif

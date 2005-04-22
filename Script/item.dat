@@ -2380,6 +2380,19 @@ amulet
     Price = 1000;
     AttachedGod = LEGIFER;
   }
+Config AMULET_OF_WARDING;
+  {
+    Possibility = 4;
+    PostFix = "of elemental protection";
+    MainMaterialConfig == ILLITHIUM;
+    CanBeCloned = false;
+    Price = 4000;
+    AttachedGod = LEGIFER;
+    FireResistance = 30;
+    ElectricityResistance = 30;
+    AcidResistance = 5;
+    PoisonResistance = 5;
+  } 
 }
 
 bodypart
@@ -3495,3 +3508,100 @@ holyhandgrenade
   Adjective = "holy";
   Alias == "gas grenade";
 }
+
+daggerofvenom
+  {
+    DefaultSize = 40;
+    Possibility = 15;
+    WeaponCategory = SMALL_SWORDS;
+    DefaultMainVolume = 25;
+    DefaultSecondaryVolume = 25;
+    BitmapPos = 48, 256;
+    FormModifier = 75;
+    StrengthModifier = 60;
+    NameSingular = "dagger";
+    PostFix = "of venom";
+    MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+    SecondaryMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+    MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+    Roundness = 20;
+    Price = 150;
+    AttachedGod = CLEPTIA;
+    WieldedBitmapPos = 160, 288;
+    EnchantmentPlusChance = 2;
+    DamageFlags = SLASH|PIERCE;
+
+   Config BROKEN;
+   {
+      Possibility = 10;
+      BitmapPos = 48, 288;
+      WieldedBitmapPos = 176, 288;
+      EnchantmentPlusChance = 4;
+   }
+}
+
+weepblade
+{
+  DefaultSize = 70;
+  Possibility = 10;
+  WeaponCategory = SMALL_SWORDS;
+  DefaultMainVolume = 70;
+  DefaultSecondaryVolume = 30;
+  BitmapPos = 48, 240;
+  FormModifier = 80;
+  StrengthModifier = 90;
+  NameSingular = "blade";
+  Adjective = "weeping";
+  MainMaterialConfig = {6, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL; }
+  SecondaryMaterialConfig = {6, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL; }
+  MaterialConfigChances = {6, 420, 390, 364, 210, 195, 182; }
+  Roundness = 10;
+  Price = 250;
+  AttachedGod = SCABIES;
+  WieldedBitmapPos = 160, 16;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH|PIERCE;
+
+  Config BROKEN;
+  {
+    Possibility = 10;
+    BitmapPos = 48, 272;
+    WieldedBitmapPos = 176, 208;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+
+acidshield /*armor ->*/
+{
+  Possibility = 10;
+  DefaultSize = 70;
+  StrengthModifier = 165;
+  DefaultMainVolume = 350;
+  Category = SHIELD;
+  FormModifier = 15;
+  MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE; }
+  MaterialConfigChances = { 5, 200, 300, 150, 30, 30; }
+  EnchantmentPlusChance = 0;
+  AcidResistance = 1;
+  NameSingular = "acid shield";
+  BitmapPos = 32, 336;
+  WeaponCategory = SHIELDS;
+  CanBeBroken = true;
+  WieldedBitmapPos = 128, 32;
+  AttachedGod = SCABIES;
+ 
+  Config BROKEN;
+  {
+    Possibility = 3;
+    DefaultSize = 45;
+    FormModifier = 20;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE, MITHRIL; }
+    MaterialConfigChances = { 6, 150, 250, 200, 60, 40, 20; }
+    EnchantmentPlusChance = 1;
+  }
+}
+
+

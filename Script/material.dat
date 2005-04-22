@@ -55,6 +55,7 @@ material
   BodyFlags = USE_MATERIAL_ATTRIBUTES;
   InteractionFlags = CAN_DISSOLVE;
   Stickiness = 0;
+  DisablesPanicWhenConsumed = false;
 }
 
 solid
@@ -1546,6 +1547,7 @@ liquid
     AttachedGod = NEFAS;
     CommonFlags = Base|IS_VALUABLE;
     InteractionFlags = CAN_EXPLODE|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config TROLL_BLOOD;

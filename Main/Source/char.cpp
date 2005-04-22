@@ -4327,6 +4327,8 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 
       Blocker->WeaponSkillHit(Enemy->CalculateWeaponSkillHits(this));
       Blocker->ReceiveDamage(this, Damage, PHYSICAL_DAMAGE);
+   
+      Blocker->BlockEffect(this, Enemy, Weapon, Type);    
 
       if(Weapon)
 	Weapon->ReceiveDamage(Enemy, Damage - NewDamage, PHYSICAL_DAMAGE);
@@ -9620,3 +9622,33 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
     }
   }
 }
+
+
+/* Should probably do more. Now only makes Player forget gods */
+truth character::ForgetRandomThing()
+{
+  if(IsPlayer())
+  {
+    /* hopefully this code isn't some where else */
+    std::vector<god*> Known;
+    for(int c = 0; c < GODS; ++c)
+    {
+      if(game::GetGod(c)->IsKnown())
+      {
+	Known.push_back(game::GetGod(c));
+      }
+    }
+    if(Known.empty())
+      return false;
+    int RandomGod = RAND_N(Known.size());
+    Known.at(RAND_N(Known.size()))->SetIsKnown(false);
+    ADD_MESSAGE("You forget how to pray to %s.", Known.at(RandomGod)->GetName());
+    return true;
+  }
+  return false;
+}
+
+int character::CheckForBlock(character* Enemy, item* Weapon, double ToHitValue, int Damage, int Success, int Type)
+{
+  return Damage; 
+};

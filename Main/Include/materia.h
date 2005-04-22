@@ -64,6 +64,7 @@ struct materialdatabase : public databasebase
   int HardenedMaterial;
   int IntelligenceRequirement;
   int Stickiness;
+  truth DisablesPanicWhenConsumed;
 };
 
 class materialprototype
@@ -206,6 +207,7 @@ class material
   virtual truth IsSparkling() const;
   material* Duplicate() const { return DataBase->ProtoType->Clone(this); }
   truth IsStuckTo(const character*) const;
+  DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
  protected:
   virtual void PostConstruct() { }
   void Initialize(int, long, truth);

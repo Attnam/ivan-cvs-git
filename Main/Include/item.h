@@ -545,6 +545,7 @@ class item : public object
   truth IsEquipped() const;
   festring GetExtendedDescription() const;
   virtual const character* FindCarrier() const;
+  virtual void BlockEffect(character*, character*, item*, int type) { } 
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

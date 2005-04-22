@@ -575,7 +575,7 @@ class character : public entity, public id
   virtual int GetRandomStepperBodyPart() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  virtual int CheckForBlock(character*, item*, double, int Damage, int, int) { return Damage; }
+  virtual int CheckForBlock(character*, item*, double, int, int, int);
   int CheckForBlockWithArm(character*, item*, arm*, double, int, int, int);
   void AddBlockMessage(const character*, const item*, const festring&, truth) const;
   character* GetPolymorphBackup() const { return PolymorphBackup; }
@@ -1026,6 +1026,7 @@ class character : public entity, public id
   virtual void ApplySpecialAttributeBonuses() { }
   void ReceiveMustardGas(int, long);
   void ReceiveMustardGasLiquid(int, long);
+  truth ForgetRandomThing(); 
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
