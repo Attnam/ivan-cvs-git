@@ -1125,7 +1125,7 @@ void kamikazedwarf::GetAICommand()
     StandIdleAI();
   else 
   {
-    if(!RAND_N(10)) 
+    if(!RAND_N(50)) 
     {
       SingRandomSong();
       return;
@@ -4959,11 +4959,27 @@ void kamikazedwarf::SingRandomSong()
 {
   festring Song;
   festring God = GetMasterGod()->GetName();
+  festring Bodypart;
 
   switch(RAND_N(9))
   {
    case 0:
-    Song = festring("On the palm of ") + God + " everybody fears everything";
+
+    switch(RAND_N(3))
+    {
+     case 0: 
+      Bodypart = "palm";
+      break;
+
+     case 1: 
+      Bodypart = "forehead";
+      break;
+
+     default:
+      Bodypart = "tongue";
+      break;
+    }
+    Song = festring("On the ") + Bodypart + festring(" of ") + God + " everybody fears everything";
     break;
    case 1:
     {
