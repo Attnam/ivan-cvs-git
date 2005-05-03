@@ -806,7 +806,7 @@ void item::SignalEnchantmentChange()
 
 long item::GetEnchantedPrice(int Enchantment) const
 {
-  return !PriceIsProportionalToEnchantment() ? item::GetPrice() : Max<int>(item::GetPrice() * Enchantment, 0);
+  return !PriceIsProportionalToEnchantment() ? item::GetPrice() : Max<int>(item::GetPrice() * Enchantment * Enchantment, 0);
 }
 
 item* item::Fix()

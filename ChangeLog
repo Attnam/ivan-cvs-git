@@ -8,6 +8,10 @@
 -----------------------------------------------------------------------------
 April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
+  * shopkeepers cannot be fooled by primed holy handgrenades.
+
+April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
   * integrated code from Atomic:
   * acid shield
   * weeping blade

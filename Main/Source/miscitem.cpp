@@ -3021,3 +3021,8 @@ col16 holyhandgrenade::GetMaterialColorB(int) const
 { 
   return MakeRGB16(200, 10, 10); 
 }
+
+bool holyhandgrenade::WillExplodeSoon() const
+{
+  return PinPulledTick != 0;
+}

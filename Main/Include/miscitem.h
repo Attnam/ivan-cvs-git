@@ -619,6 +619,7 @@ ITEM(holyhandgrenade, item)
   virtual void PostConstruct();
   virtual truth AllowAlphaEverywhere() const { return true; }
   virtual col16 GetMaterialColorB(int) const;
+  virtual bool WillExplodeSoon() const;
  protected:
   ulong PinPulledTick;
   int Count;
