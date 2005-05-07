@@ -1267,7 +1267,7 @@ truth commandsystem::LowerGodRelations(character*)
 truth commandsystem::GainDivineKnowledge(character*)
 {
   for(int c = 1; c <= GODS; ++c)
-    game::GetGod(c)->SetIsKnown(true);
+    game::LearnAbout(game::GetGod(c));
 
   return false;
 }

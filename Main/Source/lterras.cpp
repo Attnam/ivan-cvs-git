@@ -228,7 +228,7 @@ void altar::StepOn(character* Stepper)
   if(Stepper->IsPlayer() && !GetMasterGod()->IsKnown())
   {
     ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", GetMasterGod()->GetName(), GetMasterGod()->GetDescription());
-    GetMasterGod()->SetIsKnown(true);
+    game::LearnAbout(GetMasterGod());
   }
 }
 

@@ -1592,3 +1592,12 @@ const character* item::FindCarrier() const
 {
   return Slot[0]->FindCarrier();
 }
+
+/* returns 0 if not worn or wielded else the wearer */
+const character* item::GetWearer() const
+{
+  if(!GetSlot()->IsGearSlot())
+    return 0;
+  
+  return FindCarrier();
+}

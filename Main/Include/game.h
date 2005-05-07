@@ -418,6 +418,8 @@ class game
   static long GetTimeSpent();
   static void AddSpecialCursor(v2, int);
   static void RemoveSpecialCursors();
+  static void LearnAbout(god*);
+  static truth PlayerKnowsAllGods();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
@@ -521,6 +523,7 @@ class game
   static time_t GameBegan;
   static std::vector<v2> SpecialCursorPos;
   static std::vector<int> SpecialCursorData;
+  static truth PlayerHasReceivedAllGodsKnownBonus;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

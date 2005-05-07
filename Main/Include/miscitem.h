@@ -625,4 +625,9 @@ ITEM(holyhandgrenade, item)
   int Count;
   ulong PinPullerID;
 };
+
+ITEM(pantheonbook, holybook)
+{
+
+};
 #endif

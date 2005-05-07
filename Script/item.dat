@@ -3604,4 +3604,24 @@ acidshield /*armor ->*/
   }
 }
 
-
+pantheonbook
+{
+  DefaultSize = 30;
+  Possibility = 1; /* this is for each config */
+  Category = BOOK;
+  DefaultMainVolume = 2500;
+  StrengthModifier = 150;
+  BitmapPos = 32, 32;
+  FormModifier = 20;
+  Adjective = "large";
+  NameSingular = "saga of the patheon";
+  ArticleMode = FORCE_THE;
+  MainMaterialConfig == PARCHMENT;
+  Price = 500;
+  Roundness = 70;
+  IsTwoHanded = true;
+  CreateDivineConfigurations = true;
+  AttachedGod = VALPURUS;
+  WieldedBitmapPos = 176, 144;
+  ReadDifficulty = 1500;
+}

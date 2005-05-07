@@ -547,6 +547,7 @@ class item : public object
   virtual const character* FindCarrier() const;
   virtual void BlockEffect(character*, character*, item*, int type) { } 
   virtual bool WillExplodeSoon() const { return false; }
+  virtual const character* GetWearer() const;
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

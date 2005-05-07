@@ -115,6 +115,7 @@ character* game::Petrus = 0;
 time_t game::TimePlayedBeforeLastLoad;
 time_t game::LastLoad;
 time_t game::GameBegan;
+truth game::PlayerHasReceivedAllGodsKnownBonus;
 
 festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
@@ -372,6 +373,7 @@ truth game::Init(const festring& Name)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
+      bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to move, '>' to enter an area and '?' to view other commands.");
 
       if(IsXMas())
@@ -825,6 +827,7 @@ truth game::Save(const festring& SaveName)
   SaveFile << GetTimeSpent();
   /* or in more readable format: time() - LastLoad + TimeAtLastLoad */
 
+  SaveFile << PlayerHasReceivedAllGodsKnownBonus;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
   return true;
 }
@@ -903,8 +906,8 @@ int game::Load(const festring& SaveName)
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
   SaveFile >> DefaultWish >> DefaultChangeMaterial >> DefaultDetectMaterial;
   SaveFile >> TimePlayedBeforeLastLoad;
+  SaveFile >> PlayerHasReceivedAllGodsKnownBonus;
   LastLoad = time(0);
-
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
   return LOADED;
 }
@@ -3590,4 +3593,29 @@ void game::RemoveSpecialCursors()
 {
   SpecialCursorPos.clear();
   SpecialCursorData.clear();
+}
+
+void game::LearnAbout(god* Who)
+{
+  Who->SetIsKnown(true);
+
+  /* slighltly slow, but doesen't matter since
+     this is run so rarely */
+
+  if(PlayerKnowsAllGods() && !game::PlayerHasReceivedAllGodsKnownBonus)
+  {
+    GetPlayer()->ApplyAllGodsKnownBonus();
+    game::PlayerHasReceivedAllGodsKnownBonus = true;
+  }
+}
+
+truth game::PlayerKnowsAllGods()
+{
+  for(int c = 1; c <= GODS; ++c)
+  {
+    if(!GetGod(c)->IsKnown())
+      return false;
+  }
+
+  return true;
 }

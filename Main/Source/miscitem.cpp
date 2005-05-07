@@ -342,7 +342,8 @@ void holybook::FinishReading(character* Reader)
     }
     else
     {
-      GetMasterGod()->SetIsKnown(true);
+      game::LearnAbout(GetMasterGod());
+      game::LearnAbout(GetMasterGod());
       ADD_MESSAGE("You feel you master the magical rites of %s.", GetMasterGod()->GetName());
     }
   }

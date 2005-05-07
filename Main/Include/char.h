@@ -1027,6 +1027,7 @@ class character : public entity, public id
   void ReceiveMustardGas(int, long);
   void ReceiveMustardGasLiquid(int, long);
   truth ForgetRandomThing(); 
+  void ApplyAllGodsKnownBonus();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

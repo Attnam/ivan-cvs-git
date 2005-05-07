@@ -3473,5 +3473,5 @@ bodypart::bodypart(const bodypart& B) : mybase(B), OwnerDescription(B.OwnerDescr
 {
   for(int c = 0; c < Scar.size(); ++c)
     if(Scar[c].PanelBitmap)
-      Scar[c].PanelBitmap = new bitmap(*Scar[c].PanelBitmap);
+      Scar[c].PanelBitmap = new bitmap(Scar[c].PanelBitmap);
 }

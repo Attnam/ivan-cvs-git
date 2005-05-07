@@ -9652,3 +9652,19 @@ int character::CheckForBlock(character* Enemy, item* Weapon, double ToHitValue, 
 {
   return Damage; 
 };
+
+void character::ApplyAllGodsKnownBonus() 
+{
+  stack* AddPlace = GetStackUnder();
+  if(game::IsInWilderness())
+  {
+    AddPlace = GetStack();
+  }
+  else
+  {
+    AddPlace = GetStackUnder();
+  }
+
+  ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA\"");
+  ADD_MESSAGE("WFAJEO materializes near your feet.");
+}

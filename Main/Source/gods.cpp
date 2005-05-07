@@ -669,7 +669,7 @@ void mellis::PrayGoodEffect()
     if(PossibleSize)
     {
       int NewKnownGod = Possible[RAND() % PossibleSize];
-      game::GetGod(NewKnownGod)->SetIsKnown(true);
+      game::LearnAbout(game::GetGod(NewKnownGod));
       ADD_MESSAGE("%s shares his knowledge of %s, the %s.", GetName(), game::GetGod(NewKnownGod)->GetName(), game::GetGod(NewKnownGod)->GetDescription());
       return;
     }
