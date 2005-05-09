@@ -3574,11 +3574,11 @@ weepblade
 
 acidshield /*armor ->*/
 {
-  Possibility = 10;
-  DefaultSize = 70;
-  StrengthModifier = 165;
-  DefaultMainVolume = 350;
+  DefaultSize = 60;
+  Possibility = 250;
   Category = SHIELD;
+  DefaultMainVolume = 350;
+  StrengthModifier = 150;
   FormModifier = 15;
   MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE; }
   MaterialConfigChances = { 5, 200, 300, 150, 30, 30; }

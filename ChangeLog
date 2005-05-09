@@ -6,7 +6,11 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
-May 7 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * checked acid shield's code and corrected some smallish mistakes.
+
+May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * player now get a mysterious and large saga of the pantheon when he/she/it
     finds about all the gods.	

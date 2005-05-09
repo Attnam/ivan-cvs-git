@@ -358,10 +358,9 @@ protected:
 };
 
 
-ITEM(acidshield, armor)
+ITEM(acidshield, shield)
 {
  public:
-  virtual truth IsShield(const character*) const { return true; }
   virtual void BlockEffect(character*, character*, item*, int Type);
 }; 
 

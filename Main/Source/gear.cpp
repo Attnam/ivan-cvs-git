@@ -951,10 +951,8 @@ col16 meleeweapon::GetMaterialColorC(int Frame) const
 void daggerofvenom::Be()
 {
    meleeweapon::Be();
-   static int update = 0;
-   update = (update+1)%25;
 
-   if(!IsBroken() && (*Slot)->IsGearSlot()  && !update)
+   if(!IsBroken() && (*Slot)->IsGearSlot()  && !RAND_N(10))
    {
       fluidvector FluidVector;
       FillFluidVector(FluidVector);
@@ -973,46 +971,51 @@ truth weepblade::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int B
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(Enemy->IsEnabled() && !RAND() % 3)  //THIS LINE HAD A MISTAKE
+  if(Enemy->IsEnabled() && !(RAND_N(3)))
   {
-    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s weeping blade spills acid on %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
-   Enemy->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 25+RAND()%25));
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() 
+       || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s weeping blade spills acid on %s.", 
+		  Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    Enemy->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 25+RAND()%25));
     return BaseSuccess;
   }
   else
     return BaseSuccess;
 }
 
-void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type) //Working on
+void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type)
 {
    int CheckAttackType = 0;
    if(!IsBroken())
    {
-      if(RAND() % 5000 == 17)
+      if(!RAND_N(400))
       {
-         Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 200 + RAND() % 51));
-         ADD_MESSAGE("%s is completely doused in sulpheric acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+	if(Weapon)
+	{
+	  Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 200 + RAND() % 51));
+	  ADD_MESSAGE("%s is completely doused in sulpheric acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+	  return;
+	}
       }
-      else
+
+      if(RAND_2 && Weapon)
       {
-         if(Type == WEAPON_ATTACK)
-         {
-            Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 20 + RAND() % 41));
-            ADD_MESSAGE("%s weapon is splashed with acid from the shield!", Attacker->CHAR_POSSESSIVE_PRONOUN);
-         }
-         else
-            CheckAttackType = 1;
-         if(RAND() % 5 == 0 && CheckAttackType == 0)
-         {
-            Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 5 + RAND() % 11));
-            ADD_MESSAGE("%s is also splashed with acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
-         }
-         if(CheckAttackType == 1)
-         {
-            Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 26));
-            ADD_MESSAGE("%s is splashed with acid from the shield!", Attacker->CHAR_DESCRIPTION(DEFINITE));
-         }
+	Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 20 + RAND() % 41));
+	ADD_MESSAGE("%s weapon is splashed with acid from the shield!", Attacker->CHAR_POSSESSIVE_PRONOUN);
+      }
+
+      if(!RAND_N(5))
+      {
+	Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 5 + RAND() % 11));
+	ADD_MESSAGE("%s is splashed with acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+	return;
+      }
+
+      if(RAND_2)
+      {
+	Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 26));
+	ADD_MESSAGE("%s is splashed with acid from the shield!", Attacker->CHAR_DESCRIPTION(DEFINITE));
       }
    }
 } 
