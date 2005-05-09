@@ -9665,6 +9665,10 @@ void character::ApplyAllGodsKnownBonus()
     AddPlace = GetStackUnder();
   }
 
+  pantheonbook* NewBook = pantheonbook::Spawn();
+  AddPlace->AddItem(NewBook);
+
   ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA\"");
-  ADD_MESSAGE("WFAJEO materializes near your feet.");
+  ADD_MESSAGE("%s materializes near your feet.", 
+	      NewBook->CHAR_NAME(INDEFINITE));
 }

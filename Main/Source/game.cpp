@@ -3619,3 +3619,11 @@ truth game::PlayerKnowsAllGods()
 
   return true;
 }
+
+void game::AdjustRelationsToAllGods(int Amount)
+{
+  for(int c = 1; c <= GODS; ++c)
+  {
+      GetGod(c)->AdjustRelation(Amount);
+  }
+}

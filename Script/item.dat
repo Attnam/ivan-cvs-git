@@ -3607,14 +3607,14 @@ acidshield /*armor ->*/
 pantheonbook
 {
   DefaultSize = 30;
-  Possibility = 1; /* this is for each config */
+  Possibility = 1; 
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;
   BitmapPos = 32, 32;
   FormModifier = 20;
-  Adjective = "large";
-  NameSingular = "saga of the patheon";
+  Adjective = "large and mysterious";
+  NameSingular = "saga of the pantheon";
   ArticleMode = FORCE_THE;
   MainMaterialConfig == PARCHMENT;
   Price = 500;

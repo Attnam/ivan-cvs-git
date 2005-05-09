@@ -628,6 +628,9 @@ ITEM(holyhandgrenade, item)
 
 ITEM(pantheonbook, holybook)
 {
-
+ public:
+  virtual void FinishReading(character*);
+ protected:
+  virtual col16 GetMaterialColorA(int) const;
 };
 #endif

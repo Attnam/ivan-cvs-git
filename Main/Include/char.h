@@ -31,6 +31,8 @@ class cweaponskill;
 class action;
 class characterprototype;
 class web;
+class pantheonbook;
+
 struct homedata;
 struct trapdata;
 struct blitdata;

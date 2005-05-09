@@ -420,6 +420,7 @@ class game
   static void RemoveSpecialCursors();
   static void LearnAbout(god*);
   static truth PlayerKnowsAllGods();
+  static void AdjustRelationsToAllGods(int);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
