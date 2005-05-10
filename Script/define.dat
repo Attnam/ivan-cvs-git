@@ -310,6 +310,7 @@
 #define JASPER (SOLID_ID + 62)
 #define ROCK_CRYSTAL (SOLID_ID + 63)
 #define DARK_GRASS (SOLID_ID + 64)
+#define LEAD (SOLID_ID + 65)
 
 #define ORGANIC_ID (4096 * 2)
 
@@ -416,6 +417,7 @@
 #define BLINK_DOG_FLESH (FLESH_ID + 42)
 #define MAGIC_MUSHROOM_FLESH (FLESH_ID + 43)
 #define SICK_SPIDER_FLESH (FLESH_ID + 44)
+#define MIND_WORM_FLESH (FLESH_ID + 45)
 
 #define POWDER_ID (4096 * 6)
 
@@ -638,6 +640,10 @@
 #define CAUCASIAN_SIREN		3
 #define DARK_SIREN		4
 #define GREEN_SIREN		5
+
+
+#define HATCHLING 		1
+#define BOIL 			2
 
 #define PARQUET 1
 #define FLOOR 2

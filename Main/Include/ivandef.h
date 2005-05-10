@@ -169,7 +169,9 @@ const name##prototype name::ProtoType
 #define POISON 64
 #define DRAIN 128
 #define MUSTARD_GAS_DAMAGE 256
+#define PSI 512
 #define THROW 32768
+
 
 #define UNDEFINED 0
 #define MALE 1

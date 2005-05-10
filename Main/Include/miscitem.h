@@ -603,4 +603,10 @@ ITEM(pantheonbook, holybook)
  protected:
   virtual col16 GetMaterialColorA(int) const;
 };
+
+ITEM(gorovitscopyoflenin, item)
+{
+ protected:
+  virtual col16 GetMaterialColorB(int) const;
+};
 #endif

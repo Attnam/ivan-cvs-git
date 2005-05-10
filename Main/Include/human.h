@@ -165,6 +165,7 @@ CHARACTER(humanoid, character)
   virtual cchar* GetRunDescriptionLine(int) const;
   virtual cchar* GetNormalDeathMessage() const;
   virtual void ApplySpecialAttributeBonuses();
+  virtual truth MindWormCanPenetrateSkull(mindworm*) const;
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;

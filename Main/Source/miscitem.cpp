@@ -2935,3 +2935,8 @@ col16 pantheonbook::GetMaterialColorA(int) const
 {
   return MakeRGB16(200, 200, 200); 
 }
+
+col16 gorovitscopyoflenin::GetMaterialColorB(int) const
+{
+  return MakeRGB16(30, 30, 30);
+}

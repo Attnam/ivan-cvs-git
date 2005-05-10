@@ -5066,3 +5066,15 @@ truth siren::TryToSing()
 
   return Success;
 }
+
+truth humanoid::MindWormCanPenetrateSkull(mindworm* Worm) const
+{
+  if(GetHelmet())
+  {
+    if(RAND_N(102) > GetHelmet()->GetCoverPercentile())
+    {
+      return RAND_2;
+    }
+  }
+  return RAND_2;
+}

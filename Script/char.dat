@@ -5444,3 +5444,29 @@ siren
     TorsoMainColor = rgb16(180, 40, 25);
   } 
 }
+
+mindworm
+{
+  DefaultMana = 5;
+  CanOpen = false;
+  ClassStates = ESP;
+  FleshMaterial = MIND_WORM_FLESH;
+  AttachedGod = SCABIES;
+  IsAbstract = true;
+  TorsoMainColor = rgb16(200, 30, 30);
+
+  Config HATCHLING;
+  {
+    TotalVolume = 30;
+    TorsoBitmapPos = 208, 32;    
+    TotalSize = 7;
+    NameSingular = "mind worm hatchling";
+  }
+  Config BOIL;
+  {
+    TotalVolume = 30;
+    TorsoBitmapPos = 208, 32;    
+    TotalSize = 7;
+    NameSingular = "mind worm boil";
+  }
+}

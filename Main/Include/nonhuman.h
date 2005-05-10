@@ -464,4 +464,11 @@ CHARACTER(lobhse, largecreature)
   virtual bodypart* MakeBodyPart(int) const;
 };
 
+CHARACTER(mindworm, nonhumanoid)
+{
+ protected:
+  virtual void GetAICommand();
+  virtual void TryToImplantLarvae(character*);
+  virtual void PsiAttack(character*);
+};
 #endif

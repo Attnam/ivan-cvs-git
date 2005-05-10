@@ -16,6 +16,7 @@
 #include "bodypart.h"
 #include "script.h"
 #include "wskill.h"
+#include "save.h"
 
 #define CHAR_PERSONAL_PRONOUN GetPersonalPronoun(true).CStr()
 #define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun(true).CStr()
@@ -31,7 +32,7 @@ class cweaponskill;
 class action;
 class characterprototype;
 class web;
-class pantheonbook;
+class mindworm;
 
 struct homedata;
 struct trapdata;
@@ -1051,6 +1052,10 @@ class character : public entity, public id
   void ReceiveItemAsPresent(item*);
   item* FindMostExpensiveItem() const;
   void ReceiveSirenSong(character* Siren);
+  character* GetNearestEnemy() const;
+  truth IsInfectedByMindWorm() const { return !CounterToMindWormHatch; }
+  void SetCounterToMindWormHatch(int What) { CounterToMindWormHatch = What; }
+  truth MindWormCanPenetrateSkull(mindworm*) const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1158,6 +1163,7 @@ class character : public entity, public id
   int ScienceTalks;
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
+  int CounterToMindWormHatch;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

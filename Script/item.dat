@@ -3604,7 +3604,7 @@ acidshield /*armor ->*/
   }
 }
 
-pantheonbook
+pantheonbook /* holybook-> */
 {
   DefaultSize = 30;
   Possibility = 1; 
@@ -3624,4 +3624,24 @@ pantheonbook
   AttachedGod = VALPURUS;
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
+}
+
+gorovitscopyoflenin /* item-> */
+{
+  DefaultSize = 180; /* all details to height of Lenin appreciated */
+  Category = MISC;
+  DefaultMainVolume = 80000;
+  DefaultSecondaryVolume = 100; /* clothes */
+  MainMaterialConfig == LEAD; 
+  SecondaryMaterialConfig == FABRIC;
+
+  Adjective = "Gorovits family life-size";
+  NameSingular = "copy of Lenin's mummy";
+  NamePlural = "copies of Lenin's mummy";
+  FormModifier = 15;
+  AttachedGod = SOPHOS;
+  BitmapPos = 80, 48;
+  Possibility = 0;
+  Price = 50;
+
 }

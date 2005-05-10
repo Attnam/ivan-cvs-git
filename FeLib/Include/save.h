@@ -335,7 +335,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
   type1 First;
   ulong Size;
   SaveFile >> Size;
-  std::map<type1, type2>::iterator i;
+  typename std::map<type1, type2>::iterator i;
 
   for(ulong c = 0; c < Size; ++c)
   {

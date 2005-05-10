@@ -1009,6 +1009,24 @@ solid
     BodyFlags = Base|CAN_REGENERATE|IS_ALIVE;
     InteractionFlags = CAN_BURN;
   }
+
+
+  Config LEAD;
+  {
+    StrengthValue = 110;
+    ConsumeType = CT_METAL;
+    Density = 11340;
+    Color = rgb16(230, 230, 230);
+    PriceModifier = 30;
+    NameStem = "lead";
+    Flexibility = 2;
+    AttachedGod = LORICATUS;
+    HardenedMaterial = ADAMANT;
+    IntelligenceRequirement = 7;
+    CommonFlags = Base;
+    CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
 }
 
 organic /* substances that spoil but are not flesh */
@@ -2138,6 +2156,12 @@ flesh
   }
 
   Config SICK_SPIDER_FLESH;
+  {
+    NameStem = "sick spider flesh";
+    AttachedGod = SCABIES;
+  }
+
+  Config MIND_WORM_FLESH;
   {
     NameStem = "sick spider flesh";
     AttachedGod = SCABIES;

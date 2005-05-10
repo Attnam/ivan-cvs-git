@@ -367,7 +367,7 @@ character::character(ccharacter& Char)
   Stamina(Char.Stamina), MaxStamina(Char.MaxStamina),
   BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger),
   CommandFlags(Char.CommandFlags), WarnFlags(0),
-  ScienceTalks(Char.ScienceTalks), TrapData(0)
+  ScienceTalks(Char.ScienceTalks), TrapData(0), CounterToMindWormHatch(0)
 {
   Flags &= ~C_PLAYER;
   Flags |= C_INITIALIZING|C_IN_NO_MSG_MODE;
@@ -421,7 +421,7 @@ character::character()
   PolymorphBackup(0), EquipmentState(0), SquareUnder(0),
   RegenerationCounter(0), HomeData(0), LastAcidMsgMin(0),
   BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER),
-  WarnFlags(0), ScienceTalks(0), TrapData(0)
+  WarnFlags(0), ScienceTalks(0), TrapData(0), CounterToMindWormHatch(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -1768,7 +1768,8 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BaseExperience[c];
 
   SaveFile << ExpModifierMap;
-  SaveFile << NP << AP << Stamina << GenerationDanger << ScienceTalks;
+  SaveFile << NP << AP << Stamina << GenerationDanger << ScienceTalks
+	   << CounterToMindWormHatch;
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile.Put(!!IsEnabled());
   SaveFile << HomeData << BlocksSinceLastTurn << CommandFlags;
@@ -1816,7 +1817,8 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseExperience[c];
 
   SaveFile >> ExpModifierMap;
-  SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks;;
+  SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks 
+	   >> CounterToMindWormHatch;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
   if(!SaveFile.Get())
@@ -3226,6 +3228,7 @@ truth character::AllowDamageTypeBloodSpill(int Type)
    case POISON:
    case ELECTRICITY:
    case MUSTARD_GAS_DAMAGE:
+   case PSI:
     return false;
   }
 
@@ -3545,6 +3548,7 @@ int character::GetResistance(int Type) const
    case SOUND:
    case DRAIN:
    case MUSTARD_GAS_DAMAGE:
+   case PSI:
     return 0;
    case ENERGY: return GetEnergyResistance();
    case FIRE: return GetFireResistance();
@@ -4282,6 +4286,7 @@ truth character::DamageTypeAffectsInventory(int Type)
    case POISON:
    case DRAIN:
    case MUSTARD_GAS_DAMAGE:
+   case PSI:
     return false;
   }
 
@@ -9787,3 +9792,34 @@ void character::ReceiveItemAsPresent(item* Present)
   else
     GetStackUnder()->AddItem(Present);
 } 
+
+
+/* returns 0 if no enemies in sight */
+character* character::GetNearestEnemy() const
+{
+  character* NearestEnemy = 0;
+  long NearestEnemyDistance = 0x7FFFFFFF;
+  v2 Pos = GetPos();
+
+  for(int c = 0; c < game::GetTeams(); ++c)
+    if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+    {
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled())
+	{
+	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+
+	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+	  {
+	    NearestEnemy = *i;
+	    NearestEnemyDistance = ThisDistance;
+	  }
+	}
+    }
+  return NearestEnemy;
+}
+
+truth character::MindWormCanPenetrateSkull(mindworm*) const
+{
+  return false;
+}
