@@ -9672,3 +9672,115 @@ void character::ApplyAllGodsKnownBonus()
   ADD_MESSAGE("%s materializes near your feet.", 
 	      NewBook->CHAR_NAME(INDEFINITE));
 }
+
+void character::ReceiveSirenSong(character* Siren)
+{
+  if(Siren->GetTeam() == GetTeam())
+    return;
+
+
+  if(!RAND_N(4))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", 
+		  Siren->CHAR_NAME(DEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.");
+    Stamina -= (1 + RAND_N(4)) * 10000;
+    return;
+  }
+
+  if(!IsPlayer() && IsCharmable() && !RAND_N(5))
+  {
+    ChangeTeam(Siren->GetTeam());
+    ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), 
+		Siren->CHAR_NAME(DEFINITE));
+
+    return;
+  }
+
+  if(!RAND_N(4))
+  {
+    item* What = GiveMostExpensiveItem(Siren);
+    if(What)
+    {
+      if(IsPlayer())
+      {
+	ADD_MESSAGE("%s music persuades you to give %s to %s as a present.", 
+		    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE), 
+		    Siren->CHAR_OBJECT_PRONOUN);
+      }
+      else
+      {
+	ADD_MESSAGE("%s is persuated to give %s to %s because of %s beautiful singing.", 
+		    CHAR_NAME(DEFINITE), 
+		    What->CHAR_NAME(INDEFINITE), 
+		    Siren->CHAR_NAME(DEFINITE),
+		    Siren->CHAR_OBJECT_PRONOUN);
+
+      }
+    }
+    else
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You would like to give something to %s.", Siren->CHAR_NAME(DEFINITE));
+    }
+
+    return;
+  }
+}
+
+// return 0, if no item found
+item* character::FindMostExpensiveItem() const
+{
+  int MaxPrice=-1;
+  item* MostExpensive = 0;
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+  {
+    if((*i)->GetPrice() > MaxPrice)
+    {
+      MaxPrice = (*i)->GetPrice();
+      MostExpensive = (*i);
+    }
+      
+  }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Equipment = GetEquipment(c);
+    if(Equipment && Equipment->GetPrice() > MaxPrice)
+    {
+      MaxPrice = Equipment->GetPrice();
+      MostExpensive = Equipment;
+    }
+  }
+  return MostExpensive;
+}
+
+// returns 0 if no items available
+item* character::GiveMostExpensiveItem(character* ToWhom)
+{
+  item* ToGive = FindMostExpensiveItem();
+  if(!ToGive)
+    return 0;
+
+  truth Equipped = PLAYER->Equips(ToGive);
+  ToGive->RemoveFromSlot();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment lost! [press any key to continue]"));
+
+  ToWhom->ReceiveItemAsPresent(ToGive);
+  EditAP(-1000);
+  return ToGive;
+}
+
+void character::ReceiveItemAsPresent(item* Present)
+{
+  if(TestForPickup(Present))
+  {
+    GetStack()->AddItem(Present);
+  }
+  else
+    GetStackUnder()->AddItem(Present);
+} 

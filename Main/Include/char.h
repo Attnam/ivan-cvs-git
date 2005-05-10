@@ -1030,6 +1030,10 @@ class character : public entity, public id
   void ReceiveMustardGasLiquid(int, long);
   truth ForgetRandomThing(); 
   void ApplyAllGodsKnownBonus();
+  item* GiveMostExpensiveItem(character*);
+  void ReceiveItemAsPresent(item*);
+  item* FindMostExpensiveItem() const;
+  void ReceiveSirenSong(character* Siren);
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

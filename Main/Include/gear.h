@@ -364,5 +364,4 @@ ITEM(acidshield, shield)
   virtual void BlockEffect(character*, character*, item*, int Type);
 }; 
 
-
 #endif

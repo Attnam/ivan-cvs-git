@@ -5370,3 +5370,74 @@ tailor
   IsCharmable = false;
   AttachedGod = SOPHOS;
 }
+
+siren
+{
+  DefaultArmStrength = 3;
+  DefaultLegStrength = 3;
+  DefaultDexterity = 15;
+  DefaultAgility = 20;
+  DefaultEndurance = 12;
+  DefaultPerception = 20;
+  DefaultIntelligence = 10;
+  DefaultWisdom = 15;
+  DefaultCharisma = 50;
+  DefaultMana = 5;
+  Sex = FEMALE;
+  SkinColor = rgb16(160, 100, 64);
+  HairColor = rgb16(80, 48, 32);
+  HeadBitmapPos = 112, 368;
+  TorsoBitmapPos = 48, 288;
+  ArmBitmapPos = 80, 240;
+  LegBitmapPos = 16, 240;
+  TotalVolume = 40000;
+  TotalSize = 170;
+  BaseUnarmedStrength = 200;
+  HostileReplies == "\"LAallaaalalaaa!\"";
+  CanRead = true;
+  NameSingular = "siren";
+  AttachedGod = DULCIS;
+  FriendlyReplies == "\"I'm singing in the rain... Oh wait...\"";
+
+  /* if somebody really wants to J_Kahvi has provided
+     detailed discussion of nipple and pubic hair
+     color in Doc/Data/Dialog.txt starting from 
+     line 2552 to 2640 */
+
+  Config LIGHT_ASIAN_SIREN;
+  {
+    SkinColor = rgb16(254, 247, 208);
+    HairColor = rgb16(80, 48, 32);
+    TorsoMainColor = rgb16(70, 40, 25);	
+    NameSingular = "test1";
+  }
+
+  Config DARK_ASIAN_SIREN;
+  {
+    SkinColor = rgb16(254, 247, 183);
+    HairColor = rgb16(64, 48, 32);
+    TorsoMainColor = rgb16(50, 40, 28);
+    NameSingular = "test2";
+  }  
+
+  Config CAUCASIAN_SIREN;
+  {
+    SkinColor = rgb16(255, 212, 192);
+    HairColor = rgb16(35, 35, 35);
+    TorsoMainColor = rgb16(30, 30, 30);
+  }
+
+  Config DARK_SIREN;
+  {
+    SkinColor = rgb16(128, 80, 48);
+    HairColor = rgb16(80, 48, 32);
+    TorsoMainColor = rgb16(60, 30, 25);
+  }  
+
+  Config GREEN_SIREN;
+  {
+    SkinColor = rgb16(180, 255, 150);
+    HairColor = rgb16(200, 48, 32);
+    TorsoMainColor = rgb16(180, 40, 25);
+  } 
+}

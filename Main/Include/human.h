@@ -629,4 +629,12 @@ CHARACTER(tailor, humanoid)
   virtual void GetAICommand() { StandIdleAI(); }
 };
 
+
+CHARACTER(siren, humanoid)
+{
+ public:
+  virtual void GetAICommand();
+ protected:
+  virtual truth TryToSing();
+};
 #endif

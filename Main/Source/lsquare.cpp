@@ -1470,7 +1470,17 @@ truth lsquare::Polymorph(const beamdata& Beam)
 
     Character->PolymorphRandomly(1, 999999, 5000 + RAND() % 5000);
   }
-
+  
+  if(Engraved)
+  {
+    for(int c = 0; Engraved[c] != '\0'; ++c)
+    {
+      if(RAND_2)
+      {
+	Engraved[c] = 32 + RAND_N(95);
+      }
+    }
+  }
   return false;
 }
 
