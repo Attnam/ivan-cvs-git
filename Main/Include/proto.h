@@ -40,8 +40,8 @@ template <class type> class protocontainer
   typedef typename type::prototype prototype;
   static int Add(prototype*);
   static const prototype* GetProto(int I) { return GetProtoData()[I]; }
-  static int SearchCodeName(const festring&);
-  static const char* GetMainClassID() { return GetProtoData()[1]->GetClassID(); }
+  static int SearchCodeName(cfestring&);
+  static cchar* GetMainClassID() { return GetProtoData()[1]->GetClassID(); }
   static int GetSize() { return GetSizeRef(); }
  private:
   static prototype**& GetProtoData();
@@ -63,7 +63,7 @@ inline int protocontainer<type>::Add(prototype* Proto)
 }
 
 template <class type>
-inline int protocontainer<type>::SearchCodeName(const festring& Name)
+inline int protocontainer<type>::SearchCodeName(cfestring& Name)
 {
   valuemap::iterator I = GetCodeNameMap().find(Name);
   return I != GetCodeNameMap().end() ? I->second : 0;
@@ -75,9 +75,9 @@ class protosystem
   static character* BalancedCreateMonster();
   static item* BalancedCreateItem(long = 0, long = MAX_PRICE, long = ANY_CATEGORY, int = 0, int = 0, int = 0, truth = false);
   static character* CreateMonster(int = 1, int = 999999, int = 0);
-  static character* CreateMonster(const festring&, int = 0, truth = true);
-  static item* CreateItem(const festring&, truth = true);
-  static material* CreateMaterial(const festring&, long = 0, truth = true);
+  static character* CreateMonster(cfestring&, int = 0, truth = true);
+  static item* CreateItem(cfestring&, truth = true);
+  static material* CreateMaterial(cfestring&, long = 0, truth = true);
   static void CreateEveryNormalEnemy(charactervector&);
 #ifdef WIZARD
   static void CreateEveryCharacter(charactervector&);
@@ -89,7 +89,7 @@ class protosystem
   static void SaveCharacterDataBaseFlags(outputfile&);
   static void LoadCharacterDataBaseFlags(inputfile&);
   static void CreateEverySeenCharacter(charactervector&);
-  static void CreateEveryMaterial(std::vector<material*>&, const god*, const character*);
+  static void CreateEveryMaterial(std::vector<material*>&, const god*, ccharacter*);
  private:
   static itemdatabase** ItemConfigData;
   static int ItemConfigDataSize;

@@ -96,10 +96,10 @@ class igraph
  public:
   static void Init();
   static void DeInit();
-  static const bitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
-  static const bitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }
+  static cbitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
+  static cbitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }
   static const rawbitmap* GetCursorRawGraphic() { return RawGraphic[GR_CURSOR]; }
-  static const bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
+  static cbitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(v2, int);
   static tilemap::iterator AddUser(const graphicid&);
@@ -108,13 +108,13 @@ class igraph
   static const rawbitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
   static const rawbitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
   static const rawbitmap* GetRawGraphic(int I) { return RawGraphic[I]; }
-  static const int* GetBodyBitmapValidityMap(int);
+  static cint* GetBodyBitmapValidityMap(int);
   static bitmap* GetFlagBuffer() { return FlagBuffer; }
-  static const bitmap* GetMenuGraphic() { return Menu; }
+  static cbitmap* GetMenuGraphic() { return Menu; }
   static void LoadMenu();
   static void UnLoadMenu();
   static bitmap* GetSilhouetteCache(int I1, int I2, int I3) { return SilhouetteCache[I1][I2][I3]; }
-  static const bitmap* GetBackGround() { return BackGround; }
+  static cbitmap* GetBackGround() { return BackGround; }
   static void BlitBackGround(v2, v2);
   static void CreateBackGround(int);
   static bitmap* GenerateScarBitmap(int, int, int);
@@ -127,8 +127,8 @@ class igraph
   static rawbitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];
   static bitmap* TileBuffer;
-  static const char* RawGraphicFileName[];
-  static const char* GraphicFileName[];
+  static cchar* RawGraphicFileName[];
+  static cchar* GraphicFileName[];
   static tilemap TileMap;
   static uchar RollBuffer[256];
   static bitmap* FlagBuffer;

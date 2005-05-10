@@ -38,7 +38,7 @@ class object : public entity, public id
   virtual void ChangeSecondaryMaterial(material*, int = 0) { }
   virtual int GetMaterials() const { return 1; }
   virtual material* GetMaterial(int) const { return MainMaterial; }
-  const bitmap*const* GetPicture() const;
+  cbitmap*const* GetPicture() const;
   virtual col24 GetBaseEmitation() const { return 0; }
   virtual void SetParameters(int) { }
   virtual int GetOKVisualEffects() const { return 0; }
@@ -58,7 +58,7 @@ class object : public entity, public id
   static void InitSparkleValidityArrays();
   void UpdatePictures(graphicdata&, v2, int, alpha, int, bposretriever) const;
   void InitMaterial(material*&, material*, long);
-  virtual truth DetectMaterial(const material*) const;
+  virtual truth DetectMaterial(cmaterial*) const;
   virtual int GetSparkleFlags() const;
   virtual void SignalMaterialChange() { }
  protected:

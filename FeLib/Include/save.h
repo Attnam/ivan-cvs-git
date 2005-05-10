@@ -16,6 +16,7 @@
 #include <ctime>
 #include <cstdio>
 #include <vector>
+#include <deque>
 #include <list>
 #include <map>
 #include <set>
@@ -24,6 +25,19 @@
 #include "festring.h"
 #include "fearray.h"
 
+#define RAW_SAVE_LOAD(type)\
+inline outputfile& operator<<(outputfile& SaveFile, type Value)\
+{\
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));\
+  return SaveFile;\
+}\
+\
+inline inputfile& operator>>(inputfile& SaveFile, type& Value)\
+{\
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));\
+  return SaveFile;\
+}
+
 typedef std::map<festring, long> valuemap;
 
 /* fstream seems to bug with DJGPP, so we use FILE* here */
@@ -31,10 +45,10 @@ typedef std::map<festring, long> valuemap;
 class outputfile
 {
  public:
-  outputfile(const festring&, truth = true);
+  outputfile(cfestring&, truth = true);
   ~outputfile();
   void Put(char What) { fputc(What, Buffer); }
-  void Write(const char* Offset, long Size)
+  void Write(cchar* Offset, long Size)
   { fwrite(Offset, 1, Size, Buffer); }
   truth IsOpen() { return truth(Buffer); }
   void Close() { fclose(Buffer); }
@@ -48,7 +62,7 @@ class outputfile
 class inputfile
 {
  public:
-  inputfile(const festring&, const valuemap* = 0, truth = true);
+  inputfile(cfestring&, const valuemap* = 0, truth = true);
   ~inputfile();
   festring ReadWord(truth = true);
   void ReadWord(festring&, truth = true);
@@ -67,7 +81,7 @@ class inputfile
   long TellPos() { return ftell(Buffer); }
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
-  const festring& GetFileName() const { return FileName; }
+  cfestring& GetFileName() const { return FileName; }
   void Close() { fclose(Buffer); }
  private:
   int HandlePunct(festring&, int, int);
@@ -196,105 +210,18 @@ inline inputfile& operator>>(inputfile& SaveFile, ushort& Value)
   return SaveFile;
 }
 
-inline outputfile& operator<<(outputfile& SaveFile, long Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
+RAW_SAVE_LOAD(long);
+RAW_SAVE_LOAD(ulong);
+RAW_SAVE_LOAD(int);
+RAW_SAVE_LOAD(uint);
+RAW_SAVE_LOAD(double);
+RAW_SAVE_LOAD(packv2);
+RAW_SAVE_LOAD(v2);
+RAW_SAVE_LOAD(rect);
 
-inline inputfile& operator>>(inputfile& SaveFile, long& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, unsigned Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, unsigned& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, int Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, int& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, double Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, double& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, packv2 Vector)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Vector), sizeof(Vector));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, packv2& Vector)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Vector), sizeof(Vector));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, v2 Vector)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Vector), sizeof(Vector));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, v2& Vector)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Vector), sizeof(Vector));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, const rect& Rect)
-{
-  SaveFile.Write(reinterpret_cast<const char*>(&Rect), sizeof(Rect));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, rect& Rect)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Rect), sizeof(Rect));
-  return SaveFile;
-}
-
-outputfile& operator<<(outputfile&, const festring&);
+outputfile& operator<<(outputfile&, cfestring&);
 inputfile& operator>>(inputfile&, festring&);
-outputfile& operator<<(outputfile&, const char*);
+outputfile& operator<<(outputfile&, cchar*);
 inputfile& operator>>(inputfile&, char*&);
 
 template <class type1, class type2>
@@ -333,6 +260,30 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
   for(ulong c = 0; c < Vector.size(); ++c)
     SaveFile >> Vector[c];
+
+  return SaveFile;
+}
+
+template <class type>
+inline outputfile& operator<<(outputfile& SaveFile,
+			      const std::deque<type>& Deque)
+{
+  SaveFile << ulong(Deque.size());
+
+  for(ulong c = 0; c < Deque.size(); ++c)
+    SaveFile << Deque[c];
+
+  return SaveFile;
+}
+
+template <class type>
+inline inputfile& operator>>(inputfile& SaveFile,
+			     std::deque<type>& Deque)
+{
+  Deque.resize(ReadType<ulong>(SaveFile), type());
+
+  for(ulong c = 0; c < Deque.size(); ++c)
+    SaveFile >> Deque[c];
 
   return SaveFile;
 }
@@ -381,14 +332,16 @@ inline inputfile& operator>>(inputfile& SaveFile,
 			     std::map<type1, type2>& Map)
 {
   Map.clear();
+  type1 First;
   ulong Size;
   SaveFile >> Size;
+  std::map<type1, type2>::iterator i;
 
   for(ulong c = 0; c < Size; ++c)
   {
-    type1 First;
     SaveFile >> First;
-    SaveFile >> Map[First];
+    i = Map.insert(Map.end(), std::make_pair(First, type2()));
+    SaveFile >> i->second;
   }
 
   return SaveFile;

@@ -43,7 +43,7 @@
    waits for keypress. BitmapEditor is a pointer to function that is
    called during every fade tick. */
 
-void iosystem::TextScreen(const festring& Text, col16 Color,
+void iosystem::TextScreen(cfestring& Text, col16 Color,
 			  truth GKey, void (*BitmapEditor)(bitmap*))
 {
   bitmap Buffer(RES, 0);
@@ -84,7 +84,7 @@ void iosystem::TextScreen(const festring& Text, col16 Color,
 
 /* Returns amount of chars cSF in string sSH */
 
-int CountChars(char cSF, const festring& sSH)
+int CountChars(char cSF, cfestring& sSH)
 {
   int iReturnCounter = 0;
 
@@ -109,10 +109,10 @@ int CountChars(char cSF, const festring& sSH)
    If you need to use this function use the comments. Don't try to
    understand it. It is impossible. */
 
-int iosystem::Menu(const bitmap* BackGround, v2 Pos,
-		   const festring& Topic, const festring& sMS,
-		   col16 Color, const festring& SmallText1,
-		   const festring& SmallText2)
+int iosystem::Menu(cbitmap* BackGround, v2 Pos,
+		   cfestring& Topic, cfestring& sMS,
+		   col16 Color, cfestring& SmallText1,
+		   cfestring& SmallText2)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -263,7 +263,7 @@ int iosystem::Menu(const bitmap* BackGround, v2 Pos,
    NORMAL_EXIT. */
 
 int iosystem::StringQuestion(festring& Input,
-			     const festring& Topic,
+			     cfestring& Topic,
 			     v2 Pos, col16 Color,
 			     festring::sizetype MinLetters,
 			     festring::sizetype MaxLetters,
@@ -376,7 +376,7 @@ int iosystem::StringQuestion(festring& Input,
    coled. If Fade is true the question is asked on a black background
    and the transition to that is a fade. */
 
-long iosystem::NumberQuestion(const festring& Topic, v2 Pos, col16 Color,
+long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 			      truth Fade, truth ReturnZeroOnEsc)
 {
   v2 V(RES.X, 9); ///???????????
@@ -453,7 +453,7 @@ long iosystem::NumberQuestion(const festring& Topic, v2 Pos, col16 Color,
    the screen is faded to black before drawing th scrollbar. If Handler is
    set it is called always when the value of the scroll bar changes. */
 
-long iosystem::ScrollBarQuestion(const festring& Topic, v2 Pos,
+long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 				 long StartValue, long Step,
 				 long Min, long Max, long AbortValue,
 				 col16 TopicColor, col16 Color1,
@@ -623,7 +623,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, v2 Pos,
    the selected file or "" if an error occures or if no files are found. */
 
 festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
-				const festring& DirectoryName)
+				cfestring& DirectoryName)
 {
 #ifdef WIN32
   struct _finddata_t Found;

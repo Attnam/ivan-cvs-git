@@ -21,14 +21,14 @@ SYSTEM_SPECIALIZATIONS(gwterrain) SYSTEM_SPECIALIZATIONS(owterrain)
 
 #undef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
 
-const int OceanType = ocean::ProtoType.GetIndex();
-const int SnowType = snow::ProtoType.GetIndex();
-const int GlacierType = glacier::ProtoType.GetIndex();
-const int EGForestType = evergreenforest::ProtoType.GetIndex();
-const int LForestType = leafyforest::ProtoType.GetIndex();
-const int SteppeType = steppe::ProtoType.GetIndex();
-const int DesertType = desert::ProtoType.GetIndex();
-const int JungleType = jungle::ProtoType.GetIndex();
+cint OceanType = ocean::ProtoType.GetIndex();
+cint SnowType = snow::ProtoType.GetIndex();
+cint GlacierType = glacier::ProtoType.GetIndex();
+cint EGForestType = evergreenforest::ProtoType.GetIndex();
+cint LForestType = leafyforest::ProtoType.GetIndex();
+cint SteppeType = steppe::ProtoType.GetIndex();
+cint DesertType = desert::ProtoType.GetIndex();
+cint JungleType = jungle::ProtoType.GetIndex();
 
 #include <algorithm>
 

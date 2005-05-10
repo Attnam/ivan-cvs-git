@@ -26,7 +26,7 @@ square* stack::GetSquareUnder() const
 
 /* Modifies the square index bits of BlitData.CustomData */
 
-void stack::Draw(const character* Viewer, blitdata& BlitData,
+void stack::Draw(ccharacter* Viewer, blitdata& BlitData,
 		 int RequiredSquarePosition) const
 {
   if(!Items)
@@ -225,7 +225,7 @@ v2 stack::GetPos() const
 /* Returns whether there are any items satisfying the sorter or any visible
    items if it is zero */
 
-truth stack::SortedItems(const character* Viewer, sorter SorterFunction) const
+truth stack::SortedItems(ccharacter* Viewer, sorter SorterFunction) const
 {
   if(Items)
     for(stackiterator i = GetBottom(); i.HasItem(); ++i)
@@ -384,7 +384,7 @@ int stack::SearchItem(item* ToBeSearched) const
    Those returning int return 0 on success and a felist error
    otherwise (see felibdef.h) */
 
-item* stack::DrawContents(const character* Viewer, const festring& Topic,
+item* stack::DrawContents(ccharacter* Viewer, cfestring& Topic,
 			  int Flags, sorter SorterFunction) const
 {
   itemvector ReturnVector;
@@ -394,8 +394,8 @@ item* stack::DrawContents(const character* Viewer, const festring& Topic,
 }
 
 int stack::DrawContents(itemvector& ReturnVector,
-			const character* Viewer,
-			const festring& Topic, int Flags,
+			ccharacter* Viewer,
+			cfestring& Topic, int Flags,
 			sorter SorterFunction) const
 {
   return DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""),
@@ -406,9 +406,9 @@ int stack::DrawContents(itemvector& ReturnVector,
    there are items on the ground and in the character's stack */
 
 int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
-			const character* Viewer, const festring& Topic,
-			const festring& ThisDesc, const festring& ThatDesc,
-			const festring& SpecialDesc, col16 SpecialDescColor,
+			ccharacter* Viewer, cfestring& Topic,
+			cfestring& ThisDesc, cfestring& ThatDesc,
+			cfestring& SpecialDesc, col16 SpecialDescColor,
 			int Flags, sorter SorterFunction) const
 {
   felist Contents(Topic);
@@ -452,7 +452,7 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
 				  Flags, CENTER, SorterFunction);
 
   AddContentsToList(Contents, Viewer, ThisDesc, Flags, CENTER, SorterFunction);
-  static const char* WallDescription[] = { "western", "southern",
+  static cchar* WallDescription[] = { "western", "southern",
 					   "nothern", "eastern" };
 
   for(c = 0; c < 4; ++c)
@@ -523,8 +523,8 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
 
 /* Internal function to fill Contents list */
 
-void stack::AddContentsToList(felist& Contents, const character* Viewer,
-			      const festring& Desc, int Flags,
+void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
+			      cfestring& Desc, int Flags,
 			      int RequiredSquarePosition,
 			      sorter SorterFunction) const
 {
@@ -569,7 +569,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer,
    input about item amount. */
 
 int stack::SearchChosen(itemvector& ReturnVector,
-			const character* Viewer,
+			ccharacter* Viewer,
 			int Pos, int Chosen, int Flags,
 			int RequiredSquarePosition,
 			sorter SorterFunction) const
@@ -660,7 +660,7 @@ int stack::GetSideItems(int RequiredSquarePosition) const
   return VisibleItems;
 }
 
-int stack::GetVisibleItems(const character* Viewer) const
+int stack::GetVisibleItems(ccharacter* Viewer) const
 {
   int VisibleItems = 0;
 
@@ -681,7 +681,7 @@ int stack::GetVisibleItems(const character* Viewer) const
   return VisibleItems;
 }
 
-int stack::GetNativeVisibleItems(const character* Viewer) const
+int stack::GetNativeVisibleItems(ccharacter* Viewer) const
 {
   if(Flags & HIDDEN)
     return Items;
@@ -695,7 +695,7 @@ int stack::GetNativeVisibleItems(const character* Viewer) const
   return VisibleItems;
 }
 
-int stack::GetVisibleSideItems(const character* Viewer,
+int stack::GetVisibleSideItems(ccharacter* Viewer,
 			       int RequiredSquarePosition) const
 {
   int VisibleItems = 0;
@@ -708,7 +708,7 @@ int stack::GetVisibleSideItems(const character* Viewer,
   return VisibleItems;
 }
 
-item* stack::GetBottomVisibleItem(const character* Viewer) const
+item* stack::GetBottomVisibleItem(ccharacter* Viewer) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if((Flags & HIDDEN) || i->CanBeSeenBy(Viewer))
@@ -816,7 +816,7 @@ col24 stack::GetSideEmitation(int RequiredSquarePosition)
   return Emitation;
 }
 
-truth stack::CanBeSeenBy(const character* Viewer, int SquarePosition) const
+truth stack::CanBeSeenBy(ccharacter* Viewer, int SquarePosition) const
 {
   if(MotherEntity)
     return MotherEntity->ContentsCanBeSeenBy(Viewer);
@@ -827,7 +827,7 @@ truth stack::CanBeSeenBy(const character* Viewer, int SquarePosition) const
   }
 }
 
-truth stack::IsDangerous(const character* Stepper) const
+truth stack::IsDangerous(ccharacter* Stepper) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->IsDangerous(Stepper) && i->CanBeSeenBy(Stepper))
@@ -890,7 +890,7 @@ void stack::MoveItemsTo(slot* Slot)
     Slot->AddFriendItem(*GetBottom());
 }
 
-item* stack::GetBottomItem(const character* Char,
+item* stack::GetBottomItem(ccharacter* Char,
 			   truth ForceIgnoreVisibility) const
 {
   if((Flags & HIDDEN) || ForceIgnoreVisibility)
@@ -899,7 +899,7 @@ item* stack::GetBottomItem(const character* Char,
     return GetBottomVisibleItem(Char);
 }
 
-item* stack::GetBottomSideItem(const character* Char,
+item* stack::GetBottomSideItem(ccharacter* Char,
 			       int RequiredSquarePosition,
 			       truth ForceIgnoreVisibility) const
 {
@@ -920,7 +920,7 @@ truth CategorySorter(const itemvector& V1, const itemvector& V2)
    (itemvectors) of which elements are similiar to each other, for instance
    4 bananas */
 
-void stack::Pile(itemvectorvector& PileVector, const character* Viewer,
+void stack::Pile(itemvectorvector& PileVector, ccharacter* Viewer,
 		 int RequiredSquarePosition, sorter SorterFunction) const
 {
   if(!Items)
@@ -975,7 +975,7 @@ long stack::GetTruePrice() const
    Returns whether anything was done. */
 
 truth stack::TakeSomethingFrom(character* Opener,
-			       const festring& ContainerName)
+			       cfestring& ContainerName)
 {
   if(!GetItems())
   {
@@ -1018,7 +1018,7 @@ truth stack::TakeSomethingFrom(character* Opener,
 /* GUI used for instance by chests and bookcases (use ContainerID == 0 if
    the container isn't an item). Returns whether anything was done. */
 
-truth stack::PutSomethingIn(character* Opener, const festring& ContainerName,
+truth stack::PutSomethingIn(character* Opener, cfestring& ContainerName,
 			    long StorageVolume, ulong ContainerID)
 {
   if(!Opener->GetStack()->GetItems())
@@ -1112,7 +1112,7 @@ void stack::SortAllItems(const sortdata& SortData) const
 
 /* Search for traps and other secret items */
 
-void stack::Search(const character* Char, int Perception)
+void stack::Search(ccharacter* Char, int Perception)
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->Search(Char, Perception);
@@ -1120,7 +1120,7 @@ void stack::Search(const character* Char, int Perception)
 
 /* Used to determine whether the danger symbol should be shown */
 
-truth stack::NeedDangerSymbol(const character* Viewer) const
+truth stack::NeedDangerSymbol(ccharacter* Viewer) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->NeedDangerSymbol() && i->CanBeSeenBy(Viewer))
@@ -1262,7 +1262,7 @@ truth stack::AllowDamage(int Direction, int SquarePosition)
   return true;
 }
 
-long stack::GetWeight(const character* Viewer, int SquarePosition) const
+long stack::GetWeight(ccharacter* Viewer, int SquarePosition) const
 {
   long Weight = 0;
 
@@ -1274,7 +1274,7 @@ long stack::GetWeight(const character* Viewer, int SquarePosition) const
   return Weight;
 }
 
-truth stack::DetectMaterial(const material* Material) const
+truth stack::DetectMaterial(cmaterial* Material) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->DetectMaterial(Material))
@@ -1307,7 +1307,7 @@ void stack::CalculateEnchantments()
     i->CalculateEnchantment();
 }
 
-const character* stack::FindCarrier() const
+ccharacter* stack::FindCarrier() const
 {
   return MotherEntity ? MotherEntity->FindCarrier() : 0;
 }

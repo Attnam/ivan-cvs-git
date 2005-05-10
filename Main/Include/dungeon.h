@@ -29,8 +29,8 @@ class dungeon
   dungeon(int);
   ~dungeon();
   truth PrepareLevel(int, truth = true);
-  void SaveLevel(const festring&, int, truth = true);
-  level* LoadLevel(const festring&, int);
+  void SaveLevel(cfestring&, int, truth = true);
+  level* LoadLevel(cfestring&, int);
   level* GetLevel(int I) const { return Level[I]; }
   int GetLevels() const;
   void Save(outputfile&) const;

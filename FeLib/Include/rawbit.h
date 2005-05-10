@@ -29,24 +29,24 @@ typedef std::map<col16, std::pair<cachedfont*, cachedfont*> > fontcache;
 class rawbitmap
 {
  public:
-  rawbitmap(const festring&);
+  rawbitmap(cfestring&);
   rawbitmap(v2);
   ~rawbitmap();
-  void Save(const festring&);
+  void Save(cfestring&);
   void MaskedBlit(bitmap*, v2, v2,
 		  v2, packcol16*) const;
   void MaskedBlit(bitmap*, packcol16*) const;
 
   void LIKE_PRINTF(5, 6) Printf(bitmap*, v2, packcol16,
-				const char*, ...) const;
+				cchar*, ...) const;
   void LIKE_PRINTF(5, 6) PrintfUnshaded(bitmap*, v2, packcol16,
-					const char*, ...) const;
-  cachedfont* Colorize(const packcol16*, alpha = 255,
-		       const packalpha* = 0) const;
+					cchar*, ...) const;
+  cachedfont* Colorize(cpackcol16*, alpha = 255,
+		       cpackalpha* = 0) const;
   bitmap* Colorize(v2, v2, v2,
-		   const packcol16*, alpha = 255,
-		   const packalpha* = 0,
-		   const uchar* = 0, truth = true) const;
+		   cpackcol16*, alpha = 255,
+		   cpackalpha* = 0,
+		   cuchar* = 0, truth = true) const;
   v2 GetSize() const { return Size; }
 
   void AlterGradient(v2, v2, int, int, truth);
@@ -60,8 +60,7 @@ class rawbitmap
   { return PaletteBuffer[Y][X] - 192 >> 4; }
   truth IsTransparent(v2) const;
   truth IsMaterialColor1(v2) const;
-  v2 RandomizeSparklePos(const v2*, v2*, v2,
-			       v2, int, int) const;
+  v2 RandomizeSparklePos(cv2*, v2*, v2, v2, int, int) const;
   void CopyPaletteFrom(rawbitmap*);
   void PutPixel(v2 Pos, paletteindex Color)
   { PaletteBuffer[Pos.Y][Pos.X] = Color; }

@@ -36,7 +36,7 @@ class trap;
 struct sortdata;
 
 typedef std::vector<item*> itemvector;
-typedef truth (item::*sorter)(const character*) const;
+typedef truth (item::*sorter)(ccharacter*) const;
 
 struct emitter
 {
@@ -71,7 +71,7 @@ struct pathcontroller
 {
   static truth Handler(int, int);
   static lsquare*** Map;
-  static const character* Character;
+  static ccharacter* Character;
 };
 
 struct stackcontroller
@@ -119,8 +119,8 @@ class lsquare : public square
   void Noxify() { Noxify(Emitation); }
   void Noxify(col24, ulong = 0);
   truth NoxifyEmitter(ulong);
-  const char* GetEngraved() const { return Engraved; }
-  truth Engrave(const festring&);
+  cchar* GetEngraved() const { return Engraved; }
+  truth Engrave(cfestring&);
   void UpdateMemorizedDescription(truth = false);
   truth BeKicked(character*, item*, bodypart*, double, double, int, int, truth, truth);
   int GetDivineMaster() const;
@@ -160,8 +160,8 @@ class lsquare : public square
   void SendMemorizedUpdateRequest();
   lsquare* GetNeighbourLSquare(int) const;
   lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
-  truth IsDangerous(const character*) const;
-  truth IsScary(const character*) const;
+  truth IsDangerous(ccharacter*) const;
+  truth IsScary(ccharacter*) const;
   stack* GetStackOfAdjacentSquare(int) const;
   void KickAnyoneStandingHereAway();
   truth IsDark() const;
@@ -183,7 +183,7 @@ class lsquare : public square
   int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
-  truth CheckKick(const character*) const;
+  truth CheckKick(ccharacter*) const;
   void GetHitByExplosion(const explosion*);
   int GetSpoiledItems() const;
   void SortAllItems(const sortdata&);
@@ -205,8 +205,8 @@ class lsquare : public square
   truth HasEngravings() const { return truth(Engraved); }
   void FinalProcessForBone();
   truth IsFreezed() const { return Flags & FREEZED; }
-  truth IsDangerousToBreathe(const character*) const;
-  truth IsScaryToBreathe(const character*) const;
+  truth IsDangerousToBreathe(ccharacter*) const;
+  truth IsScaryToBreathe(ccharacter*) const;
   int GetWalkability() const;
   int GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
   virtual int GetSquareWalkability() const { return GetWalkability(); }
@@ -241,7 +241,7 @@ class lsquare : public square
   truth CalculateIsTransparent();
   void CalculateSunLightLuminance(ulong);
   void CreateMemorized();
-  truth DetectMaterial(const material*) const;
+  truth DetectMaterial(cmaterial*) const;
   void Reveal(ulong, truth = false);
   void DestroyMemorized();
   void SwapMemorized(lsquare*);
@@ -253,10 +253,10 @@ class lsquare : public square
   void DisplayTrapInfo(festring&) const;
   void FillTrapVector(std::vector<trap*>&) const;
   void ReceiveTrapDamage(character*, int, int, int = YOURSELF);
-  truth HasDangerousTraps(const character*) const;
-  truth HasDangerousFluids(const character*) const;
+  truth HasDangerousTraps(ccharacter*) const;
+  truth HasDangerousFluids(ccharacter*) const;
   void AddLocationDescription(festring&) const;
-  truth VomitingIsDangerous(const character*) const;
+  truth VomitingIsDangerous(ccharacter*) const;
   bool TeleportAllSmokeAway();
   bool TeleportAllFluidsAway();
   bool TeleportAllTrapsAway();

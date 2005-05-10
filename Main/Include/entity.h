@@ -15,16 +15,13 @@
 
 #include <list>
 
-#include "felibdef.h"
+#include "ivandef.h"
 
 #define EXISTS 1
 #define HAS_BE 2
 #define ENTITY_FLAGS 3
 
 class square;
-class material;
-class character;
-class festring;
 struct v2;
 
 class entity
@@ -45,7 +42,7 @@ class entity
   col24 GetEmitation() const { return Emitation; }
   virtual void SignalEmitationIncrease(col24) { }
   virtual void SignalEmitationDecrease(col24) { }
-  virtual truth ContentsCanBeSeenBy(const character*) const { return false; }
+  virtual truth ContentsCanBeSeenBy(ccharacter*) const { return false; }
   virtual truth AllowSpoil() const { return false; }
   virtual void SignalSpoil(material*) { }
   virtual void SignalSpoilLevelChange(material*) { }
@@ -65,8 +62,8 @@ class entity
   virtual int GetTrapType() const { return 0; }
   void AddFlags(ulong What) { Flags |= What; }
   void RemoveFlags(ulong What) { Flags &= ~What; }
-  virtual truth IsStuckTo(const character*) const { return false; }
-  virtual const character* FindCarrier() const { return 0; }
+  virtual truth IsStuckTo(ccharacter*) const { return false; }
+  virtual ccharacter* FindCarrier() const { return 0; }
  protected:
   col24 Emitation;
   ulong Flags;

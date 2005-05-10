@@ -33,7 +33,7 @@ truth msgsystem::MessagesChanged = true;
 bitmap* msgsystem::QuickDrawCache = 0;
 int msgsystem::LastMessageLines;
 
-void msgsystem::AddMessage(const char* Format, ...)
+void msgsystem::AddMessage(cchar* Format, ...)
 {
   if(!Enabled)
     return;

@@ -51,9 +51,9 @@ MATERIAL(gas, material)
 MATERIAL(liquid, material)
 {
  public:
-  virtual const char* GetConsumeVerb() const;
+  virtual cchar* GetConsumeVerb() const;
   virtual truth IsLiquid() const { return true; }
-  void TouchEffect(item*, const festring&);
+  void TouchEffect(item*, cfestring&);
   void TouchEffect(character*, int);
   void TouchEffect(lterrain*);
   liquid* SpawnMoreLiquid(long Volume) const { return static_cast<liquid*>(SpawnMore(Volume)); }

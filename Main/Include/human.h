@@ -65,7 +65,7 @@ CHARACTER(humanoid, character)
   virtual truth BodyPartCanBeSevered(int) const;
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
-  virtual const char* GetEquipmentName(int) const;
+  virtual cchar* GetEquipmentName(int) const;
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipments() const { return 13; }
@@ -84,7 +84,7 @@ CHARACTER(humanoid, character)
   virtual truth TryToRiseFromTheDead();
   virtual truth HandleNoBodyPart(int);
   virtual void Kick(lsquare*, int, truth = false);
-  virtual double GetTimeToKill(const character*, truth) const;
+  virtual double GetTimeToKill(ccharacter*, truth) const;
   virtual int GetAttribute(int, truth = true) const;
   virtual truth EditAttribute(int, int);
   virtual void EditExperience(int, double, double);
@@ -106,7 +106,7 @@ CHARACTER(humanoid, character)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(int);
-  virtual void SignalEquipmentRemoval(int);
+  virtual void SignalEquipmentRemoval(int, citem*);
   virtual void DrawBodyParts(blitdata&) const;
   virtual truth CanUseStethoscope(truth) const;
   virtual truth IsUsingArms() const;
@@ -121,7 +121,7 @@ CHARACTER(humanoid, character)
   virtual festring GetBodyPartName(int, truth = false) const;
   virtual void CreateBlockPossibilityVector(blockvector&, double) const;
   virtual item* SevereBodyPart(int, truth = false, stack* = 0);
-  virtual int GetSWeaponSkillLevel(const item*) const;
+  virtual int GetSWeaponSkillLevel(citem*) const;
   virtual truth UseMaterialAttributes() const;
   virtual void CalculateDodgeValue();
   virtual truth CheckZap();
@@ -131,16 +131,16 @@ CHARACTER(humanoid, character)
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual item* GetPairEquipment(int) const;
   virtual truth HasHead() const { return truth(GetHead()); }
-  virtual const festring& GetStandVerb() const;
+  virtual cfestring& GetStandVerb() const;
   virtual head* Behead();
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
   virtual int GetRandomApplyBodyPart() const;
-  void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
+  void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, citem*);
   virtual int GetSumOfAttributes() const;
-  virtual truth CheckConsume(const festring&) const;
+  virtual truth CheckConsume(cfestring&) const;
   virtual truth CanConsume(material*) const;
   virtual truth PreProcessForBone();
   virtual void FinalProcessForBone();
@@ -162,8 +162,8 @@ CHARACTER(humanoid, character)
   virtual truth AllowUnconsciousness() const;
   virtual truth CanChokeOnWeb(web*) const;
   virtual truth BrainsHurt() const;
-  virtual const char* GetRunDescriptionLine(int) const;
-  virtual const char* GetNormalDeathMessage() const;
+  virtual cchar* GetRunDescriptionLine(int) const;
+  virtual cchar* GetNormalDeathMessage() const;
   virtual void ApplySpecialAttributeBonuses();
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
@@ -174,7 +174,7 @@ CHARACTER(humanoid, character)
   virtual long GetBodyPartSize(int, int) const;
   virtual long GetBodyPartVolume(int) const;
   virtual bodypart* MakeBodyPart(int) const;
-  virtual const festring& GetDeathMessage() const;
+  virtual cfestring& GetDeathMessage() const;
   virtual v2 GetDrawDisplacement(int) const { return ZERO_V2; }
   truth HasAUsableArm() const;
   truth HasAUsableLeg() const;
@@ -187,7 +187,7 @@ CHARACTER(humanoid, character)
   std::list<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
-  static const int DrawOrder[];
+  static cint DrawOrder[];
 };
 
 CHARACTER(playerkind, humanoid)
@@ -283,11 +283,11 @@ CHARACTER(oree, humanoid)
   virtual void Bite(character*, v2, int, truth = false);
   virtual void GetAICommand();
  protected:
-  virtual const char* FirstPersonBiteVerb() const;
-  virtual const char* FirstPersonCriticalBiteVerb() const;
-  virtual const char* ThirdPersonBiteVerb() const;
-  virtual const char* ThirdPersonCriticalBiteVerb() const;
-  virtual const char* BiteNoun() const;
+  virtual cchar* FirstPersonBiteVerb() const;
+  virtual cchar* FirstPersonCriticalBiteVerb() const;
+  virtual cchar* ThirdPersonBiteVerb() const;
+  virtual cchar* ThirdPersonCriticalBiteVerb() const;
+  virtual cchar* BiteNoun() const;
   void CallForMonsters();
 };
 
@@ -348,7 +348,7 @@ CHARACTER(communist, humanoid)
  public:
   virtual truth MoveRandomly();
   virtual void BeTalkedTo();
-  virtual truth BoundToUse(const item*, int) const;
+  virtual truth BoundToUse(citem*, int) const;
   virtual truth MustBeRemovedFromBone() const;
  protected:
   virtual truth ShowClassDescription() const;
@@ -412,7 +412,7 @@ CHARACTER(zombie, humanoid)
   virtual truth BodyPartIsVital(int) const;
   virtual void CreateBodyParts(int);
   virtual truth AllowSpoil() const { return true; }
-  void SetDescription(const festring What) { Description = What; }
+  void SetDescription(cfestring What) { Description = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual festring GetZombieDescription() const;
@@ -433,7 +433,7 @@ CHARACTER(mistress, humanoid)
  public:
   virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
   virtual truth ReceiveDamage(character*, int, int, int = ALL, int = 8, truth = false, truth = false, truth = false, truth = true);
-  virtual truth AllowEquipment(const item*, int) const;
+  virtual truth AllowEquipment(citem*, int) const;
 };
 
 CHARACTER(werewolfhuman, humanoid)
@@ -465,7 +465,7 @@ CHARACTER(angel, humanoid)
   virtual int GetAttribute(int, truth = true) const;
   virtual col24 GetBaseEmitation() const;
   virtual truth CanCreateBodyPart(int) const;
-  virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
+  virtual cfestring& GetStandVerb() const { return character::GetStandVerb(); }
   virtual void FinalProcessForBone();
   virtual void CreateInitialEquipment(int);
  protected:
@@ -499,7 +499,7 @@ CHARACTER(genie, humanoid)
   virtual truth BodyPartIsVital(int) const;
   virtual int GetAttribute(int, truth = true) const;
   virtual truth CanCreateBodyPart(int) const;
-  virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
+  virtual cfestring& GetStandVerb() const { return character::GetStandVerb(); }
 };
 
 CHARACTER(orc, humanoid)

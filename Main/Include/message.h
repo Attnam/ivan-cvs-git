@@ -26,7 +26,7 @@ class festring;
 class msgsystem
 {
  public:
-  static void LIKE_PRINTF(1, 2) AddMessage(const char*, ...);
+  static void LIKE_PRINTF(1, 2) AddMessage(cchar*, ...);
   static void Draw();
   static void DrawMessageHistory();
   static void Format();

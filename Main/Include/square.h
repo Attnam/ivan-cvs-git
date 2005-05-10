@@ -40,16 +40,16 @@ class square
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
   festring GetMemorizedDescription() { return MemorizedDescription; }
-  void SetMemorizedDescription(const festring& What) { MemorizedDescription = What; }
+  void SetMemorizedDescription(cfestring& What) { MemorizedDescription = What; }
   virtual truth CanBeSeenByPlayer(truth = false) const = 0;
   virtual truth CanBeSeenFrom(v2, long, truth = false) const = 0;
   void SendNewDrawRequest() { Flags |= NEW_DRAW_REQUEST; }
   void SendStrongNewDrawRequest() { Flags |= STRONG_NEW_DRAW_REQUEST; }
-  const char* SurviveMessage(character*) const;
-  const char* MonsterSurviveMessage(character*) const;
-  const char* DeathMessage(character*) const;
-  const char* MonsterDeathVerb(character*) const;
-  const char* ScoreEntry(character*) const;
+  cchar* SurviveMessage(character*) const;
+  cchar* MonsterSurviveMessage(character*) const;
+  cchar* DeathMessage(character*) const;
+  cchar* MonsterDeathVerb(character*) const;
+  cchar* ScoreEntry(character*) const;
   truth IsFatalToStay() const;
   int GetEntryDifficulty() const;
   int GetRestModifier() const;
@@ -68,7 +68,7 @@ class square
   }
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
-  truth CanBeSeenBy(const character*, truth = false) const;
+  truth CanBeSeenBy(ccharacter*, truth = false) const;
   col24 GetLuminance() const { return Luminance; }
   square* GetNeighbourSquare(int) const;
   square* GetNearSquare(v2) const;

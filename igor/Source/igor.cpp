@@ -12,7 +12,7 @@
 
 #define STRETCH 5
 #define TILE_SIZE 16
-const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
+cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
 int Main(int, char**)
 {

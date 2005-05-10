@@ -28,21 +28,21 @@ typedef std::vector<item*> itemvector;
 typedef std::vector<fluid*> fluidvector;
 typedef truth (rawbitmap::*pixelpredicate)(v2) const;
 typedef truth (material::*materialpredicate)() const;
-typedef truth (item::*sorter)(const character*) const;
+typedef truth (item::*sorter)(ccharacter*) const;
 typedef item* (*itemspawner)(int, int);
-typedef item* (*itemcloner)(const item*);
+typedef item* (*itemcloner)(citem*);
 
 extern materialpredicate TrueMaterialPredicate;
 
 struct sortdata
 {
-  sortdata(itemvector& AllItems, const character* Character, truth Recurse, sorter Sorter)
+  sortdata(itemvector& AllItems, ccharacter* Character, truth Recurse, sorter Sorter)
   : AllItems(AllItems),
     Character(Character),
     Recurse(Recurse),
     Sorter(Sorter) { }
   itemvector& AllItems;
-  const character* Character;
+  ccharacter* Character;
   truth Recurse;
   sorter Sorter;
 };
@@ -177,11 +177,11 @@ class itemprototype
 {
  public:
   friend class databasecreator<item>;
-  itemprototype(const itemprototype*, itemspawner, itemcloner, const char*);
+  itemprototype(const itemprototype*, itemspawner, itemcloner, cchar*);
   item* Spawn(int Config = 0, int SpecialFlags = 0) const { return Spawner(Config, SpecialFlags); }
   item* SpawnAndLoad(inputfile&) const;
-  item* Clone(const item* Item) const { return Cloner(Item); }
-  const char* GetClassID() const { return ClassID; }
+  item* Clone(citem* Item) const { return Cloner(Item); }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const itemprototype* GetBase() const { return Base; }
   int CreateSpecialConfigurations(itemdatabase**, int);
@@ -196,7 +196,7 @@ class itemprototype
   int ConfigSize;
   itemspawner Spawner;
   itemcloner Cloner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class item : public object
@@ -206,7 +206,7 @@ class item : public object
   typedef itemprototype prototype;
   typedef itemdatabase database;
   item();
-  item(const item&);
+  item(citem&);
   virtual ~item();
   virtual double GetWeaponStrength() const;
   virtual truth Open(character*);
@@ -224,7 +224,7 @@ class item : public object
   virtual int GetOfferValue(int) const;
   virtual void Fly(character*, int, int);
   int HitCharacter(character*, character*, int, double, int);
-  virtual truth DogWillCatchAndConsume(const character*) const { return false; }
+  virtual truth DogWillCatchAndConsume(ccharacter*) const { return false; }
   virtual truth Apply(character*);
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
@@ -232,7 +232,7 @@ class item : public object
   virtual void StepOnEffect(character*) { }
   virtual truth IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(int);
-  virtual truth CanBeEatenByAI(const character*) const;
+  virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth IsExplosive() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -248,34 +248,34 @@ class item : public object
   virtual void RemoveFromSlot();
   void MoveTo(stack*);
   truth IsMainSlot(const slot* What) const { return Slot[0] == What; }
-  static const char* GetItemCategoryName(long);
+  static cchar* GetItemCategoryName(long);
   virtual truth IsConsumable() const { return true; }
-  truth IsEatable(const character*) const;
-  truth IsDrinkable(const character*) const;
-  virtual truth IsOpenable(const character*) const { return false; }
-  virtual truth IsReadable(const character*) const { return false; }
-  virtual truth IsDippable(const character*) const { return false; }
-  virtual truth IsDipDestination(const character*) const { return false; }
-  virtual truth IsAppliable(const character*) const { return false; }
-  virtual truth IsZappable(const character*) const { return false; }
-  virtual truth IsChargeable(const character*) const { return false; }
-  virtual truth IsHelmet(const character*) const { return false; }
-  virtual truth IsAmulet(const character*) const { return false; }
-  virtual truth IsCloak(const character*) const { return false; }
-  virtual truth IsBodyArmor(const character*) const { return false; }
-  virtual truth IsRing(const character*) const { return false; }
-  virtual truth IsGauntlet(const character*) const { return false; }
-  virtual truth IsBelt(const character*) const { return false; }
-  virtual truth IsBoot(const character*) const { return false; }
-  virtual truth IsShield(const character*) const { return false; }
-  virtual truth IsWeapon(const character*) const { return false; }
-  virtual truth IsArmor(const character*) const { return false; }
-  virtual truth IsEnchantable(const character*) const { return CanBeEnchanted(); }
-  virtual truth IsRepairable(const character*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsDecosAdShirt(const character*) const { return false; }
-  virtual truth MaterialIsChangeable(const character*) const { return true; }
-  virtual truth CanBeHardened(const character*) const;
-  virtual truth HasLock(const character*) const { return false; }
+  truth IsEatable(ccharacter*) const;
+  truth IsDrinkable(ccharacter*) const;
+  virtual truth IsOpenable(ccharacter*) const { return false; }
+  virtual truth IsReadable(ccharacter*) const { return false; }
+  virtual truth IsDippable(ccharacter*) const { return false; }
+  virtual truth IsDipDestination(ccharacter*) const { return false; }
+  virtual truth IsAppliable(ccharacter*) const { return false; }
+  virtual truth IsZappable(ccharacter*) const { return false; }
+  virtual truth IsChargeable(ccharacter*) const { return false; }
+  virtual truth IsHelmet(ccharacter*) const { return false; }
+  virtual truth IsAmulet(ccharacter*) const { return false; }
+  virtual truth IsCloak(ccharacter*) const { return false; }
+  virtual truth IsBodyArmor(ccharacter*) const { return false; }
+  virtual truth IsRing(ccharacter*) const { return false; }
+  virtual truth IsGauntlet(ccharacter*) const { return false; }
+  virtual truth IsBelt(ccharacter*) const { return false; }
+  virtual truth IsBoot(ccharacter*) const { return false; }
+  virtual truth IsShield(ccharacter*) const { return false; }
+  virtual truth IsWeapon(ccharacter*) const { return false; }
+  virtual truth IsArmor(ccharacter*) const { return false; }
+  virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
+  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
+  virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
+  virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
+  virtual truth CanBeHardened(ccharacter*) const;
+  virtual truth HasLock(ccharacter*) const { return false; }
   virtual truth IsOnGround() const;
   int GetResistance(int) const;
   virtual void Be();
@@ -288,7 +288,7 @@ class item : public object
   virtual truth IsWhip() const { return false; }
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
-  virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsDestroyable, const character*);
+  virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsDestroyable, ccharacter*);
   DATA_BASE_TRUTH(IsMaterialChangeable);
   DATA_BASE_VALUE(int, WeaponCategory);
   DATA_BASE_TRUTH(IsAutoInitializable);
@@ -306,11 +306,11 @@ class item : public object
   virtual DATA_BASE_VALUE(long, Price);
   virtual DATA_BASE_VALUE(col24, BaseEmitation);
   virtual DATA_BASE_TRUTH(UsesLongArticle);
-  virtual DATA_BASE_VALUE(const festring&, Adjective);
+  virtual DATA_BASE_VALUE(cfestring&, Adjective);
   virtual DATA_BASE_TRUTH(UsesLongAdjectiveArticle);
-  virtual DATA_BASE_VALUE(const festring&, NameSingular);
-  virtual DATA_BASE_VALUE(const festring&, NamePlural);
-  virtual DATA_BASE_VALUE(const festring&, PostFix);
+  virtual DATA_BASE_VALUE(cfestring&, NameSingular);
+  virtual DATA_BASE_VALUE(cfestring&, NamePlural);
+  virtual DATA_BASE_VALUE(cfestring&, PostFix);
   virtual DATA_BASE_VALUE(int, ArticleMode);
   DATA_BASE_VALUE(const fearray<long>&, MainMaterialConfig);
   DATA_BASE_VALUE(const fearray<long>&, SecondaryMaterialConfig);
@@ -325,7 +325,7 @@ class item : public object
   DATA_BASE_TRUTH(IsTwoHanded);
   DATA_BASE_TRUTH(CanBeBroken);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, WallBitmapPos, int);
-  DATA_BASE_VALUE(const festring&, FlexibleNameSingular);
+  DATA_BASE_VALUE(cfestring&, FlexibleNameSingular);
   DATA_BASE_TRUTH(CanBePiled);
   DATA_BASE_TRUTH(AffectsArmStrength);
   DATA_BASE_TRUTH(AffectsLegStrength);
@@ -380,14 +380,14 @@ class item : public object
   DATA_BASE_TRUTH(HasNormalPictureDirection);
   DATA_BASE_VALUE(int, DamageFlags);
   DATA_BASE_TRUTH(FlexibilityIsEssential);
-  DATA_BASE_VALUE(const festring&, BreakMsg);
+  DATA_BASE_VALUE(cfestring&, BreakMsg);
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
   truth IsSimiliarTo(item*) const;
   virtual truth IsPickable(character*) const { return true; }
   truth CanBeSeenByPlayer() const;
-  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth CanBeSeenBy(ccharacter*) const;
   festring GetDescription(int) const;
   virtual square* GetSquareUnderEntity(int = 0) const;
   virtual square* GetSquareUnder(int = 0) const;
@@ -407,7 +407,7 @@ class item : public object
   virtual void SignalEmitationDecrease(col24);
   void CalculateAll();
   virtual void DropEquipment(stack* = 0) { }
-  virtual truth IsDangerous(const character*) const { return false; }
+  virtual truth IsDangerous(ccharacter*) const { return false; }
   virtual truth NeedDangerSymbol() const { return false; }
   void WeaponSkillHit(int);
   virtual void SetTeam(int) { }
@@ -419,12 +419,12 @@ class item : public object
   int GetBaseMaxDamage() const;
   int GetBaseToHitValue() const;
   int GetBaseBlockValue() const;
-  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   long GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual truth AllowSpoil() const;
   item* DuplicateToStack(stack*, ulong = 0);
-  virtual truth CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(citem*, ccharacter*) const;
   virtual long GetTotalExplosivePower() const { return 0; }
   virtual void Break(character*, int = YOURSELF);
   virtual void SetEnchantment(int) { }
@@ -432,15 +432,15 @@ class item : public object
   virtual void SignalEnchantmentChange();
   virtual double GetTHVBonus() const { return 0.; }
   virtual double GetDamageBonus() const { return 0.; }
-  virtual void DrawContents(const character*) { }
+  virtual void DrawContents(ccharacter*) { }
   virtual truth IsBroken() const;
   virtual int GetEnchantment() const { return 0; }
   long GetEnchantedPrice(int) const;
   virtual item* Fix();
   int GetStrengthRequirement() const;
   virtual int GetInElasticityPenalty(int) const { return 0; }
-  virtual truth IsFixableBySmith(const character*) const { return false; }
-  virtual truth IsFixableByTailor(const character*) const { return false; }
+  virtual truth IsFixableBySmith(ccharacter*) const { return false; }
+  virtual truth IsFixableByTailor(ccharacter*) const { return false; }
   virtual long GetFixPrice() const;
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
@@ -450,9 +450,9 @@ class item : public object
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
-  const char* GetStrengthValueDescription() const;
-  const char* GetBaseToHitValueDescription() const;
-  const char* GetBaseBlockValueDescription() const;
+  cchar* GetStrengthValueDescription() const;
+  cchar* GetBaseToHitValueDescription() const;
+  cchar* GetBaseBlockValueDescription() const;
   virtual truth IsInCorrectSlot(int) const;
   truth IsInCorrectSlot() const;
   int GetEquipmentIndex() const;
@@ -462,7 +462,7 @@ class item : public object
   virtual truth AllowAlphaEverywhere() const { return false; }
   virtual int GetAttachedGod() const;
   virtual long GetTruePrice() const;
-  virtual void Search(const character*, int) { }
+  virtual void Search(ccharacter*, int) { }
   virtual head* Behead() { return 0; }
   virtual truth IsGorovitsFamilyRelic() const { return false; }
   virtual truth EffectIsGood() const { return false; }
@@ -482,10 +482,10 @@ class item : public object
   virtual void Draw(blitdata&) const;
   v2 GetLargeBitmapPos(v2, int) const;
   void LargeDraw(blitdata&) const;
-  virtual truth BunnyWillCatchAndConsume(const character*) const { return false; }
+  virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
-  void SendNewDrawAndMemorizedUpdateRequest() const;
+  virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }
   virtual void CalculateEmitation();
@@ -500,7 +500,7 @@ class item : public object
   void DrawFluidBodyArmorPictures(blitdata&, int) const;
   void CheckFluidGearPictures(v2, int, truth);
   void DrawFluids(blitdata&) const;
-  virtual void ReceiveAcid(material*, const festring&, long);
+  virtual void ReceiveAcid(material*, cfestring&, long);
   virtual truth ShowFluids() const { return true; }
   void DonateFluidsTo(item*);
   void Destroy(character*, int);
@@ -511,7 +511,7 @@ class item : public object
   void SetSpoilPercentage(int);
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   void RedistributeFluids();
-  virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
+  virtual material* GetConsumeMaterial(ccharacter*, materialpredicate = TrueMaterialPredicate) const;
   virtual material* RemoveMaterial(material*);
   virtual void Cannibalize();
   void InitMaterials(material*, truth = true);
@@ -532,8 +532,8 @@ class item : public object
   virtual void CalculateEnchantment() { }
   virtual character* GetBodyPartMaster() const { return 0; }
   virtual truth AllowFluids() const { return false; }
-  int GetHinderVisibilityBonus(const character*) const;
-  virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsKamikazeWeapon, const character*);
+  int GetHinderVisibilityBonus(ccharacter*) const;
+  virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsKamikazeWeapon, ccharacter*);
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
   truth HasID(ulong What) const { return ID == What; }
@@ -544,12 +544,12 @@ class item : public object
   festring GetLocationDescription() const;
   truth IsEquipped() const;
   festring GetExtendedDescription() const;
-  virtual const character* FindCarrier() const;
+  virtual ccharacter* FindCarrier() const;
   virtual void BlockEffect(character*, character*, item*, int type) { } 
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
  protected:
-  virtual const char* GetBreakVerb() const;
+  virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
   void LoadDataBaseStats();
   virtual void PostConstruct() { }

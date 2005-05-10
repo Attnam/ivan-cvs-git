@@ -18,8 +18,8 @@
 GOD(valpurus, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual void Pray();
   virtual int GetBasicAlignment() const;
@@ -34,8 +34,8 @@ GOD(valpurus, god)
 GOD(legifer, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -49,13 +49,13 @@ GOD(legifer, god)
 GOD(atavus, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
-  virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  virtual truth LikesMaterial(const materialdatabase*, ccharacter*) const;
   virtual int GetSex() const { return MALE; }
  protected:
   virtual void PrayGoodEffect();
@@ -65,8 +65,8 @@ GOD(atavus, god)
 GOD(dulcis, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -80,15 +80,15 @@ GOD(dulcis, god)
 GOD(seges, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
   virtual truth ForceGiveBodyPart() const { return true; }
   virtual truth HealRegeneratingBodyParts() const { return true; }
-  virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  virtual truth LikesMaterial(const materialdatabase*, ccharacter*) const;
   virtual int GetSex() const { return FEMALE; }
  protected:
   virtual void PrayGoodEffect();
@@ -98,8 +98,8 @@ GOD(seges, god)
 GOD(sophos, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -113,8 +113,8 @@ GOD(sophos, god)
 GOD(silva, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -128,8 +128,8 @@ GOD(silva, god)
 GOD(loricatus, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -143,8 +143,8 @@ GOD(loricatus, god)
 GOD(mellis, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -158,8 +158,8 @@ GOD(mellis, god)
 GOD(cleptia, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -173,8 +173,8 @@ GOD(cleptia, god)
 GOD(nefas, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -188,14 +188,14 @@ GOD(nefas, god)
 GOD(scabies, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual truth PlayerVomitedOnAltar(liquid*);
   virtual col16 GetColor() const;
   virtual col16 GetEliteColor() const;
-  virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  virtual truth LikesMaterial(const materialdatabase*, ccharacter*) const;
   virtual truth MutatesBodyParts() const { return true; }
   virtual int GetSex() const { return FEMALE; }
   virtual truth LikesVomit() const { return true; }
@@ -207,8 +207,8 @@ GOD(scabies, god)
 GOD(infuscor, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -222,8 +222,8 @@ GOD(infuscor, god)
 GOD(cruentus, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual col16 GetColor() const;
@@ -237,8 +237,8 @@ GOD(cruentus, god)
 GOD(mortifer, god)
 {
  public:
-  virtual const char* GetName() const;
-  virtual const char* GetDescription() const;
+  virtual cchar* GetName() const;
+  virtual cchar* GetDescription() const;
   virtual int GetAlignment() const;
   virtual void Pray();
   virtual int GetBasicAlignment() const;

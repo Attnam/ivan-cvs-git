@@ -12,10 +12,10 @@
 
 /* Compiled through itemset.cpp */
 
-const char* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
-const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "strong", "very strong", "extremely strong", "almost unbreakable" };
+cchar* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
+cchar* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "strong", "very strong", "extremely strong", "almost unbreakable" };
 
-itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, const char* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
+itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, cchar* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
 truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
@@ -32,15 +32,15 @@ truth item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslo
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 int item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 truth item::IsBroken() const { return GetConfig() & BROKEN; }
-const char* item::GetBreakVerb() const { return "breaks"; }
+cchar* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
 truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
-truth item::IsEatable(const character* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
-truth item::IsDrinkable(const character* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
+truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
+truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
 void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
@@ -48,7 +48,7 @@ void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeM
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
-item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
+item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
@@ -278,7 +278,7 @@ truth item::Consume(character* Eater, long Amount)
   return !NewConsuming->Exists() || !NewConsumeMaterial;
 }
 
-truth item::CanBeEatenByAI(const character* Eater) const
+truth item::CanBeEatenByAI(ccharacter* Eater) const
 {
   material* ConsumeMaterial = GetConsumeMaterial(Eater);
 
@@ -378,7 +378,7 @@ void item::MoveTo(stack* Stack)
   Stack->AddItem(this);
 }
 
-const char* item::GetItemCategoryName(long Category) // convert to array
+cchar* item::GetItemCategoryName(long Category) // convert to array
 {
   switch(Category)
   {
@@ -499,7 +499,7 @@ truth item::CanBeSeenByPlayer() const
   return CanBeSeenBy(PLAYER);
 }
 
-truth item::CanBeSeenBy(const character* Who) const
+truth item::CanBeSeenBy(ccharacter* Who) const
 {
   for(int c = 0; c < SquaresUnder; ++c)
     if(Slot[c] && Slot[c]->CanBeSeenBy(Who))
@@ -605,7 +605,7 @@ item* item::Duplicate(ulong Flags)
   return Clone;
 }
 
-void item::AddInventoryEntry(const character*, festring& Entry, int Amount, truth ShowSpecialInfo) const
+void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth ShowSpecialInfo) const
 {
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
@@ -724,7 +724,7 @@ item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
   return Duplicated;
 }
 
-truth item::CanBePiledWith(const item* Item, const character* Viewer) const
+truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   return GetType() == Item->GetType()
     && GetConfig() == Item->GetConfig()
@@ -877,7 +877,7 @@ void item::ResetSpoiling()
       GetMaterial(c)->ResetSpoiling();
 }
 
-const char* item::GetBaseToHitValueDescription() const
+cchar* item::GetBaseToHitValueDescription() const
 {
   if(GetBaseToHitValue() < 10)
     return ToHitValueDescription[Min(GetBaseToHitValue(), 6)];
@@ -885,7 +885,7 @@ const char* item::GetBaseToHitValueDescription() const
     return ToHitValueDescription[7];
 }
 
-const char* item::GetBaseBlockValueDescription() const
+cchar* item::GetBaseBlockValueDescription() const
 {
   if(GetBaseBlockValue() < 20)
     return ToHitValueDescription[Min(GetBaseBlockValue() >> 1, 6)];
@@ -893,7 +893,7 @@ const char* item::GetBaseBlockValueDescription() const
     return ToHitValueDescription[7];
 }
 
-const char* item::GetStrengthValueDescription() const
+cchar* item::GetStrengthValueDescription() const
 {
   int SV = GetStrengthValue();
 
@@ -999,7 +999,7 @@ void item::PostProcessForBone()
   if(BI == game::GetBoneItemIDMap().end())
   {
     ulong NewID = game::CreateNewItemID(this);
-    game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
+    game::GetBoneItemIDMap().insert(std::make_pair(-ID, NewID));
     ID = NewID;
   }
   else
@@ -1018,7 +1018,7 @@ void item::PostProcessForBone()
     if(BI == game::GetBoneItemIDMap().end())
     {
       ulong NewCloneMotherID = game::CreateNewItemID(0);
-      game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(I->ID, NewCloneMotherID));
+      game::GetBoneItemIDMap().insert(std::make_pair(I->ID, NewCloneMotherID));
       I->ID = NewCloneMotherID;
     }
     else
@@ -1088,9 +1088,9 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
 
 void item::Draw(blitdata& BlitData) const
 {
-  const int AF = GraphicData.AnimationFrames;
-  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-  const bitmap* P = GraphicData.Picture[F];
+  cint AF = GraphicData.AnimationFrames;
+  cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
+  cbitmap* P = GraphicData.Picture[F];
 
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaLuminanceBlit(BlitData);
@@ -1103,16 +1103,16 @@ void item::Draw(blitdata& BlitData) const
 
 v2 item::GetLargeBitmapPos(v2 BasePos, int I) const
 {
-  const int SquareIndex = I ? I / (GraphicData.AnimationFrames >> 2) : 0;
+  cint SquareIndex = I ? I / (GraphicData.AnimationFrames >> 2) : 0;
   return v2(SquareIndex & 1 ? BasePos.X + 16 : BasePos.X, SquareIndex & 2 ? BasePos.Y + 16 : BasePos.Y);
 }
 
 void item::LargeDraw(blitdata& BlitData) const
 {
-  const int TrueAF = GraphicData.AnimationFrames >> 2;
-  const int SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
-  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) ? SquareIndex * TrueAF : SquareIndex * TrueAF + (GET_TICK() & (TrueAF - 1));
-  const bitmap* P = GraphicData.Picture[F];
+  cint TrueAF = GraphicData.AnimationFrames >> 2;
+  cint SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
+  cint F = !(BlitData.CustomData & ALLOW_ANIMATE) ? SquareIndex * TrueAF : SquareIndex * TrueAF + (GET_TICK() & (TrueAF - 1));
+  cbitmap* P = GraphicData.Picture[F];
 
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaLuminanceBlit(BlitData);
@@ -1307,13 +1307,13 @@ void item::DrawFluidBodyArmorPictures(blitdata& BlitData, int SpecialFlags) cons
 
 void item::DrawFluids(blitdata& BlitData) const
 {
-  const int SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
+  cint SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
 
   for(const fluid* F = Fluid[SquareIndex]; F; F = F->Next)
     F->Draw(BlitData);
 }
 
-void item::ReceiveAcid(material*, const festring&, long Modifier)
+void item::ReceiveAcid(material*, cfestring&, long Modifier)
 {
   if(GetMainMaterial()->GetInteractionFlags() & CAN_DISSOLVE)
   {
@@ -1385,7 +1385,7 @@ void item::RedistributeFluids()
 	F->Redistribute();
 }
 
-material* item::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+material* item::GetConsumeMaterial(ccharacter* Consumer, materialpredicate Predicate) const
 {
   return (MainMaterial->*Predicate)() && Consumer->CanConsume(MainMaterial) ? MainMaterial : 0;
 }
@@ -1429,7 +1429,7 @@ truth item::Read(character* Reader)
   return true;
 }
 
-truth item::CanBeHardened(const character*) const
+truth item::CanBeHardened(ccharacter*) const
 {
   return MainMaterial->GetHardenedMaterial(this) != NONE;
 }
@@ -1465,7 +1465,7 @@ truth item::IsValuable() const
   return false;
 }
 
-int item::GetHinderVisibilityBonus(const character* Char) const
+int item::GetHinderVisibilityBonus(ccharacter* Char) const
 {
   int Bonus = 0;
 
@@ -1508,7 +1508,7 @@ truth item::WillSpoil() const
 {
   for(int c = 0; c < GetMaterials(); ++c)
   {
-    const material* Material = GetMaterial(c);
+    cmaterial* Material = GetMaterial(c);
 
     if(Material && Material->Spoils())
       return true;
@@ -1523,7 +1523,7 @@ int item::GetMaxSpoilPercentage() const
 
   for(int c = 0; c < GetMaterials(); ++c)
   {
-    const material* Material = GetMaterial(c);
+    cmaterial* Material = GetMaterial(c);
 
     if(Material)
       MaxPercentage = Max(MaxPercentage, Material->GetSpoilPercentage());
@@ -1561,7 +1561,7 @@ festring item::GetExtendedDescription() const
     return CONST_S("something");
 
   festring Desc;
-  const character* Carrier = FindCarrier();
+  ccharacter* Carrier = FindCarrier();
 
   if(Carrier)
   {
@@ -1588,7 +1588,7 @@ festring item::GetExtendedDescription() const
   return Desc;
 }
 
-const character* item::FindCarrier() const
+ccharacter* item::FindCarrier() const
 {
   return Slot[0]->FindCarrier();
 }

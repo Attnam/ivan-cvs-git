@@ -30,11 +30,11 @@ typedef void (*entrydrawer)(bitmap*, v2, uint);
 class felist
 {
  public:
-  felist(const festring&, col16 = WHITE, uint = 0);
+  felist(cfestring&, col16 = WHITE, uint = 0);
   ~felist();
-  void AddEntry(const festring&, col16, uint = 0,
+  void AddEntry(cfestring&, col16, uint = 0,
 		uint = NO_IMAGE, truth = true);
-  void AddDescription(const festring&, col16 = WHITE);
+  void AddDescription(cfestring&, col16 = WHITE);
   uint Draw();
   void QuickDraw(bitmap*, uint) const;
   void Empty();
@@ -53,7 +53,7 @@ class felist
   truth DrawPage(bitmap*) const;
   void Pop();
   static void CreateQuickDrawFontCaches(rawbitmap*, col16, uint);
-  void PrintToFile(const festring&);
+  void PrintToFile(cfestring&);
   void SetPos(v2 What) { Pos = What; }
   void SetWidth(uint What) { Width = What; }
   void SetPageLength(uint What) { PageLength = What; }

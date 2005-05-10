@@ -12,14 +12,14 @@
 
 /* Compiled through actset.cpp */
 
-const char* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
-const char* unconsciousness::GetDescription() const { return "unconscious"; }
-const char* consume::GetDescription() const { return Description.CStr(); }
-void consume::SetDescription(const festring& What) { Description = What; }
-const char* rest::GetDescription() const { return "resting"; }
-const char* dig::GetDescription() const { return "digging"; }
-const char* go::GetDescription() const { return "going"; }
-const char* study::GetDescription() const { return "reading"; }
+cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
+cchar* unconsciousness::GetDescription() const { return "unconscious"; }
+cchar* consume::GetDescription() const { return Description.CStr(); }
+void consume::SetDescription(cfestring& What) { Description = What; }
+cchar* rest::GetDescription() const { return "resting"; }
+cchar* dig::GetDescription() const { return "digging"; }
+cchar* go::GetDescription() const { return "going"; }
+cchar* study::GetDescription() const { return "reading"; }
 
 void unconsciousness::Save(outputfile& SaveFile) const
 {

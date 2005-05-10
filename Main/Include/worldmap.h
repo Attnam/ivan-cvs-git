@@ -49,7 +49,7 @@ class worldmap : public area
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();
   wsquare* GetNeighbourWSquare(v2, int) const;
-  v2 GetEntryPos(const character*, int) const;
+  v2 GetEntryPos(ccharacter*, int) const;
   void RevealEnvironment(v2, int);
   void SafeSmooth(int, int);
   void FastSmooth(int, int);

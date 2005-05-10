@@ -12,12 +12,12 @@
 
 /* Compiled through materset.cpp */
 
-materialprototype::materialprototype(const materialprototype* Base, materialspawner Spawner, materialcloner Cloner, const char* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
+materialprototype::materialprototype(const materialprototype* Base, materialspawner Spawner, materialcloner Cloner, cchar* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
 
 long material::GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
 truth material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
 long material::GetTotalExplosivePower() const { return long(double(Volume) * GetExplosivePower() / 1000000); }
-const char* material::GetConsumeVerb() const { return "eating"; }
+cchar* material::GetConsumeVerb() const { return "eating"; }
 
 materialpredicate TrueMaterialPredicate = &material::True;
 
@@ -299,7 +299,7 @@ long material::GetTotalNutritionValue() const
   return GetNutritionValue() * GetVolume() / 50;
 }
 
-truth material::CanBeEatenByAI(const character* Eater) const
+truth material::CanBeEatenByAI(ccharacter* Eater) const
 {
   return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit()
     && !GetSpoilLevel() && !Eater->CheckCannibalism(this);
@@ -364,7 +364,7 @@ item* material::CreateNaturalForm(long Volume) const
   return Item;
 }
 
-int material::GetHardenedMaterial(const item* Item) const
+int material::GetHardenedMaterial(citem* Item) const
 {
   const materialdatabase* DB = DataBase;
 
@@ -382,7 +382,7 @@ int material::GetHardenedMaterial(const item* Item) const
   return DB->HardenedMaterial;
 }
 
-int material::GetHardenModifier(const item* Item) const
+int material::GetHardenModifier(citem* Item) const
 {
   int M = GetFlexibility() << 2;
 
@@ -402,7 +402,7 @@ truth material::IsSparkling() const
   return DataBase->CategoryFlags & IS_SPARKLING;
 }
 
-truth material::IsStuckTo(const character* Char) const
+truth material::IsStuckTo(ccharacter* Char) const
 {
   return MotherEntity->IsStuckTo(Char);
 }

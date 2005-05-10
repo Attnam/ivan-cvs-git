@@ -26,10 +26,10 @@ class globalerrorhandler
  public:
   static void Install();
   static void DeInstall();
-  static void NO_RETURN LIKE_PRINTF(1, 2) Abort(const char*, ...);
-  static const char* GetBugMsg() { return BugMsg; }
+  static void NO_RETURN LIKE_PRINTF(1, 2) Abort(cchar*, ...);
+  static cchar* GetBugMsg() { return BugMsg; }
  private:
-  static const char* BugMsg;
+  static cchar* BugMsg;
 #ifdef VC
   static int NewHandler(size_t);
   static int (*OldNewHandler)(size_t);

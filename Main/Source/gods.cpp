@@ -21,106 +21,106 @@
 #define CHAOS_BASIC_COLOR MakeRGB16(200, 0, 0)
 #define CHAOS_ELITE_COLOR MakeRGB16(40, 40, 40)
 
-const char* valpurus::GetName() const { return "Valpurus"; }
-const char* valpurus::GetDescription() const { return "King of Gods"; }
+cchar* valpurus::GetName() const { return "Valpurus"; }
+cchar* valpurus::GetDescription() const { return "King of Gods"; }
 int valpurus::GetAlignment() const { return ALPP; }
 int valpurus::GetBasicAlignment() const { return GOOD; }
 col16 valpurus::GetColor() const { return LAWFUL_BASIC_COLOR; }
 col16 valpurus::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
-const char* legifer::GetName() const { return "Legifer"; }
-const char* legifer::GetDescription() const { return "god of law and order"; }
+cchar* legifer::GetName() const { return "Legifer"; }
+cchar* legifer::GetDescription() const { return "god of law and order"; }
 int legifer::GetAlignment() const { return ALP; }
 int legifer::GetBasicAlignment() const { return GOOD; }
 col16 legifer::GetColor() const { return LAWFUL_BASIC_COLOR; }
 col16 legifer::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
-const char* atavus::GetName() const { return "Atavus"; }
-const char* atavus::GetDescription() const { return "god of charity and munificence"; }
+cchar* atavus::GetName() const { return "Atavus"; }
+cchar* atavus::GetDescription() const { return "god of charity and munificence"; }
 int atavus::GetAlignment() const { return ALP; }
 int atavus::GetBasicAlignment() const { return GOOD; }
 col16 atavus::GetColor() const { return LAWFUL_BASIC_COLOR; }
 col16 atavus::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
-const char* dulcis::GetName() const { return "Dulcis"; }
-const char* dulcis::GetDescription() const { return "goddess of love and art"; }
+cchar* dulcis::GetName() const { return "Dulcis"; }
+cchar* dulcis::GetDescription() const { return "goddess of love and art"; }
 int dulcis::GetAlignment() const { return AL; }
 int dulcis::GetBasicAlignment() const { return GOOD; }
 col16 dulcis::GetColor() const { return LAWFUL_BASIC_COLOR; }
 col16 dulcis::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
-const char* seges::GetName() const { return "Seges"; }
-const char* seges::GetDescription() const { return "goddess of health and nutrition"; }
+cchar* seges::GetName() const { return "Seges"; }
+cchar* seges::GetDescription() const { return "goddess of health and nutrition"; }
 int seges::GetAlignment() const { return AL; }
 int seges::GetBasicAlignment() const { return GOOD; }
 col16 seges::GetColor() const { return LAWFUL_BASIC_COLOR; }
 col16 seges::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
-const char* sophos::GetName() const { return "Sophos"; }
-const char* sophos::GetDescription() const { return "god of knowledge, magic and handicrafts"; }
+cchar* sophos::GetName() const { return "Sophos"; }
+cchar* sophos::GetDescription() const { return "god of knowledge, magic and handicrafts"; }
 int sophos::GetAlignment() const { return ALM; }
 int sophos::GetBasicAlignment() const { return GOOD; }
 col16 sophos::GetColor() const { return LAWFUL_BASIC_COLOR; }
 col16 sophos::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
-const char* silva::GetName() const { return "Silva"; }
-const char* silva::GetDescription() const { return "goddess of nature"; }
+cchar* silva::GetName() const { return "Silva"; }
+cchar* silva::GetDescription() const { return "goddess of nature"; }
 int silva::GetAlignment() const { return ANP; }
 int silva::GetBasicAlignment() const { return NEUTRAL; }
 col16 silva::GetColor() const { return NEUTRAL_BASIC_COLOR; }
 col16 silva::GetEliteColor() const { return NEUTRAL_ELITE_COLOR; }
 
-const char* loricatus::GetName() const { return "Loricatus"; }
-const char* loricatus::GetDescription() const { return "god of fire, machines and weaponry"; }
+cchar* loricatus::GetName() const { return "Loricatus"; }
+cchar* loricatus::GetDescription() const { return "god of fire, machines and weaponry"; }
 int loricatus::GetAlignment() const { return AN; }
 int loricatus::GetBasicAlignment() const { return NEUTRAL; }
 col16 loricatus::GetColor() const { return NEUTRAL_BASIC_COLOR; }
 col16 loricatus::GetEliteColor() const { return NEUTRAL_ELITE_COLOR; }
 
-const char* mellis::GetName() const { return "Mellis"; }
-const char* mellis::GetDescription() const { return "god of money, trade and politics"; }
+cchar* mellis::GetName() const { return "Mellis"; }
+cchar* mellis::GetDescription() const { return "god of money, trade and politics"; }
 int mellis::GetAlignment() const { return ANM; }
 int mellis::GetBasicAlignment() const { return NEUTRAL; }
 col16 mellis::GetColor() const { return NEUTRAL_BASIC_COLOR; }
 col16 mellis::GetEliteColor() const { return NEUTRAL_ELITE_COLOR; }
 
-const char* cleptia::GetName() const { return "Cleptia"; }
-const char* cleptia::GetDescription() const { return "goddess of assassins and thieves"; }
+cchar* cleptia::GetName() const { return "Cleptia"; }
+cchar* cleptia::GetDescription() const { return "goddess of assassins and thieves"; }
 int cleptia::GetAlignment() const { return ACP; }
 int cleptia::GetBasicAlignment() const { return EVIL; }
 col16 cleptia::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 cleptia::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
-const char* nefas::GetName() const { return "Nefas"; }
-const char* nefas::GetDescription() const { return "goddess of forbidden pleasures"; }
+cchar* nefas::GetName() const { return "Nefas"; }
+cchar* nefas::GetDescription() const { return "goddess of forbidden pleasures"; }
 int nefas::GetAlignment() const { return AC; }
 int nefas::GetBasicAlignment() const { return EVIL; }
 col16 nefas::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 nefas::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
-const char* scabies::GetName() const { return "Scabies"; }
-const char* scabies::GetDescription() const { return "goddess of mutations, disease and famine"; }
+cchar* scabies::GetName() const { return "Scabies"; }
+cchar* scabies::GetDescription() const { return "goddess of mutations, disease and famine"; }
 int scabies::GetAlignment() const { return AC; }
 int scabies::GetBasicAlignment() const { return EVIL; }
 col16 scabies::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 scabies::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
-const char* infuscor::GetName() const { return "Infuscor"; }
-const char* infuscor::GetDescription() const { return "goddess of wrong knowledge and vile magic"; }
+cchar* infuscor::GetName() const { return "Infuscor"; }
+cchar* infuscor::GetDescription() const { return "goddess of wrong knowledge and vile magic"; }
 int infuscor::GetAlignment() const { return ACM; }
 int infuscor::GetBasicAlignment() const { return EVIL; }
 col16 infuscor::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 infuscor::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
-const char* cruentus::GetName() const { return "Cruentus"; }
-const char* cruentus::GetDescription() const { return "god of war and blood"; }
+cchar* cruentus::GetName() const { return "Cruentus"; }
+cchar* cruentus::GetDescription() const { return "god of war and blood"; }
 int cruentus::GetAlignment() const { return ACM; }
 int cruentus::GetBasicAlignment() const { return EVIL; }
 col16 cruentus::GetColor() const { return CHAOS_BASIC_COLOR; }
 col16 cruentus::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
-const char* mortifer::GetName() const { return "Mortifer"; }
-const char* mortifer::GetDescription() const { return "Destroyer of Worlds"; }
+cchar* mortifer::GetName() const { return "Mortifer"; }
+cchar* mortifer::GetDescription() const { return "Destroyer of Worlds"; }
 int mortifer::GetAlignment() const { return ACMM; }
 int mortifer::GetBasicAlignment() const { return EVIL; }
 col16 mortifer::GetColor() const { return CHAOS_BASIC_COLOR; }
@@ -312,6 +312,8 @@ void atavus::PrayBadEffect()
     PLAYER->EditAttribute(ARM_STRENGTH, -1);
     PLAYER->EditAttribute(ENDURANCE, -1);
   }
+
+  PLAYER->CheckDeath(CONST_S("killed by Atavus's humour"));
 }
 
 void silva::PrayGoodEffect()
@@ -1050,18 +1052,18 @@ truth scabies::PlayerVomitedOnAltar(liquid*)
   return false;
 }
 
-truth atavus::LikesMaterial(const materialdatabase* MDB, const character* Char) const
+truth atavus::LikesMaterial(const materialdatabase* MDB, ccharacter* Char) const
 {
   return Char->GetTorso()->GetMainMaterial()->GetConfig() == MDB->Config;
 }
 
-truth seges::LikesMaterial(const materialdatabase* MDB, const character* Char) const
+truth seges::LikesMaterial(const materialdatabase* MDB, ccharacter* Char) const
 {
   return MDB->BodyFlags & IS_ALIVE
     && Char->GetTorso()->GetMainMaterial()->GetConfig() == MDB->Config;
 }
 
-truth scabies::LikesMaterial(const materialdatabase* MDB, const character* Char) const
+truth scabies::LikesMaterial(const materialdatabase* MDB, ccharacter* Char) const
 {
   return MDB->BodyFlags & IS_ALIVE
     && Char->GetTorso()->GetMainMaterial()->GetConfig() == MDB->Config;

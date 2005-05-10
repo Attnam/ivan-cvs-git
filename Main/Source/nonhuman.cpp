@@ -23,10 +23,10 @@ truth nonhumanoid::UseMaterialAttributes() const { return GetTorso()->UseMateria
 
 truth elpuri::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
-const char* billswill::FirstPersonBiteVerb() const { return "emit psi waves at"; }
-const char* billswill::FirstPersonCriticalBiteVerb() const { return "emit powerful psi waves at"; }
-const char* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"; }
-const char* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
+cchar* billswill::FirstPersonBiteVerb() const { return "emit psi waves at"; }
+cchar* billswill::FirstPersonCriticalBiteVerb() const { return "emit powerful psi waves at"; }
+cchar* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"; }
+cchar* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
 int billswill::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
 int mommo::GetBodyPartWobbleData(int) const { return (GetConfig() == CONICAL ? WOBBLE_HORIZONTALLY : WOBBLE_VERTICALLY)|(2 << WOBBLE_FREQ_SHIFT); }
@@ -44,17 +44,17 @@ int eddy::GetBodyPartWobbleData(int) const { return WOBBLE_VERTICALLY|(2 << WOBB
 
 bodypart* magicmushroom::MakeBodyPart(int) const { return magicmushroomtorso::Spawn(0, NO_MATERIALS); }
 
-const char* ghost::FirstPersonBiteVerb() const { return "touch"; }
-const char* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch"; }
-const char* ghost::ThirdPersonBiteVerb() const { return "touches"; }
-const char* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
+cchar* ghost::FirstPersonBiteVerb() const { return "touch"; }
+cchar* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch"; }
+cchar* ghost::ThirdPersonBiteVerb() const { return "touches"; }
+cchar* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
 truth ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 int ghost::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
-const char* magpie::FirstPersonBiteVerb() const { return "peck"; }
-const char* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
-const char* magpie::ThirdPersonBiteVerb() const { return "pecks"; }
-const char* magpie::ThirdPersonCriticalBiteVerb() const { return "critically pecks"; }
+cchar* magpie::FirstPersonBiteVerb() const { return "peck"; }
+cchar* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
+cchar* magpie::ThirdPersonBiteVerb() const { return "pecks"; }
+cchar* magpie::ThirdPersonCriticalBiteVerb() const { return "critically pecks"; }
 
 bodypart* largecreature::MakeBodyPart(int) const { return largetorso::Spawn(0, NO_MATERIALS); }
 lsquare* largecreature::GetNeighbourLSquare(int I) const { return static_cast<lsquare*>(GetNeighbourSquare(I)); }
@@ -340,7 +340,7 @@ void nonhumanoid::UnarmedHit(character* Enemy, v2 HitPos, int Direction, truth F
 
 /* Returns the average number of APs required to kill Enemy */
 
-double nonhumanoid::GetTimeToKill(const character* Enemy, truth UseMaxHP) const
+double nonhumanoid::GetTimeToKill(ccharacter* Enemy, truth UseMaxHP) const
 {
   double Effectivity = 0;
   int AttackStyles = 0;
@@ -429,7 +429,7 @@ void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
 
       if(Change)
       {
-	const char* Adj = Change > 0 ? "stronger" : "weaker";
+	cchar* Adj = Change > 0 ? "stronger" : "weaker";
 
 	if(IsPlayer())
 	  ADD_MESSAGE("Your feel %s!", Adj);
@@ -451,7 +451,7 @@ void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
 
       if(Change)
       {
-	const char* Adj = Change > 0 ? "very agile" : "sluggish";
+	cchar* Adj = Change > 0 ? "very agile" : "sluggish";
 
 	if(IsPlayer())
 	  ADD_MESSAGE("Your feel %s!", Adj);
@@ -513,7 +513,7 @@ void dog::BeTalkedTo()
     if(GetRelation(PLAYER) != HOSTILE)
     {
       static truth Last;
-      const char* Reply;
+      cchar* Reply;
 
       if(GetHP() << 1 > GetMaxHP())
 	Reply = Last ? "barks happily" : "wags its tail happily";
@@ -1423,7 +1423,7 @@ truth largecreature::IsFreeForMe(square* Square) const
   {
     v2 SquarePos = Pos + game::GetLargeMoveVector(12 + c);
 
-    if(!Area->IsValidPos(SquarePos) || (Area->GetSquare(SquarePos)->GetCharacter() && Area->GetSquare(SquarePos)->GetCharacter() != static_cast<const character*>(this)))
+    if(!Area->IsValidPos(SquarePos) || (Area->GetSquare(SquarePos)->GetCharacter() && Area->GetSquare(SquarePos)->GetCharacter() != static_cast<ccharacter*>(this)))
       return false;
   }
 
@@ -1897,7 +1897,7 @@ truth blinkdog::SpecialEnemySightedReaction(character*)
   return false;
 }
 
-void blinkdog::MonsterTeleport(const char* BarkMsg)
+void blinkdog::MonsterTeleport(cchar* BarkMsg)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("You hear a %s inside your head as %s vanishes!", BarkMsg, CHAR_NAME(DEFINITE));
@@ -1950,7 +1950,7 @@ int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
   return Return;
 }
 
-void unicorn::MonsterTeleport(const char* NeighMsg)
+void unicorn::MonsterTeleport(cchar* NeighMsg)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s %s and disappears!", CHAR_NAME(DEFINITE), NeighMsg);

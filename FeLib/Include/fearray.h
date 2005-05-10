@@ -17,7 +17,7 @@
 
 template <class type> struct fearray
 {
-  typedef unsigned sizetype;
+  typedef uint sizetype;
   fearray() : Data(0), Size(0) { }
   fearray(const fearray&);
   fearray(const type*, sizetype);

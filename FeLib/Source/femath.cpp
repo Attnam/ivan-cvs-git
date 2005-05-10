@@ -16,8 +16,8 @@
 #include "error.h"
 #include "save.h"
 
-const int basequadricontroller::OrigoDeltaX[4] = { 0, 1, 0, 1 };
-const int basequadricontroller::OrigoDeltaY[4] = { 0, 0, 1, 1 };
+cint basequadricontroller::OrigoDeltaX[4] = { 0, 1, 0, 1 };
+cint basequadricontroller::OrigoDeltaY[4] = { 0, 0, 1, 1 };
 int basequadricontroller::OrigoX, basequadricontroller::OrigoY;
 int basequadricontroller::StartX, basequadricontroller::StartY;
 int basequadricontroller::XSize, basequadricontroller::YSize;
@@ -295,7 +295,7 @@ void ReadData(region& R, inputfile& SaveFile)
 
 outputfile& operator<<(outputfile& SaveFile, const interval& I)
 {
-  SaveFile.Write(reinterpret_cast<const char*>(&I), sizeof(I));
+  SaveFile.Write(reinterpret_cast<cchar*>(&I), sizeof(I));
   return SaveFile;
 }
 
@@ -307,7 +307,7 @@ inputfile& operator>>(inputfile& SaveFile, interval& I)
 
 outputfile& operator<<(outputfile& SaveFile, const region& R)
 {
-  SaveFile.Write(reinterpret_cast<const char*>(&R), sizeof(R));
+  SaveFile.Write(reinterpret_cast<cchar*>(&R), sizeof(R));
   return SaveFile;
 }
 
@@ -331,7 +331,7 @@ void femath::GenerateFractalMap(int** Map, int Side,
 				int StartStep,
 				int Randomness)
 {
-  const int Limit = Side - 1;
+  cint Limit = Side - 1;
   Map[0][0] = 0;
   Map[0][Limit] = 0;
   Map[Limit][0] = 0;

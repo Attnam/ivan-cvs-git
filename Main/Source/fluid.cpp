@@ -29,7 +29,7 @@ fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), L
   AddLiquid(Liquid->GetVolume());
 }
 
-fluid::fluid(liquid* Liquid, item* MotherItem, const festring& LocationName, truth IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(false), GearImage(0), Flags(0), LocationName(LocationName)
+fluid::fluid(liquid* Liquid, item* MotherItem, cfestring& LocationName, truth IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(false), GearImage(0), Flags(0), LocationName(LocationName)
 {
   TrapData.TrapID = 0;
 
@@ -517,7 +517,7 @@ void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, 
     return;
 
   DripTimer = 0;
-  const int* ValidityMap = igraph::GetBodyBitmapValidityMap(SpecialFlags);
+  cint* ValidityMap = igraph::GetBodyBitmapValidityMap(SpecialFlags);
   v2 PixelAllowed[256];
   int PixelsAllowed = 0;
 
@@ -740,12 +740,12 @@ void fluid::PostProcessForBone()
   TrapData.TrapID = game::CreateNewTrapID(this);
 }
 
-truth fluid::IsStuckTo(const character* Char) const
+truth fluid::IsStuckTo(ccharacter* Char) const
 {
   return TrapData.VictimID == Char->GetID();
 }
 
-truth fluid::IsDangerous(const character* Char) const
+truth fluid::IsDangerous(ccharacter* Char) const
 {
   return Char->GetAttribute(WISDOM) >= Liquid->GetStepInWisdomLimit();
 }

@@ -27,7 +27,7 @@ ulong level::NextExplosionID = 1;
 
 node*** node::NodeMap;
 int node::RequiredWalkability;
-const character* node::SpecialMover;
+ccharacter* node::SpecialMover;
 v2 node::To;
 uchar** node::WalkabilityMap;
 int node::XSize, node::YSize;
@@ -775,7 +775,7 @@ void level::GenerateNewMonsters(int HowMany, truth ConsiderPlayer)
 
 /* Example of the usage: GetRandomSquare() gives out a random walkable square */
 
-v2 level::GetRandomSquare(const character* Char, int Flags, const rect* Borders) const
+v2 level::GetRandomSquare(ccharacter* Char, int Flags, const rect* Borders) const
 {
   rect LocalBorder;
 
@@ -860,7 +860,7 @@ room* level::GetRoom(int I) const
   return Room[I];
 }
 
-void level::Explosion(character* Terrorist, const festring& DeathMsg, v2 Pos, int Strength, truth HurtNeutrals)
+void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Strength, truth HurtNeutrals)
 {
   static int StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
   uint c;
@@ -1124,11 +1124,11 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
 
 void level::Draw(truth AnimationDraw) const
 {
-  const int XMin = Max(game::GetCamera().X, 0);
-  const int YMin = Max(game::GetCamera().Y, 0);
-  const int XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
-  const int YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
-  const ulong LOSTick = game::GetLOSTick();
+  cint XMin = Max(game::GetCamera().X, 0);
+  cint YMin = Max(game::GetCamera().Y, 0);
+  cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
+  cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  culong LOSTick = game::GetLOSTick();
   blitdata BlitData = { DOUBLE_BUFFER,
 			{ 0, 0 },
 			{ 0, 0 },
@@ -1149,7 +1149,7 @@ void level::Draw(truth AnimationDraw) const
 	for(int y = YMin; y < YMax; ++y, ++SquarePtr, BlitData.Dest.Y += TILE_SIZE)
 	{
 	  const lsquare* Square = *SquarePtr;
-	  const ulong LastSeen = Square->LastSeen;
+	  culong LastSeen = Square->LastSeen;
 
 	  if(LastSeen == LOSTick)
 	    Square->Draw(BlitData);
@@ -1173,7 +1173,7 @@ void level::Draw(truth AnimationDraw) const
 	    Square->Draw(BlitData);
 	  else
 	  {
-	    const character* C = Square->Character;
+	    ccharacter* C = Square->Character;
 
 	    if(C && C->CanBeSeenByPlayer())
 	      Square->DrawMemorizedCharacter(BlitData);
@@ -1195,7 +1195,7 @@ void level::Draw(truth AnimationDraw) const
   }
 }
 
-v2 level::GetEntryPos(const character* Char, int I) const
+v2 level::GetEntryPos(ccharacter* Char, int I) const
 {
   if(I == FOUNTAIN)
   {
@@ -1602,7 +1602,7 @@ void (level::*level::GetBeam(int I))(beamdata&)
   return Beam[I];
 }
 
-v2 level::FreeSquareSeeker(const character* Char, v2 StartPos, v2 Prohibited, int MaxDistance, truth AllowStartPos) const
+v2 level::FreeSquareSeeker(ccharacter* Char, v2 StartPos, v2 Prohibited, int MaxDistance, truth AllowStartPos) const
 {
   int c;
 
@@ -1636,7 +1636,7 @@ v2 level::FreeSquareSeeker(const character* Char, v2 StartPos, v2 Prohibited, in
 
 /* Returns ERROR_V2 if no free square was found */
 
-v2 level::GetNearestFreeSquare(const character* Char, v2 StartPos, truth AllowStartPos) const
+v2 level::GetNearestFreeSquare(ccharacter* Char, v2 StartPos, truth AllowStartPos) const
 {
   if(AllowStartPos && Char->CanMoveOn(GetLSquare(StartPos)) && Char->IsFreeForMe(GetLSquare(StartPos)))
     return StartPos;
@@ -1668,7 +1668,7 @@ v2 level::GetNearestFreeSquare(const character* Char, v2 StartPos, truth AllowSt
   return ERROR_V2;
 }
 
-v2 level::GetFreeAdjacentSquare(const character* Char, v2 StartPos, truth AllowCharacter) const
+v2 level::GetFreeAdjacentSquare(ccharacter* Char, v2 StartPos, truth AllowCharacter) const
 {
   int PossibleDir[8];
   int Index = 0;
@@ -1764,7 +1764,7 @@ void level::FinalProcessForBone()
 
 void level::GenerateDungeon(int Index)
 {
-  const festring* Msg = LevelScript->GetLevelMessage();
+  cfestring* Msg = LevelScript->GetLevelMessage();
 
   if(Msg)
     LevelMessage = *Msg;
@@ -2232,7 +2232,7 @@ void node::CalculateNextNodes()
    a route can't be found. Calling FindRoute again may invalidate the node, so you must
    store the path in another format ASAP. */
 
-node* level::FindRoute(v2 From, v2 To, const std::set<v2>& Illegal, int RequiredWalkability, const character* SpecialMover)
+node* level::FindRoute(v2 From, v2 To, const std::set<v2>& Illegal, int RequiredWalkability, ccharacter* SpecialMover)
 {
   node::NodeMap = NodeMap;
   node::RequiredWalkability = RequiredWalkability;
@@ -2473,7 +2473,7 @@ struct loscontroller : public tickcontroller, public stackcontroller
   static truth Handler(int x, int y)
   {
     lsquare* Square = Map[x >> 1][y >> 1];
-    const ulong SquareFlags = Square->Flags;
+    culong SquareFlags = Square->Flags;
 
     if(SquareFlags & PERFECTLY_QUADRI_HANDLED)
       return true;
@@ -2490,7 +2490,7 @@ struct loscontroller : public tickcontroller, public stackcontroller
       return true;
     }
 
-    const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
+    cint SquarePartIndex = (x & 1) + ((y & 1) << 1);
     Square->SquarePartLastSeen = Square->SquarePartLastSeen
 				 & ~SquarePartTickMask[SquarePartIndex]
 				 | ShiftedTick[SquarePartIndex];
@@ -2744,7 +2744,7 @@ void sunbeamcontroller::ProcessStack()
     Stack[c]->CheckIfIsSecondarySunLightEmitter();
 }
 
-int level::DetectMaterial(const material* Material)
+int level::DetectMaterial(cmaterial* Material)
 {
   ulong Tick = game::IncreaseLOSTick();
   int Squares = 0;

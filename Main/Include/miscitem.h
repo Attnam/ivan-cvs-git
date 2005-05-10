@@ -13,8 +13,6 @@
 #ifndef __MISCITEM_H__
 #define __MISCITEM_H__
 
-#include <set>
-
 #include "item.h"
 #include "game.h" /// check
 #include "trap.h"
@@ -33,12 +31,12 @@ ITEM(materialcontainer, item)
   virtual void Load(inputfile&);
   virtual int GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
-  virtual truth CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(citem*, ccharacter*) const;
   virtual void Be();
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
   virtual int GetAttachedGod() const;
-  virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
+  virtual material* GetConsumeMaterial(ccharacter*, materialpredicate = TrueMaterialPredicate) const;
   virtual material* RemoveMaterial(material*);
   material* RemoveMainMaterial();
   virtual material* RemoveSecondaryMaterial();
@@ -63,8 +61,8 @@ ITEM(banana, materialcontainer)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
-  virtual truth IsZappable(const character*) const { return true; }
-  virtual truth IsChargeable(const character*) const { return true; }
+  virtual truth IsZappable(ccharacter*) const { return true; }
+  virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual void SignalSpoil(material*);
   virtual truth IsBanana() const { return true; }
   virtual material* RemoveSecondaryMaterial();
@@ -81,7 +79,7 @@ ITEM(holybanana, banana)
   virtual truth Zap(character*, v2, int);
   virtual void Be() { }
   virtual int GetSpecialFlags() const;
-  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual truth ReceiveDamage(character*, int, int, int);
 };
 
@@ -110,8 +108,8 @@ ITEM(can, materialcontainer)
  public:
   virtual item* BetterVersion() const;
   virtual void DipInto(liquid*, character*);
-  virtual truth IsDippable(const character*) const { return !SecondaryMaterial; }
-  virtual truth IsDipDestination(const character*) const;
+  virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
+  virtual truth IsDipDestination(ccharacter*) const;
   virtual liquid* CreateDipLiquid();
   virtual truth AllowSpoil() const { return false; } // temporary
   virtual truth WillSpoil() const { return false; } // temporary
@@ -136,14 +134,14 @@ ITEM(potion, materialcontainer)
   virtual item* BetterVersion() const;
   virtual void DipInto(liquid*, character*);
   virtual liquid* CreateDipLiquid();
-  virtual truth IsDippable(const character*) const { return !SecondaryMaterial; }
+  virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
   virtual void Break(character*, int);
-  virtual truth IsDipDestination(const character*) const;
+  virtual truth IsDipDestination(ccharacter*) const;
   virtual truth IsExplosive() const;
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
   virtual truth EffectIsGood() const;
-  virtual truth IsKamikazeWeapon(const character*) const { return IsExplosive(); }
+  virtual truth IsKamikazeWeapon(ccharacter*) const { return IsExplosive(); }
  protected:
   virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;
@@ -156,7 +154,7 @@ ITEM(bananapeels, item)
   virtual truth HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual truth IsBananaPeel() const { return true; }
-  virtual truth IsDangerous(const character*) const;
+  virtual truth IsDangerous(ccharacter*) const;
   virtual truth RaiseTheDead(character*);
 };
 
@@ -168,14 +166,14 @@ ITEM(brokenbottle, item)
   virtual truth HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual item* Fix();
-  virtual truth IsDangerous(const character*) const;
+  virtual truth IsDangerous(ccharacter*) const;
 };
 
 ITEM(scroll, item)
 {
  public:
   virtual truth CanBeRead(character*) const;
-  virtual truth IsReadable(const character*) const { return true; }
+  virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
 };
 
@@ -206,7 +204,7 @@ ITEM(leftnutofpetrus, nut)
 ITEM(bone, item)
 {
  public:
-  virtual truth DogWillCatchAndConsume(const character*) const;
+  virtual truth DogWillCatchAndConsume(ccharacter*) const;
 };
 
 ITEM(loaf, item)
@@ -233,17 +231,17 @@ ITEM(wand, item)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
-  virtual truth IsAppliable(const character*) const { return true; }
-  virtual truth IsZappable(const character*) const { return true; }
-  virtual truth IsChargeable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
+  virtual truth IsZappable(ccharacter*) const { return true; }
+  virtual truth IsChargeable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth Zap(character*, v2, int);
-  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual long GetPrice() const;
   virtual truth IsExplosive() const { return true; }
  protected:
   virtual void PostConstruct();
-  void BreakEffect(character*, const festring&);
+  void BreakEffect(character*, cfestring&);
   ulong GetSpecialParameters() const;
   int Charges;
   int TimesUsed;
@@ -274,14 +272,14 @@ ITEM(pineapple, item)
 ITEM(palmbranch, item)
 {
  public:
-  virtual truth IsShield(const character*) const { return true; }
+  virtual truth IsShield(ccharacter*) const { return true; }
 };
 
 ITEM(backpack, materialcontainer)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth IsExplosive() const;
   virtual long GetTotalExplosivePower() const;
@@ -294,7 +292,7 @@ ITEM(holybook, item)
 {
  public:
   virtual truth CanBeRead(character*) const;
-  virtual truth IsReadable(const character*) const { return true; }
+  virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual void FinishReading(character*);
  protected:
@@ -316,7 +314,7 @@ ITEM(oillamp, item)
   virtual truth GetInhabitedByGenie() const { return InhabitedByGenie; }
   virtual void SetInhabitedByGenie(truth What) { InhabitedByGenie = What; }
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
  protected:
   truth InhabitedByGenie;
 };
@@ -335,40 +333,24 @@ ITEM(scrolloftaming, scroll)
   virtual void FinishReading(character*);
 };
 
-ITEM(mine, materialcontainer)
+ITEM(mine, itemtrap<materialcontainer>)
 {
  public:
-  mine() : Active(false) { }
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
   virtual void StepOnEffect(character*);
   virtual truth ReceiveDamage(character*, int, int, int);
-  virtual truth IsActive() const { return Active; }
-  virtual void SetIsActive(truth);
-  virtual truth CanBeSeenBy(const character*) const;
   virtual truth Apply(character* User);
-  virtual truth IsAppliable(const character*) const { return true; }
-  virtual truth IsDangerous(const character* Stepper) const { return WillExplode(Stepper); }
-  virtual truth WillExplode(const character*) const;
-  virtual int GetTeam() const { return Team; }
-  virtual void SetTeam(int What) { Team = What; }
+  virtual truth IsDangerous(ccharacter* Stepper) const { return WillExplode(Stepper); }
+  virtual truth WillExplode(ccharacter*) const;
   virtual truth CheckPickUpEffect(character*);
-  virtual void Search(const character*, int);
-  virtual truth NeedDangerSymbol() const { return IsActive(); }
-  virtual void FinalProcessForBone();
-  virtual void TeleportRandomly();
  protected:
   virtual truth AddAdjective(festring&, truth) const;
-  truth Active;
-  int Team;
-  std::set<int> DiscoveredByTeam;
 };
 
 ITEM(key, item)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual truth CanOpenDoors() const { return true; }
   virtual truth CanOpenLockType(int AnotherLockType) const { return GetConfig() == AnotherLockType; }
 };
@@ -385,7 +367,7 @@ ITEM(whistle, item)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual void BlowEffect(character*);
  protected:
   virtual col16 GetMaterialColorB(int) const;
@@ -410,9 +392,9 @@ ITEM(itemcontainer, item)
   itemcontainer(const itemcontainer&);
   virtual ~itemcontainer();
   virtual truth Open(character*);
-  virtual truth IsOpenable(const character*) const { return true; }
+  virtual truth IsOpenable(ccharacter*) const { return true; }
   virtual truth TryKey(item*, character*);
-  virtual truth HasLock(const character*) const { return true; }
+  virtual truth HasLock(ccharacter*) const { return true; }
   virtual void Lock() { Locked = true; }
   virtual truth IsLocked() const { return Locked; }
   virtual void SetIsLocked(truth What) { Locked = What; }
@@ -421,15 +403,15 @@ ITEM(itemcontainer, item)
   virtual void Save(outputfile&) const;
   virtual truth Polymorph(character*, stack*);
   virtual void CalculateVolumeAndWeight();
-  virtual truth ContentsCanBeSeenBy(const character*) const;
+  virtual truth ContentsCanBeSeenBy(ccharacter*) const;
   virtual long GetTruePrice() const;
   virtual truth ReceiveDamage(character*, int, int, int);
-  virtual void DrawContents(const character*);
+  virtual void DrawContents(ccharacter*);
   virtual truth Apply(character* Applier) { return Open(Applier); }
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
   virtual truth AllowContentEmitation() const { return false; }
-  virtual truth IsDestroyable(const character*) const;
+  virtual truth IsDestroyable(ccharacter*) const;
   virtual int GetOfferValue(int) const;
   virtual void SortAllItems(const sortdata&) const;
   virtual void PreProcessForBone();
@@ -448,7 +430,7 @@ ITEM(itemcontainer, item)
   truth Locked;
 };
 
-ITEM(beartrap, item)
+ITEM(beartrap, itemtrap<item>)
 {
  public:
   beartrap();
@@ -459,21 +441,12 @@ ITEM(beartrap, item)
   virtual void StepOnEffect(character*);
   virtual truth CheckPickUpEffect(character*);
   virtual truth IsPickable(character*) const;
-  virtual truth IsActive() const { return Active; }
-  virtual void SetIsActive(truth);
-  virtual truth CanBeSeenBy(const character*) const;
   virtual truth Apply(character*);
   virtual v2 GetBitmapPos(int) const;
-  virtual truth IsAppliable(const character*) const { return true; }
-  virtual truth IsDangerous(const character*) const { return Active; }
-  virtual int GetTeam() const { return Team; }
-  virtual void SetTeam(int What) { Team = What; }
+  virtual truth IsDangerous(ccharacter*) const { return Active; }
   virtual truth ReceiveDamage(character*, int, int, int);
-  virtual void Search(const character*, int);
   virtual truth NeedDangerSymbol() const { return IsActive(); }
   virtual void Fly(character*, int, int);
-  virtual void FinalProcessForBone();
-  virtual void TeleportRandomly();
   virtual ulong GetTrapID() const { return TrapData.TrapID; }
   virtual ulong GetVictimID() const { return TrapData.VictimID; }
   virtual void UnStick() { TrapData.VictimID = 0; }
@@ -488,17 +461,14 @@ ITEM(beartrap, item)
   virtual truth AddAdjective(festring&, truth) const;
   truth IsStuck() const { return TrapData.VictimID; }
   int GetBaseTrapDamage() const;
-  int Team;
-  std::set<int> DiscoveredByTeam;
   trapdata TrapData;
-  truth Active;
 };
 
 ITEM(stethoscope, item)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; };
+  virtual truth IsAppliable(ccharacter*) const { return true; };
 };
 
 ITEM(scrollofenchantweapon, scroll)
@@ -539,7 +509,7 @@ ITEM(horn, item)
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual void FinalProcessForBone();
  protected:
   ulong LastUsed;
@@ -548,7 +518,7 @@ ITEM(horn, item)
 ITEM(carrot, item)
 {
  public:
-  virtual truth BunnyWillCatchAndConsume(const character*) const;
+  virtual truth BunnyWillCatchAndConsume(ccharacter*) const;
  protected:
   virtual col16 GetMaterialColorB(int) const;
 };
@@ -558,7 +528,7 @@ ITEM(charmlyre, item)
  public:
   charmlyre();
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void FinalProcessForBone();
@@ -605,7 +575,7 @@ ITEM(holyhandgrenade, item)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual truth CalculateHasBe() const;
   virtual void Explode();
   virtual void Be();

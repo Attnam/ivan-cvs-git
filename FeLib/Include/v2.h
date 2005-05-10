@@ -93,11 +93,11 @@ inline podv2::operator v2() const { return v2(X, Y); }
 
 inline void Rotate(v2& Vect, int Size, int Flags)
 {
-  const int Limit = Size - 1;
+  cint Limit = Size - 1;
 
   if(Flags & ROTATE)
   {
-    const int T = Vect.X;
+    cint T = Vect.X;
     Vect.X = Limit - Vect.Y;
     Vect.Y = T;
   }
@@ -109,8 +109,8 @@ inline void Rotate(v2& Vect, int Size, int Flags)
     Vect.Y = Limit - Vect.Y;
 }
 
-const v2 ZERO_V2(0, 0);
-const v2 ERROR_V2(-0x8000, -0x8000);
-const v2 ABORT_V2(-0x7FFF, -0x7FFF);
+cv2 ZERO_V2(0, 0);
+cv2 ERROR_V2(-0x8000, -0x8000);
+cv2 ABORT_V2(-0x7FFF, -0x7FFF);
 
 #endif

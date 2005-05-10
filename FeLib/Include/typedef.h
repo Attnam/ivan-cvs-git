@@ -15,6 +15,11 @@
 
 #include "pragmas.h"
 
+class bitmap;
+class festring;
+struct blitdata;
+struct v2;
+
 typedef int truth;
 typedef unsigned char uchar;
 typedef unsigned short ushort;
@@ -29,6 +34,8 @@ typedef int priority;
 typedef uchar packpriority;
 typedef uchar paletteindex;
 
+typedef const char cchar;
+typedef const int cint;
 typedef const int ctruth;
 typedef const unsigned char cuchar;
 typedef const unsigned short cushort;
@@ -42,5 +49,10 @@ typedef const uchar cpackalpha;
 typedef const int cpriority;
 typedef const uchar cpackpriority;
 typedef const uchar cpaletteindex;
+
+typedef const bitmap cbitmap;
+typedef const blitdata cblitdata;
+typedef const festring cfestring;
+typedef const v2 cv2;
 
 #endif

@@ -81,7 +81,7 @@ class lterrain : public object
   virtual truth TryKey(item*, character*) { return false; }
   truth CanBeSeenByPlayer() const;
   truth CanBeSeenBy(character*) const;
-  virtual const festring& GetSitMessage() const = 0;
+  virtual cfestring& GetSitMessage() const = 0;
   virtual truth SitOn(character*);
   virtual square* GetSquareUnderEntity(int = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
@@ -126,10 +126,10 @@ class glterrainprototype
 {
  public:
   friend class databasecreator<glterrain>;
-  glterrainprototype(const glterrainprototype*, glterrainspawner, const char*);
+  glterrainprototype(const glterrainprototype*, glterrainspawner, cchar*);
   glterrain* Spawn(int Config = 0, int SpecialFlags = 0) const { return Spawner(Config, SpecialFlags); }
   glterrain* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const glterrainprototype* GetBase() const { return Base; }
   int CreateSpecialConfigurations(glterraindatabase**, int Configs) { return Configs; }
@@ -143,7 +143,7 @@ class glterrainprototype
   glterraindatabase** ConfigTable[CONFIG_TABLE_SIZE];
   int ConfigSize;
   glterrainspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class glterrain : public lterrain, public gterrain
@@ -160,11 +160,11 @@ class glterrain : public lterrain, public gterrain
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
   DATA_BASE_TRUTH(UsesLongArticle);
-  DATA_BASE_VALUE(const festring&, Adjective);
+  DATA_BASE_VALUE(cfestring&, Adjective);
   DATA_BASE_TRUTH(UsesLongAdjectiveArticle);
-  DATA_BASE_VALUE(const festring&, NameSingular);
-  DATA_BASE_VALUE(const festring&, NamePlural);
-  DATA_BASE_VALUE(const festring&, PostFix);
+  DATA_BASE_VALUE(cfestring&, NameSingular);
+  DATA_BASE_VALUE(cfestring&, NamePlural);
+  DATA_BASE_VALUE(cfestring&, PostFix);
   DATA_BASE_VALUE(int, ArticleMode);
   virtual DATA_BASE_VALUE(const fearray<long>&, MainMaterialConfig);
   DATA_BASE_VALUE(const fearray<long>&, SecondaryMaterialConfig);
@@ -174,7 +174,7 @@ class glterrain : public lterrain, public gterrain
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorB, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorC, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorD, int);
-  virtual DATA_BASE_VALUE(const festring&, SitMessage);
+  virtual DATA_BASE_VALUE(cfestring&, SitMessage);
   DATA_BASE_TRUTH(ShowMaterial);
   DATA_BASE_VALUE(int, Walkability);
   DATA_BASE_TRUTH(UseBorderTiles);
@@ -223,10 +223,10 @@ class olterrainprototype
 {
  public:
   friend class databasecreator<olterrain>;
-  olterrainprototype(const olterrainprototype*, olterrainspawner, const char*);
+  olterrainprototype(const olterrainprototype*, olterrainspawner, cchar*);
   olterrain* Spawn(int Config = 0, int SpecialFlags = 0) const { return Spawner(Config, SpecialFlags); }
   olterrain* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const olterrainprototype* GetBase() const { return Base; }
   int CreateSpecialConfigurations(olterraindatabase**, int);
@@ -240,7 +240,7 @@ class olterrainprototype
   olterraindatabase** ConfigTable[CONFIG_TABLE_SIZE];
   int ConfigSize;
   olterrainspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class olterrain : public lterrain, public oterrain
@@ -272,11 +272,11 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
   DATA_BASE_TRUTH(UsesLongArticle);
-  DATA_BASE_VALUE(const festring&, Adjective);
+  DATA_BASE_VALUE(cfestring&, Adjective);
   DATA_BASE_TRUTH(UsesLongAdjectiveArticle);
-  DATA_BASE_VALUE(const festring&, NameSingular);
-  DATA_BASE_VALUE(const festring&, NamePlural);
-  DATA_BASE_VALUE(const festring&, PostFix);
+  DATA_BASE_VALUE(cfestring&, NameSingular);
+  DATA_BASE_VALUE(cfestring&, NamePlural);
+  DATA_BASE_VALUE(cfestring&, PostFix);
   DATA_BASE_VALUE(int, ArticleMode);
   virtual DATA_BASE_VALUE(const fearray<long>&, MainMaterialConfig);
   DATA_BASE_VALUE(const fearray<long>&, SecondaryMaterialConfig);
@@ -286,12 +286,12 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorB, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorC, int);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(col16, MaterialColorD, int);
-  virtual DATA_BASE_VALUE(const festring&, SitMessage);
+  virtual DATA_BASE_VALUE(cfestring&, SitMessage);
   DATA_BASE_TRUTH(ShowMaterial);
-  DATA_BASE_VALUE(const festring&, DigMessage);
+  DATA_BASE_VALUE(cfestring&, DigMessage);
   truth CanBeDestroyed() const;
   DATA_BASE_VALUE(int, RestModifier);
-  DATA_BASE_VALUE(const festring&, RestMessage);
+  DATA_BASE_VALUE(cfestring&, RestMessage);
   DATA_BASE_TRUTH(IsUpLink);
   DATA_BASE_VALUE(long, StorageVolume);
   DATA_BASE_VALUE(int, HPModifier);
@@ -307,7 +307,7 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_TRUTH(IsWall);
   virtual void SetAttachedArea(int) { }
   virtual void SetAttachedEntry(int) { }
-  virtual void SetText(const festring&) { }
+  virtual void SetText(cfestring&) { }
   virtual festring GetText() const;
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
   int GetStrengthValue() const;
@@ -324,13 +324,13 @@ class olterrain : public lterrain, public oterrain
   virtual void SignalRustLevelChange();
   virtual truth IsFountainWithWater() const { return false; }
   truth ShowThingsUnder() const;
-  truth WillBeDestroyedBy(const character*) const;
+  truth WillBeDestroyedBy(ccharacter*) const;
   virtual void PreProcessForBone() { }
   virtual void PostProcessForBone() { }
   virtual void FinalProcessForBone() { }
   virtual void RestoreHP() { HP = CalculateMaxHP(); }
   virtual truth IsAnimated() const;
-  virtual truth VomitingIsDangerous(const character*) const { return false; }
+  virtual truth VomitingIsDangerous(ccharacter*) const { return false; }
   virtual void AddSpecialCursors() { }
  protected:
   virtual v2 GetBitmapPos(int) const;

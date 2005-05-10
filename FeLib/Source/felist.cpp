@@ -31,7 +31,7 @@ truth FelistDrawController()
 struct felistentry
 {
   felistentry() : ImageKey(NO_IMAGE) { }
-  felistentry(const festring&, col16, uint, uint, truth);
+  felistentry(cfestring&, col16, uint, uint, truth);
   festring String;
   col16 Color;
   uint Marginal;
@@ -39,7 +39,7 @@ struct felistentry
   truth Selectable;
 };
 
-felistentry::felistentry(const festring& String, col16 Color,
+felistentry::felistentry(cfestring& String, col16 Color,
 			 uint Marginal, uint ImageKey, truth Selectable)
 : String(String), Color(Color), Marginal(Marginal),
   ImageKey(ImageKey), Selectable(Selectable)
@@ -64,13 +64,13 @@ inputfile& operator>>(inputfile& SaveFile, felistentry*& Entry)
 struct felistdescription
 {
   felistdescription() { }
-  felistdescription(const festring& String, col16 Color)
+  felistdescription(cfestring& String, col16 Color)
   : String(String), Color(Color) { }
   festring String;
   col16 Color;
 };
 
-felist::felist(const festring& Topic, col16 TopicColor, uint Maximum)
+felist::felist(cfestring& Topic, col16 TopicColor, uint Maximum)
 : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780),
   PageLength(30), BackColor(0), Flags(SELECTABLE|FADE),
   UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0)
@@ -98,7 +98,7 @@ col16 felist::GetColor(uint I) const
 { return Entry[I]->Color; }
 void felist::SetColor(uint I, col16 What)
 { Entry[I]->Color = What; }
-void felist::AddDescription(const festring& Str, col16 Color)
+void felist::AddDescription(cfestring& Str, col16 Color)
 { Description.push_back(new felistdescription(Str, Color)); }
 
 void felist::Pop()
@@ -508,7 +508,7 @@ void felist::Empty()
   Entry.clear();
 }
 
-void felist::AddEntry(const festring& Str, col16 Color,
+void felist::AddEntry(cfestring& Str, col16 Color,
 		      uint Marginal, uint Key, truth Selectable)
 {
   Entry.push_back(new felistentry(Str, Color, Marginal, Key, Selectable));
@@ -530,7 +530,7 @@ void felist::Load(inputfile& SaveFile)
   SaveFile >> Entry >> Maximum >> Selected;
 }
 
-void felist::PrintToFile(const festring& FileName)
+void felist::PrintToFile(cfestring& FileName)
 {
   std::ofstream SaveFile(FileName.CStr(), std::ios::out);
 

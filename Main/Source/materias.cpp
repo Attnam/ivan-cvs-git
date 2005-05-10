@@ -14,7 +14,7 @@
 
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
 
-const char* liquid::GetConsumeVerb() const { return "drinking"; }
+cchar* liquid::GetConsumeVerb() const { return "drinking"; }
 
 truth powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
 
@@ -237,7 +237,7 @@ void ironalloy::Load(inputfile& SaveFile)
   SaveFile >> RustData;
 }
 
-void liquid::TouchEffect(item* Item, const festring& LocationName)
+void liquid::TouchEffect(item* Item, cfestring& LocationName)
 {
   if(GetRustModifier())
     Item->TryToRust(GetRustModifier() * GetVolume());

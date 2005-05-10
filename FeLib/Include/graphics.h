@@ -39,11 +39,11 @@ class graphics
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
-  static void SetMode(const char*, const char*, v2, truth);
+  static void SetMode(cchar*, cchar*, v2, truth);
   static void BlitDBToScreen();
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
-  static void LoadDefaultFont(const festring&);
+  static void LoadDefaultFont(cfestring&);
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
   static void SetSwitchModeHandler(void (*What)())
   { SwitchModeHandler = What; }

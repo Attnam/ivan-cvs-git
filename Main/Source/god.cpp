@@ -12,7 +12,7 @@
 
 /* Compiled through godset.cpp */
 
-godprototype::godprototype(godspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
+godprototype::godprototype(godspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
 
 god::god() : Relation(0), Timer(0), Known(false), LastPray(-1) { }
 int god::GetBasicAlignment() const { return NEUTRAL; }
@@ -266,7 +266,7 @@ character* god::CreateAngel(team* Team, int LifeBase)
 
 void god::PrintRelation() const
 {
-  const char* VerbalRelation;
+  cchar* VerbalRelation;
 
   if(GetRelation() == 1000)
     VerbalRelation = "greets you as a Champion of the Cause!";
@@ -351,19 +351,19 @@ god* godprototype::SpawnAndLoad(inputfile& SaveFile) const
   return God;
 }
 
-truth god::LikesMaterial(const materialdatabase* MDB, const character*) const
+truth god::LikesMaterial(const materialdatabase* MDB, ccharacter*) const
 {
   return MDB->AttachedGod == GetType();
 }
 
 struct materialsorter
 {
-  materialsorter(const item* Item) : Item(Item) { }
-  truth operator()(const material* M1, const material* M2) const
+  materialsorter(citem* Item) : Item(Item) { }
+  truth operator()(cmaterial* M1, cmaterial* M2) const
   {
     return M1->GetHardenModifier(Item) > M2->GetHardenModifier(Item);
   }
-  const item* Item;
+  citem* Item;
 };
 
 truth god::TryToAttachBodyPart(character* Char)
@@ -478,12 +478,12 @@ truth god::TryToHardenBodyPart(character* Char)
   return Changed;
 }
 
-const char* god::GetPersonalPronoun() const
+cchar* god::GetPersonalPronoun() const
 {
   return GetSex() == MALE ? "He" : "She";
 }
 
-const char* god::GetObjectPronoun() const
+cchar* god::GetObjectPronoun() const
 {
   return GetSex() == MALE ? "Him" : "Her";
 }

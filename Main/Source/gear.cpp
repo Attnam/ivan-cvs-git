@@ -18,7 +18,7 @@ void meleeweapon::InitMaterials(material* M1, material* M2, truth CUP) { ObjectI
 double meleeweapon::GetTHVBonus() const { return Enchantment * .5; }
 double meleeweapon::GetDamageBonus() const { return Enchantment; }
 col16 meleeweapon::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
-truth meleeweapon::IsDippable(const character*) const { return !Fluid; }
+truth meleeweapon::IsDippable(ccharacter*) const { return !Fluid; }
 truth meleeweapon::AllowRegularColors() const { return SecondaryMaterial->GetVolume(); }
 v2 meleeweapon::GetWieldedBitmapPos(int I) const { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : v2(160, 128); }
 void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, truth CUP) { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
@@ -41,15 +41,15 @@ double armor::GetDamageBonus() const { return Enchantment; }
 
 long bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 truth bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
-const festring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
-const char* bodyarmor::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
+cfestring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
+cchar* bodyarmor::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
 col16 goldeneagleshirt::GetOutlineColor(int) const { return MakeRGB16(0, 255, 255); }
 
 long cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice(Enchantment); }
 truth cloak::IsInCorrectSlot(int I) const { return I == CLOAK_INDEX; }
 col16 cloak::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
-const char* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
+cchar* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 truth cloak::ReceiveDamage(character* Damager, int Damage,  int Type, int Dir) { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
 int cloak::GetSpecialFlags() const { return ST_CLOAK; }
 
@@ -168,7 +168,7 @@ int whip::GetFormModifier() const
   return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
-truth pickaxe::IsAppliable(const character* Who) const
+truth pickaxe::IsAppliable(ccharacter* Who) const
 {
   return Who->CanWield();
 }
@@ -302,7 +302,7 @@ meleeweapon::meleeweapon(const meleeweapon& MW) : mybase(MW), Enchantment(MW.Enc
   CopyMaterial(MW.SecondaryMaterial, SecondaryMaterial);
 }
 
-truth whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitter) const
+truth whipofthievery::CleptiaHelps(ccharacter* Enemy, ccharacter* Hitter) const
 {
   /* TERRIBLE gum solution! */
 
@@ -323,7 +323,7 @@ truth whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitt
     return !(RAND() % 10);
 }
 
-void meleeweapon::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+void meleeweapon::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -500,7 +500,7 @@ int belt::GetFormModifier() const
   return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
-void armor::AddInventoryEntry(const character*, festring& Entry, int Amount, truth ShowSpecialInfo) const
+void armor::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth ShowSpecialInfo) const
 {
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
@@ -514,7 +514,7 @@ void armor::AddInventoryEntry(const character*, festring& Entry, int Amount, tru
     Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << ']';
 }
 
-void shield::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -535,7 +535,7 @@ void shield::AddInventoryEntry(const character* Viewer, festring& Entry, int, tr
   }
 }
 
-truth armor::CanBePiledWith(const item* Item, const character* Viewer) const
+truth armor::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   return item::CanBePiledWith(Item, Viewer) && Enchantment == static_cast<const armor*>(Item)->Enchantment;
 }
@@ -637,7 +637,7 @@ truth chameleonwhip::HitEffect(character* Enemy, character* Hitter, v2 HitPos, i
     return BaseSuccess;
 }
 
-truth chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter) const
+truth chameleonwhip::ScabiesHelps(ccharacter* Enemy, ccharacter* Hitter) const
 {
   if(!Enemy->IsPolymorphable())
     return false;
@@ -807,7 +807,7 @@ void meleeweapon::TryToRust(long LiquidModifier)
     SecondaryMaterial->SetRustLevel(SecondaryMaterial->GetRustLevel() + 1);
 }
 
-material* meleeweapon::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+material* meleeweapon::GetConsumeMaterial(ccharacter* Consumer, materialpredicate Predicate) const
 {
   if((SecondaryMaterial->*Predicate)()
      && SecondaryMaterial->GetVolume()

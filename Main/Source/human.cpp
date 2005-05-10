@@ -12,7 +12,7 @@
 
 /* Compiled through charsset.cpp */
 
-const int humanoid::DrawOrder[] = { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
+cint humanoid::DrawOrder[] = { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
 
 truth humanoid::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX || I == GROIN_INDEX; }
 truth humanoid::BodyPartCanBeSevered(int I) const { return I != TORSO_INDEX && I != GROIN_INDEX; }
@@ -27,11 +27,11 @@ v2 farmer::GetRightArmBitmapPos() const { return v2(64, (RAND() & 1) << 4); }
 
 void guard::SetWayPoints(const fearray<packv2>& What) { ArrayToVector(What, WayPoints); }
 
-const char* oree::FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
-const char* oree::FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
-const char* oree::ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
-const char* oree::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous blood at"; }
-const char* oree::BiteNoun() const { return "liquid"; }
+cchar* oree::FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
+cchar* oree::FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
+cchar* oree::ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
+cchar* oree::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous blood at"; }
+cchar* oree::BiteNoun() const { return "liquid"; }
 
 truth skeleton::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 
@@ -265,7 +265,7 @@ truth petrus::HealFully(character* ToBeHealed)
 
       BodyPart->RemoveFromSlot();
       ToBeHealed->AttachBodyPart(BodyPart);
-      BodyPart->SetHP(BodyPart->GetMaxHP());
+      BodyPart->RestoreHP();
       DidSomething = true;
 
       if(ToBeHealed->IsPlayer())
@@ -1297,7 +1297,7 @@ arm* humanoid::GetSecondaryArm() const
   return GetRightArm() ? GetLeftArm() : 0;
 }
 
-const char* humanoid::GetEquipmentName(int I) const // convert to array
+cchar* humanoid::GetEquipmentName(int I) const // convert to array
 {
   switch(I)
   {
@@ -1560,7 +1560,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 		  ALLOW_ANIMATE };
 
   v2 Where(RES.X - SILHOUETTE_SIZE.X - 39, 53);
-  const int Equipments = GetEquipments();
+  cint Equipments = GetEquipments();
 
   if(CanUseEquipment())
     for(c = 0; c < Equipments; ++c)
@@ -1850,7 +1850,7 @@ void humanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
 
 /* Returns the average number of APs required to kill Enemy */
 
-double humanoid::GetTimeToKill(const character* Enemy, truth UseMaxHP) const
+double humanoid::GetTimeToKill(ccharacter* Enemy, truth UseMaxHP) const
 {
   double Effectivity = 0;
   int AttackStyles = 0;
@@ -2146,9 +2146,9 @@ void humanoid::SignalEquipmentAdd(int EquipmentIndex)
     CalculateBattleInfo();
 }
 
-void humanoid::SignalEquipmentRemoval(int EquipmentIndex)
+void humanoid::SignalEquipmentRemoval(int EquipmentIndex, citem* Item)
 {
-  character::SignalEquipmentRemoval(EquipmentIndex);
+  character::SignalEquipmentRemoval(EquipmentIndex, Item);
 
   if(EquipmentIndex == RIGHT_WIELDED_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
@@ -2510,17 +2510,17 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, double ToHitVal
   /* Double block */
 
   if(RightBlockCapability + LeftBlockCapability)
-    Vector.push_back(std::pair<double, int>(RightBlockChance * LeftBlockChance, RightBlockCapability + LeftBlockCapability));
+    Vector.push_back(std::make_pair(RightBlockChance * LeftBlockChance, RightBlockCapability + LeftBlockCapability));
 
   /* Right block */
 
   if(RightBlockCapability)
-    Vector.push_back(std::pair<double, int>(RightBlockChance * (1 - LeftBlockChance), RightBlockCapability));
+    Vector.push_back(std::make_pair(RightBlockChance * (1 - LeftBlockChance), RightBlockCapability));
 
   /* Left block */
 
   if(LeftBlockCapability)
-    Vector.push_back(std::pair<double, int>(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
+    Vector.push_back(std::make_pair(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
 }
 
 item* humanoid::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stack* EquipmentDropStack)
@@ -2543,13 +2543,13 @@ humanoid::humanoid(const humanoid& Humanoid) : mybase(Humanoid), CurrentRightSWe
     *i1 = new sweaponskill(**i2);
 }
 
-const festring& humanoid::GetDeathMessage() const
+cfestring& humanoid::GetDeathMessage() const
 {
   static festring HeadlessDeathMsg = CONST_S("@Dd dies without a sound.");
   return GetHead() || character::GetDeathMessage() != "@Dd dies screaming." ? character::GetDeathMessage() : HeadlessDeathMsg;
 }
 
-int humanoid::GetSWeaponSkillLevel(const item* Item) const
+int humanoid::GetSWeaponSkillLevel(citem* Item) const
 {
   std::list<sweaponskill*>::const_iterator i;
 
@@ -2751,7 +2751,7 @@ void bananagrower::GetAICommand()
   if(!IsEnabled())
     return;
 
-  const v2 BananaTarget = FeedingSumo ? SUMO_ROOM_POS + v2(1, 2) : v2(45, 45);
+  cv2 BananaTarget = FeedingSumo ? SUMO_ROOM_POS + v2(1, 2) : v2(45, 45);
 
   if(GetPos() == BananaTarget)
   {
@@ -3084,7 +3084,7 @@ item* humanoid::GetPairEquipment(int I) const
   return 0;
 }
 
-const festring& humanoid::GetStandVerb() const
+cfestring& humanoid::GetStandVerb() const
 {
   if(ForceCustomStandVerb())
     return DataBase->StandVerb;
@@ -3363,7 +3363,7 @@ head* humanoid::Behead()
   return Head;
 }
 
-truth communist::BoundToUse(const item* Item, int I) const
+truth communist::BoundToUse(citem* Item, int I) const
 {
   return Item && Item->IsGorovitsFamilyRelic() && Item->IsInCorrectSlot(I);
 }
@@ -3724,7 +3724,7 @@ void playerkind::BeTalkedTo()
   }
 }
 
-void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, const item* Wielded)
+void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, citem* Wielded)
 {
   if(Wielded)
   {
@@ -3830,7 +3830,7 @@ int humanoid::GetSumOfAttributes() const
   return character::GetSumOfAttributes() + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
 }
 
-truth humanoid::CheckConsume(const festring& Verb) const
+truth humanoid::CheckConsume(cfestring& Verb) const
 {
   if(!HasHead())
   {
@@ -4516,7 +4516,7 @@ void orc::PostConstruct()
     GainIntrinsic(LEPROSY);
 }
 
-truth mistress::AllowEquipment(const item* Item, int EquipmentIndex) const
+truth mistress::AllowEquipment(citem* Item, int EquipmentIndex) const
 {
   return ((EquipmentIndex != RIGHT_WIELDED_INDEX
 	   && EquipmentIndex != LEFT_WIELDED_INDEX)
@@ -4904,7 +4904,7 @@ void slave::PostConstruct()
   Weakness = TALENT_CLEVER;
 }
 
-const int TalentOfAttribute[ATTRIBUTES] = { TALENT_HEALTHY, TALENT_FAST_N_ACCURATE, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_STRONG, TALENT_STRONG, TALENT_FAST_N_ACCURATE, TALENT_FAST_N_ACCURATE };
+cint TalentOfAttribute[ATTRIBUTES] = { TALENT_HEALTHY, TALENT_FAST_N_ACCURATE, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_STRONG, TALENT_STRONG, TALENT_FAST_N_ACCURATE, TALENT_FAST_N_ACCURATE };
 const double TalentBonusOfAttribute[ATTRIBUTES] = { 1.1, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25 };
 
 double playerkind::GetNaturalExperience(int Identifier) const
@@ -4920,7 +4920,7 @@ double playerkind::GetNaturalExperience(int Identifier) const
   return NE;
 }
 
-const char* humanoid::GetRunDescriptionLine(int I) const
+cchar* humanoid::GetRunDescriptionLine(int I) const
 {
   if(!GetRunDescriptionLineOne().IsEmpty())
     return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
@@ -4945,7 +4945,7 @@ const char* humanoid::GetRunDescriptionLine(int I) const
   return !I ? "Running" : "";
 }
 
-const char* humanoid::GetNormalDeathMessage() const
+cchar* humanoid::GetNormalDeathMessage() const
 {
   if(BodyPartIsVital(HEAD_INDEX) && (!GetHead() || GetHead()->GetHP() <= 0))
     return "beheaded @k";

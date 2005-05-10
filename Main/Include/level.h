@@ -48,7 +48,7 @@ struct nodepointerstorer
 
 struct spawnresult
 {
-  const character* Pioneer;
+  ccharacter* Pioneer;
   int Seen;
 };
 
@@ -74,7 +74,7 @@ struct node
   truth Processed;
   static node*** NodeMap;
   static int RequiredWalkability;
-  static const character* SpecialMover;
+  static ccharacter* SpecialMover;
   static v2 To;
   static uchar** WalkabilityMap;
   static int XSize, YSize;
@@ -95,8 +95,8 @@ struct explosion
 
 struct beamdata
 {
-  beamdata(character*, const festring&, int, ulong);
-  beamdata(character*, const festring&, v2, col16, int, int, int, ulong);
+  beamdata(character*, cfestring&, int, ulong);
+  beamdata(character*, cfestring&, v2, col16, int, int, int, ulong);
   character* Owner;
   festring DeathMsg;
   v2 StartPos;
@@ -110,7 +110,7 @@ struct beamdata
 inline beamdata::beamdata
 (
   character* Owner,
-  const festring& DeathMsg,
+  cfestring& DeathMsg,
   int Direction,
   ulong SpecialParameters
 ) :
@@ -123,7 +123,7 @@ SpecialParameters(SpecialParameters)
 inline beamdata::beamdata
 (
   character* Owner,
-  const festring& DeathMsg,
+  cfestring& DeathMsg,
   v2 StartPos,
   col16 BeamColor,
   int BeamEffect,
@@ -147,7 +147,7 @@ class level : public area
   level();
   virtual ~level();
   void Generate(int);
-  v2 GetRandomSquare(const character* = 0, int = 0, const rect* = 0) const;
+  v2 GetRandomSquare(ccharacter* = 0, int = 0, const rect* = 0) const;
   void GenerateMonsters();
   lsquare* GetLSquare(v2 Pos) const { return Map[Pos.X][Pos.Y]; }
   lsquare* GetLSquare(int x, int y) const { return Map[x][y]; }
@@ -166,7 +166,7 @@ class level : public area
   truth MakeRoom(const roomscript*);
   void ParticleTrail(v2, v2);
   festring GetLevelMessage() { return LevelMessage; }
-  void SetLevelMessage(const festring& What) { LevelMessage = What; }
+  void SetLevelMessage(cfestring& What) { LevelMessage = What; }
   void SetLevelScript(const levelscript* What) { LevelScript = What; }
   truth IsOnGround() const;
   const levelscript* GetLevelScript() const { return LevelScript; }
@@ -174,11 +174,11 @@ class level : public area
   room* GetRoom(int) const;
   void SetRoom(int, room*);
   void AddRoom(room*);
-  void Explosion(character*, const festring&, v2, int, truth = true);
+  void Explosion(character*, cfestring&, v2, int, truth = true);
   truth CollectCreatures(charactervector&, character*, truth);
   void ApplyLSquareScript(const squarescript*);
   virtual void Draw(truth) const;
-  v2 GetEntryPos(const character*, int) const;
+  v2 GetEntryPos(ccharacter*, int) const;
   void GenerateRectangularRoom(std::vector<v2>&, std::vector<v2>&, std::vector<v2>&, const roomscript*, room*, v2, v2);
   void Reveal();
   static void (level::*GetBeam(int))(beamdata&);
@@ -192,9 +192,9 @@ class level : public area
   truth DrawExplosion(const explosion*) const;
   int TriggerExplosions(int);
   lsquare*** GetMap() const { return Map; }
-  v2 GetNearestFreeSquare(const character*, v2, truth = true) const;
-  v2 FreeSquareSeeker(const character*, v2, v2, int, truth) const;
-  v2 GetFreeAdjacentSquare(const character*, v2, truth) const;
+  v2 GetNearestFreeSquare(ccharacter*, v2, truth = true) const;
+  v2 FreeSquareSeeker(ccharacter*, v2, v2, int, truth) const;
+  v2 GetFreeAdjacentSquare(ccharacter*, v2, truth) const;
   static void (level::*GetBeamEffectVisualizer(int))(const fearray<lsquare*>&, col16) const;
   void ParticleVisualizer(const fearray<lsquare*>&, col16) const;
   void LightningVisualizer(const fearray<lsquare*>&, col16) const;
@@ -211,7 +211,7 @@ class level : public area
   void GenerateGlacier();
   void CreateTunnelNetwork(int, int, int, int, v2);
   void SetWalkability(v2 Pos, int What) { WalkabilityMap[Pos.X][Pos.Y] = What; }
-  node* FindRoute(v2, v2, const std::set<v2>&, int, const character* = 0);
+  node* FindRoute(v2, v2, const std::set<v2>&, int, ccharacter* = 0);
   void AddToAttachQueue(v2);
   void CollectEverything(itemvector&, charactervector&);
   void CreateGlobalRain(liquid*, v2);
@@ -227,7 +227,7 @@ class level : public area
   void InitLastSeen();
   lsquare** GetSquareStack() const { return SquareStack; }
   col24 GetNightAmbientLuminance() const { return NightAmbientLuminance; }
-  int DetectMaterial(const material*);
+  int DetectMaterial(cmaterial*);
   void BlurMemory();
   void CalculateLuminances();
   int AddRadiusToSquareStack(v2, long) const;

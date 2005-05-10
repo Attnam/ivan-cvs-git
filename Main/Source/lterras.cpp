@@ -28,11 +28,11 @@ void fountain::InitMaterials(const materialscript* M, const materialscript* C, t
 
 void brokendoor::HasBeenHitByItem(character* Thrower, item*, int Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 
-const char* liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
-const char* liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
-const char* liquidterrain::DeathMessage() const { return "you drown"; }
-const char* liquidterrain::MonsterDeathVerb() const { return "drowns"; }
-const char* liquidterrain::ScoreEntry() const { return "drowned"; }
+cchar* liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
+cchar* liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
+cchar* liquidterrain::DeathMessage() const { return "you drown"; }
+cchar* liquidterrain::MonsterDeathVerb() const { return "drowns"; }
+cchar* liquidterrain::ScoreEntry() const { return "drowned"; }
 
 festring sign::GetText() const { return Text; }
 
@@ -305,7 +305,7 @@ truth altar::ReceiveVomit(character* Who, liquid* Liquid)
     return false;
 }
 
-truth altar::VomitingIsDangerous(const character*) const
+truth altar::VomitingIsDangerous(ccharacter*) const
 {
   return !GetMasterGod()->LikesVomit();
 }
@@ -369,7 +369,10 @@ truth fountain::Drink(character* Drinker)
 	  if(!RAND_4)
 	    Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
 	  else
+	  {
 	    Drinker->ChangeRandomAttribute(-1);
+	    Drinker->CheckDeath(CONST_S("died of contaminated water"));
+	  }
 
 	  break;
 	}

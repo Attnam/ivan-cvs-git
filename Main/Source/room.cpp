@@ -12,7 +12,7 @@
 
 /* Compiled through roomset.cpp */
 
-roomprototype::roomprototype(roomspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
+roomprototype::roomprototype(roomspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
 
 void room::Save(outputfile& SaveFile) const
 {
@@ -65,7 +65,7 @@ truth room::MasterIsActive() const
   return Master && Master->IsEnabled() && Master->IsConscious();
 }
 
-truth room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) const
+truth room::CheckKickSquare(ccharacter* Kicker, const lsquare* LSquare) const
 {
   if(!AllowKick(Kicker, LSquare))
   {
@@ -90,7 +90,7 @@ character* room::GetMaster() const
   }
 }
 
-truth room::IsOKToDestroyWalls(const character* Infidel) const
+truth room::IsOKToDestroyWalls(ccharacter* Infidel) const
 {
   return !MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE;
 }

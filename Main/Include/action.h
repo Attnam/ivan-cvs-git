@@ -26,14 +26,14 @@ typedef action* (*actionspawner)(character*);
 class actionprototype
 {
  public:
-  actionprototype(actionspawner, const char*);
+  actionprototype(actionspawner, cchar*);
   action* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
   actionspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class action
@@ -55,11 +55,11 @@ class action
   virtual truth IsRest() const { return false; }
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
-  virtual const char* GetDescription() const = 0;
+  virtual cchar* GetDescription() const = 0;
   truth InDNDMode() const { return Flags & IN_DND_MODE; }
   void ActivateInDNDMode() { Flags |= IN_DND_MODE; }
   virtual truth ShowEnvironment() const { return true; }
-  virtual const char* GetDeathExplanation() const { return ""; }
+  virtual cchar* GetDeathExplanation() const { return ""; }
   virtual truth CanBeTalkedTo() const { return true; }
   virtual truth IsUnconsciousness() const { return false; }
  protected:

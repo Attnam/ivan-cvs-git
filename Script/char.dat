@@ -270,7 +270,6 @@ character
   AllowUnconsciousness = true;
   CanChoke = true;
   IsImmuneToStickiness = false;
-  DisplacePriority = 0;
   RunDescriptionLineOne = ""; /* if empty, IVAN determines this itself */
   RunDescriptionLineTwo = "";
   VomittingIsUnhealthy = true;
@@ -302,11 +301,13 @@ humanoid
   CanApply = true;
   IsImmuneToLeprosy = false;
   WillCarryItems = true;
+  DisplacePriority = 0;
 }
 
 nonhumanoid
 {
   IsAbstract = true;
+  DisplacePriority = -1;
 }
 
 playerkind
@@ -433,7 +434,7 @@ farmer
     "agriculture", "apiculture", "aquaculture", "horticulture", "silviculture",
     "herbalism", "plants", "breeding", "snow", "forestry";
   }
-  DisplacePriority = -1;
+  DisplacePriority = -2;
 }
 
 guard
@@ -481,6 +482,7 @@ guard
       "\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
     }
     AutomaticallySeen = true;
+    DisplacePriority = -5;
   }
 
   Config VETERAN;
@@ -649,6 +651,7 @@ guard
     }
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
+    DisplacePriority = 4;
   }
 }
 
@@ -4940,7 +4943,7 @@ tourist
     ClothColor = rgb16(200, 16, 200);
     LegMainColor = rgb16(50, 100, 132);
     CapColor = rgb16(200, 200, 0);
-    HostileReplies == "\"Violence is barbaric. Couldn't we settle this little dispute of ours in a court?\"";
+    HostileReplies == "\"Violence is barbaric. Couldn't we settle this little dispute of ours in a court of law?\"";
     FriendlyReplies =
     {
       6,

@@ -13,11 +13,10 @@
 #ifndef __WSKILL_H__
 #define __WSKILL_H__
 
-#include "typedef.h"
+#include "ivandef.h"
 
 class outputfile;
 class inputfile;
-class item;
 
 class weaponskill
 {
@@ -45,7 +44,7 @@ class cweaponskill : public weaponskill
   virtual int GetLevelMap(int) const;
   virtual ulong GetUnuseTickMap(int) const;
   virtual int GetUnusePenaltyMap(int) const;
-  const char* GetName(int) const;
+  cchar* GetName(int) const;
   int GetBonus() const { return 1000 + 50 * Level; }
   void AddLevelUpMessage(int) const;
   void AddLevelDownMessage(int) const;
@@ -67,17 +66,17 @@ class sweaponskill : public weaponskill
 {
  public:
   sweaponskill() : ID(0), Weight(0), Config(0) { }
-  sweaponskill(const item*);
+  sweaponskill(citem*);
   virtual int GetLevelMap(int) const;
   virtual ulong GetUnuseTickMap(int) const;
   virtual int GetUnusePenaltyMap(int) const;
   int GetBonus() const { return Level ? 1150 + 25 * (Level - 1) : 1000; }
-  void AddLevelUpMessage(const char*) const;
-  void AddLevelDownMessage(const char*) const;
+  void AddLevelUpMessage(cchar*) const;
+  void AddLevelDownMessage(cchar*) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  truth IsSkillOf(const item*) const;
-  truth IsSkillOfCloneMother(const item*, ulong) const;
+  truth IsSkillOf(citem*) const;
+  truth IsSkillOfCloneMother(citem*, ulong) const;
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
   void PreProcessForBone() { ID = -ID; }

@@ -33,7 +33,7 @@
 #include "proto.h"
 #endif
 
-command::command(truth (*LinkedFunction)(character*), const char* Description, char Key1, char Key2, truth UsableInWilderness, truth WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
+command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, truth UsableInWilderness, truth WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
 
 char command::GetKey() const { return !ivanconfig::GetUseAlternativeKeys() ? Key1 : Key2; }
 
@@ -310,7 +310,7 @@ truth commandsystem::Drink(character* Char)
   return Consume(Char, "drink", &item::IsDrinkable);
 }
 
-truth commandsystem::Consume(character* Char, const char* ConsumeVerb, sorter Sorter)
+truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
 {
   lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
@@ -903,7 +903,7 @@ truth commandsystem::ForceVomit(character* Char)
 
       if(Char->GetArea()->IsValidPos(VomitPos))
       {
-	const character* Other = Char->GetArea()->GetSquare(VomitPos)->GetCharacter();
+	ccharacter* Other = Char->GetArea()->GetSquare(VomitPos)->GetCharacter();
 
 	if(Other && Other->GetTeam() != Char->GetTeam()
 	   && Other->GetRelation(Char) != HOSTILE

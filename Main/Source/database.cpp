@@ -170,7 +170,7 @@ template <class database, class member> struct databasemember : public databasem
   member Member;
 };
 
-template <class database, class member> void AddMember(std::map<festring, databasememberbase<database>*>& Map, const char* Str, member Member)
+template <class database, class member> void AddMember(std::map<festring, databasememberbase<database>*>& Map, cchar* Str, member Member)
 {
   Map.insert(std::pair<festring, databasememberbase<database>*>(Str, new databasemember<database, member>(Member)));
 }
@@ -178,7 +178,7 @@ template <class database, class member> void AddMember(std::map<festring, databa
 /* Explicit instantiations seem to increase compile speed greatly here... */
 
 #define INST_ADD_MEMBER(type, member)\
-template void AddMember<type##database, member type##database::*>(std::map<festring, databasememberbase<type##database>*>&, const char*, member type##database::*)
+template void AddMember<type##database, member type##database::*>(std::map<festring, databasememberbase<type##database>*>&, cchar*, member type##database::*)
 
 INST_ADD_MEMBER(character, int);
 INST_ADD_MEMBER(character, long);
@@ -597,9 +597,9 @@ if(Word == #name)\
   = DataBase.*static_cast<databasemember<database, ulong database::*>*>(Data)->Member;
 
 template <class type>
-void databasecreator<type>::SetBaseValue(const festring&, databasememberbase<database>*, database&) { }
+void databasecreator<type>::SetBaseValue(cfestring&, databasememberbase<database>*, database&) { }
 
-template<> void databasecreator<material>::SetBaseValue(const festring& Word, databasememberbase<materialdatabase>* Data, materialdatabase& DataBase)
+template<> void databasecreator<material>::SetBaseValue(cfestring& Word, databasememberbase<materialdatabase>* Data, materialdatabase& DataBase)
 {
   ADD_BASE_VALUE(CommonFlags);
   ADD_BASE_VALUE(NameFlags);
@@ -609,7 +609,7 @@ template<> void databasecreator<material>::SetBaseValue(const festring& Word, da
 }
 
 template <class type>
-truth databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)
+truth databasecreator<type>::AnalyzeData(inputfile& SaveFile, cfestring& Word, database& DataBase)
 {
   typename databasemembermap::iterator i = GetDataBaseMemberMap().find(Word);
 
@@ -624,7 +624,7 @@ truth databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Wo
     return false;
 }
 
-template<> void databasecreator<character>::CheckDefaults(const festring& Word, character::database& DataBase)
+template<> void databasecreator<character>::CheckDefaults(cfestring& Word, character::database& DataBase)
 {
   if(Word == "ArmBitmapPos")
     DataBase.RightArmBitmapPos =
@@ -659,7 +659,7 @@ template<> void databasecreator<character>::CheckDefaults(const festring& Word, 
     DataBase.CanBeWished = !DataBase.IsUnique;
 }
 
-template<> void databasecreator<item>::CheckDefaults(const festring& Word, item::database& DataBase)
+template<> void databasecreator<item>::CheckDefaults(cfestring& Word, item::database& DataBase)
 {
   if(Word == "NameSingular")
   {
@@ -674,7 +674,7 @@ template<> void databasecreator<item>::CheckDefaults(const festring& Word, item:
     DataBase.CanBeMirrored = DataBase.CanBeCloned;
 }
 
-template<> void databasecreator<glterrain>::CheckDefaults(const festring& Word, glterrain::database& DataBase)
+template<> void databasecreator<glterrain>::CheckDefaults(cfestring& Word, glterrain::database& DataBase)
 {
   if(Word == "NameSingular")
     DataBase.NamePlural = DataBase.NameSingular + 's';
@@ -682,7 +682,7 @@ template<> void databasecreator<glterrain>::CheckDefaults(const festring& Word, 
     DataBase.MaterialConfigChanceSum = femath::SumArray(DataBase.MaterialConfigChances);
 }
 
-template<> void databasecreator<olterrain>::CheckDefaults(const festring& Word, olterrain::database& DataBase)
+template<> void databasecreator<olterrain>::CheckDefaults(cfestring& Word, olterrain::database& DataBase)
 {
   if(Word == "NameSingular")
     DataBase.NamePlural = DataBase.NameSingular + 's';
@@ -690,7 +690,7 @@ template<> void databasecreator<olterrain>::CheckDefaults(const festring& Word, 
     DataBase.MaterialConfigChanceSum = femath::SumArray(DataBase.MaterialConfigChances);
 }
 
-template<> void databasecreator<material>::CheckDefaults(const festring& Word, material::database& DataBase)
+template<> void databasecreator<material>::CheckDefaults(cfestring& Word, material::database& DataBase)
 {
   if(Word == "NameStem")
     DataBase.AdjectiveStem = DataBase.NameStem;

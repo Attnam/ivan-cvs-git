@@ -253,7 +253,7 @@ statedata StateData[STATES] =
 characterprototype::characterprototype(const characterprototype* Base,
 				       characterspawner Spawner,
 				       charactercloner Cloner,
-				       const char* ClassID)
+				       cchar* ClassID)
 : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID)
 { Index = protocontainer<character>::Add(this); }
 std::list<character*>::iterator character::GetTeamIterator()
@@ -296,28 +296,28 @@ truth character::HomeDataIsValid() const
 { return (HomeData && HomeData->Level == GetLSquareUnder()->GetLevelIndex()
 	  && HomeData->Dungeon == GetLSquareUnder()->GetDungeonIndex()); }
 void character::SetHomePos(v2 Pos) { HomeData->Pos = Pos; }
-const char* character::FirstPersonUnarmedHitVerb() const { return "hit"; }
-const char* character::FirstPersonCriticalUnarmedHitVerb() const
+cchar* character::FirstPersonUnarmedHitVerb() const { return "hit"; }
+cchar* character::FirstPersonCriticalUnarmedHitVerb() const
 { return "critically hit"; }
-const char* character::ThirdPersonUnarmedHitVerb() const { return "hits"; }
-const char* character::ThirdPersonCriticalUnarmedHitVerb() const
+cchar* character::ThirdPersonUnarmedHitVerb() const { return "hits"; }
+cchar* character::ThirdPersonCriticalUnarmedHitVerb() const
 { return "critically hits"; }
-const char* character::FirstPersonKickVerb() const { return "kick"; }
-const char* character::FirstPersonCriticalKickVerb() const
+cchar* character::FirstPersonKickVerb() const { return "kick"; }
+cchar* character::FirstPersonCriticalKickVerb() const
 { return "critically kick"; }
-const char* character::ThirdPersonKickVerb() const { return "kicks"; }
-const char* character::ThirdPersonCriticalKickVerb() const
+cchar* character::ThirdPersonKickVerb() const { return "kicks"; }
+cchar* character::ThirdPersonCriticalKickVerb() const
 { return "critically kicks"; }
-const char* character::FirstPersonBiteVerb() const { return "bite"; }
-const char* character::FirstPersonCriticalBiteVerb() const
+cchar* character::FirstPersonBiteVerb() const { return "bite"; }
+cchar* character::FirstPersonCriticalBiteVerb() const
 { return "critically bite"; }
-const char* character::ThirdPersonBiteVerb() const { return "bites"; }
-const char* character::ThirdPersonCriticalBiteVerb() const
+cchar* character::ThirdPersonBiteVerb() const { return "bites"; }
+cchar* character::ThirdPersonCriticalBiteVerb() const
 { return "critically bites"; }
-const char* character::UnarmedHitNoun() const { return "attack"; }
-const char* character::KickNoun() const { return "kick"; }
-const char* character::BiteNoun() const { return "attack"; }
-const char* character::GetEquipmentName(int) const { return ""; }
+cchar* character::UnarmedHitNoun() const { return "attack"; }
+cchar* character::KickNoun() const { return "kick"; }
+cchar* character::BiteNoun() const { return "attack"; }
+cchar* character::GetEquipmentName(int) const { return ""; }
 const std::list<ulong>& character::GetOriginalBodyPartID(int I) const
 { return OriginalBodyPartID[I]; }
 square* character::GetNeighbourSquare(int I) const
@@ -351,9 +351,9 @@ truth character::HasBeenSeen() const
 { return DataBase->Flags & HAS_BEEN_SEEN; }
 truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
-const char* character::GetNormalDeathMessage() const { return "killed @k"; }
+cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
 
-character::character(const character& Char)
+character::character(ccharacter& Char)
 : entity(Char), id(Char), NP(Char.NP), AP(Char.AP),
   TemporaryState(Char.TemporaryState&~POLYMORPHED),
   Team(Char.Team), GoingTo(ERROR_V2), Money(0),
@@ -948,7 +948,7 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
   {
     if(IsPlayer())
     {
-      const char* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
+      cchar* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
       ADD_MESSAGE("You try very hard to %s forward. But your load is too heavy.", CrawlVerb);
     }
 
@@ -1350,7 +1350,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-void character::Die(const character* Killer, const festring& Msg, ulong DeathFlags)
+void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 {
   /* Note: This function musn't delete any objects, since one of these may be
      the one currently processed by pool::Be()! */
@@ -1520,7 +1520,7 @@ void character::Die(const character* Killer, const festring& Msg, ulong DeathFla
   }
 }
 
-void character::AddMissMessage(const character* Enemy) const
+void character::AddMissMessage(ccharacter* Enemy) const
 {
   festring Msg;
 
@@ -1536,7 +1536,7 @@ void character::AddMissMessage(const character* Enemy) const
   ADD_MESSAGE("%s", Msg.CStr());
 }
 
-void character::AddBlockMessage(const character* Enemy, const item* Blocker, const festring& HitNoun, truth Partial) const
+void character::AddBlockMessage(ccharacter* Enemy, citem* Blocker, cfestring& HitNoun, truth Partial) const
 {
   festring Msg;
   festring BlockVerb = (Partial ? " to partially block the " : " to block the ") + HitNoun;
@@ -1556,7 +1556,7 @@ void character::AddBlockMessage(const character* Enemy, const item* Blocker, con
   ADD_MESSAGE("%s", Msg.CStr());
 }
 
-void character::AddPrimitiveHitMessage(const character* Enemy, const festring& FirstPersonHitVerb, const festring& ThirdPersonHitVerb, int BodyPart) const
+void character::AddPrimitiveHitMessage(ccharacter* Enemy, cfestring& FirstPersonHitVerb, cfestring& ThirdPersonHitVerb, int BodyPart) const
 {
   festring Msg;
   festring BodyPartDescription;
@@ -1576,10 +1576,10 @@ void character::AddPrimitiveHitMessage(const character* Enemy, const festring& F
   ADD_MESSAGE("%s", Msg.CStr());
 }
 
-const char*const HitVerb[] = { "strike", "slash", "stab" };
-const char*const HitVerb3rdPersonEnd[] = { "s", "es", "s" };
+cchar*const HitVerb[] = { "strike", "slash", "stab" };
+cchar*const HitVerb3rdPersonEnd[] = { "s", "es", "s" };
 
-void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, int BodyPart, truth Critical) const
+void character::AddWeaponHitMessage(ccharacter* Enemy, citem* Weapon, int BodyPart, truth Critical) const
 {
   festring Msg;
   festring BodyPartDescription;
@@ -1605,7 +1605,7 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
 
   festring NewHitVerb = Critical ? " critically " : " ";
   NewHitVerb << HitVerb[DamageType];
-  const char*const E = HitVerb3rdPersonEnd[DamageType];
+  cchar*const E = HitVerb3rdPersonEnd[DamageType];
 
   if(Enemy->IsPlayer())
   {
@@ -1767,6 +1767,7 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile << BaseExperience[c];
 
+  SaveFile << ExpModifierMap;
   SaveFile << NP << AP << Stamina << GenerationDanger << ScienceTalks;
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile.Put(!!IsEnabled());
@@ -1814,6 +1815,7 @@ void character::Load(inputfile& SaveFile)
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile >> BaseExperience[c];
 
+  SaveFile >> ExpModifierMap;
   SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks;;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
@@ -1862,7 +1864,7 @@ void character::Load(inputfile& SaveFile)
       GetSquareUnder(c)->SetCharacter(this);
 }
 
-truth character::Engrave(const festring& What)
+truth character::Engrave(cfestring& What)
 {
   GetLSquareUnder()->Engrave(What);
   return true;
@@ -1899,7 +1901,7 @@ truth character::TestForPickup(item* ToBeTested) const
   return true;
 }
 
-void character::AddScoreEntry(const festring& Description, double Multiplier, truth AddEndLevel) const
+void character::AddScoreEntry(cfestring& Description, double Multiplier, truth AddEndLevel) const
 {
   if(!game::WizardModeIsReallyActive())
   {
@@ -1924,7 +1926,7 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, tr
   }
 }
 
-truth character::CheckDeath(const festring& Msg, const character* Murderer, ulong DeathFlags)
+truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFlags)
 {
   if(!IsEnabled())
     return true;
@@ -2008,7 +2010,7 @@ truth character::CheckDeath(const festring& Msg, const character* Murderer, ulon
     return false;
 }
 
-truth character::CheckStarvationDeath(const festring& Msg)
+truth character::CheckStarvationDeath(cfestring& Msg)
 {
   if(GetNP() < 1 && UsesNutrition())
     return CheckDeath(Msg, 0, FORCE_DEATH);
@@ -2302,7 +2304,7 @@ void character::FallTo(character* GuiltyGuy, v2 Where)
   }
 }
 
-truth character::CheckCannibalism(const material* What) const
+truth character::CheckCannibalism(cmaterial* What) const
 {
   return GetTorso()->GetMainMaterial()->IsSameAs(What);
 }
@@ -2361,7 +2363,7 @@ truth character::LoseConsciousness(int Counter, truth HungerFaint)
   return true;
 }
 
-void character::DeActivateVoluntaryAction(const festring& Reason)
+void character::DeActivateVoluntaryAction(cfestring& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
   {
@@ -2579,7 +2581,7 @@ truth character::FollowLeader(character* Leader)
       return false;
 }
 
-void character::SeekLeader(const character* Leader)
+void character::SeekLeader(ccharacter* Leader)
 {
   if(Leader && Leader != this)
     if(Leader->CanBeSeenBy(this) && (Leader->SquareUnderCanBeSeenBy(this, true) || !IsGoingSomeWhere()))
@@ -2638,7 +2640,7 @@ truth character::Displace(character* Who, truth Forced)
   {
     if(IsPlayer())
     {
-      const char* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
+      cchar* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
       ADD_MESSAGE("You try very hard to %s forward. But your load is too heavy.", CrawlVerb);
       EditAP(-1000);
       return true;
@@ -2650,13 +2652,18 @@ truth character::Displace(character* Who, truth Forced)
   double Danger = GetRelativeDanger(Who);
   int PriorityDifference = Limit(GetDisplacePriority() - Who->GetDisplacePriority(), -31, 31);
 
-  if(PriorityDifference > 0)
+  if(IsPlayer())
+    ++PriorityDifference;
+  else if(Who->IsPlayer())
+    --PriorityDifference;
+
+  if(PriorityDifference >= 0)
     Danger *= 1 << PriorityDifference;
   else
     Danger /= 1 << -PriorityDifference;
 
   if(IsSmall() && Who->IsSmall()
-     && (Forced || Danger > 1.)
+     && (Forced || Danger > 1. || !Who->IsBadPath(GetPos()))
      && !IsStuck() && !Who->IsStuck()
      && (!Who->GetAction() || Who->GetAction()->TryDisplace())
      && CanMove() && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
@@ -2981,8 +2988,8 @@ void character::DisplayInfo(festring& Msg)
   else
   {
     Msg << ' ' << GetName(INDEFINITE).CapitalizeCopy() << " is " << GetStandVerb() << " here. " << GetPersonalPronoun().CapitalizeCopy();
-    const char* Separator1 = GetAction() ? "," : " and";
-    const char* Separator2 = " and";
+    cchar* Separator1 = GetAction() ? "," : " and";
+    cchar* Separator2 = " and";
 
     if(GetTeam() == PLAYER->GetTeam())
       Msg << " is tame";
@@ -4243,7 +4250,7 @@ void character::DrawPanel(truth AnimationDraw) const
   if(game::PlayerIsRunning())
   {
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, GetRunDescriptionLine(0));
-    const char* SecondLine = GetRunDescriptionLine(1);
+    cchar* SecondLine = GetRunDescriptionLine(1);
 
     if(strlen(SecondLine))
       FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, SecondLine);
@@ -4384,10 +4391,11 @@ void character::SignalEquipmentAdd(int EquipmentIndex)
     ApplyEquipmentAttributeBonuses(Equipment);
 }
 
-void character::SignalEquipmentRemoval(int)
+void character::SignalEquipmentRemoval(int, citem* Item)
 {
   CalculateEquipmentState();
   CalculateAttributeBonuses();
+  CheckDeath(festring("lost ") + GetPossessivePronoun(false) + " vital " + Item->GetName(INDEFINITE));
 }
 
 void character::CalculateEquipmentState()
@@ -4835,7 +4843,7 @@ truth character::CanBeSeenByPlayer(truth Theoretically, truth IgnoreESP) const
     return false;
 }
 
-truth character::CanBeSeenBy(const character* Who, truth Theoretically, truth IgnoreESP) const
+truth character::CanBeSeenBy(ccharacter* Who, truth Theoretically, truth IgnoreESP) const
 {
   if(Who->IsPlayer())
     return CanBeSeenByPlayer(Theoretically, IgnoreESP);
@@ -4921,7 +4929,7 @@ truth character::SquareUnderCanBeSeenByPlayer(truth IgnoreDarkness) const
   }
 }
 
-truth character::SquareUnderCanBeSeenBy(const character* Who, truth IgnoreDarkness) const
+truth character::SquareUnderCanBeSeenBy(ccharacter* Who, truth IgnoreDarkness) const
 {
   int S1 = SquaresUnder, S2 = Who->SquaresUnder;
   int LOSRangeSquare = Who->GetLOSRangeSquare();
@@ -4943,7 +4951,7 @@ truth character::SquareUnderCanBeSeenBy(const character* Who, truth IgnoreDarkne
   }
 }
 
-int character::GetDistanceSquareFrom(const character* Who) const
+int character::GetDistanceSquareFrom(ccharacter* Who) const
 {
   int S1 = SquaresUnder, S2 = Who->SquaresUnder;
 
@@ -5137,7 +5145,7 @@ void character::Draw(blitdata& BlitData) const
   DrawBodyParts(BlitData);
   BlitData.Luminance = ivanconfig::GetContrastLuminance();
   BlitData.Src.Y = 16;
-  const int SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
+  cint SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
 
   if(GetTeam() == PLAYER->GetTeam() && !IsPlayer()
      && SquareIndex == GetTameSymbolSquareIndex())
@@ -5551,7 +5559,7 @@ int characterprototype::CreateSpecialConfigurations(characterdatabase** TempConf
   return Configs;
 }
 
-double character::GetTimeToDie(const character* Enemy, int Damage, double ToHitValue, truth AttackIsBlockable, truth UseMaxHP) const
+double character::GetTimeToDie(ccharacter* Enemy, int Damage, double ToHitValue, truth AttackIsBlockable, truth UseMaxHP) const
 {
   double DodgeValue = GetDodgeValue();
 
@@ -5581,7 +5589,7 @@ double character::GetTimeToDie(const character* Enemy, int Damage, double ToHitV
   return MinHits;
 }
 
-double character::GetRelativeDanger(const character* Enemy, truth UseMaxHP) const
+double character::GetRelativeDanger(ccharacter* Enemy, truth UseMaxHP) const
 {
   double Danger = Enemy->GetTimeToKill(this, UseMaxHP) / GetTimeToKill(Enemy, UseMaxHP);
   int EnemyAP = Enemy->GetMoveAPRequirement(1);
@@ -5632,7 +5640,7 @@ item* character::SearchForItem(ulong ID) const
   return 0;
 }
 
-truth character::ContentsCanBeSeenBy(const character* Viewer) const
+truth character::ContentsCanBeSeenBy(ccharacter* Viewer) const
 {
   return Viewer == this;
 }
@@ -5833,7 +5841,7 @@ void character::UpdateESPLOS() const
 	  (*i)->SendNewDrawRequest();
 }
 
-int character::GetCWeaponSkillLevel(const item* Item) const
+int character::GetCWeaponSkillLevel(citem* Item) const
 {
   if(Item->GetWeaponCategory() < GetAllowedWeaponSkillCategories())
     return GetCWeaponSkill(Item->GetWeaponCategory())->GetLevel();
@@ -5901,7 +5909,7 @@ truth character::CanHeal() const
   return false;
 }
 
-int character::GetRelation(const character* Who) const
+int character::GetRelation(ccharacter* Who) const
 {
   return GetTeam()->GetRelation(Who->GetTeam());
 }
@@ -5942,27 +5950,6 @@ void character::CalculateAttributeBonuses()
       if((Equipment->*AffectTest[c2])())
 	AttributeBonus[c2] += Equipment->GetEnchantment();
 
-    /*if(Equipment->AffectsEndurance())
-      AttributeBonus[ENDURANCE] += Equipment->GetEnchantment();
-
-    if(Equipment->AffectsPerception())
-      AttributeBonus[PERCEPTION] += Equipment->GetEnchantment();
-
-    if(Equipment->AffectsIntelligence())
-      AttributeBonus[INTELLIGENCE] += Equipment->GetEnchantment();
-
-    if(Equipment->AffectsWisdom())
-      AttributeBonus[WISDOM] += Equipment->GetEnchantment();
-
-    if(Equipment->AffectsWillPower())
-      AttributeBonus[WILL_POWER] += Equipment->GetEnchantment();
-
-    if(Equipment->AffectsCharisma())
-      AttributeBonus[CHARISMA] += Equipment->GetEnchantment();
-
-    if(Equipment->AffectsMana())
-      AttributeBonus[MANA] += Equipment->GetEnchantment();*/
-
     if(Equipment->AffectsCarryingCapacity())
       CarryingBonus += Equipment->GetCarryingBonus();
   }
@@ -5982,8 +5969,7 @@ void character::CalculateAttributeBonuses()
     UpdateESPLOS();
 
   if(!IsInitializing() && CarryingBonus != BackupCarryingBonus)
-    CalculateBurdenState();
- 
+    CalculateBurdenState(); 
 }
 
 void character::ApplyEquipmentAttributeBonuses(item* Equipment)
@@ -6130,7 +6116,7 @@ void character::AddToInventory(const fearray<contentscript<item> >& ItemArray, i
     }
 }
 
-truth character::HasHadBodyPart(const item* Item) const
+truth character::HasHadBodyPart(citem* Item) const
 {
   for(int c = 0; c < BodyParts; ++c)
     if(std::find(OriginalBodyPartID[c].begin(), OriginalBodyPartID[c].end(), Item->GetID()) != OriginalBodyPartID[c].end())
@@ -6202,7 +6188,7 @@ void character::DamageAllItems(character* Damager, int Damage, int Type)
   }
 }
 
-truth character::Equips(const item* Item) const
+truth character::Equips(citem* Item) const
 {
   return combineequipmentpredicateswithparam<ulong>()(this, &item::HasID, Item->GetID(), 1);
 }
@@ -6247,14 +6233,14 @@ void character::AddConfuseHitMessage() const
     ADD_MESSAGE("This stuff is confusing.");
 }
 
-item* character::SelectFromPossessions(const festring& Topic, sorter Sorter)
+item* character::SelectFromPossessions(cfestring& Topic, sorter Sorter)
 {
   itemvector ReturnVector;
   SelectFromPossessions(ReturnVector, Topic, NO_MULTI_SELECT, Sorter);
   return !ReturnVector.empty() ? ReturnVector[0] : 0;
 }
 
-truth character::SelectFromPossessions(itemvector& ReturnVector, const festring& Topic, int Flags, sorter Sorter)
+truth character::SelectFromPossessions(itemvector& ReturnVector, cfestring& Topic, int Flags, sorter Sorter)
 {
   felist List(Topic);
   truth InventoryPossible = GetStack()->SortedItems(this, Sorter);
@@ -6583,7 +6569,7 @@ void character::SetBodyPart(int I, bodypart* What)
   }
 }
 
-truth character::ConsumeItem(item* Item, const festring& ConsumeVerb)
+truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
 {
   if(IsPlayer() && HasHadBodyPart(Item) && !game::TruthQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))
     return false;
@@ -6747,7 +6733,7 @@ void character::ShowAdventureInfo() const
     for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
       i->DrawContents(this);
 
-    doforequipmentswithparam<const character*>()(this, &item::DrawContents, this);
+    doforequipmentswithparam<ccharacter*>()(this, &item::DrawContents, this);
   }
 
   if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
@@ -6931,7 +6917,7 @@ truth character::PostProcessForBone(double& DangerSum, int& Enemies)
 truth character::PostProcessForBone()
 {
   ulong NewID = game::CreateNewCharacterID(this);
-  game::GetBoneCharacterIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
+  game::GetBoneCharacterIDMap().insert(std::make_pair(-ID, NewID));
   game::RemoveCharacterID(ID);
   ID = NewID;
 
@@ -6982,7 +6968,7 @@ void character::SetSoulID(ulong What)
     GetPolymorphBackup()->SetSoulID(What);
 }
 
-truth character::SearchForItem(const item* Item) const
+truth character::SearchForItem(citem* Item) const
 {
   if(combineequipmentpredicateswithparam<ulong>()(this, &item::HasID, Item->GetID(), 1))
     return true;
@@ -7361,7 +7347,7 @@ void character::SetConfig(int NewConfig, int SpecialFlags)
     UpdatePictures();
 }
 
-truth character::IsOver(const item* Item) const
+truth character::IsOver(citem* Item) const
 {
   for(int c1 = 0; c1 < Item->GetSquaresUnder(); ++c1)
     for(int c2 = 0; c2 < SquaresUnder; ++c2)
@@ -7371,7 +7357,7 @@ truth character::IsOver(const item* Item) const
   return false;
 }
 
-truth character::CheckConsume(const festring& Verb) const
+truth character::CheckConsume(cfestring& Verb) const
 {
   if(!UsesNutrition())
   {
@@ -7441,7 +7427,7 @@ void character::StayOn(liquid* Liquid)
   Liquid->TouchEffect(this, TORSO_INDEX);
 }
 
-truth character::IsAlly(const character* Char) const
+truth character::IsAlly(ccharacter* Char) const
 {
   return Char->GetTeam()->GetID() == GetTeam()->GetID();
 }
@@ -7451,9 +7437,9 @@ void character::ResetSpoiling()
   doforbodyparts()(this, &bodypart::ResetSpoiling);
 }
 
-item* character::SearchForItem(const character* Char, sorter Sorter) const
+item* character::SearchForItem(ccharacter* Char, sorter Sorter) const
 {
-  item* Equipment = findequipment<const character*>()(this, Sorter, Char);
+  item* Equipment = findequipment<ccharacter*>()(this, Sorter, Char);
 
   if(Equipment)
     return Equipment;
@@ -7465,11 +7451,11 @@ item* character::SearchForItem(const character* Char, sorter Sorter) const
   return 0;
 }
 
-truth character::DetectMaterial(const material* Material) const
+truth character::DetectMaterial(cmaterial* Material) const
 {
   return GetStack()->DetectMaterial(Material)
-    || combinebodypartpredicateswithparam<const material*>()(this, &bodypart::DetectMaterial, Material, 1)
-    || combineequipmentpredicateswithparam<const material*>()(this, &item::DetectMaterial, Material, 1);
+    || combinebodypartpredicateswithparam<cmaterial*>()(this, &bodypart::DetectMaterial, Material, 1)
+    || combineequipmentpredicateswithparam<cmaterial*>()(this, &item::DetectMaterial, Material, 1);
 }
 
 truth character::DamageTypeDestroysBodyPart(int Type)
@@ -7477,7 +7463,7 @@ truth character::DamageTypeDestroysBodyPart(int Type)
   return (Type&0xFFF) != PHYSICAL_DAMAGE;
 }
 
-truth character::CheckIfTooScaredToHit(const character* Enemy) const
+truth character::CheckIfTooScaredToHit(ccharacter* Enemy) const
 {
   if(IsPlayer() && StateIsActivated(PANIC))
     for(int d = 0; d < GetNeighbourSquares(); ++d)
@@ -7544,7 +7530,7 @@ void character::EditExperience(int Identifier, double Value, double Speed)
   if(!Change)
     return;
 
-  const char* PlayerMsg = 0, * NPCMsg = 0;
+  cchar* PlayerMsg = 0, * NPCMsg = 0;
 
   switch(Identifier)
   {
@@ -7741,7 +7727,7 @@ void character::PrintEndLeprosyMessage() const
     ADD_MESSAGE("You feel your limbs are stuck in place tightly."); // CHANGE OR DIE
 }
 
-void character::TryToInfectWithLeprosy(const character* Infector)
+void character::TryToInfectWithLeprosy(ccharacter* Infector)
 {
   if(!IsImmuneToLeprosy()
      && ((GetRelation(Infector) == HOSTILE
@@ -7809,7 +7795,7 @@ void character::RemoveAllItems()
   }
 }
 
-int character::CalculateWeaponSkillHits(const character* Enemy) const
+int character::CalculateWeaponSkillHits(ccharacter* Enemy) const
 {
   if(Enemy->IsPlayer())
   {
@@ -8175,6 +8161,7 @@ void character::LeprosyHandler()
   EditExperience(AGILITY, -25, 1 << 1);
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
+  CheckDeath(CONST_S("killed by leprosy"));
 }
 
 bodypart* character::SearchForOriginalBodyPart(int I) const
@@ -8227,7 +8214,7 @@ void character::DuplicateEquipment(character* Receiver, ulong Flags)
   }
 }
 
-void character::Disappear(corpse* Corpse, const char* Verb, truth (item::*ClosePredicate)() const)
+void character::Disappear(corpse* Corpse, cchar* Verb, truth (item::*ClosePredicate)() const)
 {
   truth TorsoDisappeared = false;
   truth CanBeSeen = Corpse ? Corpse->CanBeSeenByPlayer() : IsPlayer() || CanBeSeenByPlayer();
@@ -8338,7 +8325,7 @@ void character::EndLeprosy()
   doforbodypartswithparam<truth>()(this, &bodypart::SetIsInfectedByLeprosy, false);
 }
 
-truth character::IsSameAs(const character* What) const
+truth character::IsSameAs(ccharacter* What) const
 {
   return What->GetType() == GetType()
     && What->GetConfig() == GetConfig();
@@ -8398,7 +8385,7 @@ truth character::ChatMenu()
   if(ManagementFlags == CHAT_IDLY || !IsPet())
     return ChatIdly();
 
-  static const char*const ChatMenuEntry[CHAT_MENU_ENTRIES] =
+  static cchar*const ChatMenuEntry[CHAT_MENU_ENTRIES] =
     {
       "Change equipment",
       "Take items",
@@ -8648,10 +8635,10 @@ ulong character::GetManagementFlags() const
   return Flags;
 }
 
-const char* VerbalBurdenState[] = { "overloaded", "stressed", "burdened", "unburdened" };
+cchar* VerbalBurdenState[] = { "overloaded", "stressed", "burdened", "unburdened" };
 col16 VerbalBurdenStateColor[] = { RED, BLUE, BLUE, WHITE };
 
-const char* character::GetVerbalBurdenState() const
+cchar* character::GetVerbalBurdenState() const
 {
   return VerbalBurdenState[BurdenState];
 }
@@ -8666,7 +8653,7 @@ int character::GetAttributeAverage() const
   return GetSumOfAttributes() / 7;
 }
 
-const festring& character::GetStandVerb() const
+cfestring& character::GetStandVerb() const
 {
   if(ForceCustomStandVerb())
     return DataBase->StandVerb;
@@ -8904,7 +8891,7 @@ void character::TryToName()
   }
 }
 
-double character::GetSituationDanger(const character* Enemy, v2 ThisPos, v2 EnemyPos, truth SeesEnemy) const
+double character::GetSituationDanger(ccharacter* Enemy, v2 ThisPos, v2 EnemyPos, truth SeesEnemy) const
 {
   double Danger;
 
@@ -9275,7 +9262,7 @@ festring character::GetTrapDescription() const
 	    ++TrapStack[c].second;
 
 	if(c == Index)
-	  TrapStack[Index++] = std::pair<entity*, int>(Trap, 1);
+	  TrapStack[Index++] = std::make_pair(Trap, 1);
       }
     }
     else
@@ -9337,7 +9324,7 @@ truth character::BodyPartIsStuck(int I) const
   return false;
 }
 
-void character::PrintAttribute(const char* Desc, int I, int PanelPosX, int PanelPosY) const
+void character::PrintAttribute(cchar* Desc, int I, int PanelPosX, int PanelPosY) const
 {
   int Attribute = GetAttribute(I);
   int NoBonusAttribute = GetAttribute(I, false);
@@ -9445,7 +9432,7 @@ truth character::HasBodyPart(sorter Sorter) const
   if(Sorter == 0)
     return true;
 
-  return combinebodypartpredicateswithparam<const character*>()(this, Sorter, this, 1);
+  return combinebodypartpredicateswithparam<ccharacter*>()(this, Sorter, this, 1);
 }
 
 truth character::PossessesItem(sorter Sorter) const
@@ -9454,13 +9441,13 @@ truth character::PossessesItem(sorter Sorter) const
     return true;
 
   return (GetStack()->SortedItems(this, Sorter)
-	  || combinebodypartpredicateswithparam<const character*>()(this, Sorter, this, 1)
-	  || combineequipmentpredicateswithparam<const character*>()(this, Sorter, this, 1));
+	  || combinebodypartpredicateswithparam<ccharacter*>()(this, Sorter, this, 1)
+	  || combineequipmentpredicateswithparam<ccharacter*>()(this, Sorter, this, 1));
 }
 
 /* 0 <= I <= 1 */
 
-const char* character::GetRunDescriptionLine(int I) const
+cchar* character::GetRunDescriptionLine(int I) const
 {
   if(!GetRunDescriptionLineOne().IsEmpty())
     return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
@@ -9512,7 +9499,7 @@ void character::RemoveLifeSavers()
   }
 }
 
-const character* character::FindCarrier() const
+ccharacter* character::FindCarrier() const
 {
   return this; //check
 }
@@ -9623,6 +9610,21 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
   }
 }
 
+truth character::IsBadPath(v2 Pos) const
+{
+  if(!IsGoingSomeWhere())
+    return false;
+
+  v2 TPos = !Route.empty() ? Route.back() : GoingTo;
+
+  return ((TPos - Pos).GetManhattanLength()
+	  > (TPos - GetPos()).GetManhattanLength());
+}
+
+double& character::GetExpModifierRef(expid E)
+{
+  return ExpModifierMap.insert(std::make_pair(E, 1.)).first->second;
+}
 
 /* Should probably do more. Now only makes Player forget gods */
 truth character::ForgetRandomThing()
@@ -9656,6 +9658,7 @@ int character::CheckForBlock(character* Enemy, item* Weapon, double ToHitValue, 
 void character::ApplyAllGodsKnownBonus() 
 {
   stack* AddPlace = GetStackUnder();
+
   if(game::IsInWilderness())
   {
     AddPlace = GetStack();

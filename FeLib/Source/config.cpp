@@ -20,29 +20,29 @@ festring configsystem::ConfigFileName;
 int configsystem::Options;
 
 void configsystem::AddOption(configoption* O) { Option[Options++] = O; }
-void configsystem::NormalStringChanger(stringoption* O, const festring& What)
+void configsystem::NormalStringChanger(stringoption* O, cfestring& What)
 { O->Value = What; }
 void configsystem::NormalNumberChanger(numberoption* O, long What)
 { O->Value = What; }
 void configsystem::NormalTruthChanger(truthoption* O, truth What)
 { O->Value = What; }
 
-configoption::configoption(const char* Name, const char* Description)
+configoption::configoption(cchar* Name, cchar* Description)
 : Name(Name), Description(Description) { }
 
-stringoption::stringoption(const char* Name, const char* Desc,
-			   const festring& Value,
+stringoption::stringoption(cchar* Name, cchar* Desc,
+			   cfestring& Value,
 			   void (*ValueDisplayer)(const stringoption*,
 						  festring&),
 			   truth (*ChangeInterface)(stringoption*),
 			   void (*ValueChanger)(stringoption*,
-						const festring&))
+						cfestring&))
 : configoption(Name, Desc),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
-numberoption::numberoption(const char* Name, const char* Desc, long Value,
+numberoption::numberoption(cchar* Name, cchar* Desc, long Value,
 			   void (*ValueDisplayer)(const numberoption*,
 						  festring&),
 			   truth (*ChangeInterface)(numberoption*),
@@ -52,8 +52,8 @@ numberoption::numberoption(const char* Name, const char* Desc, long Value,
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
-scrollbaroption::scrollbaroption(const char* Name,
-				 const char* Desc, long Value,
+scrollbaroption::scrollbaroption(cchar* Name,
+				 cchar* Desc, long Value,
 				 void (*ValueDisplayer)(const numberoption*,
 							festring&),
 				 truth (*ChangeInterface)(numberoption*),
@@ -64,7 +64,7 @@ scrollbaroption::scrollbaroption(const char* Name,
   BarHandler(BarHandler) { }
 
 
-truthoption::truthoption(const char* Name, const char* Desc, truth Value,
+truthoption::truthoption(cchar* Name, cchar* Desc, truth Value,
 			 void (*ValueDisplayer)(const truthoption*, festring&),
 			 truth (*ChangeInterface)(truthoption*),
 			 void (*ValueChanger)(truthoption*, truth))

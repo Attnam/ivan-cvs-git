@@ -63,7 +63,7 @@ void square::RemoveCharacter()
   Flags |= STRONG_NEW_DRAW_REQUEST;
 }
 
-const char* square::SurviveMessage(character* Char) const
+cchar* square::SurviveMessage(character* Char) const
 {
   if(GetOTerrain() && !Char->CanMoveOn(GetOTerrain()))
     return GetOTerrain()->SurviveMessage();
@@ -71,7 +71,7 @@ const char* square::SurviveMessage(character* Char) const
     return GetGTerrain()->SurviveMessage();
 }
 
-const char* square::MonsterSurviveMessage(character* Char) const
+cchar* square::MonsterSurviveMessage(character* Char) const
 {
   if(GetOTerrain() && !Char->CanMoveOn(GetOTerrain()))
     return GetOTerrain()->MonsterSurviveMessage();
@@ -79,7 +79,7 @@ const char* square::MonsterSurviveMessage(character* Char) const
     return GetGTerrain()->MonsterSurviveMessage();
 }
 
-const char* square::DeathMessage(character* Char) const
+cchar* square::DeathMessage(character* Char) const
 {
   if(GetOTerrain() && !Char->CanMoveOn(GetOTerrain()))
     return GetOTerrain()->DeathMessage();
@@ -87,7 +87,7 @@ const char* square::DeathMessage(character* Char) const
     return GetGTerrain()->DeathMessage();
 }
 
-const char* square::MonsterDeathVerb(character* Char) const
+cchar* square::MonsterDeathVerb(character* Char) const
 {
   if(GetOTerrain() && !Char->CanMoveOn(GetOTerrain()))
     return GetOTerrain()->MonsterDeathVerb();
@@ -95,7 +95,7 @@ const char* square::MonsterDeathVerb(character* Char) const
     return GetGTerrain()->MonsterDeathVerb();
 }
 
-const char* square::ScoreEntry(character* Char) const
+cchar* square::ScoreEntry(character* Char) const
 {
   if(GetOTerrain() && !Char->CanMoveOn(GetOTerrain()))
     return GetOTerrain()->ScoreEntry();
@@ -118,7 +118,7 @@ int square::GetRestModifier() const
   return GetOTerrain() ? GetOTerrain()->GetRestModifier() : 1;
 }
 
-truth square::CanBeSeenBy(const character* Who, truth IgnoreDarkness) const
+truth square::CanBeSeenBy(ccharacter* Who, truth IgnoreDarkness) const
 {
   if(Who->IsPlayer())
     return CanBeSeenByPlayer(IgnoreDarkness);

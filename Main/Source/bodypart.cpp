@@ -70,14 +70,14 @@ void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << WobbleData << HP;
-  SaveFile << OwnerDescription << BloodMaterial << NormalMaterial << Scar;
+  SaveFile << OwnerDescription << BloodMaterial << NormalMaterial << Scar << DamageID;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags >> WobbleData >> HP;
-  SaveFile >> OwnerDescription >> BloodMaterial >> NormalMaterial >> Scar;
+  SaveFile >> OwnerDescription >> BloodMaterial >> NormalMaterial >> Scar >> DamageID;
 }
 
 int bodypart::GetStrengthValue() const
@@ -259,7 +259,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(!Damage)
       return false;
 
-    EditHP(-Damage);
+    EditHP(1, -Damage);
 
     if(Type & DRAIN && IsAlive())
       for(int c = 0; c < Damage; ++c)
@@ -405,7 +405,7 @@ truth arm::PairArmAllowsMelee() const
 
 double arm::GetWieldedDamage() const
 {
-  const item* Wielded = GetWielded();
+  citem* Wielded = GetWielded();
 
   if(Wielded->IsShield(Master))
     return 0;
@@ -434,7 +434,7 @@ double arm::GetWieldedToHitValue() const
   if(HitStrength <= 0)
     return 0;
 
-  const item* Wielded = GetWielded();
+  citem* Wielded = GetWielded();
   double Base = 2e-11
 		* Min(HitStrength, 10)
 		* GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus()
@@ -446,7 +446,7 @@ double arm::GetWieldedToHitValue() const
 
   if(PairArm && PairArm->IsUsable())
   {
-    const item* PairWielded = PairArm->GetWielded();
+    citem* PairWielded = PairArm->GetWielded();
 
     if(!PairWielded)
     {
@@ -464,7 +464,7 @@ double arm::GetWieldedToHitValue() const
 
 long arm::GetWieldedAPCost() const
 {
-  const item* Wielded = GetWielded();
+  citem* Wielded = GetWielded();
 
   if(Wielded->IsShield(Master))
     return 0;
@@ -592,7 +592,7 @@ double corpse::GetWeaponStrength() const
   return GetFormModifier() * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() * sqrt(GetDeceased()->GetTorso()->GetMainMaterial()->GetWeight());
 }
 
-truth corpse::CanBeEatenByAI(const character* Eater) const
+truth corpse::CanBeEatenByAI(ccharacter* Eater) const
 {
   for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
   {
@@ -780,7 +780,7 @@ leg::~leg()
   delete GetBoot();
 }
 
-truth corpse::IsDestroyable(const character* Char) const
+truth corpse::IsDestroyable(ccharacter* Char) const
 {
   for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
   {
@@ -993,7 +993,7 @@ void arm::EditExperience(int Identifier, double Value, double Speed)
 
       if(Change)
       {
-	const char* Adj = Change > 0 ? "stronger" : "weaker";
+	cchar* Adj = Change > 0 ? "stronger" : "weaker";
 
 	if(Master->IsPlayer())
 	  ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
@@ -1017,7 +1017,7 @@ void arm::EditExperience(int Identifier, double Value, double Speed)
 
       if(Change)
       {
-	const char* Adj = Change > 0 ? "quite dextrous" : "clumsy";
+	cchar* Adj = Change > 0 ? "quite dextrous" : "clumsy";
 
 	if(Master->IsPlayer())
 	  ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
@@ -1104,7 +1104,7 @@ void leg::EditExperience(int Identifier, double Value, double Speed)
 
       if(Change)
       {
-	const char* Adj = Change > 0 ? "stronger" : "weaker";
+	cchar* Adj = Change > 0 ? "stronger" : "weaker";
 
 	if(Master->IsPlayer())
 	  ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
@@ -1126,7 +1126,7 @@ void leg::EditExperience(int Identifier, double Value, double Speed)
 
       if(Change)
       {
-	const char* Adj = Change > 0 ? "very agile" : "slower";
+	cchar* Adj = Change > 0 ? "very agile" : "slower";
 
 	if(Master->IsPlayer())
 	  ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
@@ -1188,10 +1188,10 @@ void bodypart::SignalEquipmentAdd(gearslot* Slot)
     Master->SignalEquipmentAdd(Slot->GetEquipmentIndex());
 }
 
-void bodypart::SignalEquipmentRemoval(gearslot* Slot)
+void bodypart::SignalEquipmentRemoval(gearslot* Slot, citem* Item)
 {
   if(Master)
-    Master->SignalEquipmentRemoval(Slot->GetEquipmentIndex());
+    Master->SignalEquipmentRemoval(Slot->GetEquipmentIndex(), Item);
 }
 
 void bodypart::Mutate()
@@ -1337,7 +1337,7 @@ void bodypart::CalculateEmitation()
 
 void bodypart::CalculateMaxHP(ulong Flags)
 {
-  int HPDelta = MaxHP - HP;
+  int HPDelta = MaxHP - HP, OldMaxHP = MaxHP;
   MaxHP = 0;
 
   if(Master)
@@ -1362,7 +1362,16 @@ void bodypart::CalculateMaxHP(ulong Flags)
       MaxHP = 1;
 
     if(Flags & MAY_CHANGE_HPS)
-      HP = Max(MaxHP - HPDelta, 1);
+    {
+      if(MaxHP - HPDelta > 1)
+	HP = MaxHP - HPDelta;
+      else
+	HP = 1;
+    }
+    else
+    {
+      //OldMaxHP - MaxHP;
+    }
 
     if(Flags & CHECK_USABILITY)
       SignalPossibleUsabilityChange();
@@ -1386,6 +1395,14 @@ void bodypart::SignalVolumeAndWeightChange()
   }
 }
 
+/*{
+  for(;;)
+  {
+    damageid& D = DamageID.back();
+    D.
+  }
+}*/
+
 void bodypart::SetHP(int What)
 {
   HP = What;
@@ -1397,9 +1414,14 @@ void bodypart::SetHP(int What)
   }
 }
 
-void bodypart::EditHP(int What)
+void bodypart::EditHP(int SrcID, int What)
 {
   HP += What;
+
+  if(What < 0)
+    RemoveDamageIDs(-What);
+  else
+    AddDamageID(SrcID, What);
 
   if(Master)
   {
@@ -1466,7 +1488,7 @@ void bodypart::CalculateAttackInfo()
 
 truth arm::TwoHandWieldIsActive() const
 {
-  const item* Wielded = GetWielded();
+  citem* Wielded = GetWielded();
 
   if(Wielded->IsTwoHanded() && !Wielded->IsShield(Master))
   {
@@ -1552,13 +1574,13 @@ void bodypart::RandomizePosition()
 
 double arm::GetBlockChance(double EnemyToHitValue) const
 {
-  const item* Wielded = GetWielded();
+  citem* Wielded = GetWielded();
   return Wielded ? Min(1.0 / (1 + EnemyToHitValue / (GetToHitValue() * Wielded->GetBlockModifier()) * 10000), 1.0) : 0;
 }
 
 int arm::GetBlockCapability() const
 {
-  const item* Wielded = GetWielded();
+  citem* Wielded = GetWielded();
 
   if(!Wielded)
     return 0;
@@ -1664,13 +1686,13 @@ void corpse::SignalDisappearance()
   GetDeceased()->Disappear(this, "disappear", &item::IsVeryCloseToDisappearance);
 }
 
-truth bodypart::CanBePiledWith(const item* Item, const character* Viewer) const
+truth bodypart::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   return item::CanBePiledWith(Item, Viewer)
     && OwnerDescription == static_cast<const bodypart*>(Item)->OwnerDescription;
 }
 
-truth corpse::CanBePiledWith(const item* Item, const character* Viewer) const
+truth corpse::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   if(GetType() != Item->GetType()
      || GetConfig() != Item->GetConfig()
@@ -1796,7 +1818,7 @@ void arm::SignalEquipmentAdd(gearslot* Slot)
     Master->SignalEquipmentAdd(EquipmentIndex);
 }
 
-void arm::SignalEquipmentRemoval(gearslot* Slot)
+void arm::SignalEquipmentRemoval(gearslot* Slot, citem* Item)
 {
   int EquipmentIndex = Slot->GetEquipmentIndex();
 
@@ -1811,7 +1833,7 @@ void arm::SignalEquipmentRemoval(gearslot* Slot)
     }
 
   if(Master)
-    Master->SignalEquipmentRemoval(EquipmentIndex);
+    Master->SignalEquipmentRemoval(EquipmentIndex, Item);
 }
 
 void leg::SignalEquipmentAdd(gearslot* Slot)
@@ -2061,7 +2083,7 @@ truth leg::DamageArmor(character* Damager, int Damage, int Type)
   return AVSum ? Armor[femath::WeightedRand(AV, AVSum)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
 
-truth bodypart::CanBeEatenByAI(const character* Who) const
+truth bodypart::CanBeEatenByAI(ccharacter* Who) const
 {
   return item::CanBeEatenByAI(Who) && !(Who->IsPet() && PLAYER->HasHadBodyPart(this));
 }
@@ -2080,7 +2102,7 @@ int bodypart::GetConditionColorIndex() const
     return 4;
 }
 
-truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
+truth arm::CheckIfWeaponTooHeavy(cchar* WeaponDescription) const
 {
   if(!IsUsable())
   {
@@ -2115,7 +2137,7 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
     if(HitStrength - Requirement < 10)
     {
       festring OtherHandInfo;
-      const char* HandInfo = "";
+      cchar* HandInfo = "";
 
       if(GetWielded()->IsTwoHanded())
       {
@@ -2265,9 +2287,9 @@ void arm::UpdatePictures()
 
 void bodypart::Draw(blitdata& BlitData) const
 {
-  const int AF = GraphicData.AnimationFrames;
-  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-  const bitmap* P = GraphicData.Picture[F];
+  cint AF = GraphicData.AnimationFrames;
+  cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
+  cbitmap* P = GraphicData.Picture[F];
 
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaPriorityBlit(BlitData);
@@ -2320,7 +2342,7 @@ void corpse::FinalProcessForBone()
   Deceased->FinalProcessForBone();
 }
 
-truth bodypart::IsRepairable(const character*) const
+truth bodypart::IsRepairable(ccharacter*) const
 {
   return !CanRegenerate() && (GetHP() < GetMaxHP() || IsRusted());
 }
@@ -2350,7 +2372,7 @@ truth corpse::SuckSoul(character* Soul, character* Summoner)
     return false;
 }
 
-double arm::GetTypeDamage(const character* Enemy) const
+double arm::GetTypeDamage(ccharacter* Enemy) const
 {
   if(!GetWielded() || !GetWielded()->IsGoodWithPlants() || !Enemy->IsPlant())
     return Damage;
@@ -2911,7 +2933,7 @@ void playerkindtorso::SignalVolumeAndWeightChange()
     Master->UpdatePictures();
 }
 
-void bodypart::ReceiveAcid(material* Material, const festring& LocationName, long Modifier)
+void bodypart::ReceiveAcid(material* Material, cfestring& LocationName, long Modifier)
 {
   if(Master && MainMaterial->GetInteractionFlags() & CAN_DISSOLVE)
   {
@@ -2934,11 +2956,11 @@ void bodypart::ReceiveAcid(material* Material, const festring& LocationName, lon
       if(Master->GetLastAcidMsgMin() != Minute && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
       {
 	Master->SetLastAcidMsgMin(Minute);
-	const char* MName = Material->GetName(false, false).CStr();
+	cchar* MName = Material->GetName(false, false).CStr();
 
 	if(Master->IsPlayer())
 	{
-	  const char* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
+	  cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
 	  ADD_MESSAGE("Acidous %s dissolves your %s.", MName, TName);
 	}
 	else
@@ -2956,7 +2978,7 @@ void bodypart::TryToRust(long LiquidModifier)
 {
   if(MainMaterial->TryToRust(LiquidModifier << 4))
   {
-    const char* MoreMsg = MainMaterial->GetRustLevel() == NOT_RUSTED ? "" : " more";
+    cchar* MoreMsg = MainMaterial->GetRustLevel() == NOT_RUSTED ? "" : " more";
 
     if(Master)
     {
@@ -2972,7 +2994,7 @@ void bodypart::TryToRust(long LiquidModifier)
   }
 }
 
-material* corpse::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+material* corpse::GetConsumeMaterial(ccharacter* Consumer, materialpredicate Predicate) const
 {
   for(int c = GetDeceased()->GetBodyParts() - 1; c; --c)
   {
@@ -3073,13 +3095,13 @@ v2 dogtorso::GetBitmapPos(int Frame) const
 
 void dogtorso::Draw(blitdata& BlitData) const
 {
-  const int AF = GraphicData.AnimationFrames >> 1;
+  cint AF = GraphicData.AnimationFrames >> 1;
   int Index = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
 
   if(GetHP() << 1 <= GetMaxHP())
     Index += AF;
 
-  const bitmap* P = GraphicData.Picture[Index];
+  cbitmap* P = GraphicData.Picture[Index];
 
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaPriorityBlit(BlitData);
@@ -3262,18 +3284,21 @@ void leg::SignalPossibleUsabilityChange()
 void bodypart::IncreaseHP()
 {
   ++HP;
+  RemoveDamageIDs(1);
   SignalPossibleUsabilityChange();
 }
 
 void bodypart::FastRestoreHP()
 {
   HP = MaxHP;
+  DamageID.clear();
   SignalPossibleUsabilityChange();
 }
 
 void bodypart::RestoreHP()
 {
   HP = MaxHP;
+  DamageID.clear();
   SignalPossibleUsabilityChange();
   Master->CalculateHP();
 }
@@ -3293,7 +3318,7 @@ void bodypart::SetIsInfectedByLeprosy(truth What)
 
 void bodypart::SetSparkleFlags(int What)
 {
-  const int S = SPARKLING_B|SPARKLING_C|SPARKLING_D;
+  cint S = SPARKLING_B|SPARKLING_C|SPARKLING_D;
   Flags = Flags & ~(S << BODYPART_SPARKLE_SHIFT) | ((What & S) << BODYPART_SPARKLE_SHIFT);
 }
 
@@ -3326,7 +3351,7 @@ void bodypart::SignalAnimationStateChange(truth WasAnimated)
   }
 }
 
-truth bodypart::MaterialIsChangeable(const character*) const
+truth bodypart::MaterialIsChangeable(ccharacter*) const
 {
   return !Master || !Master->BodyPartIsVital(GetBodyPartIndex()) || UseMaterialAttributes();
 }
@@ -3356,13 +3381,13 @@ long bodypart::GetFixPrice() const
   return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25;
 }
 
-truth bodypart::IsFixableBySmith(const character*) const
+truth bodypart::IsFixableBySmith(ccharacter*) const
 {
   return (GetMainMaterial()->GetCategoryFlags() & IS_METAL
 	  && (GetHP() < GetMaxHP() || IsRusted()));
 }
 
-truth bodypart::IsFixableByTailor(const character*) const
+truth bodypart::IsFixableByTailor(ccharacter*) const
 {
   return (GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED
 	  && GetHP() < GetMaxHP());
@@ -3392,7 +3417,7 @@ col16 lobhsetorso::GetMaterialColorD(int Frame) const
   return MakeRGB16(220 - (Modifier >> 2), 220 - (Modifier >> 1), 0);
 }
 
-truth bodypart::IsDestroyable(const character*) const
+truth bodypart::IsDestroyable(ccharacter*) const
 {
   return !Master || !Master->BodyPartIsVital(GetBodyPartIndex());
 }
@@ -3425,7 +3450,7 @@ void bodypart::GenerateScar(int Damage, int Type)
   CalculateAttackInfo();
 }
 
-void bodypart::DrawScars(const blitdata& B) const
+void bodypart::DrawScars(cblitdata& B) const
 {
   for(int c = 0; c < Scar.size(); ++c)
   {
@@ -3474,4 +3499,34 @@ bodypart::bodypart(const bodypart& B) : mybase(B), OwnerDescription(B.OwnerDescr
   for(int c = 0; c < Scar.size(); ++c)
     if(Scar[c].PanelBitmap)
       Scar[c].PanelBitmap = new bitmap(Scar[c].PanelBitmap);
+}
+
+/* Amount should be > 0 */
+
+void bodypart::RemoveDamageIDs(int Amount)
+{
+  /*while(Amount)
+  {
+    damageid& D = DamageID.front();
+    int CurrentAmount = D.Amount;
+
+    if(Amount < CurrentAmount)
+    {
+      D.Amount -= Amount;
+      Amount = 0;
+    }
+    else
+    {
+      DamageID.pop_front();
+      Amount -= CurrentAmount;
+    }
+  }*/
+}
+
+/* Amount should be > 0 */
+
+void bodypart::AddDamageID(int SrcID, int Amount)
+{
+  /*damageid D = { SrcID, Amount };
+  DamageID.push_back(D);*/
 }

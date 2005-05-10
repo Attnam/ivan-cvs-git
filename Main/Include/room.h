@@ -29,15 +29,15 @@ typedef room* (*roomspawner)();
 class roomprototype
 {
  public:
-  roomprototype(roomspawner, const char*);
+  roomprototype(roomspawner, cchar*);
   room* Spawn() const { return Spawner(); }
   room* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
   roomspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class room
@@ -72,17 +72,17 @@ class room
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void DestroyTerrain(character*);
-  virtual truth AllowSpoil(const item*) const { return true; }
+  virtual truth AllowSpoil(citem*) const { return true; }
   virtual truth CheckDestroyTerrain(character*);
   virtual int GetGodRelationAdjustment() const { return -50; }
-  virtual truth AllowKick(const character*, const lsquare*) const { return true; }
+  virtual truth AllowKick(ccharacter*, const lsquare*) const { return true; }
   truth MasterIsActive() const;
-  truth CheckKickSquare(const character*, const lsquare*) const;
+  truth CheckKickSquare(ccharacter*, const lsquare*) const;
   virtual void HostileAction(character*) const { }
   virtual truth AllowAltarPolymorph() const { return true; }
   virtual truth AllowFoodSearch() const { return true; }
   virtual void ReceiveVomit(character*) { }
-  virtual truth IsOKToDestroyWalls(const character*) const;
+  virtual truth IsOKToDestroyWalls(ccharacter*) const;
   virtual void AddItemEffect(item*) { };
   void FinalProcessForBone();
   void SetFlags(ulong What) { Flags = What; }

@@ -18,9 +18,9 @@
 
 char** festring::IntegerMap = 0;
 char* festring::EmptyString = "";
-const festring::sizetype festring::NPos = festring::sizetype(-1);
+festring::csizetype festring::NPos = festring::sizetype(-1);
 
-festring& festring::Append(const char* CStr, sizetype N)
+festring& festring::Append(cchar* CStr, sizetype N)
 {
   sizetype OldSize = Size;
   sizetype NewSize = OldSize + N;
@@ -37,7 +37,7 @@ festring& festring::Append(const char* CStr, sizetype N)
   return *this;
 }
 
-festring& festring::operator=(const char* CStr)
+festring& festring::operator=(cchar* CStr)
 {
   sizetype NewSize = strlen(CStr);
   Size = NewSize;
@@ -60,7 +60,7 @@ festring& festring::operator=(const char* CStr)
   return *this;
 }
 
-festring& festring::operator=(const festring& Str)
+festring& festring::operator=(cfestring& Str)
 {
   sizetype NewSize = Str.Size;
   Size = NewSize;
@@ -112,7 +112,7 @@ festring& festring::Capitalize()
   return *this;
 }
 
-void festring::CreateOwnData(const char* CStr, sizetype N)
+void festring::CreateOwnData(cchar* CStr, sizetype N)
 {
   Size = N;
   Reserved = N|FESTRING_PAGE;
@@ -159,7 +159,7 @@ void festring::SlowAppend(char Char)
   OwnsData = true;
 }
 
-void festring::SlowAppend(const char* CStr, sizetype N)
+void festring::SlowAppend(cchar* CStr, sizetype N)
 {
   char* OldPtr = Data;
 
@@ -282,7 +282,7 @@ festring::sizetype festring::Find(char Char, sizetype Pos) const
   return NPos;
 }
 
-festring::sizetype festring::Find(const char* CStr,
+festring::sizetype festring::Find(cchar* CStr,
 				  sizetype Pos,
 				  sizetype N) const
 {
@@ -328,6 +328,32 @@ festring::sizetype festring::FindLast(char Char, sizetype Pos) const
   }
   else
     return NPos;
+}
+
+festring::sizetype festring::FindLast(const char* CStr,
+				      sizetype Pos,
+				      sizetype N) const
+{
+  if(N)
+  {
+    char* Ptr = Data;
+
+    if(Ptr && Size >= N)
+    {
+      char Char = CStr[0];
+
+      if(Pos > Size - N)
+	Pos = Size - N;
+
+      for(sizetype c = Pos; c != NPos; --c)
+	if(Ptr[c] == Char && !memcmp(Ptr + c, CStr, N))
+	  return c;
+
+      return NPos;
+    }
+  }
+
+  return NPos;
 }
 
 void festring::Erase(sizetype Pos, sizetype Length)
@@ -379,7 +405,7 @@ void festring::Erase(sizetype Pos, sizetype Length)
   }
 }
 
-void festring::Insert(sizetype Pos, const char* CStr, sizetype N)
+void festring::Insert(sizetype Pos, cchar* CStr, sizetype N)
 {
   if(N)
   {
@@ -576,7 +602,7 @@ void festring::SplitString(festring& Source,
    beginning of each line except the first. It returns the number of
    created lines. */
 
-int festring::SplitString(const festring& Source,
+int festring::SplitString(cfestring& Source,
 			  std::vector<festring>& StringVector,
 			  sizetype Length, sizetype Marginal)
 {
@@ -617,8 +643,8 @@ char Capitalize(char Char)
    starting at Begin or after it, ignoring the case of letters.
    If the search fails, festring::NPos is returned instead. */
 
-festring::sizetype festring::IgnoreCaseFind(const festring& Where,
-					    const festring& What,
+festring::sizetype festring::IgnoreCaseFind(cfestring& Where,
+					    cfestring& What,
 					    sizetype Begin)
 {
   if(What.IsEmpty())
@@ -645,8 +671,8 @@ festring::sizetype festring::IgnoreCaseFind(const festring& Where,
 
 /* Replaces all occurances of What in Where after Begin with With */
 
-void festring::SearchAndReplace(festring& Where, const festring& What,
-				const festring& With, sizetype Begin)
+void festring::SearchAndReplace(festring& Where, cfestring& What,
+				cfestring& With, sizetype Begin)
 {
   for(sizetype Pos = Where.Find(What, Begin);
       Pos != NPos; Pos = Where.Find(What, Pos))
@@ -659,8 +685,8 @@ void festring::SearchAndReplace(festring& Where, const festring& What,
 /* Returns whether First is behind Second in alphabetical order,
    ignoring case */
 
-bool festring::IgnoreCaseCompare(const festring& First,
-				 const festring& Second)
+bool festring::IgnoreCaseCompare(cfestring& First,
+				 cfestring& Second)
 {
   for(sizetype Pos = 0;
       Pos < First.GetSize() && Pos < Second.GetSize(); ++Pos)
@@ -791,9 +817,9 @@ void festring::ExtractWord(festring& To)
 void festring::SwapData(festring& Str)
 {
   char*const TData = Data;
-  const sizetype TSize = Size;
-  const sizetype TReserved = Reserved;
-  const truth TOwnsData = OwnsData;
+  csizetype TSize = Size;
+  csizetype TReserved = Reserved;
+  ctruth TOwnsData = OwnsData;
   Data = Str.Data;
   Size = Str.Size;
   Reserved = Str.Reserved;

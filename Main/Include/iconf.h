@@ -19,8 +19,8 @@
 class ivanconfig
 {
  public:
-  static const festring& GetDefaultName() { return DefaultName.Value; }
-  static const festring& GetDefaultPetName() { return DefaultPetName.Value; }
+  static cfestring& GetDefaultName() { return DefaultName.Value; }
+  static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }

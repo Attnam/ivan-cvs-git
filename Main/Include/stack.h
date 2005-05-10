@@ -70,7 +70,7 @@ class stack
   stack(square*, entity*, ulong = 0);
   ~stack();
   void Load(inputfile&);
-  void Draw(const character*, blitdata&, int) const;
+  void Draw(ccharacter*, blitdata&, int) const;
   void AddItem(item*, truth = true);
   void RemoveItem(stackslot*);
   item* GetItem(int) const;
@@ -78,20 +78,20 @@ class stack
   stackiterator GetTop() const { return stackiterator(Top); }
   int GetItems() const { return Items; }
   int GetSideItems(int) const;
-  int GetVisibleItems(const character*) const;
-  int GetNativeVisibleItems(const character*) const;
-  int GetVisibleSideItems(const character*, int) const;
+  int GetVisibleItems(ccharacter*) const;
+  int GetNativeVisibleItems(ccharacter*) const;
+  int GetVisibleSideItems(ccharacter*, int) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
-  item* DrawContents(const character*, const festring&, int = 0, sorter = 0) const;
-  int DrawContents(itemvector&, const character*, const festring&, int = 0, sorter = 0) const;
-  int DrawContents(itemvector&, stack*, const character*, const festring&, const festring&, const festring&, const festring&, col16, int, sorter = 0) const;
+  item* DrawContents(ccharacter*, cfestring&, int = 0, sorter = 0) const;
+  int DrawContents(itemvector&, ccharacter*, cfestring&, int = 0, sorter = 0) const;
+  int DrawContents(itemvector&, stack*, ccharacter*, cfestring&, cfestring&, cfestring&, cfestring&, col16, int, sorter = 0) const;
   v2 GetPos() const;
   void Clean(truth = false);
   void Save(outputfile&) const;
   int SearchItem(item*) const;
   square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
-  truth SortedItems(const character*, sorter) const;
+  truth SortedItems(ccharacter*, sorter) const;
   void BeKicked(character*, int, int);
   void Polymorph(character*);
   void CheckForStepOnEffect(character*);
@@ -107,7 +107,7 @@ class stack
   void CalculateVolumeAndWeight();
   long GetVolume() const { return Volume; }
   long GetWeight() const { return Weight; }
-  long GetWeight(const character*, int) const;
+  long GetWeight(ccharacter*, int) const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   area* GetArea() const { return GetSquareUnder()->GetArea(); }
@@ -117,25 +117,25 @@ class stack
   void SignalEmitationDecrease(int, col24);
   void CalculateEmitation();
   col24 GetSideEmitation(int);
-  truth CanBeSeenBy(const character*, int) const;
-  truth IsDangerous(const character*) const;
+  truth CanBeSeenBy(ccharacter*, int) const;
+  truth IsDangerous(ccharacter*) const;
   truth Duplicate(int, ulong = 0);
   void MoveItemsTo(stack*);
   void MoveItemsTo(slot*);
-  item* GetBottomItem(const character*, truth) const;
-  item* GetBottomVisibleItem(const character*) const;
-  item* GetBottomSideItem(const character*, int, truth) const;
-  void Pile(itemvectorvector&, const character*, int, sorter = 0) const;
+  item* GetBottomItem(ccharacter*, truth) const;
+  item* GetBottomVisibleItem(ccharacter*) const;
+  item* GetBottomSideItem(ccharacter*, int, truth) const;
+  void Pile(itemvectorvector&, ccharacter*, int, sorter = 0) const;
   long GetTruePrice() const;
   static int GetSelected() { return Selected; }
   static void SetSelected(int What) { Selected = What; }
-  truth TakeSomethingFrom(character*, const festring&);
-  truth PutSomethingIn(character*, const festring&, long, ulong);
+  truth TakeSomethingFrom(character*, cfestring&);
+  truth PutSomethingIn(character*, cfestring&, long, ulong);
   truth IsVisible() const { return !(Flags & HIDDEN); }
   int GetSpoiledItems() const;
   void SortAllItems(const sortdata&) const;
-  void Search(const character*, int);
-  truth NeedDangerSymbol(const character*) const;
+  void Search(ccharacter*, int);
+  truth NeedDangerSymbol(ccharacter*) const;
   void PreProcessForBone();
   void PostProcessForBone();
   void FinalProcessForBone();
@@ -146,15 +146,15 @@ class stack
   void Freeze() { Flags |= FREEZED; }
   void UnFreeze() { Flags &= ~FREEZED; }
   void DropSideItems();
-  truth DetectMaterial(const material*) const;
+  truth DetectMaterial(cmaterial*) const;
   void SetLifeExpectancy(int, int);
   truth Necromancy(character*);
   void CalculateEnchantments();
-  const character* FindCarrier() const;
+  ccharacter* FindCarrier() const;
  private:
   void RemoveElement(stackslot*);
-  void AddContentsToList(felist&, const character*, const festring&, int, int, sorter) const;
-  int SearchChosen(itemvector&, const character*, int, int, int, int, sorter = 0) const;
+  void AddContentsToList(felist&, ccharacter*, cfestring&, int, int, sorter) const;
+  int SearchChosen(itemvector&, ccharacter*, int, int, int, int, sorter = 0) const;
   static truth AllowDamage(int, int);
   static int Selected;
   stackslot* Bottom;

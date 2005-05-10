@@ -28,10 +28,10 @@
 
 #include "typedef.h"
 
-const int MapMoveX[9] = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };
-const int MapMoveY[9] = { -1, -1, -1, 0, 0, 1, 1, 1, 0 };
+cint MapMoveX[9] = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };
+cint MapMoveY[9] = { -1, -1, -1, 0, 0, 1, 1, 1, 0 };
 
-const ulong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
+culong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
 
 #define FPI 3.1415926535897932384626433832795
 

@@ -34,7 +34,7 @@ class wterrain
   festring GetName(int) const;
   truth IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(int What) { AnimationFrames = What; }
-  virtual const char* GetNameStem() const = 0;
+  virtual cchar* GetNameStem() const = 0;
  protected:
   virtual truth UsesLongArticle() const { return false; }
   virtual v2 GetBitmapPos(int) const = 0;
@@ -45,15 +45,15 @@ class wterrain
 class gwterrainprototype
 {
  public:
-  gwterrainprototype(gwterrainspawner, const char*);
+  gwterrainprototype(gwterrainspawner, cchar*);
   gwterrain* Spawn() const { return Spawner(); }
   gwterrain* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
   gwterrainspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class gwterrain : public wterrain, public gterrain
@@ -75,15 +75,15 @@ class gwterrain : public wterrain, public gterrain
 class owterrainprototype
 {
  public:
-  owterrainprototype(owterrainspawner, const char*);
+  owterrainprototype(owterrainspawner, cchar*);
   owterrain* Spawn() const { return Spawner(); }
   owterrain* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
   owterrainspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class owterrain : public wterrain, public oterrain

@@ -189,7 +189,7 @@ void web::Destroy()
   SendToHell();
 }
 
-truth web::CanBeSeenBy(const character* Who) const
+truth web::CanBeSeenBy(ccharacter* Who) const
 {
   return (GetLSquareUnder()->CanBeSeenBy(Who)
 	  && Who->GetAttribute(WISDOM) > 4);

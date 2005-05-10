@@ -27,8 +27,8 @@ ROOM(shop, room)
   virtual truth ConsumeItem(character*, item*, int);
   virtual truth AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual truth AllowSpoil(const item*) const;
-  virtual truth AllowKick(const character*,const lsquare*) const;
+  virtual truth AllowSpoil(citem*) const;
+  virtual truth AllowKick(ccharacter*,const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual truth AllowFoodSearch() const { return false; }
   virtual void ReceiveVomit(character*);
@@ -52,9 +52,9 @@ ROOM(cathedral, room)
   virtual truth Dip(character*) const;
   virtual truth HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual truth AllowSpoil(const item*) const { return false; }
+  virtual truth AllowSpoil(citem*) const { return false; }
   virtual int GetGodRelationAdjustment() const { return -150; }
-  virtual truth AllowKick(const character*,const lsquare*) const;
+  virtual truth AllowKick(ccharacter*,const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual truth AllowAltarPolymorph() const { return false; }
   virtual truth AllowFoodSearch() const { return false; }
@@ -74,7 +74,7 @@ ROOM(library, room)
   virtual truth ConsumeItem(character*, item*, int);
   virtual truth AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual truth AllowKick(const character*, const lsquare*) const;
+  virtual truth AllowKick(ccharacter*, const lsquare*) const;
   virtual void HostileAction(character*) const;
 };
 
@@ -87,7 +87,7 @@ ROOM(bananadroparea, room)
   virtual truth ConsumeItem(character*, item*, int);
   virtual truth AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual truth AllowKick(const character*, const lsquare*) const;
+  virtual truth AllowKick(ccharacter*, const lsquare*) const;
   virtual void HostileAction(character*) const;
 };
 

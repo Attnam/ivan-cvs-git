@@ -20,7 +20,7 @@
 
 void rawbitmap::MaskedBlit(bitmap* Bitmap, packcol16* Color) const { MaskedBlit(Bitmap, ZERO_V2, ZERO_V2, Size, Color); }
 
-rawbitmap::rawbitmap(const festring& FileName)
+rawbitmap::rawbitmap(cfestring& FileName)
 {
   inputfile File(FileName.CStr(), 0, false);
 
@@ -76,7 +76,7 @@ rawbitmap::~rawbitmap()
 
 /* A lousy bitmap saver that uses the pcx format but doesn't do any compression. */
 
-void rawbitmap::Save(const festring& FileName)
+void rawbitmap::Save(cfestring& FileName)
 {
   char PCXHeader[128];
   memset(PCXHeader, 0, 128);
@@ -158,7 +158,7 @@ void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Src, v2 Dest, v2 Border, packcol16
   }
 }
 
-cachedfont* rawbitmap::Colorize(const packcol16* Color, alpha BaseAlpha, const packalpha* Alpha) const
+cachedfont* rawbitmap::Colorize(cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha) const
 {
   cachedfont* Bitmap = new cachedfont(Size);
   paletteindex* Buffer = PaletteBuffer[0];
@@ -235,7 +235,7 @@ cachedfont* rawbitmap::Colorize(const packcol16* Color, alpha BaseAlpha, const p
   return Bitmap;
 }
 
-bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, const packcol16* Color, alpha BaseAlpha, const packalpha* Alpha, const uchar* RustData, truth AllowReguralColors) const
+bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha, cuchar* RustData, truth AllowReguralColors) const
 {
   bitmap* Bitmap = new bitmap(Border);
   v2 TargetPos(0, 0);
@@ -361,7 +361,7 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, const packcol16* Color, 
   return Bitmap;
 }
 
-void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Format, ...) const
+void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, ...) const
 {
   char Buffer[256];
 
@@ -378,13 +378,14 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Form
 
     for(int c = 0; Buffer[c]; ++c)
     {
-      const v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
+      v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3) + 1, Pos.Y + 1), v2(8, 8), &ShadeCol);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y), v2(8, 8), &Color);
     }
   }
   else
   {
+    const cachedfont* Font = Iterator->second.first;
     blitdata B = { Bitmap,
 		   { 0, 0 },
 		   { Pos.X, Pos.Y },
@@ -397,12 +398,12 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Form
     {
       B.Src.X = ((Buffer[c] - 0x20) & 0xF) << 4;
       B.Src.Y = (Buffer[c] - 0x20) & 0xF0;
-      Iterator->second.first->PrintCharacter(B);
+      Font->PrintCharacter(B);
     }
   }
 }
 
-void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Format, ...) const
+void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, ...) const
 {
   char Buffer[256];
 
@@ -417,12 +418,13 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const ch
   {
     for(int c = 0; Buffer[c]; ++c)
     {
-      const v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
+      v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y), v2(8, 8), &Color);
     }
   }
   else
   {
+    const cachedfont* Font = Iterator->second.second;
     blitdata B = { Bitmap,
 		   { 0, 0 },
 		   { Pos.X, Pos.Y },
@@ -435,7 +437,7 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const ch
     {
       B.Src.X = ((Buffer[c] - 0x20) & 0xF) << 4;
       B.Src.Y = (Buffer[c] - 0x20) & 0xF0;
-      Iterator->second.second->PrintCharacter(B);
+      Font->PrintCharacter(B);
     }
   }
 }
@@ -567,12 +569,12 @@ void rawbitmap::CreateFontCache(packcol16 Color)
   UnshadedFont->NormalMaskedBlit(B);
   Font->CreateMaskMap();
   UnshadedFont->CreateMaskMap();
-  FontCache[Color] = std::pair<cachedfont*, cachedfont*>(Font, UnshadedFont);
+  FontCache[Color] = std::make_pair(Font, UnshadedFont);
 }
 
 /* returns ERROR_V2 if fails find Pos else returns pos */
 
-v2 rawbitmap::RandomizeSparklePos(const v2* ValidityArray, v2* PossibleBuffer, v2 Pos, v2 Border, int ValidityArraySize, int SparkleFlags) const
+v2 rawbitmap::RandomizeSparklePos(cv2* ValidityArray, v2* PossibleBuffer, v2 Pos, v2 Border, int ValidityArraySize, int SparkleFlags) const
 {
   if(!SparkleFlags)
     return ERROR_V2;
@@ -670,7 +672,7 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 	memcpy(DestBuffer[0], SrcBuffer[0], Size.X * Size.Y * sizeof(paletteindex));
       else
       {
-	const int Bytes = Border.X * sizeof(paletteindex);
+	cint Bytes = Border.X * sizeof(paletteindex);
 
 	for(int y = 0; y < Border.Y; ++y)
 	  memcpy(&DestBuffer[Dest.Y + y][Dest.X], &SrcBuffer[Src.Y + y][Src.X], Bytes);
@@ -685,8 +687,8 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	const paletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	const paletteindex* EndPtr = SrcPtr + Border.X;
+	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+	cpaletteindex* EndPtr = SrcPtr + Border.X;
 	paletteindex* DestPtr = &DestBuffer[Dest.Y + y][Dest.X];
 
 	for(; SrcPtr != EndPtr; ++SrcPtr, --DestPtr)
@@ -699,7 +701,7 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
    case FLIP:
     {
       Dest.Y += Border.Y - 1;
-      const int Bytes = Border.X * sizeof(paletteindex);
+      cint Bytes = Border.X * sizeof(paletteindex);
 
       for(int y = 0; y < Border.Y; ++y)
 	memcpy(&DestBuffer[Dest.Y - y][Dest.X], &SrcBuffer[Src.Y + y][Src.X], Bytes);
@@ -714,8 +716,8 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	const paletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	const paletteindex* EndPtr = SrcPtr + Border.X;
+	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+	cpaletteindex* EndPtr = SrcPtr + Border.X;
 	paletteindex* DestPtr = &DestBuffer[Dest.Y - y][Dest.X];
 
 	for(; SrcPtr != EndPtr; ++SrcPtr, --DestPtr)
@@ -733,8 +735,8 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	const paletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	const paletteindex* EndPtr = SrcPtr + Border.X;
+	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+	cpaletteindex* EndPtr = SrcPtr + Border.X;
 	paletteindex* DestPtr = DestBase - y;
 
 	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr += TrueDestXMove)
@@ -751,8 +753,8 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	const paletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	const paletteindex* EndPtr = SrcPtr + Border.X;
+	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+	cpaletteindex* EndPtr = SrcPtr + Border.X;
 	paletteindex* DestPtr = DestBase + y;
 
 	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr += TrueDestXMove)
@@ -771,8 +773,8 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	const paletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	const paletteindex* EndPtr = SrcPtr + Border.X;
+	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+	cpaletteindex* EndPtr = SrcPtr + Border.X;
 	paletteindex* DestPtr = DestBase - y;
 
 	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr -= TrueDestXMove)
@@ -790,8 +792,8 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	const paletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	const paletteindex* EndPtr = SrcPtr + Border.X;
+	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+	cpaletteindex* EndPtr = SrcPtr + Border.X;
 	paletteindex* DestPtr = DestBase + y;
 
 	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr -= TrueDestXMove)

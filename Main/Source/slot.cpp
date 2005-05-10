@@ -59,7 +59,7 @@ void gearslot::Empty()
   col24 Emitation = Item->GetEmitation();
   Item = 0;
   SignalVolumeAndWeightChange();
-  GetBodyPart()->SignalEquipmentRemoval(this);
+  GetBodyPart()->SignalEquipmentRemoval(this, Item);
   SignalEmitationDecrease(Emitation);
 }
 
@@ -226,17 +226,17 @@ void stackslot::DonateTo(item* Item) // could be optimized
   Empty();
 }
 
-truth stackslot::CanBeSeenBy(const character* Viewer) const
+truth stackslot::CanBeSeenBy(ccharacter* Viewer) const
 {
   return GetMotherStack()->CanBeSeenBy(Viewer, Item->GetSquarePosition());
 }
 
-truth bodypartslot::CanBeSeenBy(const character* Viewer) const
+truth bodypartslot::CanBeSeenBy(ccharacter* Viewer) const
 {
   return GetMaster()->CanBeSeenBy(Viewer);
 }
 
-truth gearslot::CanBeSeenBy(const character* Viewer) const
+truth gearslot::CanBeSeenBy(ccharacter* Viewer) const
 {
   return GetBodyPart()->CanBeSeenBy(Viewer);
 }
@@ -251,12 +251,12 @@ truth stackslot::IsVisible() const
   return GetMotherStack()->IsVisible();
 }
 
-const character* stackslot::FindCarrier() const
+ccharacter* stackslot::FindCarrier() const
 {
   return GetMotherStack()->FindCarrier();
 }
 
-const character* gearslot::FindCarrier() const
+ccharacter* gearslot::FindCarrier() const
 {
   return GetBodyPart()->FindCarrier();
 }

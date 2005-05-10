@@ -35,13 +35,13 @@ class febot
   struct wordchain
   {
     wordchain(ushort ChainLength) : String(ChainLength, festring()) { }
-    wordchain(const wordchain*, const festring&);
+    wordchain(const wordchain*, cfestring&);
     bool operator<(const wordchain&) const;
     wordchain* GetRandomLink() const;
     std::list<festring> String;
     std::vector<wordchain*> Link;
   };
-  wordchain* CreateWordChain(const wordchain*, const festring&);
+  wordchain* CreateWordChain(const wordchain*, cfestring&);
   wordchain* GetControlWordChain() const;
   typedef std::set<wordchain> wordchainset;
   wordchainset WordChainSet;

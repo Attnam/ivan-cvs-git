@@ -42,14 +42,14 @@ class bitmap
 {
  public:
   friend class cachedfont;
-  bitmap(const festring&);
-  bitmap(const bitmap*, int = 0, truth = true);
+  bitmap(cfestring&);
+  bitmap(cbitmap*, int = 0, truth = true);
   bitmap(v2);
   bitmap(v2, col16);
   ~bitmap();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void Save(const festring&) const;
+  void Save(cfestring&) const;
   void PutPixel(int X, int Y, col16 Color) { Image[Y][X] = Color; }
   void PutPixel(v2 Pos, col16 Color) { Image[Pos.Y][Pos.X] = Color; }
   void PowerPutPixel(int, int, col16, alpha, priority);
@@ -62,17 +62,17 @@ class bitmap
   void Fill(v2, v2, col16);
 
   void ClearToColor(col16);
-  void NormalBlit(const blitdata&) const;
+  void NormalBlit(cblitdata&) const;
   void NormalBlit(bitmap*, int = 0) const;
   void FastBlit(bitmap*) const;
   void FastBlit(bitmap*, v2) const;
 
-  void LuminanceBlit(const blitdata&) const;
-  void NormalMaskedBlit(const blitdata&) const;
-  void LuminanceMaskedBlit(const blitdata&) const;
+  void LuminanceBlit(cblitdata&) const;
+  void NormalMaskedBlit(cblitdata&) const;
+  void LuminanceMaskedBlit(cblitdata&) const;
   void SimpleAlphaBlit(bitmap*, alpha, col16 = TRANSPARENT_COLOR) const;
-  void AlphaMaskedBlit(const blitdata&) const;
-  void AlphaLuminanceBlit(const blitdata&) const;
+  void AlphaMaskedBlit(cblitdata&) const;
+  void AlphaLuminanceBlit(cblitdata&) const;
 
   void DrawLine(int, int, int, int, col16, truth = false);
   void DrawLine(v2, int, int, col16, truth = false);
@@ -82,7 +82,7 @@ class bitmap
   void DrawVerticalLine(int, int, int, col16, truth = false);
   void DrawHorizontalLine(int, int, int, col16, truth = false);
 
-  void StretchBlit(const blitdata&) const;
+  void StretchBlit(cblitdata&) const;
 
   void DrawRectangle(int, int, int, int, col16, truth = false);
   void DrawRectangle(v2, int, int, col16, truth = false);
@@ -90,8 +90,8 @@ class bitmap
   void DrawRectangle(v2, v2, col16, truth = false);
 
   void BlitAndCopyAlpha(bitmap*, int = 0) const;
-  void MaskedPriorityBlit(const blitdata&) const;
-  void AlphaPriorityBlit(const blitdata&) const;
+  void MaskedPriorityBlit(cblitdata&) const;
+  void AlphaPriorityBlit(cblitdata&) const;
   void FastBlitAndCopyAlpha(bitmap*) const;
   v2 GetSize() const { return Size; }
   void DrawPolygon(int, int, int, int, col16, truth = true, truth = false, double = 0);
@@ -163,8 +163,8 @@ inline void bitmap::FastBlit(bitmap* Bitmap, v2 Pos) const
 {
   packcol16** SrcImage = Image;
   packcol16** DestImage = Bitmap->Image;
-  const int Bytes = Size.X * sizeof(packcol16);
-  const int Height = Size.Y;
+  cint Bytes = Size.X * sizeof(packcol16);
+  cint Height = Size.Y;
 
   for(int y = 0; y < Height; ++y)
     memcpy(&DestImage[Pos.Y + y][Pos.X], SrcImage[y], Bytes);
@@ -182,7 +182,7 @@ inline void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
   NormalBlit(B);
 }
 
-outputfile& operator<<(outputfile&, const bitmap*);
+outputfile& operator<<(outputfile&, cbitmap*);
 inputfile& operator>>(inputfile&, bitmap*&);
 
 class cachedfont : public bitmap
@@ -191,7 +191,7 @@ class cachedfont : public bitmap
   cachedfont(v2);
   cachedfont(v2, col16);
   ~cachedfont() { delete [] MaskMap; }
-  void PrintCharacter(const blitdata) const;
+  void PrintCharacter(cblitdata) const;
   void CreateMaskMap();
  private:
   packcol16** MaskMap;

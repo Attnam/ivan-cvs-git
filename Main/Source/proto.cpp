@@ -290,7 +290,7 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
   return Monster;
 }
 
-template <class type> std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, const festring& Identifier)
+template <class type> std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, cfestring& Identifier)
 {
   std::pair<int, int> Result(0, 0);
 
@@ -319,7 +319,7 @@ template <class type> std::pair<int, int> CountCorrectNameLetters(const typename
   return Result;
 }
 
-template <class type> std::pair<const typename type::prototype*, int> SearchForProto(const festring& What, truth Output)
+template <class type> std::pair<const typename type::prototype*, int> SearchForProto(cfestring& What, truth Output)
 {
   typedef typename type::prototype prototype;
   typedef typename type::database database;
@@ -380,7 +380,7 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
   return ID;
 }
 
-character* protosystem::CreateMonster(const festring& What, int SpecialFlags, truth Output)
+character* protosystem::CreateMonster(cfestring& What, int SpecialFlags, truth Output)
 {
   std::pair<const character::prototype*, int> ID = SearchForProto<character>(What, Output);
 
@@ -401,7 +401,7 @@ character* protosystem::CreateMonster(const festring& What, int SpecialFlags, tr
     return 0;
 }
 
-item* protosystem::CreateItem(const festring& What, truth Output)
+item* protosystem::CreateItem(cfestring& What, truth Output)
 {
   std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, Output);
 
@@ -424,7 +424,7 @@ item* protosystem::CreateItem(const festring& What, truth Output)
     return 0;
 }
 
-material* protosystem::CreateMaterial(const festring& What, long Volume, truth Output)
+material* protosystem::CreateMaterial(cfestring& What, long Volume, truth Output)
 {
   for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
   {
@@ -639,7 +639,7 @@ void protosystem::CreateEverySeenCharacter(charactervector& Character)
   }
 }
 
-void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const god* God, const character* Char)
+void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const god* God, ccharacter* Char)
 {
   for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
   {

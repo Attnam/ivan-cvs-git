@@ -135,13 +135,13 @@ void smoke::Merge(gas* OtherGas)
   delete OtherGas;
 }
 
-truth smoke::IsDangerousToBreathe(const character* Who) const
+truth smoke::IsDangerousToBreathe(ccharacter* Who) const
 {
   return (!Who->StateIsActivated(GAS_IMMUNITY)
 	  && Who->GetAttribute(WISDOM) >= Gas->GetStepInWisdomLimit());
 }
 
-truth smoke::IsScaryToBreathe(const character* Who) const
+truth smoke::IsScaryToBreathe(ccharacter* Who) const
 {
   return (!Who->StateIsActivated(GAS_IMMUNITY)
 	  && Gas->GetCategoryFlags() & IS_SCARY);

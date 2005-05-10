@@ -96,4 +96,5 @@ Crash : During the reading of a scroll of repair. See forum.
 (hs) Mines do not disappear in the cathedral.
 10000/100 HP bug.
 If you try to open a (closed) chest that stands on the place of open door, the game calls you idiot for no reason.
+Floating eyes can vomit.
 Selling activated holy grenades should be handled.

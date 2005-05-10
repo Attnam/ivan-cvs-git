@@ -6,6 +6,19 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+
+May 10 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * An additional abstract base template for trap items
+  * AI may be more intelligent when choosing whether to let another
+    character or player to displace itself
+  * Some typedefing and S&Ring from const <type> to c<type>, eg. const int
+    -> cint & const item* -> citem* etc.
+  * Added some code for an experience id system which would be a most
+    powerful tool when battling abuses, but it's still very incomplete
+  * The Groke added to item.pcx by Kahvi
+  * A frying pan, a rolling pin and a sausage added to item.pcx by Kahvi
+
 May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Added sirens	
@@ -26,7 +39,7 @@ May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 May 7 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * added some features that will give player bonus when he finds all gods 
-	(not fully implemented yet)
+    (not fully implemented yet)
 
 April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
@@ -40,6 +53,7 @@ April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
   * amulet of warding (may not actually function? OR?)	
 	
 April 6 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
   * Corrected "if and ;" bug spotted by TheFallenOne222
 	
 April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>

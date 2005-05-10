@@ -118,17 +118,17 @@ time_t game::GameBegan;
 truth game::PlayerHasReceivedAllGodsKnownBonus;
 
 festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
-const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
+cchar* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 god** game::God;
 
-const int game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
-const int game::MoveAbnormalCommandKey[] = { '7','8','9','u','o','j','k','l','.' };
+cint game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
+cint game::MoveAbnormalCommandKey[] = { '7','8','9','u','o','j','k','l','.' };
 
-const v2 game::MoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
-const v2 game::RelativeMoveVector[] = { v2(-1, -1), v2(1, 0), v2(1, 0), v2(-2, 1), v2(2, 0), v2(-2, 1), v2(1, 0), v2(1, 0), v2(-1, -1) };
-const v2 game::BasicMoveVector[] = { v2(-1, 0), v2(1, 0), v2(0, -1), v2(0, 1) };
-const v2 game::LargeMoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(2, -1), v2(-1, 0), v2(2, 0), v2(-1, 1), v2(2, 1), v2(-1, 2), v2(0, 2), v2(1, 2), v2(2, 2), v2(0, 0), v2(1, 0), v2(0, 1), v2(1, 1) };
-const int game::LargeMoveDirection[] = { 0, 1, 1, 2, 3, 4, 3, 4, 5, 6, 6, 7, 8, 8, 8, 8 };
+cv2 game::MoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
+cv2 game::RelativeMoveVector[] = { v2(-1, -1), v2(1, 0), v2(1, 0), v2(-2, 1), v2(2, 0), v2(-2, 1), v2(1, 0), v2(1, 0), v2(-1, -1) };
+cv2 game::BasicMoveVector[] = { v2(-1, 0), v2(1, 0), v2(0, -1), v2(0, 1) };
+cv2 game::LargeMoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(2, -1), v2(-1, 0), v2(2, 0), v2(-1, 1), v2(2, 1), v2(-1, 2), v2(0, 2), v2(1, 2), v2(2, 2), v2(0, 0), v2(1, 0), v2(0, 1), v2(1, 1) };
+cint game::LargeMoveDirection[] = { 0, 1, 1, 2, 3, 4, 3, 4, 5, 6, 6, 7, 8, 8, 8, 8 };
 
 truth game::LOSUpdateRequested = false;
 uchar*** game::LuxTable = 0;
@@ -168,7 +168,7 @@ std::vector<int> game::SpecialCursorData;
 void game::AddCharacterID(character* Char, ulong ID) {
   if(CharacterIDMap.find(ID) != CharacterIDMap.end())
     int esko = esko = 2;
-  CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char));
+  CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID) {
   if(CharacterIDMap.find(ID) == CharacterIDMap.end())
@@ -178,7 +178,7 @@ void game::RemoveCharacterID(ulong ID) {
 void game::AddItemID(item* Item, ulong ID) {
   if(ItemIDMap.find(ID) != ItemIDMap.end())
     int esko = esko = 2;
-  ItemIDMap.insert(std::pair<ulong, item*>(ID, Item));
+  ItemIDMap.insert(std::make_pair(ID, Item));
 }
 void game::RemoveItemID(ulong ID)
 {
@@ -197,7 +197,7 @@ void game::AddTrapID(entity* Trap, ulong ID) {
     int esko = esko = 2;
 
   if(ID)
-    TrapIDMap.insert(std::pair<ulong, entity*>(ID, Trap));
+    TrapIDMap.insert(std::make_pair(ID, Trap));
 }
 void game::RemoveTrapID(ulong ID)
 {
@@ -223,7 +223,7 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-truth game::Init(const festring& Name)
+truth game::Init(cfestring& Name)
 {
   if(Name.IsEmpty())
     if(ivanconfig::GetDefaultName().IsEmpty())
@@ -658,7 +658,7 @@ void game::UpdateCameraCoordinate(int& Coordinate, int Center, int Size, int Scr
     GetCurrentArea()->SendNewDrawRequest();
 }
 
-const char* game::Insult() // convert to array
+cchar* game::Insult() // convert to array
 {
   switch(RAND_N(18))
   {
@@ -686,7 +686,7 @@ const char* game::Insult() // convert to array
 
 /* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
 
-truth game::TruthQuestion(const festring& String, int DefaultAnswer, int OtherKeyForTrue)
+truth game::TruthQuestion(cfestring& String, int DefaultAnswer, int OtherKeyForTrue)
 {
   if(DefaultAnswer == NO)
     DefaultAnswer = 'n';
@@ -781,7 +781,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       igraph::DrawCursor(CalculateScreenCoordinates(SpecialCursorPos[c]), SpecialCursorData[c]);
 }
 
-truth game::Save(const festring& SaveName)
+truth game::Save(cfestring& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << int(SAVE_FILE_VERSION);
@@ -832,7 +832,7 @@ truth game::Save(const festring& SaveName)
   return true;
 }
 
-int game::Load(const festring& SaveName)
+int game::Load(cfestring& SaveName)
 {
   inputfile SaveFile(SaveName + ".sav", 0, false);
 
@@ -912,7 +912,7 @@ int game::Load(const festring& SaveName)
   return LOADED;
 }
 
-festring game::SaveName(const festring& Base)
+festring game::SaveName(cfestring& Base)
 {
   festring SaveName = GetSaveDir();
 
@@ -1008,7 +1008,7 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
-int game::DirectionQuestion(const festring& Topic, truth RequireAnswer, truth AcceptYourself)
+int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
 {
   for(;;)
   {
@@ -1117,7 +1117,7 @@ void game::DoEvilDeed(int Amount)
   }
 }
 
-void game::SaveWorldMap(const festring& SaveName, truth DeleteAfterwards)
+void game::SaveWorldMap(cfestring& SaveName, truth DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + ".wm");
   SaveFile << WorldMap;
@@ -1129,7 +1129,7 @@ void game::SaveWorldMap(const festring& SaveName, truth DeleteAfterwards)
   }
 }
 
-worldmap* game::LoadWorldMap(const festring& SaveName)
+worldmap* game::LoadWorldMap(cfestring& SaveName)
 {
   inputfile SaveFile(SaveName + ".wm");
   SaveFile >> WorldMap;
@@ -1171,7 +1171,7 @@ void game::CreateTeams()
     for(uint c = 0; c < i->second.GetRelation().size(); ++c)
       GetTeam(i->second.GetRelation()[c].first)->SetRelation(GetTeam(i->first), i->second.GetRelation()[c].second);
 
-    const int* KillEvilness = i->second.GetKillEvilness();
+    cint* KillEvilness = i->second.GetKillEvilness();
 
     if(KillEvilness)
       GetTeam(i->first)->SetKillEvilness(*KillEvilness);
@@ -1180,7 +1180,7 @@ void game::CreateTeams()
 
 /* v2 Pos should be removed from xxxQuestion()s? */
 
-festring game::StringQuestion(const festring& Topic, col16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, truth AllowExit, stringkeyhandler KeyHandler)
+festring game::StringQuestion(cfestring& Topic, col16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, truth AllowExit, stringkeyhandler KeyHandler)
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23)); // pos may be incorrect!
@@ -1190,7 +1190,7 @@ festring game::StringQuestion(const festring& Topic, col16 Color, festring::size
   return Return;
 }
 
-long game::NumberQuestion(const festring& Topic, col16 Color, truth ReturnZeroOnEsc)
+long game::NumberQuestion(cfestring& Topic, col16 Color, truth ReturnZeroOnEsc)
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
@@ -1199,7 +1199,7 @@ long game::NumberQuestion(const festring& Topic, col16 Color, truth ReturnZeroOn
   return Return;
 }
 
-long game::ScrollBarQuestion(const festring& Topic, long BeginValue, long Step, long Min, long Max, long AbortValue, col16 TopicColor, col16 Color1, col16 Color2, void (*Handler)(long))
+long game::ScrollBarQuestion(cfestring& Topic, long BeginValue, long Step, long Min, long Max, long AbortValue, col16 TopicColor, col16 Color1, col16 Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
@@ -1275,7 +1275,7 @@ int game::GetDirectionForVector(v2 Vector)
   return DIR_ERROR;
 }
 
-const char* game::GetVerbalPlayerAlignment()
+cchar* game::GetVerbalPlayerAlignment()
 {
   long Sum = 0;
 
@@ -1388,7 +1388,7 @@ void game::CreateBusyAnimationCache()
   }
 }
 
-int game::AskForKeyPress(const festring& Topic)
+int game::AskForKeyPress(cfestring& Topic)
 {
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
@@ -1402,7 +1402,7 @@ int game::AskForKeyPress(const festring& Topic)
  * KeyHandler is called when the key has NOT been identified as a movement key
  * Both can be deactivated by passing 0 as parameter */
 
-v2 game::PositionQuestion(const festring& Topic, v2 CursorPos, void (*Handler)(v2), positionkeyhandler KeyHandler, truth Zoom)
+v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2), positionkeyhandler KeyHandler, truth Zoom)
 {
   int Key = 0;
   SetDoZoom(Zoom);
@@ -1551,11 +1551,11 @@ void game::InitGlobalValueMap()
       ABORT("Illegal datafile define on line %ld!", SaveFile.TellLine());
 
     SaveFile.ReadWord(Word);
-    GlobalValueMap.insert(std::pair<festring, long>(Word, SaveFile.ReadNumber()));
+    GlobalValueMap.insert(std::make_pair(Word, SaveFile.ReadNumber()));
   }
 }
 
-void game::TextScreen(const festring& Text, col16 Color, truth GKey, void (*BitmapEditor)(bitmap*))
+void game::TextScreen(cfestring& Text, col16 Color, truth GKey, void (*BitmapEditor)(bitmap*))
 {
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
@@ -1567,7 +1567,7 @@ void game::TextScreen(const festring& Text, col16 Color, truth GKey, void (*Bitm
    Not surprisingly KeyNumber is the number of keys at ...
 */
 
-int game::KeyQuestion(const festring& Message, int DefaultAnswer, int KeyNumber, ...)
+int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 {
   int* Key = new int[KeyNumber];
   va_list Arguments;
@@ -1717,7 +1717,7 @@ int game::CalculateRoughDirection(v2 Vector)
     return 4;
 }
 
-int game::Menu(bitmap* BackGround, v2 Pos, const festring& Topic, const festring& sMS, col16 Color, const festring& SmallText1, const festring& SmallText2)
+int game::Menu(bitmap* BackGround, v2 Pos, cfestring& Topic, cfestring& sMS, col16 Color, cfestring& SmallText1, cfestring& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
   int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
@@ -1894,7 +1894,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     }
 
     GetCurrentLevel()->FiatLux();
-    const truth* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
+    ctruth* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
 
     if(New && AutoReveal && *AutoReveal)
       GetCurrentLevel()->Reveal();
@@ -2146,7 +2146,7 @@ ulong game::CreateNewCharacterID(character* NewChar)
   if(CharacterIDMap.find(ID) != CharacterIDMap.end())
     int esko = esko = 2;
 
-  CharacterIDMap.insert(std::pair<ulong, character*>(ID, NewChar));
+  CharacterIDMap.insert(std::make_pair(ID, NewChar));
   return ID;
 }
 
@@ -2158,7 +2158,7 @@ ulong game::CreateNewItemID(item* NewItem)
     int esko = esko = 2;
 
   if(NewItem)
-    ItemIDMap.insert(std::pair<ulong, item*>(ID, NewItem));
+    ItemIDMap.insert(std::make_pair(ID, NewItem));
 
   return ID;
 }
@@ -2171,7 +2171,7 @@ ulong game::CreateNewTrapID(entity* NewTrap)
     int esko = esko = 2;
 
   if(NewTrap)
-    TrapIDMap.insert(std::pair<ulong, entity*>(ID, NewTrap));
+    TrapIDMap.insert(std::make_pair(ID, NewTrap));
 
   return ID;
 }
@@ -2196,7 +2196,7 @@ entity* game::SearchTrap(ulong ID)
 
 outputfile& operator<<(outputfile& SaveFile, const configid& Value)
 {
-  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
+  SaveFile.Write(reinterpret_cast<cchar*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
@@ -2278,7 +2278,7 @@ int game::GetLevels()
   return GetCurrentDungeon()->GetLevels();
 }
 
-void game::SignalDeath(const character* Ghost, const character* Murderer, festring DeathMsg)
+void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMsg)
 {
   if(InWilderness)
     DeathMsg << " in the world map";
@@ -2313,7 +2313,7 @@ void game::SignalDeath(const character* Ghost, const character* Murderer, festri
 
   if(i == MassacreMap->end())
   {
-    i = MassacreMap->insert(std::pair<massacreid, killdata>(MI, killdata(1, Ghost->GetGenerationDanger()))).first;
+    i = MassacreMap->insert(std::make_pair(MI, killdata(1, Ghost->GetGenerationDanger()))).first;
     i->second.Reason.push_back(killreason(DeathMsg, 1));
   }
   else
@@ -2354,7 +2354,7 @@ struct massacresetentry
   int ImageKey;
 };
 
-void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reason, long Amount)
+void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, long Amount)
 {
   std::set<massacresetentry> MassacreSet;
   festring FirstPronoun;
@@ -3040,7 +3040,7 @@ ulong game::IncreaseSquarePartEmitationTicks()
   return SquarePartEmitationTick;
 }
 
-void game::Wish(character* Wisher, const char* MsgSingle, const char* MsgPair)
+void game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair)
 {
   for(;;)
   {
@@ -3188,7 +3188,7 @@ truth DistanceOrderer(character* C1, character* C2)
     return Pos1.X < Pos2.X;
 }
 
-truth game::FillPetVector(const char* Verb)
+truth game::FillPetVector(cchar* Verb)
 {
   PetVector.clear();
   team* Team = GetTeam(PLAYER_TEAM);
@@ -3317,9 +3317,9 @@ truth game::SelectPet(int Key)
   return false;
 }
 
-void game::CommandScreen(const festring& Topic, ulong PossibleFlags, ulong ConstantFlags, ulong& VaryFlags, ulong& Flags)
+void game::CommandScreen(cfestring& Topic, ulong PossibleFlags, ulong ConstantFlags, ulong& VaryFlags, ulong& Flags)
 {
-  static const char* CommandDescription[COMMAND_FLAGS] =
+  static cchar* CommandDescription[COMMAND_FLAGS] =
     {
       "Follow me",
       "Flee from enemies",

@@ -13,25 +13,22 @@
 #ifndef __COMMAND_H__
 #define __COMMAND_H__
 
-#include "typedef.h"
+#include "ivandef.h"
 
-class item;
-class character;
-
-typedef truth (item::*sorter)(const character*) const;
+typedef truth (item::*sorter)(ccharacter*) const;
 
 class command
 {
  public:
-  command(truth (*)(character*), const char*, char, char, truth, truth = false);
+  command(truth (*)(character*), cchar*, char, char, truth, truth = false);
   truth (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
-  const char* GetDescription() const { return Description; }
+  cchar* GetDescription() const { return Description; }
   char GetKey() const;
   truth IsUsableInWilderness() const { return UsableInWilderness; }
   truth IsWizardModeFunction() const { return WizardModeFunction; }
  private:
   truth (*LinkedFunction)(character*);
-  const char* Description;
+  cchar* Description;
   char Key1;
   char Key2;
   truth UsableInWilderness;
@@ -81,7 +78,7 @@ class commandsystem
   static truth WieldInLeftArm(character*);
   static truth AssignName(character*);
   static truth Search(character*);
-  static truth Consume(character*, const char*, sorter);
+  static truth Consume(character*, cchar*, sorter);
 #ifdef WIZARD
   static truth WizardMode(character*);
   static truth RaiseStats(character*);

@@ -40,11 +40,11 @@ class slot
   virtual void SignalEmitationIncrease(col24) = 0;
   virtual void SignalEmitationDecrease(col24) = 0;
   virtual void DonateTo(item*);
-  virtual truth CanBeSeenBy(const character*) const = 0;
+  virtual truth CanBeSeenBy(ccharacter*) const = 0;
   virtual void SignalEnchantmentChange() { }
   virtual truth IsVisible() const = 0;
   virtual truth IsGearSlot() const { return false; }
-  virtual const character* FindCarrier() const = 0;
+  virtual ccharacter* FindCarrier() const = 0;
  protected:
   item* Item;
 };
@@ -63,13 +63,13 @@ class stackslot : public slot
   virtual void SignalEmitationIncrease(col24);
   virtual void SignalEmitationDecrease(col24);
   virtual void DonateTo(item*);
-  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth CanBeSeenBy(ccharacter*) const;
   stack* GetMotherStack() const { return MotherStack; }
   void SetMotherStack(stack* What) { MotherStack = What; }
   virtual truth IsVisible() const;
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
-  virtual const character* FindCarrier() const;
+  virtual ccharacter* FindCarrier() const;
  protected:
   stack* MotherStack;
   stackslot* Last;
@@ -89,9 +89,9 @@ class bodypartslot : public slot
   virtual void SignalEmitationDecrease(col24);
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
-  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth CanBeSeenBy(ccharacter*) const;
   virtual truth IsVisible() const { return false; }
-  virtual const character* FindCarrier() const { return Master; }
+  virtual ccharacter* FindCarrier() const { return Master; }
  protected:
   character* Master;
 };
@@ -111,11 +111,11 @@ class gearslot : public slot
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(col24);
   virtual void SignalEmitationDecrease(col24);
-  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth CanBeSeenBy(ccharacter*) const;
   virtual void SignalEnchantmentChange();
   virtual truth IsVisible() const { return false; }
   virtual truth IsGearSlot() const { return true; }
-  virtual const character* FindCarrier() const;
+  virtual ccharacter* FindCarrier() const;
  protected:
   bodypart* BodyPart;
   int EquipmentIndex;

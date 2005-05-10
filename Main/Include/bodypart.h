@@ -27,6 +27,13 @@ struct scar
 outputfile& operator<<(outputfile&, const scar&);
 inputfile& operator>>(inputfile&, scar&);
 
+struct damageid
+{
+  int SrcID, Amount;
+};
+
+RAW_SAVE_LOAD(damageid);
+
 ITEM(bodypart, item)
 {
  public:
@@ -44,18 +51,18 @@ ITEM(bodypart, item)
   int GetMaxHP() const { return MaxHP; }
   void SetHP(int);
   int GetHP() const { return HP; }
-  void EditHP(int);
+  void EditHP(int, int);
   void IncreaseHP();
   virtual int GetTotalResistance(int) const { return 0; }
   virtual truth ReceiveDamage(character*, int, int, int);
-  const festring& GetOwnerDescription() const { return OwnerDescription; }
-  void SetOwnerDescription(const festring& What) { OwnerDescription = What; }
+  cfestring& GetOwnerDescription() const { return OwnerDescription; }
+  void SetOwnerDescription(cfestring& What) { OwnerDescription = What; }
   truth IsUnique() const { return Flags & UNIQUE; }
   void SetIsUnique(truth);
   virtual void DropEquipment(stack* = 0) { }
   virtual void InitSpecialAttributes() { }
   virtual void SignalEquipmentAdd(gearslot*);
-  virtual void SignalEquipmentRemoval(gearslot*);
+  virtual void SignalEquipmentRemoval(gearslot*, citem*);
   virtual void Mutate();
   long GetBodyPartVolume() const { return BodyPartVolume; }
   long GetCarriedWeight() const { return CarriedWeight; }
@@ -73,11 +80,11 @@ ITEM(bodypart, item)
   void CalculateAttackInfo();
   double GetTimeToDie(int, double, double, truth, truth) const;
   virtual double GetRoughChanceToHit(double, double) const;
-  const festring& GetBodyPartName() const { return GetNameSingular(); }
+  cfestring& GetBodyPartName() const { return GetNameSingular(); }
   void RandomizePosition();
   void ResetPosition() { SpecialFlags &= ~0x7; }
   virtual void SignalSpoil(material*);
-  virtual truth CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(citem*, ccharacter*) const;
   truth IsAlive() const;
   void SpillBlood(int);
   void SpillBlood(int, v2);
@@ -92,14 +99,14 @@ ITEM(bodypart, item)
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
-  virtual truth CanBeEatenByAI(const character*) const;
+  virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth DamageArmor(character*, int, int) { return false; }
   truth CanBeSevered(int) const;
   virtual truth EditAllAttributes(int) { return false; }
   virtual void Draw(blitdata&) const;
   void SetSparkleFlags(int);
   virtual int GetSpecialFlags() const;
-  virtual truth IsRepairable(const character*) const;
+  virtual truth IsRepairable(ccharacter*) const;
   truth IsWarm() const;
   truth UseMaterialAttributes() const;
   truth CanRegenerate() const;
@@ -116,7 +123,7 @@ ITEM(bodypart, item)
   virtual void UpdatePictures();
   item* GetExternalBodyArmor() const;
   item* GetExternalCloak() const;
-  virtual void ReceiveAcid(material*, const festring&, long);
+  virtual void ReceiveAcid(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
   virtual truth AllowFluidBe() const;
@@ -133,17 +140,17 @@ ITEM(bodypart, item)
   virtual void SignalPossibleUsabilityChange() { UpdateFlags(); }
   void SetIsInfectedByLeprosy(truth);
   virtual int GetSparkleFlags() const;
-  virtual truth MaterialIsChangeable(const character*) const;
+  virtual truth MaterialIsChangeable(ccharacter*) const;
   virtual void RemoveRust();
   virtual item* Fix();
   virtual long GetFixPrice() const;
-  virtual truth IsFixableBySmith(const character*) const;
-  virtual truth IsFixableByTailor(const character*) const;
+  virtual truth IsFixableBySmith(ccharacter*) const;
+  virtual truth IsFixableByTailor(ccharacter*) const;
   virtual void SignalMaterialChange();
   void SetNormalMaterial(int What) { NormalMaterial = What; }
   virtual truth IsBroken() const { return HP < MaxHP; }
-  virtual truth IsDestroyable(const character*) const;
-  void DrawScars(const blitdata&) const;
+  virtual truth IsDestroyable(ccharacter*) const;
+  void DrawScars(cblitdata&) const;
   static truth DamageTypeCanScar(int);
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
@@ -165,6 +172,8 @@ ITEM(bodypart, item)
   truth MasterIsAnimated() const;
   void SignalAnimationStateChange(truth);
   virtual truth AddAdjective(festring&, truth) const;
+  void RemoveDamageIDs(int);
+  void AddDamageID(int, int);
   festring OwnerDescription;
   character* Master;
   long CarriedWeight;
@@ -181,6 +190,7 @@ ITEM(bodypart, item)
   uchar SpillBloodCounter;
   uchar WobbleData;
   std::vector<scar> Scar;
+  std::deque<damageid> DamageID;
 };
 
 ITEM(head, bodypart)
@@ -322,10 +332,10 @@ ITEM(arm, bodypart)
   virtual void CalculateAttributeBonuses();
   int GetWieldedHitStrength() const;
   virtual void SignalEquipmentAdd(gearslot*);
-  virtual void SignalEquipmentRemoval(gearslot*);
+  virtual void SignalEquipmentRemoval(gearslot*, citem*);
   void ApplyDexterityPenalty(item*);
   virtual truth DamageArmor(character*, int, int);
-  truth CheckIfWeaponTooHeavy(const char*) const;
+  truth CheckIfWeaponTooHeavy(cchar*) const;
   virtual truth EditAllAttributes(int);
   void AddAttackInfo(felist&) const;
   void AddDefenceInfo(felist&) const;
@@ -333,7 +343,7 @@ ITEM(arm, bodypart)
   void DrawWielded(blitdata&) const;
   virtual truth IsRightArm() const { return 0; }
   virtual void UpdatePictures();
-  virtual double GetTypeDamage(const character*) const;
+  virtual double GetTypeDamage(ccharacter*) const;
   virtual item* GetArmorToReceiveFluid(truth) const;
   virtual void CopyAttributes(const bodypart*);
   double GetStrengthExperience() const { return StrengthExperience; }
@@ -477,20 +487,20 @@ ITEM(corpse, item)
   virtual ~corpse();
   virtual int GetOfferValue(int) const;
   virtual double GetWeaponStrength() const;
-  virtual truth CanBeEatenByAI(const character*) const;
+  virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual int GetStrengthValue() const;
   character* GetDeceased() const { return Deceased; }
   void SetDeceased(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual truth IsDestroyable(const character*) const;
+  virtual truth IsDestroyable(ccharacter*) const;
   virtual long GetTruePrice() const;
   virtual int GetMaterials() const { return 2; }
   virtual truth RaiseTheDead(character*);
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
   virtual void SignalSpoil(material*);
-  virtual truth CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(citem*, ccharacter*) const;
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
   virtual head* Behead();
@@ -502,8 +512,8 @@ ITEM(corpse, item)
   virtual truth SuckSoul(character*, character* = 0);
   virtual character* TryNecromancy(character*);
   virtual void Cannibalize();
-  virtual material* GetConsumeMaterial(const character*, materialpredicate) const;
-  virtual truth DetectMaterial(const material*) const;
+  virtual material* GetConsumeMaterial(ccharacter*, materialpredicate) const;
+  virtual truth DetectMaterial(cmaterial*) const;
   virtual void SetLifeExpectancy(int, int);
   virtual void Be();
   virtual void SignalDisappearance();
@@ -512,7 +522,7 @@ ITEM(corpse, item)
   virtual truth Necromancy(character*);
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
-  virtual truth CanBeHardened(const character*) const { return false; }
+  virtual truth CanBeHardened(ccharacter*) const { return false; }
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;

@@ -43,9 +43,9 @@ class smoke : public entity
   virtual truth IsOnGround() const { return true; }
   void AddBreatheMessage() const;
   void Merge(gas*);
-  const material* GetGas() const { return Gas; }
-  truth IsDangerousToBreathe(const character*) const;
-  truth IsScaryToBreathe(const character*) const;
+  cmaterial* GetGas() const { return Gas; }
+  truth IsDangerousToBreathe(ccharacter*) const;
+  truth IsScaryToBreathe(ccharacter*) const;
  protected:
   material* Gas;
   std::vector<bitmap*> Picture;

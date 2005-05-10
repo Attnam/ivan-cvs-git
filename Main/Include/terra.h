@@ -22,11 +22,11 @@ class terrain
 {
  public:
   virtual void StepOn(character*) { }
-  virtual const char* SurviveMessage() const;
-  virtual const char* MonsterSurviveMessage() const;
-  virtual const char* DeathMessage() const;
-  virtual const char* MonsterDeathVerb() const;
-  virtual const char* ScoreEntry() const;
+  virtual cchar* SurviveMessage() const;
+  virtual cchar* MonsterSurviveMessage() const;
+  virtual cchar* DeathMessage() const;
+  virtual cchar* MonsterDeathVerb() const;
+  virtual cchar* ScoreEntry() const;
   virtual truth IsFatalToStay() const { return false; }
   virtual void SurviveEffect(character*) { };
 };

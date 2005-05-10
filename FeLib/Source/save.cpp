@@ -15,7 +15,7 @@
 #include "save.h"
 #include "femath.h"
 
-outputfile::outputfile(const festring& FileName, truth AbortOnErr)
+outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
 : Buffer(fopen(FileName.CStr(), "wb")), FileName(FileName)
 {
   if(AbortOnErr && !IsOpen())
@@ -34,7 +34,7 @@ void outputfile::ReOpen()
   Buffer = fopen(FileName.CStr(), "ab");
 }
 
-inputfile::inputfile(const festring& FileName,
+inputfile::inputfile(cfestring& FileName,
 		     const valuemap* ValueMap,
 		     truth AbortOnErr)
 : Buffer(fopen(FileName.CStr(), "rb")),
@@ -480,7 +480,7 @@ rect inputfile::ReadRect()
   return Rect;
 }
 
-outputfile& operator<<(outputfile& SaveFile, const festring& String)
+outputfile& operator<<(outputfile& SaveFile, cfestring& String)
 {
   ushort Length = String.GetSize();
   SaveFile << Length;
@@ -512,7 +512,7 @@ inputfile& operator>>(inputfile& SaveFile, festring& String)
   return SaveFile;
 }
 
-outputfile& operator<<(outputfile& SaveFile, const char* String)
+outputfile& operator<<(outputfile& SaveFile, cchar* String)
 {
   ushort Length = String ? strlen(String) : 0;
   SaveFile << Length;

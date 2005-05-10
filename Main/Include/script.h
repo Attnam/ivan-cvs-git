@@ -40,13 +40,13 @@
 
 #define SCRIPT_TRUTH(name)\
  public:\
-  const truth* name() const { return name##Holder.Member; }\
+  ctruth* name() const { return name##Holder.Member; }\
  protected:\
   scriptmember<truth> name##Holder
 
 #define SCRIPT_TRUTH_WITH_BASE(name)\
  public:\
-  const truth* name() const { return GetMemberOf(name##Holder, Base, &scripttype::name); }\
+  ctruth* name() const { return GetMemberOf(name##Holder, Base, &scripttype::name); }\
  protected:\
   scriptmember<truth> name##Holder
 
@@ -132,15 +132,15 @@ template <class type> struct fastscriptmember : public scriptmemberbase
 class script
 {
  public:
-  typedef std::map<const char*, scriptmemberbase script::*, charcomparer> datamap;
+  typedef std::map<cchar*, scriptmemberbase script::*, charcomparer> datamap;
   virtual ~script() { }
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile& SaveFile) const { SaveDataMap(GetDataMap(), SaveFile); }
   virtual void Load(inputfile& SaveFile) { LoadDataMap(GetDataMap(), SaveFile); }
  protected:
-  truth ReadMember(inputfile&, const festring&);
-  virtual scriptmemberbase* GetDataFromMap(const datamap&, const char*);
-  virtual scriptmemberbase* GetData(const char* String) { return GetDataFromMap(GetDataMap(), String); }
+  truth ReadMember(inputfile&, cfestring&);
+  virtual scriptmemberbase* GetDataFromMap(const datamap&, cchar*);
+  virtual scriptmemberbase* GetData(cchar* String) { return GetDataFromMap(GetDataMap(), String); }
   virtual const datamap& GetDataMap() const = 0;
   virtual void SaveDataMap(const datamap&, outputfile&) const;
   virtual void LoadDataMap(const datamap&, inputfile&);
@@ -209,9 +209,9 @@ class basecontentscript : public script
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual scriptmemberbase* GetData(const char*);
-  virtual int SearchCodeName(const festring&) const = 0;
-  virtual const char* GetClassID() const = 0;
+  virtual scriptmemberbase* GetData(cchar*);
+  virtual int SearchCodeName(cfestring&) const = 0;
+  virtual cchar* GetClassID() const = 0;
   static datamap DataMap;
   SCRIPT_MEMBER(materialscript, MainMaterial);
   SCRIPT_MEMBER(materialscript, SecondaryMaterial);
@@ -227,7 +227,7 @@ template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
   type* BasicInstantiate(int) const;
-  virtual int SearchCodeName(const festring&) const;
+  virtual int SearchCodeName(cfestring&) const;
 };
 
 template <class type> class contentscript;
@@ -243,7 +243,7 @@ class contentscript<item> : public contentscripttemplate<item>
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual const char* GetClassID() const;
+  virtual cchar* GetClassID() const;
   static datamap DataMap;
   SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
   SCRIPT_MEMBER(interval, Times);
@@ -272,7 +272,7 @@ class contentscript<character> : public contentscripttemplate<character>
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual const char* GetClassID() const;
+  virtual cchar* GetClassID() const;
   static datamap DataMap;
   SCRIPT_MEMBER(fearray<contentscript<item> >, Inventory);
   SCRIPT_MEMBER(fearray<packv2>, WayPoint);
@@ -290,7 +290,7 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  virtual const char* GetClassID() const;
+  virtual cchar* GetClassID() const;
   SCRIPT_TRUTH(IsInside);
 };
 
@@ -305,7 +305,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  virtual const char* GetClassID() const;
+  virtual cchar* GetClassID() const;
   SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
   SCRIPT_MEMBER(festring, Text);
   FAST_SCRIPT_MEMBER(uchar, VisualEffects);

@@ -98,18 +98,18 @@ inline truth mapmath<controller>::DoLine(int X1, int Y1,
   if(!(Flags & SKIP_FIRST))
     controller::Handler(X1, Y1);
 
-  const int DeltaX = abs(X2 - X1);
-  const int DeltaY = abs(Y2 - Y1);
-  const int DoubleDeltaX = DeltaX << 1;
-  const int DoubleDeltaY = DeltaY << 1;
-  const int XChange = X1 < X2 ? 1 : -1;
-  const int YChange = Y1 < Y2 ? 1 : -1;
+  cint DeltaX = abs(X2 - X1);
+  cint DeltaY = abs(Y2 - Y1);
+  cint DoubleDeltaX = DeltaX << 1;
+  cint DoubleDeltaY = DeltaY << 1;
+  cint XChange = X1 < X2 ? 1 : -1;
+  cint YChange = Y1 < Y2 ? 1 : -1;
   int x = X1, y = Y1;
 
   if(DeltaX >= DeltaY)
   {
     int c = DeltaX;
-    const int End = X2;
+    cint End = X2;
 
     while(x != End)
     {
@@ -129,7 +129,7 @@ inline truth mapmath<controller>::DoLine(int X1, int Y1,
   else
   {
     int c = DeltaY;
-    const int End = Y2;
+    cint End = Y2;
 
     while(y != End)
     {
@@ -152,8 +152,8 @@ inline truth mapmath<controller>::DoLine(int X1, int Y1,
 
 struct basequadricontroller
 {
-  static const int OrigoDeltaX[4];
-  static const int OrigoDeltaY[4];
+  static cint OrigoDeltaX[4];
+  static cint OrigoDeltaY[4];
   static int OrigoX, OrigoY;
   static int StartX, StartY;
   static int XSize, YSize;
@@ -179,13 +179,13 @@ struct quadricontroller : public basequadricontroller
 template <class controller>
 truth quadricontroller<controller>::Handler(int x, int y)
 {
-  const int HalfX = x >> 1, HalfY = y >> 1;
+  cint HalfX = x >> 1, HalfY = y >> 1;
 
   if(HalfX >= 0 && HalfY >= 0 && HalfX < XSize && HalfY < YSize)
   {
     ulong& SquareTick = controller::GetTickReference(HalfX, HalfY);
-    const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
-    const ulong Mask = SquarePartTickMask[SquarePartIndex];
+    cint SquarePartIndex = (x & 1) + ((y & 1) << 1);
+    culong Mask = SquarePartTickMask[SquarePartIndex];
 
     if((SquareTick & Mask) < controller::ShiftedTick[SquarePartIndex])
     {
@@ -214,11 +214,11 @@ truth quadricontroller<controller>::Handler(int x, int y)
   return false;
 }
 
-const int ChangeXArray[4][3] = { { -1,  0, -1 },
+cint ChangeXArray[4][3] = { { -1,  0, -1 },
 				 {  0,  1,  1 },
 				 { -1, -1,  0 },
 				 {  1,  0,  1 } };
-const int ChangeYArray[4][3] = { { -1, -1,  0 },
+cint ChangeYArray[4][3] = { { -1, -1,  0 },
 				 { -1, -1,  0 },
 				 {  0,  1,  1 },
 				 {  0,  1,  1 } };
@@ -232,7 +232,7 @@ inline void mapmath<controller>::DoArea()
 
   for(int c1 = 0; c1 < 4; ++c1)
   {
-    const int* ChangeX = ChangeXArray[c1], * ChangeY = ChangeYArray[c1];
+    cint* ChangeX = ChangeXArray[c1], * ChangeY = ChangeYArray[c1];
     int OldStackPos = 0, NewStackPos = 0;
     int StartX = controller::GetStartX(c1);
     int StartY = controller::GetStartY(c1);
@@ -249,7 +249,7 @@ inline void mapmath<controller>::DoArea()
       while(OldStackPos)
       {
 	OldStackPos -= 2;
-	const int X = OldStack[OldStackPos], Y = OldStack[OldStackPos + 1];
+	cint X = OldStack[OldStackPos], Y = OldStack[OldStackPos + 1];
 
 	if(controller::Handler(X, Y))
 	  for(int c2 = 0; c2 < 3; ++c2)

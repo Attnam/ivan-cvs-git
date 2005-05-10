@@ -138,7 +138,7 @@ INST_FAST_SCRIPT_MEMBER(long);
 INST_FAST_SCRIPT_MEMBER(ulong);
 INST_FAST_SCRIPT_MEMBER(packv2);
 
-truth script::ReadMember(inputfile& SaveFile, const festring& Word)
+truth script::ReadMember(inputfile& SaveFile, cfestring& Word)
 {
   scriptmemberbase* Data = GetData(Word.CStr());
 
@@ -151,7 +151,7 @@ truth script::ReadMember(inputfile& SaveFile, const festring& Word)
     return false;
 }
 
-scriptmemberbase* script::GetDataFromMap(const datamap& DataMap, const char* Identifier)
+scriptmemberbase* script::GetDataFromMap(const datamap& DataMap, cchar* Identifier)
 {
   datamap::const_iterator i = DataMap.find(Identifier);
   return i != DataMap.end() ? &(this->*i->second) : 0;
@@ -169,7 +169,7 @@ void script::LoadDataMap(const datamap& DataMap, inputfile& SaveFile)
     (this->*i->second).Load(SaveFile);
 }
 
-template <class scriptmemberptr> void InitMember(script::datamap& DataMap, const char* Identifier, scriptmemberptr DataMember)
+template <class scriptmemberptr> void InitMember(script::datamap& DataMap, cchar* Identifier, scriptmemberptr DataMember)
 {
   DataMap[Identifier] = reinterpret_cast<scriptmemberbase script::*>(DataMember);
 }
@@ -355,7 +355,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
       ABORT("Odd terminator %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
-scriptmemberbase* basecontentscript::GetData(const char* String)
+scriptmemberbase* basecontentscript::GetData(cchar* String)
 {
   scriptmemberbase* Return = GetDataFromMap(GetDataMap(), String);
   return Return ? Return : GetDataFromMap(DataMap, String);
@@ -446,22 +446,22 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(int Sp
 
 template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(int) const;
 
-template <class type> int contentscripttemplate<type>::SearchCodeName(const festring& String) const
+template <class type> int contentscripttemplate<type>::SearchCodeName(cfestring& String) const
 {
   return protocontainer<type>::SearchCodeName(String);
 }
 
 /* GCC 2.952 SUCKS!!! IT MUST BURN!!! */
 
-template int contentscripttemplate<character>::SearchCodeName(const festring&) const;
-template int contentscripttemplate<item>::SearchCodeName(const festring&) const;
-template int contentscripttemplate<glterrain>::SearchCodeName(const festring&) const;
-template int contentscripttemplate<olterrain>::SearchCodeName(const festring&) const;
+template int contentscripttemplate<character>::SearchCodeName(cfestring&) const;
+template int contentscripttemplate<item>::SearchCodeName(cfestring&) const;
+template int contentscripttemplate<glterrain>::SearchCodeName(cfestring&) const;
+template int contentscripttemplate<olterrain>::SearchCodeName(cfestring&) const;
 
-const char* contentscript<character>::GetClassID() const { return "character"; }
-const char* contentscript<item>::GetClassID() const { return "item"; }
-const char* contentscript<glterrain>::GetClassID() const { return "glterrain"; }
-const char* contentscript<olterrain>::GetClassID() const { return "olterrain"; }
+cchar* contentscript<character>::GetClassID() const { return "character"; }
+cchar* contentscript<item>::GetClassID() const { return "item"; }
+cchar* contentscript<glterrain>::GetClassID() const { return "glterrain"; }
+cchar* contentscript<olterrain>::GetClassID() const { return "olterrain"; }
 
 void contentscript<character>::InitDataMap()
 {
@@ -626,7 +626,7 @@ olterrain* contentscript<olterrain>::Instantiate(int SpecialFlags) const
   if(GetAttachedEntry() != DEFAULT_ATTACHED_ENTRY)
     Instance->SetAttachedEntry(GetAttachedEntry());
 
-  const festring* Text = GetText();
+  cfestring* Text = GetText();
 
   if(Text)
     Instance->SetText(*Text);
@@ -743,7 +743,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
       typename std::map<int, contenttype>::iterator i = SymbolMap.find(Char);
 
       if(i != SymbolMap.end())
-	ContentMap[x][y] = std::pair<int, contenttype*>(Char, &i->second);
+	ContentMap[x][y] = std::make_pair(Char, &i->second);
       else
 	ABORT("Illegal content %c in %s content map line %ld!", Char, protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
     }
@@ -774,7 +774,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Loa
     for(int x = 0; x < Size.X; ++x)
     {
       int Char = ReadType<char>(SaveFile);
-      ContentMap[x][y] = std::pair<int, contenttype*>(Char, &SymbolMap.find(Char)->second);
+      ContentMap[x][y] = std::make_pair(Char, &SymbolMap.find(Char)->second);
     }
 }
 
@@ -884,7 +884,7 @@ void levelscript::ReadFrom(inputfile& SaveFile)
 
   if(Base)
   {
-    const v2* Size = static_cast<const levelscript*>(Base)->GetSize();
+    cv2* Size = static_cast<const levelscript*>(Base)->GetSize();
 
     if(Size)
     {
@@ -1015,7 +1015,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
     if(Word == "Level")
     {
       int Index = SaveFile.ReadNumber();
-      std::pair<std::map<int, levelscript>::iterator, bool> Return = Level.insert(std::pair<int, levelscript>(Index, levelscript()));
+      std::pair<std::map<int, levelscript>::iterator, bool> Return = Level.insert(std::make_pair(Index, levelscript()));
 
       if(Return.second)
       {
@@ -1037,7 +1037,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
     {
       interval Interval;
       ReadData(Interval, SaveFile);
-      RandomLevel.push_back(std::pair<interval, levelscript>(Interval, levelscript()));
+      RandomLevel.push_back(std::make_pair(Interval, levelscript()));
       const levelscript* LevelDefault = GetLevelDefault();
 
       if(LevelDefault)
@@ -1145,7 +1145,7 @@ void gamescript::ReadFrom(inputfile& SaveFile)
     if(Word == "Dungeon")
     {
       int Index = SaveFile.ReadNumber();
-      std::pair<std::map<int, dungeonscript>::iterator, bool> Return = Dungeon.insert(std::pair<int, dungeonscript>(Index, dungeonscript()));
+      std::pair<std::map<int, dungeonscript>::iterator, bool> Return = Dungeon.insert(std::make_pair(Index, dungeonscript()));
 
       if(Return.second)
 	Return.first->second.ReadFrom(SaveFile);

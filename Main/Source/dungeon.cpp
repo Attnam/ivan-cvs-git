@@ -104,7 +104,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
 }
 
-void dungeon::SaveLevel(const festring& SaveName, int Number, truth DeleteAfterwards)
+void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + '.' + Index + Number);
   SaveFile << Level[Number];
@@ -116,7 +116,7 @@ void dungeon::SaveLevel(const festring& SaveName, int Number, truth DeleteAfterw
   }
 }
 
-level* dungeon::LoadLevel(const festring& SaveName, int Number)
+level* dungeon::LoadLevel(cfestring& SaveName, int Number)
 {
   inputfile SaveFile(SaveName + '.' + Index + Number);
   return LoadLevel(SaveFile, Number);

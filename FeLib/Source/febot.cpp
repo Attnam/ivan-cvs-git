@@ -32,7 +32,7 @@ febot::wordchain* febot::GetControlWordChain() const
 febot::wordchain* febot::wordchain::GetRandomLink() const
 { return Link[RAND() % Link.size()]; }
 
-febot::wordchain::wordchain(const febot::wordchain* WordChain, const festring& NewWord) : String(++WordChain->String.begin(), WordChain->String.end())
+febot::wordchain::wordchain(const febot::wordchain* WordChain, cfestring& NewWord) : String(++WordChain->String.begin(), WordChain->String.end())
 {
   String.push_back(NewWord);
 }
@@ -40,7 +40,7 @@ febot::wordchain::wordchain(const febot::wordchain* WordChain, const festring& N
 /* Searches for an fword associated with String in FWordSet and returns it
    or creates a new one if needed */
 
-febot::wordchain* febot::CreateWordChain(const febot::wordchain* WordChain, const festring& NewWord)
+febot::wordchain* febot::CreateWordChain(const febot::wordchain* WordChain, cfestring& NewWord)
 {
   return const_cast<wordchain*>(&*WordChainSet.insert(wordchain(WordChain, NewWord)).first);
 }

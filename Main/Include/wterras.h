@@ -19,15 +19,15 @@ GWTERRAIN(ocean, gwterrain)
 {
  public:
   ocean() { SetAnimationFrames(32); }
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual truth UsesLongArticle() const { return true; }
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 10; }
-  virtual const char* SurviveMessage() const;
-  virtual const char* MonsterSurviveMessage() const;
-  virtual const char* DeathMessage() const;
-  virtual const char* MonsterDeathVerb() const;
-  virtual const char* ScoreEntry() const;
+  virtual cchar* SurviveMessage() const;
+  virtual cchar* MonsterSurviveMessage() const;
+  virtual cchar* DeathMessage() const;
+  virtual cchar* MonsterDeathVerb() const;
+  virtual cchar* ScoreEntry() const;
   virtual truth IsFatalToStay() const { return true; }
   virtual int GetWalkability() const;
 };
@@ -35,7 +35,7 @@ GWTERRAIN(ocean, gwterrain)
 GWTERRAIN(glacier, gwterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 90; }
 };
@@ -43,7 +43,7 @@ GWTERRAIN(glacier, gwterrain)
 GWTERRAIN(desert, gwterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 20; }
 };
@@ -51,7 +51,7 @@ GWTERRAIN(desert, gwterrain)
 GWTERRAIN(snow, gwterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 80; }
 };
@@ -59,14 +59,14 @@ GWTERRAIN(snow, gwterrain)
 GWTERRAIN(jungle, gwterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 50; }
 };
 
 GWTERRAIN(leafyforest, gwterrain)
 {
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 60; }
 };
@@ -74,7 +74,7 @@ GWTERRAIN(leafyforest, gwterrain)
 GWTERRAIN(evergreenforest, gwterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual truth UsesLongArticle() const { return true; }
   virtual int GetPriority() const { return 70; }
@@ -83,7 +83,7 @@ GWTERRAIN(evergreenforest, gwterrain)
 GWTERRAIN(steppe, gwterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetPriority() const { return 30; }
 };
@@ -91,7 +91,7 @@ GWTERRAIN(steppe, gwterrain)
 OWTERRAIN(attnam, owterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetAttachedDungeon() const;
 };
@@ -99,7 +99,7 @@ OWTERRAIN(attnam, owterrain)
 OWTERRAIN(elpuricave, owterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetAttachedDungeon() const;
 };
@@ -107,7 +107,7 @@ OWTERRAIN(elpuricave, owterrain)
 OWTERRAIN(newattnam, owterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetAttachedDungeon() const;
 };
@@ -115,7 +115,7 @@ OWTERRAIN(newattnam, owterrain)
 OWTERRAIN(underwatertunnel, owterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetAttachedDungeon() const;
   virtual truth UsesLongArticle() const { return true; }
@@ -124,7 +124,7 @@ OWTERRAIN(underwatertunnel, owterrain)
 OWTERRAIN(underwatertunnelexit, owterrain)
 {
  public:
-  virtual const char* GetNameStem() const;
+  virtual cchar* GetNameStem() const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetAttachedDungeon() const;
   virtual truth UsesLongArticle() const { return true; }

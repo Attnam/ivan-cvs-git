@@ -15,7 +15,7 @@
 lsquare*** eyecontroller::Map;
 
 lsquare*** pathcontroller::Map;
-const character* pathcontroller::Character;
+ccharacter* pathcontroller::Character;
 
 lsquare*** stackcontroller::Map;
 lsquare** stackcontroller::Stack;
@@ -346,7 +346,7 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
   static truth Handler(int x, int y)
   {
     lsquare* Square = Map[x >> 1][y >> 1];
-    const ulong SquareFlags = Square->Flags;
+    culong SquareFlags = Square->Flags;
 
     if(SquareFlags & PERFECTLY_QUADRI_HANDLED)
       return SquareFlags & ALLOW_EMITATION_CONTINUE;
@@ -360,7 +360,7 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
       Stack[StackIndex++] = Square;
     }
 
-    const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
+    cint SquarePartIndex = (x & 1) + ((y & 1) << 1);
     Square->SquarePartEmitationTick = Square->SquarePartEmitationTick
 				      & ~SquarePartTickMask[SquarePartIndex]
 				      | ShiftedTick[SquarePartIndex];
@@ -370,8 +370,8 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
   static int ProcessSquare(int X, int Y, lsquare* Square)
   {
     Stack[StackIndex++] = Square;
-    const ulong SquareFlags = Square->Flags;
-    const int MaxE = MaxLuxTable[X - EmitterPosXMinus16][Y - EmitterPosYMinus16];
+    culong SquareFlags = Square->Flags;
+    cint MaxE = MaxLuxTable[X - EmitterPosXMinus16][Y - EmitterPosYMinus16];
 
     if(MaxE >= LIGHT_BORDER
        && (SquareFlags & INSIDE
@@ -396,7 +396,7 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
     for(long c1 = 0; c1 < StackIndex; ++c1)
     {
       lsquare* Square = Stack[c1];
-      const ulong SquareTick = Square->SquarePartEmitationTick;
+      culong SquareTick = Square->SquarePartEmitationTick;
       ulong TempID = ID;
 
       for(int c2 = 0; c2 < 4; ++c2)
@@ -1283,7 +1283,7 @@ void lsquare::DrawMemorized(blitdata& BlitData) const
   else
     DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
 
-  const character* C = Character;
+  ccharacter* C = Character;
 
   if(C && C->CanBeSeenByPlayer())
   {
@@ -1308,7 +1308,7 @@ void lsquare::DrawMemorizedCharacter(blitdata& BlitData) const
   Flags |= STRONG_NEW_DRAW_REQUEST;
 }
 
-truth lsquare::IsDangerous(const character* Who) const
+truth lsquare::IsDangerous(ccharacter* Who) const
 {
   return ((!Who->IsFlying()
 	   && (Stack->IsDangerous(Who)
@@ -1316,7 +1316,7 @@ truth lsquare::IsDangerous(const character* Who) const
 	  || IsDangerousToBreathe(Who) || HasDangerousTraps(Who));
 }
 
-truth lsquare::IsScary(const character* Who) const
+truth lsquare::IsScary(ccharacter* Who) const
 {
   return IsScaryToBreathe(Who);
 }
@@ -1365,7 +1365,7 @@ void lsquare::KickAnyoneStandingHereAway()
 
 outputfile& operator<<(outputfile& SaveFile, const emitter& Emitter)
 {
-  SaveFile.Write(reinterpret_cast<const char*>(&Emitter), sizeof(Emitter));
+  SaveFile.Write(reinterpret_cast<cchar*>(&Emitter), sizeof(Emitter));
   return SaveFile;
 }
 
@@ -1678,7 +1678,7 @@ truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
   return BeamEffect[I];
 }
 
-truth lsquare::CheckKick(const character* Kicker) const
+truth lsquare::CheckKick(ccharacter* Kicker) const
 {
   if(Character && Kicker->CheckIfTooScaredToHit(Character))
     return false;
@@ -1934,7 +1934,7 @@ void lsquare::DisplayEngravedInfo(festring& Buffer) const
   Buffer << " There is a message engraved here: \"" << Engraved << '\"';
 }
 
-truth lsquare::IsDangerousToBreathe(const character* Who) const
+truth lsquare::IsDangerousToBreathe(ccharacter* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
     if(S->IsDangerousToBreathe(Who))
@@ -1943,7 +1943,7 @@ truth lsquare::IsDangerousToBreathe(const character* Who) const
   return false;
 }
 
-truth lsquare::IsScaryToBreathe(const character* Who) const
+truth lsquare::IsScaryToBreathe(ccharacter* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
     if(S->IsScaryToBreathe(Who))
@@ -2458,7 +2458,7 @@ void lsquare::InitLastSeen()
   SquarePartLastSeen = 0;
 }
 
-truth lsquare::Engrave(const festring& What)
+truth lsquare::Engrave(cfestring& What)
 {
   if(Engraved)
     delete [] Engraved;
@@ -2593,7 +2593,7 @@ truth lsquare::AcidRain(const beamdata& Beam)
   return false;
 }
 
-truth lsquare::DetectMaterial(const material* Material) const
+truth lsquare::DetectMaterial(cmaterial* Material) const
 {
   if(GLTerrain->DetectMaterial(Material)
      || OLTerrain && OLTerrain->DetectMaterial(Material)
@@ -2771,7 +2771,7 @@ void lsquare::ReceiveTrapDamage(character* Damager, int Damage, int Type, int Di
     TrapVector[c]->ReceiveDamage(Damager, Damage, Type, Direction);
 }
 
-truth lsquare::HasDangerousTraps(const character* Who) const
+truth lsquare::HasDangerousTraps(ccharacter* Who) const
 {
   for(trap* T = Trap; T; T = T->Next)
     if(T->IsDangerous(Who))
@@ -2780,7 +2780,7 @@ truth lsquare::HasDangerousTraps(const character* Who) const
   return false;
 }
 
-truth lsquare::HasDangerousFluids(const character* Who) const
+truth lsquare::HasDangerousFluids(ccharacter* Who) const
 {
   for(const fluid* F = Fluid; F; F = F->Next)
     if(F->IsDangerous(Who))
@@ -2802,7 +2802,7 @@ void lsquare::AddLocationDescription(festring& String) const
     OLTerrain->AddLocationDescription(String);
 }
 
-truth lsquare::VomitingIsDangerous(const character* Char) const
+truth lsquare::VomitingIsDangerous(ccharacter* Char) const
 {
   return ((OLTerrain && OLTerrain->VomitingIsDangerous(Char))
 	  || (Character && Character->GetTeam() != Char->GetTeam()

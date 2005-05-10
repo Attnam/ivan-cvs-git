@@ -24,7 +24,7 @@ ITEM(meleeweapon, item)
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual void DipInto(liquid*, character*);
   virtual long GetPrice() const;
-  virtual truth IsDippable(const character*) const;
+  virtual truth IsDippable(ccharacter*) const;
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
   virtual void SetSecondaryMaterial(material*, int = 0);
   virtual void ChangeSecondaryMaterial(material*, int = 0);
@@ -32,22 +32,22 @@ ITEM(meleeweapon, item)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual int GetMaterials() const { return 2; }
-  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual void SignalSpoil(material*);
   virtual void Be();
-  virtual truth IsWeapon(const character*) const { return true; }
+  virtual truth IsWeapon(ccharacter*) const { return true; }
   virtual int GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(int);
   virtual void EditEnchantment(int);
   virtual int GetStrengthValue() const;
-  virtual truth IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsFixableByTailor(const character*) const { return IsBroken(); }
+  virtual truth IsFixableBySmith(ccharacter*) const { return IsBroken() || IsRusted(); }
+  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken(); }
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
   virtual void TryToRust(long);
-  virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
+  virtual material* GetConsumeMaterial(ccharacter*, materialpredicate = TrueMaterialPredicate) const;
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   virtual material* RemoveMaterial(material*);
   material* RemoveMainMaterial();
@@ -100,7 +100,7 @@ ITEM(pickaxe, meleeweapon)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(const character*) const;
+  virtual truth IsAppliable(ccharacter*) const;
 };
 
 ITEM(whip, meleeweapon)
@@ -142,7 +142,7 @@ ITEM(whipofthievery, whip)
   virtual long GetPrice() const;
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
  protected:
-  virtual truth CleptiaHelps(const character*, const character*) const;
+  virtual truth CleptiaHelps(ccharacter*, ccharacter*) const;
 };
 
 ITEM(gorovitshammer, meleeweapon)
@@ -183,19 +183,19 @@ ITEM(armor, item)
 {
  public:
   virtual long GetPrice() const;
-  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual truth IsArmor(const character*) const { return true; }
+  virtual truth IsArmor(ccharacter*) const { return true; }
   virtual int GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(int);
   virtual void EditEnchantment(int);
   virtual int GetStrengthValue() const;
-  virtual truth CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(citem*, ccharacter*) const;
   virtual int GetInElasticityPenalty(int) const;
   virtual int GetCarryingBonus() const;
-  virtual truth IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsFixableByTailor(const character*) const { return IsBroken(); }
+  virtual truth IsFixableBySmith(ccharacter*) const { return IsBroken() || IsRusted(); }
+  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken(); }
   virtual truth AllowFluids() const { return true; }
   virtual void CalculateEnchantment();
   virtual double GetTHVBonus() const;
@@ -210,12 +210,12 @@ ITEM(bodyarmor, armor)
 {
  public:
   virtual long GetPrice() const;
-  virtual truth IsBodyArmor(const character*) const { return true; }
+  virtual truth IsBodyArmor(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
  protected:
-  virtual const char* GetBreakVerb() const;
+  virtual cchar* GetBreakVerb() const;
   virtual truth AddAdjective(festring&, truth) const;
-  virtual const festring& GetNameSingular() const;
+  virtual cfestring& GetNameSingular() const;
 };
 
 ITEM(goldeneagleshirt, bodyarmor)
@@ -234,20 +234,20 @@ ITEM(shield, armor)
 {
  public:
   virtual long GetPrice() const;
-  virtual truth IsShield(const character*) const { return true; }
-  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual truth IsShield(ccharacter*) const { return true; }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
 };
 
 ITEM(cloak, armor)
 {
  public:
   virtual long GetPrice() const;
-  virtual truth IsCloak(const character*) const { return true; }
+  virtual truth IsCloak(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
   virtual truth ReceiveDamage(character*, int, int, int);
  protected:
   virtual int GetSpecialFlags() const;
-  virtual const char* GetBreakVerb() const;
+  virtual cchar* GetBreakVerb() const;
   virtual truth AddAdjective(festring&, truth) const;
   virtual col16 GetMaterialColorB(int) const;
 };
@@ -256,7 +256,7 @@ ITEM(boot, armor)
 {
  public:
   virtual long GetPrice() const;
-  virtual truth IsBoot(const character*) const { return true; }
+  virtual truth IsBoot(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
 };
 
@@ -264,7 +264,7 @@ ITEM(gauntlet, armor)
 {
  public:
   virtual long GetPrice() const;
-  virtual truth IsGauntlet(const character*) const { return true; }
+  virtual truth IsGauntlet(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
 };
 
@@ -272,7 +272,7 @@ ITEM(belt, armor)
 {
  public:
   virtual long GetPrice() const;
-  virtual truth IsBelt(const character*) const { return true; }
+  virtual truth IsBelt(ccharacter*) const { return true; }
   virtual int GetFormModifier() const;
   virtual truth IsInCorrectSlot(int) const;
   virtual col16 GetMaterialColorB(int Frame) const { return GetMaterialColorA(Frame); }
@@ -281,7 +281,7 @@ ITEM(belt, armor)
 ITEM(ring, item)
 {
  public:
-  virtual truth IsRing(const character*) const { return true; }
+  virtual truth IsRing(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
  protected:
   virtual col16 GetMaterialColorB(int) const;
@@ -290,7 +290,7 @@ ITEM(ring, item)
 ITEM(amulet, item)
 {
  public:
-  virtual truth IsAmulet(const character*) const { return true; }
+  virtual truth IsAmulet(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
  protected:
   virtual col16 GetMaterialColorB(int) const;
@@ -301,7 +301,7 @@ ITEM(helmet, armor)
  public:
   virtual truth IsGorovitsFamilyRelic() const;
   virtual long GetPrice() const;
-  virtual truth IsHelmet(const character*) const { return true; }
+  virtual truth IsHelmet(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
  protected:
   virtual col16 GetMaterialColorB(int) const;
@@ -313,7 +313,7 @@ ITEM(chameleonwhip, whip)
  public:
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
  protected:
-  virtual truth ScabiesHelps(const character*, const character*) const;
+  virtual truth ScabiesHelps(ccharacter*, ccharacter*) const;
 };
 
 ITEM(wondersmellstaff, meleeweapon)
@@ -336,7 +336,7 @@ ITEM(decosadshirt, bodyarmor)
   virtual void Load(inputfile&);
   ulong GetEquippedTicks() { return EquippedTicks; }
   void SetEquippedTicks(ulong What) { EquippedTicks = What; }
-  virtual truth IsDecosAdShirt(const character*) const { return true; }
+  virtual truth IsDecosAdShirt(ccharacter*) const { return true; }
  protected:
   virtual truth CalculateHasBe() const { return true; }
   ulong EquippedTicks;

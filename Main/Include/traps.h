@@ -39,8 +39,8 @@ TRAP(web, trap)
   truth IsStuckToBodyPart(int) const;
   virtual void ReceiveDamage(character*, int, int, int);
   virtual void Destroy();
-  virtual truth IsDangerous(const character* Char) const { return CanBeSeenBy(Char); }
-  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth IsDangerous(ccharacter* Char) const { return CanBeSeenBy(Char); }
+  virtual truth CanBeSeenBy(ccharacter*) const;
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void Untrap();

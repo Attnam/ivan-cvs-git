@@ -12,8 +12,8 @@
 
 /* Compiled through levelset.cpp */
 
-glterrainprototype::glterrainprototype(const glterrainprototype* Base, glterrainspawner Spawner, const char* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
-olterrainprototype::olterrainprototype(const olterrainprototype* Base, olterrainspawner Spawner, const char* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
+glterrainprototype::glterrainprototype(const glterrainprototype* Base, glterrainspawner Spawner, cchar* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
+olterrainprototype::olterrainprototype(const olterrainprototype* Base, olterrainspawner Spawner, cchar* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
 
 square* lterrain::GetSquareUnderEntity(int) const { return LSquareUnder; }
 level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
@@ -380,7 +380,7 @@ v2 glterrain::GetBorderBitmapPos(v2 BasePos, int I) const
 
     if(VisualEffects & ROTATE)
     {
-      const int T = MV.Y;
+      cint T = MV.Y;
       MV.Y = -MV.X;
       MV.X = T;
     }
@@ -395,7 +395,7 @@ void glterrain::Draw(blitdata& BlitData) const
 {
   if(UseBorderTiles())
   {
-    const int TrueAF = GraphicData.AnimationFrames / 9;
+    cint TrueAF = GraphicData.AnimationFrames / 9;
     int PictureIndex = (BlitData.CustomData & SQUARE_INDEX_MASK) * TrueAF;
 
     if(BlitData.CustomData & ALLOW_ANIMATE && TrueAF != 1)
@@ -405,8 +405,8 @@ void glterrain::Draw(blitdata& BlitData) const
   }
   else
   {
-    const int AF = GraphicData.AnimationFrames;
-    const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
+    cint AF = GraphicData.AnimationFrames;
+    cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
     GraphicData.Picture[F]->LuminanceBlit(BlitData);
   }
 }
@@ -432,7 +432,7 @@ v2 olterrain::GetBorderBitmapPos(v2 BasePos, int I) const
 
     if(VisualEffects & ROTATE)
     {
-      const int T = MV.Y;
+      cint T = MV.Y;
       MV.Y = -MV.X;
       MV.X = T;
     }
@@ -447,7 +447,7 @@ void olterrain::Draw(blitdata& BlitData) const
 {
   if(UseBorderTiles())
   {
-    const int TrueAF = GraphicData.AnimationFrames / 9;
+    cint TrueAF = GraphicData.AnimationFrames / 9;
     int PictureIndex = (BlitData.CustomData & SQUARE_INDEX_MASK) * TrueAF;
 
     if(BlitData.CustomData & ALLOW_ANIMATE && TrueAF != 1)
@@ -457,8 +457,8 @@ void olterrain::Draw(blitdata& BlitData) const
   }
   else
   {
-    const int AF = GraphicData.AnimationFrames;
-    const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
+    cint AF = GraphicData.AnimationFrames;
+    cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
     GraphicData.Picture[F]->AlphaLuminanceBlit(BlitData);
   }
 }
@@ -541,7 +541,7 @@ truth olterrain::ShowThingsUnder() const
   return DataBase->ShowThingsUnder || IsTransparent();
 }
 
-truth olterrain::WillBeDestroyedBy(const character* Char) const
+truth olterrain::WillBeDestroyedBy(ccharacter* Char) const
 {
   return IsWall() && CanBeDestroyed() && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
 }

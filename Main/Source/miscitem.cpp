@@ -26,16 +26,16 @@ col16 lantern::GetMaterialColorD(int) const { return MakeRGB16(255, 255, 100); }
 
 truth can::AddAdjective(festring& String, truth Articled) const { return AddEmptyAdjective(String, Articled); }
 v2 can::GetBitmapPos(int) const { return v2(16, SecondaryMaterial ? 288 : 304); }
-truth can::IsDipDestination(const character*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
+truth can::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
 truth potion::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
 truth potion::AddAdjective(festring& String, truth Articled) const { return AddEmptyAdjective(String, Articled); }
 truth potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
-truth potion::IsDipDestination(const character*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
+truth potion::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
-truth bananapeels::IsDangerous(const character* Stepper) const { return Stepper->HasALeg(); }
+truth bananapeels::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
 
-truth brokenbottle::IsDangerous(const character* Stepper) const { return Stepper->HasALeg(); }
+truth brokenbottle::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
 
 long wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
@@ -629,18 +629,6 @@ void scrolloftaming::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
-void mine::Load(inputfile& SaveFile)
-{
-  materialcontainer::Load(SaveFile);
-  SaveFile >> Active >> Team >> DiscoveredByTeam;
-}
-
-void mine::Save(outputfile& SaveFile) const
-{
-  materialcontainer::Save(SaveFile);
-  SaveFile << Active << Team << DiscoveredByTeam;
-}
-
 truth mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
@@ -671,7 +659,7 @@ void mine::StepOnEffect(character* Stepper)
 
   if(Stepper->IsPlayer())
   {
-    const char* SenseVerb = Stepper->CanHear() ? "hear" : "sense";
+    cchar* SenseVerb = Stepper->CanHear() ? "hear" : "sense";
 
     if(GetLSquareUnder()->IsDark())
       ADD_MESSAGE("You %s a faint thump. You try to look down, but it is too dark to see anything.", SenseVerb);
@@ -1022,7 +1010,7 @@ itemcontainer::~itemcontainer()
   delete Contained;
 }
 
-beartrap::beartrap(const beartrap& Trap) : mybase(Trap), Team(Trap.Team), DiscoveredByTeam(Trap.DiscoveredByTeam), Active(Trap.Active)
+beartrap::beartrap(const beartrap& Trap) : mybase(Trap)
 {
   TrapData.TrapID = game::CreateNewTrapID(this);
   TrapData.VictimID = 0;
@@ -1109,18 +1097,18 @@ truth beartrap::TryToUnStick(character* Victim, v2)
 
 void beartrap::Load(inputfile& SaveFile)
 {
-  item::Load(SaveFile);
-  SaveFile >> Active >> Team >> TrapData >> DiscoveredByTeam;
+  mybase::Load(SaveFile);
+  SaveFile >> TrapData;
   game::AddTrapID(this, TrapData.TrapID);
 }
 
 void beartrap::Save(outputfile& SaveFile) const
 {
-  item::Save(SaveFile);
-  SaveFile << Active << Team << TrapData << DiscoveredByTeam;
+  mybase::Save(SaveFile);
+  SaveFile << TrapData;
 }
 
-beartrap::beartrap() : Active(false) /* a must */
+beartrap::beartrap()
 {
   if(!game::IsLoading())
   {
@@ -1228,21 +1216,9 @@ materialcontainer::~materialcontainer()
   delete SecondaryMaterial;
 }
 
-truth itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
+truth itemcontainer::ContentsCanBeSeenBy(ccharacter* Viewer) const
 {
   return GetMainMaterial()->IsTransparent() && CanBeSeenBy(Viewer);
-}
-
-truth mine::CanBeSeenBy(const character* Viewer) const
-{
-  int ViewerTeam = Viewer->GetTeam()->GetID();
-  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && materialcontainer::CanBeSeenBy(Viewer);
-}
-
-truth beartrap::CanBeSeenBy(const character* Viewer) const
-{
-  int ViewerTeam = Viewer->GetTeam()->GetID();
-  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && item::CanBeSeenBy(Viewer);
 }
 
 truth mine::Apply(character* User)
@@ -1339,7 +1315,7 @@ v2 beartrap::GetBitmapPos(int Frame) const
     return item::GetBitmapPos(Frame);
 }
 
-truth mine::WillExplode(const character* Stepper) const
+truth mine::WillExplode(ccharacter* Stepper) const
 {
   return IsActive() && GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 5000);
 }
@@ -1386,7 +1362,7 @@ truth wand::Zap(character* Zapper, v2, int Direction)
   return true;
 }
 
-void wand::AddInventoryEntry(const character*, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+void wand::AddInventoryEntry(ccharacter*, festring& Entry, int, truth ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -1424,7 +1400,7 @@ void materialcontainer::SignalSpoil(material* Material)
   }
 }
 
-truth materialcontainer::CanBePiledWith(const item* Item, const character* Viewer) const
+truth materialcontainer::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   if(!item::CanBePiledWith(Item, Viewer))
     return false;
@@ -1643,7 +1619,7 @@ truth itemcontainer::ReceiveDamage(character* Damager, int Damage, int Type, int
   return false;
 }
 
-void itemcontainer::DrawContents(const character* Char)
+void itemcontainer::DrawContents(ccharacter* Char)
 {
   festring Topic = CONST_S("Contents of your ") + GetName(UNARTICLED);
   GetContained()->DrawContents(Char, Topic, NO_SELECT);
@@ -1785,7 +1761,7 @@ truth horn::Apply(character* Blower)
   if(!LastUsed || game::GetTick() - LastUsed >= 2500)
   {
     LastUsed = game::GetTick();
-    const char* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
+    cchar* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
 
     if(Blower->IsPlayer())
     {
@@ -1939,7 +1915,7 @@ void banana::SignalSpoil(material* Material)
     item::SignalSpoil(Material);
 }
 
-truth bone::DogWillCatchAndConsume(const character* Doggie) const
+truth bone::DogWillCatchAndConsume(ccharacter* Doggie) const
 {
   return GetConsumeMaterial(Doggie)->GetConfig() == BONE
 						  && !GetConsumeMaterial(Doggie)->GetSpoilLevel();
@@ -1955,7 +1931,7 @@ int itemcontainer::GetOfferValue(int Receiver) const
   return item::GetOfferValue(Receiver) + Sum;
 }
 
-truth itemcontainer::IsDestroyable(const character* Char) const
+truth itemcontainer::IsDestroyable(ccharacter* Char) const
 {
   for(int c = 0; c < GetContained()->GetItems(); ++c)
     if(!GetContained()->GetItem(c)->IsDestroyable(Char))
@@ -1995,54 +1971,7 @@ int materialcontainer::GetAttachedGod() const
   return DataBase->AttachedGod ? DataBase->AttachedGod : SecondaryMaterial ? SecondaryMaterial->GetAttachedGod() : MainMaterial->GetAttachedGod();
 }
 
-void beartrap::Search(const character* Char, int Perception)
-{
-  int ViewerTeam = Char->GetTeam()->GetID();
-
-  if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
-  {
-    DiscoveredByTeam.insert(ViewerTeam);
-    SendNewDrawAndMemorizedUpdateRequest();
-
-    if(Char->IsPlayer())
-    {
-      game::AskForKeyPress(CONST_S("Trap found! [press any key to continue]"));
-      ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
-    }
-  }
-}
-
-void mine::Search(const character* Char, int Perception)
-{
-  int ViewerTeam = Char->GetTeam()->GetID();
-
-  if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
-  {
-    DiscoveredByTeam.insert(ViewerTeam);
-    SendNewDrawAndMemorizedUpdateRequest();
-
-    if(Char->IsPlayer())
-    {
-      game::AskForKeyPress(CONST_S("Trap found! [press any key to continue]"));
-      ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
-    }
-  }
-}
-
-void beartrap::SetIsActive(truth What)
-{
-  Active = What;
-  UpdatePictures();
-  DiscoveredByTeam.clear();
-}
-
-void mine::SetIsActive(truth What)
-{
-  Active = What;
-  DiscoveredByTeam.clear();
-}
-
-void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
+void wand::BreakEffect(character* Terrorist, cfestring& DeathMsg)
 {
   v2 Pos = GetPos();
   level* Level = GetLevel();
@@ -2195,7 +2124,7 @@ truth holybanana::Zap(character* Zapper, v2, int Direction)
   return true;
 }
 
-void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+void holybanana::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -2247,14 +2176,14 @@ truth holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
 
 void beartrap::PreProcessForBone()
 {
-  item::PreProcessForBone();
+  mybase::PreProcessForBone();
   game::RemoveTrapID(TrapData.TrapID);
   TrapData.TrapID = 0;
 }
 
 void beartrap::PostProcessForBone()
 {
-  item::PostProcessForBone();
+  mybase::PostProcessForBone();
   TrapData.TrapID = game::CreateNewTrapID(this);
 }
 
@@ -2274,32 +2203,6 @@ void itemcontainer::FinalProcessForBone()
 {
   item::FinalProcessForBone();
   Contained->FinalProcessForBone();
-}
-
-void mine::FinalProcessForBone()
-{
-  materialcontainer::FinalProcessForBone();
-
-  if(Team == PLAYER_TEAM)
-    Team = MONSTER_TEAM;
-
-  std::set<int>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
-
-  if(i != DiscoveredByTeam.end())
-    DiscoveredByTeam.erase(i);
-}
-
-void beartrap::FinalProcessForBone()
-{
-  item::FinalProcessForBone();
-
-  if(Team == PLAYER_TEAM)
-    Team = MONSTER_TEAM;
-
-  std::set<int>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
-
-  if(i != DiscoveredByTeam.end())
-    DiscoveredByTeam.erase(i);
 }
 
 void magicalwhistle::FinalProcessForBone()
@@ -2412,24 +2315,10 @@ void charmlyre::FinalProcessForBone()
   LastUsed = 0;
 }
 
-truth carrot::BunnyWillCatchAndConsume(const character* Bunny) const
+truth carrot::BunnyWillCatchAndConsume(ccharacter* Bunny) const
 {
   return GetConsumeMaterial(Bunny)->GetConfig() == CARROT_FLESH
 						 && !GetConsumeMaterial(Bunny)->GetSpoilLevel();
-}
-
-void beartrap::TeleportRandomly()
-{
-  Team = NO_TEAM;
-  DiscoveredByTeam.clear();
-  item::TeleportRandomly();
-}
-
-void mine::TeleportRandomly()
-{
-  Team = NO_TEAM;
-  DiscoveredByTeam.clear();
-  item::TeleportRandomly();
 }
 
 int materialcontainer::GetRustDataB() const
@@ -2450,7 +2339,7 @@ void backpack::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
   item::SpillFluid(Spiller, Liquid, SquareIndex);
 }
 
-material* materialcontainer::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+material* materialcontainer::GetConsumeMaterial(ccharacter* Consumer, materialpredicate Predicate) const
 {
   if(SecondaryMaterial
      && (SecondaryMaterial->*Predicate)()

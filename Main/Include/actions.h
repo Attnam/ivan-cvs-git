@@ -27,8 +27,8 @@ ACTION(unconsciousness, action)
   virtual truth IsVoluntary() const { return false; }
   virtual void Terminate(truth);
   virtual truth AllowUnconsciousness() const { return false; }
-  virtual const char* GetDescription() const;
-  virtual const char* GetDeathExplanation() const;
+  virtual cchar* GetDescription() const;
+  virtual cchar* GetDeathExplanation() const;
   virtual truth CanBeTalkedTo() const { return false; }
   virtual truth IsUnconsciousness() const { return true; }
   void RaiseCounterTo(int);
@@ -46,8 +46,8 @@ ACTION(consume, action)
   void SetConsumingID(ulong What) { ConsumingID = What; }
   virtual truth AllowUnconsciousness() const { return false; }
   virtual truth AllowFoodConsumption() const { return false; }
-  virtual const char* GetDescription() const;
-  virtual void SetDescription(const festring&);
+  virtual cchar* GetDescription() const;
+  virtual void SetDescription(cfestring&);
  protected:
   festring Description;
   ulong ConsumingID;
@@ -62,7 +62,7 @@ ACTION(rest, action)
   void SetGoalHP(int What) { GoalHP = What; }
   virtual void Terminate(truth);
   virtual truth IsRest() const { return true; }
-  virtual const char* GetDescription() const;
+  virtual cchar* GetDescription() const;
   void SetMinToStop(int What) { MinToStop = What; }
  protected:
   int GoalHP;
@@ -81,7 +81,7 @@ ACTION(dig, action)
   void SetRightBackupID(ulong What) { RightBackupID = What; }
   void SetLeftBackupID(ulong What) { LeftBackupID = What; }
   virtual truth TryDisplace() { return false; }
-  virtual const char* GetDescription() const;
+  virtual cchar* GetDescription() const;
   virtual truth ShowEnvironment() const { return false; }
   void SetMoveDigger(truth What) { MoveDigger = What; }
  protected:
@@ -102,7 +102,7 @@ ACTION(go, action)
   truth IsWalkingInOpen() const { return WalkingInOpen; }
   void SetIsWalkingInOpen(truth What) { WalkingInOpen = What; }
   virtual truth TryDisplace();
-  virtual const char* GetDescription() const;
+  virtual cchar* GetDescription() const;
   virtual truth ShowEnvironment() const { return false; }
  protected:
   int Direction;
@@ -117,7 +117,7 @@ ACTION(study, action)
   virtual void Handle();
   virtual void Terminate(truth);
   void SetLiteratureID(ulong What) { LiteratureID = What; }
-  virtual const char* GetDescription() const;
+  virtual cchar* GetDescription() const;
   void SetCounter(int What) { Counter = What; }
  protected:
   ulong LiteratureID;

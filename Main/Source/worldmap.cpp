@@ -27,7 +27,7 @@ int DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 worldmap::worldmap() { }
 continent* worldmap::GetContinentUnder(v2 Pos) const
 { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
-v2 worldmap::GetEntryPos(const character*, int I) const
+v2 worldmap::GetEntryPos(ccharacter*, int I) const
 { return EntryMap.find(I)->second; }
 continent* worldmap::GetContinent(int I) const { return Continent[I]; }
 int worldmap::GetAltitude(v2 Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
@@ -543,11 +543,11 @@ void worldmap::CalculateContinents()
 
 	  if(IsValidPos(Pos))
 	  {
-	    const int NearCont = ContinentBuffer[Pos.X][Pos.Y];
+	    cint NearCont = ContinentBuffer[Pos.X][Pos.Y];
 
 	    if(NearCont)
 	    {
-	      const int ThisCont = ContinentBuffer[x][y];
+	      cint ThisCont = ContinentBuffer[x][y];
 
 	      if(ThisCont)
 	      {
@@ -609,10 +609,10 @@ void worldmap::RemoveEmptyContinents()
 
 void worldmap::Draw(truth) const
 {
-  const int XMin = Max(game::GetCamera().X, 0);
-  const int YMin = Max(game::GetCamera().Y, 0);
-  const int XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
-  const int YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  cint XMin = Max(game::GetCamera().X, 0);
+  cint YMin = Max(game::GetCamera().Y, 0);
+  cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
+  cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
   blitdata BlitData = { DOUBLE_BUFFER,
 			{ 0, 0 },
 			{ 0, 0 },

@@ -48,7 +48,7 @@ CHARACTER(nonhumanoid, character)
   virtual truth Hit(character*, v2, int, truth = false);
   virtual void UnarmedHit(character*, v2, int, truth = false);
   virtual void InitSpecialAttributes();
-  virtual double GetTimeToKill(const character*, truth) const;
+  virtual double GetTimeToKill(ccharacter*, truth) const;
   virtual int GetAttribute(int, truth = true) const;
   virtual truth EditAttribute(int, int);
   virtual void EditExperience(int, double, double);
@@ -88,10 +88,10 @@ CHARACTER(billswill, nonhumanoid)
 {
  protected:
   virtual int GetBodyPartWobbleData(int) const;
-  virtual const char* FirstPersonBiteVerb() const;
-  virtual const char* FirstPersonCriticalBiteVerb() const;
-  virtual const char* ThirdPersonBiteVerb() const;
-  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual cchar* FirstPersonBiteVerb() const;
+  virtual cchar* FirstPersonCriticalBiteVerb() const;
+  virtual cchar* ThirdPersonBiteVerb() const;
+  virtual cchar* ThirdPersonCriticalBiteVerb() const;
   virtual truth AttackIsBlockable(int) const { return false; }
   virtual truth AttackMayDamageArmor() const { return false; }
 };
@@ -181,7 +181,7 @@ CHARACTER(unicorn, nonhumanoid)
   virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
   virtual truth SpecialEnemySightedReaction(character*);
  protected:
-  void MonsterTeleport(const char*);
+  void MonsterTeleport(cchar*);
 };
 
 CHARACTER(lion, nonhumanoid)
@@ -284,7 +284,7 @@ CHARACTER(ghost, nonhumanoid)
   virtual void AddName(festring&, int) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void SetOwnerSoul(const festring& What) { OwnerSoul = What; }
+  void SetOwnerSoul(cfestring& What) { OwnerSoul = What; }
   virtual truth IsNameable() const { return OwnerSoul.IsEmpty(); }
   virtual truth RaiseTheDead(character*);
   virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
@@ -293,10 +293,10 @@ CHARACTER(ghost, nonhumanoid)
   virtual truth IsPolymorphable() const { return MaxHP < 100; }
  protected:
   virtual int GetBodyPartWobbleData(int) const;
-  virtual const char* FirstPersonBiteVerb() const;
-  virtual const char* FirstPersonCriticalBiteVerb() const;
-  virtual const char* ThirdPersonBiteVerb() const;
-  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual cchar* FirstPersonBiteVerb() const;
+  virtual cchar* FirstPersonCriticalBiteVerb() const;
+  virtual cchar* ThirdPersonBiteVerb() const;
+  virtual cchar* ThirdPersonCriticalBiteVerb() const;
   virtual truth AttackIsBlockable(int) const { return false; }
   virtual truth AttackMayDamageArmor() const { return false; }
   virtual void GetAICommand();
@@ -316,10 +316,10 @@ CHARACTER(magpie, nonhumanoid)
   virtual void GetAICommand();
   virtual truth IsRetreating() const;
  protected:
-  virtual const char* FirstPersonBiteVerb() const;
-  virtual const char* FirstPersonCriticalBiteVerb() const;
-  virtual const char* ThirdPersonBiteVerb() const;
-  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual cchar* FirstPersonBiteVerb() const;
+  virtual cchar* FirstPersonCriticalBiteVerb() const;
+  virtual cchar* ThirdPersonBiteVerb() const;
+  virtual cchar* ThirdPersonCriticalBiteVerb() const;
 };
 
 CHARACTER(skunk, nonhumanoid)
@@ -439,7 +439,7 @@ CHARACTER(blinkdog, dog)
   virtual truth SpecialEnemySightedReaction(character*);
  protected:
   virtual bodypart* MakeBodyPart(int) const;
-  void MonsterTeleport(const char*);
+  void MonsterTeleport(cchar*);
   truth SummonFriend();
   int SummonModifier;
 };

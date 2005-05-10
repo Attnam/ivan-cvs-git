@@ -31,6 +31,14 @@
 
 #define IVAN_VERSION "0.50"
 
+class item;
+class material;
+class character;
+
+typedef const item citem;
+typedef const material cmaterial;
+typedef const character ccharacter;
+
 struct databasebase
 {
   int Config;
@@ -261,7 +269,7 @@ const name##prototype name::ProtoType
 #define WOBBLE_FREQ_SHIFT 4
 #define WOBBLE_FREQ_RANGE (3 << WOBBLE_FREQ_SHIFT)
 
-const v2 SILHOUETTE_SIZE(48, 64);
+cv2 SILHOUETTE_SIZE(48, 64);
 
 #define ITEM_CATEGORIES 18
 
@@ -1076,7 +1084,7 @@ const v2 SILHOUETTE_SIZE(48, 64);
 /*************************/
 
 #define TILE_SIZE 16
-const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
+cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
 #define SQUARE_INDEX_MASK 0xFFFF
 #define ALLOW_ANIMATE 0x10000

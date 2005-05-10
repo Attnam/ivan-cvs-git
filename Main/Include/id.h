@@ -27,18 +27,18 @@ class id
   virtual festring GetName(int, int) const;
   virtual void AddName(festring&, int) const;
   virtual festring GetName(int) const;
-  const char* GetArticle() const { return UsesLongArticle() ? "an" : "a"; }
+  cchar* GetArticle() const { return UsesLongArticle() ? "an" : "a"; }
  protected:
-  virtual const festring& GetNameSingular() const = 0;
+  virtual cfestring& GetNameSingular() const = 0;
   virtual void AddNameSingular(festring&, truth) const;
-  virtual const festring& GetNamePlural() const = 0;
+  virtual cfestring& GetNamePlural() const = 0;
   virtual truth UsesLongArticle() const = 0;
   virtual truth AddRustLevelDescription(festring&, truth) const { return false; }
   virtual truth AddAdjective(festring&, truth) const;
-  virtual const festring& GetAdjective() const = 0;
+  virtual cfestring& GetAdjective() const = 0;
   virtual truth UsesLongAdjectiveArticle() const = 0;
   virtual truth AddMaterialDescription(festring&, truth) const { return false; }
-  virtual const festring& GetPostFix() const = 0;
+  virtual cfestring& GetPostFix() const = 0;
   virtual void AddPostFix(festring&, int) const;
   virtual int GetArticleMode() const { return 0; }
   virtual truth ShowMaterial() const { return false; }

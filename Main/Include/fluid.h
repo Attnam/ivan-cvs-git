@@ -28,7 +28,7 @@ class fluid : public entity
  public:
   fluid();
   fluid(liquid*, lsquare*);
-  fluid(liquid*, item*, const festring&, truth);
+  fluid(liquid*, item*, cfestring&, truth);
   virtual ~fluid();
   virtual void Be();
   void Save(outputfile&) const;
@@ -53,7 +53,7 @@ class fluid : public entity
   void Redistribute();
   virtual material* RemoveMaterial(material*);
   void Destroy();
-  const festring& GetLocationName() const { return LocationName; }
+  cfestring& GetLocationName() const { return LocationName; }
   truth IsInside() const { return Flags & FLUID_INSIDE; }
   truth UseImage() const;
   virtual int GetTrapType() const { return Liquid->GetType() | FLUID_TRAP; }
@@ -66,8 +66,8 @@ class fluid : public entity
   virtual truth TryToUnStick(character*, v2);
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
-  virtual truth IsStuckTo(const character*) const;
-  truth IsDangerous(const character*) const;
+  virtual truth IsStuckTo(ccharacter*) const;
+  truth IsDangerous(ccharacter*) const;
  protected:
   trapdata TrapData;
   struct imagedata

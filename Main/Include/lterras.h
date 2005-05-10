@@ -101,7 +101,7 @@ OLTERRAIN(altar, olterrain)
   virtual truth Polymorph(character*);
   virtual truth SitOn(character*);
   virtual void Draw(blitdata&) const;
-  virtual truth VomitingIsDangerous(const character*) const;
+  virtual truth VomitingIsDangerous(ccharacter*) const;
 };
 
 OLTERRAIN(throne, decoration)
@@ -172,11 +172,11 @@ OLTERRAIN(brokendoor, door)
 GLTERRAIN(liquidterrain, glterrain)
 {
  public:
-  virtual const char* SurviveMessage() const;
-  virtual const char* MonsterSurviveMessage() const;
-  virtual const char* DeathMessage() const;
-  virtual const char* MonsterDeathVerb() const;
-  virtual const char* ScoreEntry() const;
+  virtual cchar* SurviveMessage() const;
+  virtual cchar* MonsterSurviveMessage() const;
+  virtual cchar* DeathMessage() const;
+  virtual cchar* MonsterDeathVerb() const;
+  virtual cchar* ScoreEntry() const;
   virtual truth IsFatalToStay() const { return true; }
   virtual truth DipInto(item*, character*);
   virtual truth IsDipDestination() const { return true; }
@@ -197,7 +197,7 @@ OLTERRAIN(sign, olterrain)
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SetText(const festring& What) { Text = What; }
+  virtual void SetText(cfestring& What) { Text = What; }
   virtual festring GetText() const;
   virtual void AddPostFix(festring&, int) const;
   virtual void StepOn(character*);

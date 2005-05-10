@@ -63,10 +63,10 @@ void area::Load(inputfile& SaveFile)
 
 void area::SendNewDrawRequest()
 {
-  const int XMin = Max(game::GetCamera().X, 0);
-  const int YMin = Max(game::GetCamera().Y, 0);
-  const int XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
-  const int YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  cint XMin = Max(game::GetCamera().X, 0);
+  cint YMin = Max(game::GetCamera().Y, 0);
+  cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
+  cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
 
   for(int x = XMin; x < XSize && x < XMax; ++x)
     for(int y = YMin; y < YMax; ++y)
@@ -89,5 +89,5 @@ square* area::GetNeighbourSquare(v2 Pos, int I) const
 
 void area::SetEntryPos(int I, v2 Pos)
 {
-  EntryMap.insert(std::pair<int, v2>(I, Pos));
+  EntryMap.insert(std::make_pair(I, Pos));
 }

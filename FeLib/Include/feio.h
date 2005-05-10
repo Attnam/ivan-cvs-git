@@ -23,20 +23,20 @@ typedef truth (*stringkeyhandler)(int, festring&);
 class iosystem
 {
  public:
-  static festring ContinueMenu(col16, col16, const festring&);
-  static int StringQuestion(festring&, const festring&, v2, col16,
+  static festring ContinueMenu(col16, col16, cfestring&);
+  static int StringQuestion(festring&, cfestring&, v2, col16,
 			    festring::sizetype, festring::sizetype,
 			    truth, truth, stringkeyhandler = 0);
-  static long NumberQuestion(const festring&, v2, col16,
+  static long NumberQuestion(cfestring&, v2, col16,
 			     truth, truth = false);
-  static long ScrollBarQuestion(const festring&, v2, long, long, long,
+  static long ScrollBarQuestion(cfestring&, v2, long, long, long,
 				long, long, col16, col16, col16, int,
 				int, truth, void (*)(long) = 0);
-  static int Menu(const bitmap*, v2, const festring&,
-		  const festring&, col16,
-		  const festring& = CONST_S(""),
-		  const festring& = CONST_S(""));
-  static void TextScreen(const festring&, col16 = 0xFFFF,
+  static int Menu(cbitmap*, v2, cfestring&,
+		  cfestring&, col16,
+		  cfestring& = CONST_S(""),
+		  cfestring& = CONST_S(""));
+  static void TextScreen(cfestring&, col16 = 0xFFFF,
 			 truth = true, void (*)(bitmap*) = 0);
   static truth IsAcceptableForStringQuestion(char);
 };

@@ -32,7 +32,7 @@ int CWeaponSkillUnusePenaltyMap[]
     625, 800, 1000, 1250, 1500, 2000, 2500,
     3000, 4000, 5000, 6250, 8000, 10000 };
 
-const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES]
+cchar* CWeaponSkillName[WEAPON_SKILL_CATEGORIES]
 = { "unarmed combat",
     "kicking",
     "biting",
@@ -70,10 +70,10 @@ ulong cweaponskill::GetUnuseTickMap(int I) const
 { return CWeaponSkillUnuseTickMap[I]; }
 int cweaponskill::GetUnusePenaltyMap(int I) const
 { return CWeaponSkillUnusePenaltyMap[I]; }
-const char* cweaponskill::GetName(int Category) const
+cchar* cweaponskill::GetName(int Category) const
 { return CWeaponSkillName[Category]; }
 
-sweaponskill::sweaponskill(const item* Item)
+sweaponskill::sweaponskill(citem* Item)
 : ID(Item->GetID()), Weight(Item->GetWeight()), Config(Item->GetConfig()) { }
 int sweaponskill::GetLevelMap(int I) const
 { return SWeaponSkillLevelMap[I]; }
@@ -143,13 +143,13 @@ void cweaponskill::AddLevelDownMessage(int Category) const
 	      CWeaponSkillName[Category], Level);
 }
 
-void sweaponskill::AddLevelUpMessage(const char* WeaponName) const
+void sweaponskill::AddLevelUpMessage(cchar* WeaponName) const
 {
   ADD_MESSAGE("You advance to skill level %d with your %s!",
 	      Level, WeaponName);
 }
 
-void sweaponskill::AddLevelDownMessage(const char* WeaponName) const
+void sweaponskill::AddLevelDownMessage(cchar* WeaponName) const
 {
   ADD_MESSAGE("You have not practised enough with your %s lately. "
 	      "Your skill level is reduced to %d!", WeaponName, Level);
@@ -180,14 +180,14 @@ truth weaponskill::Tick()
   return false;
 }
 
-truth sweaponskill::IsSkillOf(const item* Item) const
+truth sweaponskill::IsSkillOf(citem* Item) const
 {
   return (ID == Item->GetID()
 	  && Weight == Item->GetWeight()
 	  && Config == Item->GetConfig());
 }
 
-truth sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const
+truth sweaponskill::IsSkillOfCloneMother(citem* Item, ulong CMID) const
 {
   return (ID == CMID
 	  && Weight == Item->GetWeight()

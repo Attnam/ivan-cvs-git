@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   }
   catch(...)
   {
-    const char* Msg = "Fatal Error: Unknown exception thrown.";
+    cchar* Msg = "Fatal Error: Unknown exception thrown.";
 #ifdef WIN32
     ShowWindow(GetActiveWindow(), SW_HIDE);
     char Buffer[256];

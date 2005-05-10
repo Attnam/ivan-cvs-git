@@ -13,13 +13,10 @@
 #ifndef __GOD_H__
 #define __GOD_H__
 
-#include "typedef.h"
+#include "ivandef.h"
 
-class item;
-class character;
 class outputfile;
 class inputfile;
-class festring;
 class god;
 class liquid;
 class team;
@@ -30,15 +27,15 @@ typedef god* (*godspawner)();
 class godprototype
 {
  public:
-  godprototype(godspawner, const char*);
+  godprototype(godspawner, cchar*);
   god* Spawn() const { return Spawner(); }
   god* SpawnAndLoad(inputfile&) const;
-  const char* GetClassID() const { return ClassID; }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
   godspawner Spawner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class god
@@ -47,10 +44,10 @@ class god
   typedef godprototype prototype;
   god();
   virtual void Pray();
-  virtual const char* GetName() const = 0;
-  virtual const char* GetDescription() const = 0;
-  const char* GetPersonalPronoun() const;
-  const char* GetObjectPronoun() const;
+  virtual cchar* GetName() const = 0;
+  virtual cchar* GetDescription() const = 0;
+  cchar* GetPersonalPronoun() const;
+  cchar* GetObjectPronoun() const;
   virtual int GetAlignment() const = 0;
   festring GetCompleteDescription() const;
   void ApplyDivineTick();
@@ -77,7 +74,7 @@ class god
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual truth ForceGiveBodyPart() const { return false; }
   virtual truth HealRegeneratingBodyParts() const { return false; }
-  virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  virtual truth LikesMaterial(const materialdatabase*, ccharacter*) const;
   truth TryToAttachBodyPart(character*);
   truth TryToHardenBodyPart(character*);
   virtual truth MutatesBodyParts() const { return false; }

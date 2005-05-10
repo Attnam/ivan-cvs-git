@@ -40,7 +40,7 @@
 
 /* Shouldn't be initialized here! */
 
-const char* globalerrorhandler::BugMsg
+cchar* globalerrorhandler::BugMsg
 = "\n\nPlease send bug report to ivan-users@sourceforge.net\n"
 "including a brief description of what you did, what version\n"
 "you are running and which kind of system you are using.";
@@ -85,7 +85,7 @@ void globalerrorhandler::DeInstall()
   set_new_handler(OldNewHandler);
 }
 
-void globalerrorhandler::Abort(const char* Format, ...)
+void globalerrorhandler::Abort(cchar* Format, ...)
 {
   char Buffer[512];
 
@@ -118,7 +118,7 @@ int globalerrorhandler::NewHandler(size_t)
   void globalerrorhandler::NewHandler()
 #endif
 {
-  const char* Msg = "Fatal Error: Memory depleted.\n"
+  cchar* Msg = "Fatal Error: Memory depleted.\n"
 		    "Get more RAM and hard disk space.";
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);

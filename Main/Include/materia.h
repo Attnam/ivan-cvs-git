@@ -24,7 +24,7 @@ class materialprototype;
 template <class type> class databasecreator;
 
 typedef material* (*materialspawner)(int, long, truth);
-typedef material* (*materialcloner)(const material*);
+typedef material* (*materialcloner)(cmaterial*);
 
 struct materialdatabase : public databasebase
 {
@@ -71,11 +71,11 @@ class materialprototype
 {
  public:
   friend class databasecreator<material>;
-  materialprototype(const materialprototype*, materialspawner, materialcloner, const char*);
+  materialprototype(const materialprototype*, materialspawner, materialcloner, cchar*);
   material* Spawn(int Config, long Volume = 0) const { return Spawner(Config, Volume, false); }
   material* SpawnAndLoad(inputfile&) const;
-  material* Clone(const material* Material) const { return Cloner(Material); }
-  const char* GetClassID() const { return ClassID; }
+  material* Clone(cmaterial* Material) const { return Cloner(Material); }
+  cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const materialprototype* GetBase() const { return Base; }
   int CreateSpecialConfigurations(materialdatabase**, int Configs) { return Configs; }
@@ -90,7 +90,7 @@ class materialprototype
   int ConfigSize;
   materialspawner Spawner;
   materialcloner Cloner;
-  const char* ClassID;
+  cchar* ClassID;
 };
 
 class material
@@ -133,8 +133,8 @@ class material
   DATA_BASE_VALUE(long, PriceModifier);
   DATA_BASE_VALUE(col24, Emitation);
   DATA_BASE_VALUE(int, NutritionValue);
-  DATA_BASE_VALUE(const festring&, NameStem);
-  DATA_BASE_VALUE(const festring&, AdjectiveStem);
+  DATA_BASE_VALUE(cfestring&, NameStem);
+  DATA_BASE_VALUE(cfestring&, AdjectiveStem);
   DATA_BASE_VALUE(int, Effect);
   DATA_BASE_VALUE(int, ConsumeEndMessage);
   DATA_BASE_VALUE(int, HitMessage);
@@ -158,19 +158,19 @@ class material
   static material* MakeMaterial(int, long = 0);
   virtual truth IsFlesh() const { return false; }
   virtual truth IsLiquid() const { return false; }
-  virtual const char* GetConsumeVerb() const;
+  virtual cchar* GetConsumeVerb() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  truth IsSameAs(const material* What) const { return What->GetConfig() == GetConfig(); }
+  truth IsSameAs(cmaterial* What) const { return What->GetConfig() == GetConfig(); }
   truth IsTransparent() const { return GetAlpha() != 255; }
   virtual long GetTotalNutritionValue() const;
   virtual truth IsVeryCloseToSpoiling() const { return false; }
   virtual void AddWetness(long) { }
   virtual int GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
-  truth CanBeEatenByAI(const character*) const;
+  truth CanBeEatenByAI(ccharacter*) const;
   virtual void SetSpoilCounter(int) { }
-  DATA_BASE_VALUE(const festring&, BreatheMessage);
+  DATA_BASE_VALUE(cfestring&, BreatheMessage);
   truth BreatheEffect(character*);
   virtual truth SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(truth) { }
@@ -199,14 +199,14 @@ class material
   virtual truth IsInfectedByLeprosy() const { return false; }
   virtual void SetIsInfectedByLeprosy(truth) { }
   virtual truth AddRustLevelDescription(festring&, truth) const { return false; }
-  int GetHardenedMaterial(const item*) const;
-  int GetHardenModifier(const item*) const;
+  int GetHardenedMaterial(citem*) const;
+  int GetHardenModifier(citem*) const;
   virtual int GetSpoilPercentage() const { return 0; }
   virtual truth Spoils() const { return false; }
   virtual truth IsExplosive() const;
   virtual truth IsSparkling() const;
   material* Duplicate() const { return DataBase->ProtoType->Clone(this); }
-  truth IsStuckTo(const character*) const;
+  truth IsStuckTo(ccharacter*) const;
   DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
  protected:
   virtual void PostConstruct() { }

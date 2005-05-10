@@ -26,8 +26,8 @@ rawbitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
-const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx", "Graphics/Cursor.pcx" };
-const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Symbol.pcx" };
+cchar* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx", "Graphics/Cursor.pcx" };
+cchar* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Symbol.pcx" };
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;
@@ -161,10 +161,10 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
   }
   else
   {
-    const int SpecialFlags = GI.SpecialFlags;
-    const int BodyPartFlags = SpecialFlags & 0x78;
-    const int RotateFlags = SpecialFlags & 0x7;
-    const int Frame = GI.Frame;
+    cint SpecialFlags = GI.SpecialFlags;
+    cint BodyPartFlags = SpecialFlags & 0x78;
+    cint RotateFlags = SpecialFlags & 0x7;
+    cint Frame = GI.Frame;
     v2 SparklePos = v2(GI.SparklePosX, GI.SparklePosY);
     rawbitmap* RawBitmap = RawGraphic[GI.FileIndex];
     v2 RawPos = v2(GI.BitmapPosX, GI.BitmapPosY);
@@ -206,7 +206,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     if(GI.FlyAmount)
       Bitmap->CreateFlies(GI.Seed, Frame, GI.FlyAmount);
 
-    const int WobbleData = GI.WobbleData;
+    cint WobbleData = GI.WobbleData;
 
     if(WobbleData & WOBBLE)
     {
@@ -227,7 +227,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     if(SpecialFlags & ST_LIGHTNING && !((Frame + 1) & 7))
       Bitmap->CreateLightning(GI.Seed + Frame, WHITE);
 
-    return TileMap.insert(std::pair<graphicid, tile>(GI, tile(Bitmap))).first;
+    return TileMap.insert(std::make_pair(GI, tile(Bitmap))).first;
   }
 }
 
@@ -278,7 +278,7 @@ v2 igraph::RotateTile(rawbitmap* Source, rawbitmap* Dest, v2 Pos, v2 SparklePos,
   {
     if(RotateFlags & ROTATE)
     {
-      const int T = SparklePos.X;
+      cint T = SparklePos.X;
       SparklePos.X = 15 - SparklePos.Y;
       SparklePos.Y = T;
     }
@@ -306,7 +306,7 @@ void igraph::RemoveUser(tilemap::iterator Iterator)
 
 outputfile& operator<<(outputfile& SaveFile, const graphicid& Value)
 {
-  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
+  SaveFile.Write(reinterpret_cast<cchar*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
@@ -379,7 +379,7 @@ void graphicdata::Retire()
   }
 }
 
-const int* igraph::GetBodyBitmapValidityMap(int SpecialFlags)
+cint* igraph::GetBodyBitmapValidityMap(int SpecialFlags)
 {
   return BodyBitmapValidityMap[(SpecialFlags & 0x38) >> 3];
 }

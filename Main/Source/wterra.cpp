@@ -13,11 +13,11 @@
 /* Compiled through wmapset.cpp */
 
 gwterrainprototype::gwterrainprototype(gwterrainspawner Spawner,
-				       const char* ClassID)
+				       cchar* ClassID)
 : Spawner(Spawner), ClassID(ClassID)
 { Index = protocontainer<gwterrain>::Add(this); }
 owterrainprototype::owterrainprototype(owterrainspawner Spawner,
-				       const char* ClassID)
+				       cchar* ClassID)
 : Spawner(Spawner), ClassID(ClassID)
 { Index = protocontainer<owterrain>::Add(this); }
 
@@ -55,8 +55,8 @@ festring wterrain::GetName(int Case) const
 
 void gwterrain::Draw(blitdata& BlitData) const
 {
-  const int AF = AnimationFrames;
-  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1
+  cint AF = AnimationFrames;
+  cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1
 		? 0 : GET_TICK() & (AF - 1);
   BlitData.Src = GetBitmapPos(F);
   igraph::GetWTerrainGraphic()->LuminanceBlit(BlitData);
@@ -72,8 +72,8 @@ void gwterrain::Draw(blitdata& BlitData) const
 
 void owterrain::Draw(blitdata& BlitData) const
 {
-  const int AF = AnimationFrames;
-  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1
+  cint AF = AnimationFrames;
+  cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1
 		? 0 : GET_TICK() & (AF - 1);
   BlitData.Src = GetBitmapPos(F);
   igraph::GetWTerrainGraphic()->LuminanceMaskedBlit(BlitData);

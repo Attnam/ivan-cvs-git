@@ -31,7 +31,7 @@ v2 PossibleSparkleBuffer[256];
 object::object() : entity(0), MainMaterial(0) { }
 int object::GetSpecialFlags() const { return ST_NORMAL; }
 col16 object::GetOutlineColor(int) const { return TRANSPARENT_COLOR; }
-const bitmap*const* object::GetPicture() const { return GraphicData.Picture; }
+cbitmap*const* object::GetPicture() const { return GraphicData.Picture; }
 
 object::object(const object& Object) : entity(Object), id(Object), VisualEffects(Object.VisualEffects)
 {
@@ -146,7 +146,7 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
 
 void object::UpdatePictures()
 {
-  static const v2 ZeroPos(0, 0);
+  static cv2 ZeroPos(0, 0);
   UpdatePictures(GraphicData, ZeroPos, VisualEffects|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
@@ -509,7 +509,7 @@ int object::GetRustDataA() const
   return MainMaterial->GetRustData();
 }
 
-truth object::DetectMaterial(const material* Material) const
+truth object::DetectMaterial(cmaterial* Material) const
 {
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && GetMaterial(c)->IsSameAs(Material))

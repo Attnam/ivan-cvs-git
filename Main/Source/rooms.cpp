@@ -649,28 +649,28 @@ void bananadroparea::TeleportSquare(character* Infidel, lsquare* Square)
     }
 }
 
-truth shop::AllowSpoil(const item* Item) const
+truth shop::AllowSpoil(citem* Item) const
 {
   character* Master = GetMaster();
   return !Master || !Master->IsEnabled() || !Item->HasPrice();
 }
 
-truth shop::AllowKick(const character* Char, const lsquare* LSquare) const // gum solution
+truth shop::AllowKick(ccharacter* Char, const lsquare* LSquare) const // gum solution
 {
   return !LSquare->GetStack()->GetItems() || !MasterIsActive() || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE || !LSquare->CanBeSeenBy(GetMaster());
 }
 
-truth cathedral::AllowKick(const character* Char, const lsquare* LSquare) const
+truth cathedral::AllowKick(ccharacter* Char, const lsquare* LSquare) const
 {
   return game::GetTeam(ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE || !LSquare->GetStack()->GetItems();
 }
 
-truth library::AllowKick(const character* Char, const lsquare* LSquare) const
+truth library::AllowKick(ccharacter* Char, const lsquare* LSquare) const
 {
   return !LSquare->GetStack()->GetItems() || !MasterIsActive() || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE || LSquare->CanBeSeenBy(GetMaster());
 }
 
-truth bananadroparea::AllowKick(const character* Char, const lsquare*) const
+truth bananadroparea::AllowKick(ccharacter* Char, const lsquare*) const
 {
   return !Char->IsPlayer() || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE);
 }
