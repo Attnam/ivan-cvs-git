@@ -57,9 +57,10 @@ void bodypartslot::Empty()
 void gearslot::Empty()
 {
   col24 Emitation = Item->GetEmitation();
-  Item = 0;
   SignalVolumeAndWeightChange();
   GetBodyPart()->SignalEquipmentRemoval(this, Item);
+  Item = 0;
+
   SignalEmitationDecrease(Emitation);
 }
 

@@ -420,9 +420,13 @@ double arm::GetWieldedDamage() const
   }
 
   if(HitStrength > Requirement)
+  {
+    /* I have no idea whether this works. It needs to be checked */
+
     return Wielded->GetBaseDamage() * sqrt(1e-13 * HitStrength)
-      * (*GetCurrentSWeaponSkill())->GetBonus()
-      * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
+	* GetCurrentSWeaponSkillBonus()
+	* GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
+  }
   else
     return 0;
 }
@@ -435,10 +439,11 @@ double arm::GetWieldedToHitValue() const
     return 0;
 
   citem* Wielded = GetWielded();
+
   double Base = 2e-11
 		* Min(HitStrength, 10)
 		* GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus()
-		* (*GetCurrentSWeaponSkill())->GetBonus()
+		* GetCurrentSWeaponSkillBonus()
 		* Master->GetMoveEase()
 		* (10000. / (1000 + Wielded->GetWeight()) + Wielded->GetTHVBonus());
   double ThisToHit = GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION));
@@ -474,7 +479,7 @@ long arm::GetWieldedAPCost() const
   if(HitStrength <= 0)
     return 0;
 
-  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * (*GetCurrentSWeaponSkill())->GetBonus() * Min(HitStrength, 10)));
+  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * (GetCurrentSWeaponSkillBonus() * Min(HitStrength, 10)));
 }
 
 void head::CalculateDamage()
@@ -3529,4 +3534,10 @@ void bodypart::AddDamageID(int SrcID, int Amount)
 {
   /*damageid D = { SrcID, Amount };
   DamageID.push_back(D);*/
+}
+
+int bodypart::GetCurrentSWeaponSkillBonus() const
+{
+  return *GetCurrentSWeaponSkill() ? 
+      (*GetCurrentSWeaponSkill())->GetBonus() : 1;
 }
