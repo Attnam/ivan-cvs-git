@@ -155,7 +155,6 @@ ITEM(bodypart, item)
   static truth DamageTypeCanScar(int);
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
-  int GetCurrentSWeaponSkillBonus() const;
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
@@ -355,6 +354,7 @@ ITEM(arm, bodypart)
  protected:
   virtual sweaponskill** GetCurrentSWeaponSkill() const { return 0; }
   void UpdateArmArmorPictures(graphicdata&, graphicdata&, int) const;
+  int GetCurrentSWeaponSkillBonus() const;
   gearslot WieldedSlot;
   gearslot GauntletSlot;
   gearslot RingSlot;

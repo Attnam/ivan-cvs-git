@@ -479,7 +479,7 @@ long arm::GetWieldedAPCost() const
   if(HitStrength <= 0)
     return 0;
 
-  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * (GetCurrentSWeaponSkillBonus() * Min(HitStrength, 10)));
+  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * (GetCurrentSWeaponSkillBonus() * Min(HitStrength, 10))));
 }
 
 void head::CalculateDamage()
@@ -3536,7 +3536,7 @@ void bodypart::AddDamageID(int SrcID, int Amount)
   DamageID.push_back(D);*/
 }
 
-int bodypart::GetCurrentSWeaponSkillBonus() const
+int arm::GetCurrentSWeaponSkillBonus() const
 {
   return *GetCurrentSWeaponSkill() ? 
       (*GetCurrentSWeaponSkill())->GetBonus() : 1;
