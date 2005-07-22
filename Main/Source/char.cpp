@@ -9829,6 +9829,9 @@ truth character::CanTameWithDulcis(const character* Tamer) const
   if(GetAttachedGod() == DULCIS)
     return true;
 
+  if(TamingDifficulty == NO_TAMING)
+    return false;
+
   int Modifier = Tamer->GetAttribute(WISDOM) + Tamer->GetAttribute(CHARISMA);
 
   if(Tamer->IsPlayer())
@@ -9851,6 +9854,9 @@ truth character::CanTameWithLyre(const character* Tamer) const
 {
   int TamingDifficulty = GetTamingDifficulty();
 
+  if(TamingDifficulty == NO_TAMING)
+    return false;
+
   if(TamingDifficulty == 0)
     if(!IgnoreDanger())
       TamingDifficulty = 10 * GetRelativeDanger(Tamer);
@@ -9863,5 +9869,9 @@ truth character::CanTameWithLyre(const character* Tamer) const
 truth character::CanTameWithScroll(const character* Tamer) const
 {
   int TamingDifficulty = GetTamingDifficulty();
+
+  if(TamingDifficulty == NO_TAMING)
+    return false;
+
   return TamingDifficulty == 0 || Tamer->GetAttribute(INTELLIGENCE) * 4 + Tamer->GetAttribute(CHARISMA) >= TamingDifficulty * 5;
 }
