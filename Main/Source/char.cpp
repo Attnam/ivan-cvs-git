@@ -1418,6 +1418,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
   square* SquareUnder[MAX_SQUARES_UNDER];
   lsquare** LSquareUnder = reinterpret_cast<lsquare**>(SquareUnder);
   memset(SquareUnder, 0, sizeof(SquareUnder));
+  Disable();
 
   if(IsPlayer() || !game::IsInWilderness())
   {
