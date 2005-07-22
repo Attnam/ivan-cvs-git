@@ -1019,3 +1019,17 @@ void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weap
       }
    }
 } 
+
+
+void wondersmellstaff::Break(character* Who, int Much)
+{
+    material* GasMaterial = GetSecondaryMaterial();
+    GetLevel()->GasExplosion(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100), GetLSquareUnder());
+
+    if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s unleashes a puff of a wonderous gas.", CHAR_NAME(DEFINITE));
+
+    }
+    meleeweapon::Break(Who,Much);
+}

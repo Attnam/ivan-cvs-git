@@ -321,6 +321,7 @@ ITEM(wondersmellstaff, meleeweapon)
  public:
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual truth AllowAlphaEverywhere() const { return true; }
+  virtual void Break(character*, int);
  protected:
   virtual int GetClassAnimationFrames() const;
   virtual col16 GetOutlineColor(int) const;

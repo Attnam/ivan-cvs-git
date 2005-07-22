@@ -146,7 +146,7 @@ material* material::EatEffect(character* Eater, long Amount)
       }
       else if(Eater->CanBeSeenByPlayer())
       {
-	ADD_MESSAGE("%s relaxs a bit.", Eater->CHAR_NAME(DEFINITE));	
+	ADD_MESSAGE("%s relaxes a bit.", Eater->CHAR_NAME(DEFINITE));	
       }
       Eater->DeActivateTemporaryState(PANIC);
     }

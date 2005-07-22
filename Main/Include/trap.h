@@ -16,6 +16,7 @@
 #include <set>
 
 #include "entity.h"
+#include "festring.h"
 
 class trap;
 class lsquare;
