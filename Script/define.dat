@@ -930,4 +930,6 @@
 
 #define NO_MONSTER_GENERATION 1
 
+#define NO_TAMING -1
+
 ; /* this line must be here */

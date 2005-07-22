@@ -33,7 +33,11 @@ int mommo::GetBodyPartWobbleData(int) const { return (GetConfig() == CONICAL ? W
 
 bodypart* dog::MakeBodyPart(int) const { return dogtorso::Spawn(0, NO_MATERIALS); }
 
+bodypart* spider::MakeBodyPart(int) const { return spidertorso::Spawn(0, NO_MATERIALS); }
+
 int dolphin::GetSpecialBodyPartFlags(int) const { return RAND() & (MIRROR|ROTATE); }
+
+bodypart* bat::MakeBodyPart(int) const { return battorso::Spawn(0, NO_MATERIALS); }
 
 col16 chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
@@ -1593,6 +1597,7 @@ void hedgehog::SpecialBodyDefenceEffect(character* Enemy, bodypart* BodyPart, in
       ADD_MESSAGE("%s spines jab %s!", CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_NAME(DEFINITE));
 
     Enemy->ReceiveBodyPartDamage(this, 1 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart->GetBodyPartIndex(), YOURSELF, false, false, true, false);
+    Enemy->CheckDeath(CONST_S("killed by the pointy spines of ") + GetName(INDEFINITE), this);
   }
 }
 

@@ -236,7 +236,6 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(DefaultMoney);
   ADD_MEMBER(TotalSize);
   ADD_MEMBER(CanRead);
-  ADD_MEMBER(IsCharmable);
   ADD_MEMBER(Sex);
   ADD_MEMBER(CanBeGenerated);
   ADD_MEMBER(CriticalModifier);
@@ -384,6 +383,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ForceCustomStandVerb);
   ADD_MEMBER(VomittingIsUnhealthy);
   ADD_MEMBER(AllowPlayerToChangeEquipment);
+  ADD_MEMBER(TamingDifficulty);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

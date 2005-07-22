@@ -1105,4 +1105,6 @@ cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
 #define NO_MONSTER_GENERATION 1
 
+#define NO_TAMING -1
+
 #endif

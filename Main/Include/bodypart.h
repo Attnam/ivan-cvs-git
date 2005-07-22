@@ -729,4 +729,18 @@ ITEM(lobhsetorso, largetorso)
   virtual col16 GetMaterialColorD(int) const;
 };
 
+ITEM(battorso, normaltorso)
+{
+ protected:
+  virtual int GetClassAnimationFrames() const { return 16; }
+  virtual v2 GetBitmapPos(int) const;
+};
+
+ITEM(spidertorso, normaltorso)
+{
+ protected:
+  virtual int GetClassAnimationFrames() const { return 16; }
+  virtual v2 GetBitmapPos(int) const;
+};
+
 #endif

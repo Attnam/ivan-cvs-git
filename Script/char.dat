@@ -38,7 +38,6 @@ character
   DefaultMoney = 0;
   /* Obligatory: TotalSize */
   CanRead = false;
-  IsCharmable = true;
   Sex = UNDEFINED;
   CanBeGenerated = false;
   CriticalModifier = 20;
@@ -275,6 +274,7 @@ character
   VomittingIsUnhealthy = true;
   AllowPlayerToChangeEquipment = true;
   DefaultWillPower = 10;
+  TamingDifficulty = 0;
 }
 
 humanoid
@@ -346,7 +346,7 @@ petrus
   DefaultWisdom = 40;
   DefaultCharisma = 40;
   DefaultMana = 40;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   HairColor = rgb16(160, 160, 160);
@@ -630,7 +630,7 @@ guard
     RightSWeaponSkillHits = 200;
     LeftSWeaponSkillHits = 200;
     PanicLevel = 5;
-    IsCharmable = false;
+    TamingDifficulty = NO_TAMING;
     IsUnique = true;
     DefaultName = "Sir Haedlac Galladon VII";
     IsNameable = false;
@@ -685,7 +685,7 @@ shopkeeper
   CanBeCloned = false;
   IsPolymorphable = false;
   Inventory == holybook(MELLIS);
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   AttachedGod = MELLIS;
   CanBeConfused = false;
 
@@ -764,7 +764,7 @@ priest
   CanRead = true;
   NameSingular = "priest";
   CanBeCloned = false;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   MoveType = WALK|SWIM;
   IsAbstract = true;
   Inventory == potion { Times = 2; SecondaryMaterial = ANTIDOTE_LIQUID; }
@@ -856,7 +856,7 @@ oree
   DefaultWisdom = 20;
   DefaultCharisma = 3;
   DefaultMana = 30;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   HeadBitmapPos = 96, 32;
@@ -1008,7 +1008,7 @@ darkknight
     CWeaponSkillHits == 5000;
     RightSWeaponSkillHits = 2000;
     PanicLevel = 0;
-    IsCharmable = false;
+    TamingDifficulty = NO_TAMING;
     IsUnique = true;
     CanBeWished = true;
     DefaultName = "Golgor Dhan";
@@ -1802,7 +1802,7 @@ spider
     DefaultWisdom = 3;
     DefaultCharisma = 4;
     Adjective = "large";
-    TorsoBitmapPos = 272, 0;
+    TorsoBitmapPos = 304, 16;
     BaseBiteStrength = 400;
     CWeaponSkillHits == 50;
     TotalVolume = 500;
@@ -2428,7 +2428,7 @@ librarian
   IsUnique = true;
   IsNameable = false;
   DefaultName = "Haathbar";
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsExtraCoward = true;
   AttachedGod = SOPHOS;
   PolymorphIntelligenceRequirement = 20;
@@ -2520,7 +2520,7 @@ bat
   StandVerb = "flying";
   CanOpen = false;
   TotalVolume = 1000;
-  TorsoBitmapPos = 464, 0;
+  TorsoBitmapPos = 464, 16;
   HostileReplies == "@Dd squeaks evilly.";
   FriendlyReplies == "@Dd squeaks happily.";
   TotalSize = 20;
@@ -2712,7 +2712,7 @@ mistress
     NameSingular = "mistress queen";
     PanicLevel = 0;
     ClassStates = INVISIBLE|HASTE|INFRA_VISION|ESP;
-    IsCharmable = false;
+    TamingDifficulty = NO_TAMING;
     IsUnique = true;
     CanBeWished = true;
     DefaultName = "Sherarax";
@@ -3007,7 +3007,7 @@ angel
   DefaultWisdom = 35;
   DefaultCharisma = 50;
   DefaultMana = 35;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   Sex = FEMALE;
   TotalVolume = 60000;
   TorsoBitmapPos = 432, 0;
@@ -3628,7 +3628,7 @@ bananagrower
   ArmBitmapPos = 64, 64;
   LegBitmapPos = 0, 288;
   Inventory == banana { Times = 10; }
-  IsCharmable = false; /* AI will go insane if he leaves New Attnam */
+  TamingDifficulty = NO_TAMING; /* AI will go insane if he leaves New Attnam */
   HostileReplies == "\"Banana POWER!\"";
   AttachedGod = SILVA;
   CanRead = true;
@@ -3696,7 +3696,7 @@ imperialist
   DefaultName = "Richel Decos";
   AttackStyle = USE_ARMS|USE_LEGS;
   CriticalModifier = 4;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   StandVerb = "smiling in a twisted way";
   AttachedGod = MELLIS;
   CanBeConfused = false;
@@ -3815,7 +3815,7 @@ smith
   IsNameable = false;
   CanBeCloned = false;
   DefaultName = "Ikiros";
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   AttachedGod = LORICATUS;
 }
 
@@ -3847,7 +3847,7 @@ ostrich
   FleshMaterial = OSTRICH_FLESH;
   DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
   StandVerb = "floating";
-  IsCharmable = false; /* AI will go insane if it leaves New Attnam */
+  TamingDifficulty = NO_TAMING; /* AI will go insane if it leaves New Attnam */
   AttachedGod = SILVA;
   ClassStates = LEVITATION;
   AutomaticallySeen = true;
@@ -3877,7 +3877,7 @@ elder
   LegBitmapPos = 0, 288;
   IsUnique = true;
   DefaultName = "Kaethos";
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
   CanRead = true;
   Inventory == holybook(SILVA);
@@ -3936,7 +3936,7 @@ encourager
   CWeaponSkillHits = { 2, 100, 100; }
   RightSWeaponSkillHits = 100;
   AttackStyle = USE_ARMS|USE_LEGS;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   HostileReplies == "\"Ah! Again me kick ye!\"";
   AttachedGod = MELLIS;
   FriendlyReplies =
@@ -4067,7 +4067,7 @@ eddy
   ClassStates = GAS_IMMUNITY;
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 0;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   CanHear = false;
   CanChoke = false;
   IsImmuneToStickiness = true;
@@ -4293,7 +4293,7 @@ darkmage
     TotalSize = 150;
     IsUnique = true;
     PanicLevel = 0;
-    IsCharmable = false;
+    TamingDifficulty = NO_TAMING;
     IsNameable = false;
     CanBeCloned = false;
     IsPolymorphable = false;
@@ -4513,7 +4513,7 @@ elpuri
   DefaultWisdom = 35;
   DefaultCharisma = 2;
   DefaultMana = 35;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   TotalVolume = 1000000;
@@ -4568,7 +4568,7 @@ genetrixvesana
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   PanicLevel = 0;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   DeathMessage = "@Dd is brutally destroyed.";
@@ -4878,7 +4878,7 @@ sumowrestler
   TorsoBitmapPos = 32, 352;
   ArmBitmapPos = 64, 336;
   LegBitmapPos = 16, 176;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this)\"";
   AttachedGod = SILVA;
   KnownCWeaponSkills = { 2, UNARMED, KICK; }
@@ -5087,7 +5087,7 @@ archangel
   DefaultMana = 45;
   IsAbstract = true;
   ClassStates = TELEPORT|HASTE|INFRA_VISION|ESP|TELEPORT_CONTROL|POLYMORPH_CONTROL|GAS_IMMUNITY|LIFE_SAVED;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsUnique = true;
   IsNameable = false;
   CanBeCloned = false;
@@ -5224,7 +5224,7 @@ tailor
   IsNameable = false;
   CanBeCloned = false;
   DefaultName = "Mirvo";
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
 }
 
@@ -5318,7 +5318,7 @@ lobhse
   DefaultName = "Lobh-Se";
   TorsoBitmapPos = 192, 64;
   TotalVolume = 500000;
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   TotalSize = 200;
@@ -5370,7 +5370,7 @@ tailor
   IsNameable = false;
   CanBeCloned = false;
   DefaultName = "Mirvo";
-  IsCharmable = false;
+  TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
 }
 

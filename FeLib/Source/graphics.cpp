@@ -30,6 +30,9 @@ void (*graphics::SwitchModeHandler)();
 
 #ifdef USE_SDL
 SDL_Surface* graphics::Screen;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+SDL_Surface* graphics::TempSurface;
+#endif
 #endif
 
 #ifdef __DJGPP__
@@ -71,6 +74,9 @@ void graphics::DeInit()
   DefaultFont = 0;
 
 #ifdef USE_SDL
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+  SDL_FreeSurface(TempSurface);
+#endif
   SDL_Quit();
 #endif
 
@@ -115,7 +121,44 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   DoubleBuffer = new bitmap(NewRes);
   Res = NewRes;
   ColorDepth = 16;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+
+  Uint32 rmask, gmask, bmask;
+  rmask = 0xF800;
+  gmask = 0x7E0;
+  bmask = 0x1F;
+
+  TempSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, Res.X, Res.Y, 16,
+				     rmask, gmask, bmask, 0);
+
+  if(!TempSurface)
+      ABORT("CreateRGBSurface failed: %s\n", SDL_GetError());
+
+#endif
 }
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+
+void graphics::BlitDBToScreen()
+{
+  SDL_LockSurface(TempSurface);
+  packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
+  packcol16* DestPtr = static_cast<packcol16*>(TempSurface->pixels);
+  ulong ScreenYMove = (TempSurface->pitch >> 1);
+  ulong LineSize = Res.X << 1;
+
+  for(int y = 0; y < Res.Y; ++y, SrcPtr += Res.X, DestPtr += ScreenYMove)
+    memcpy(DestPtr, SrcPtr, LineSize);
+
+  SDL_UnlockSurface(TempSurface);
+  SDL_Surface* S = SDL_DisplayFormat(TempSurface);
+  SDL_BlitSurface(S, NULL, Screen, NULL);
+  SDL_FreeSurface(S);
+  SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
+}
+
+#else
 
 void graphics::BlitDBToScreen()
 {
@@ -135,6 +178,8 @@ void graphics::BlitDBToScreen()
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 }
+
+#endif
 
 void graphics::SwitchMode()
 {

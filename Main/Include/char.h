@@ -75,7 +75,6 @@ struct characterdatabase : public databasebase
   ulong Flags;
   truth IsAbstract;
   truth CanRead;
-  truth IsCharmable;
   truth CanBeGenerated;
   truth CanOpen;
   truth IsUnique;
@@ -235,6 +234,7 @@ struct characterdatabase : public databasebase
   festring RunDescriptionLineOne;
   festring RunDescriptionLineTwo;
   truth AllowPlayerToChangeEquipment;
+  int TamingDifficulty;
 };
 
 class characterprototype
@@ -456,7 +456,6 @@ class character : public entity, public id
   DATA_BASE_VALUE(long, DefaultMoney);
   DATA_BASE_VALUE(int, TotalSize);
   DATA_BASE_TRUTH(CanRead);
-  DATA_BASE_TRUTH(IsCharmable);
   DATA_BASE_VALUE(int, Sex);
   DATA_BASE_TRUTH(CanBeGenerated);
   DATA_BASE_VALUE(int, CriticalModifier);
@@ -577,6 +576,7 @@ class character : public entity, public id
   DATA_BASE_TRUTH(ForceCustomStandVerb);
   DATA_BASE_TRUTH(VomittingIsUnhealthy);
   DATA_BASE_TRUTH(AllowPlayerToChangeEquipment);
+  DATA_BASE_VALUE(int, TamingDifficulty);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
@@ -1056,6 +1056,10 @@ class character : public entity, public id
   truth IsInfectedByMindWorm() const { return !CounterToMindWormHatch; }
   void SetCounterToMindWormHatch(int What) { CounterToMindWormHatch = What; }
   truth MindWormCanPenetrateSkull(mindworm*) const;
+  truth CanTameWithDulcis(const character*) const;
+  truth CanTameWithLyre(const character*) const;
+  truth CanTameWithScroll(const character*) const;
+  truth IsCharmable() const { return GetTamingDifficulty() != NO_TAMING; }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

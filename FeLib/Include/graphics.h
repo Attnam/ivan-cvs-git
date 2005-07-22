@@ -51,6 +51,9 @@ class graphics
   static void (*SwitchModeHandler)();
 #ifdef USE_SDL
   static SDL_Surface* Screen;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+  static SDL_Surface* TempSurface;
+#endif
 #endif
 #ifdef __DJGPP__
   static ulong BufferSize;

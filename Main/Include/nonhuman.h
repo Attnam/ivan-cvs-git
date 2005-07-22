@@ -128,9 +128,10 @@ CHARACTER(dog, canine)
 
 CHARACTER(spider, nonhumanoid)
 {
- public:
+ protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
   virtual void GetAICommand();
+  virtual bodypart* MakeBodyPart(int) const;
 };
 
 CHARACTER(jackal, nonhumanoid)
@@ -154,6 +155,8 @@ CHARACTER(dolphin, nonhumanoid)
 
 CHARACTER(bat, nonhumanoid)
 {
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
 };
 
 CHARACTER(largecat, nonhumanoid)

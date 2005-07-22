@@ -282,7 +282,7 @@ truth whipofthievery::HitEffect(character* Enemy, character* Hitter, v2 HitPos, 
     if(Hitter->IsPlayer())
     {
       game::DoEvilDeed(10);
-      game::GetGod(10)->AdjustRelation(10);
+      game::GetGod(CLEPTIA)->AdjustRelation(10);
     }
 
     Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
@@ -314,10 +314,10 @@ truth whipofthievery::CleptiaHelps(ccharacter* Enemy, ccharacter* Hitter) const
 
   if(Hitter->IsPlayer())
   {
-    if(game::GetGod(10)->GetRelation() < 0)
+    if(game::GetGod(CLEPTIA)->GetRelation() < 0)
       return false;
     else
-      return !(RAND() % (10 - game::GetGod(10)->GetRelation() / 200));
+      return !(RAND() % (10 - game::GetGod(CLEPTIA)->GetRelation() / 200));
   }
   else
     return !(RAND() % 10);
@@ -626,7 +626,7 @@ truth chameleonwhip::HitEffect(character* Enemy, character* Hitter, v2 HitPos, i
     if(Hitter->IsPlayer())
     {
       game::DoEvilDeed(20);
-      game::GetGod(10)->AdjustRelation(10);
+      game::GetGod(SCABIES)->AdjustRelation(10);
     }
 
     int CurrentDanger = int(Enemy->GetRelativeDanger(PLAYER) * 1000);

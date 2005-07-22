@@ -9823,3 +9823,45 @@ truth character::MindWormCanPenetrateSkull(mindworm*) const
 {
   return false;
 }
+
+truth character::CanTameWithDulcis(const character* Tamer) const
+{
+  if(GetAttachedGod() == DULCIS)
+    return true;
+
+  int Modifier = Tamer->GetAttribute(WISDOM) + Tamer->GetAttribute(CHARISMA);
+
+  if(Tamer->IsPlayer())
+    Modifier += game::GetGod(DULCIS)->GetRelation() / 20;
+  else if(Tamer->GetAttachedGod() == DULCIS)
+    Modifier += 50;
+
+  int TamingDifficulty = GetTamingDifficulty();
+
+  if(TamingDifficulty == 0)
+    if(!IgnoreDanger())
+      TamingDifficulty = 10 * GetRelativeDanger(Tamer);
+    else
+      TamingDifficulty = 10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1);
+
+  return Modifier >= TamingDifficulty * 3;
+}
+
+truth character::CanTameWithLyre(const character* Tamer) const
+{
+  int TamingDifficulty = GetTamingDifficulty();
+
+  if(TamingDifficulty == 0)
+    if(!IgnoreDanger())
+      TamingDifficulty = 10 * GetRelativeDanger(Tamer);
+    else
+      TamingDifficulty = 10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1);
+
+  return Tamer->GetAttribute(CHARISMA) >= TamingDifficulty;
+}
+
+truth character::CanTameWithScroll(const character* Tamer) const
+{
+  int TamingDifficulty = GetTamingDifficulty();
+  return TamingDifficulty == 0 || Tamer->GetAttribute(INTELLIGENCE) * 4 + Tamer->GetAttribute(CHARISMA) >= TamingDifficulty * 5;
+}

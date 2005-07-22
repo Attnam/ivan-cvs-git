@@ -578,7 +578,7 @@ void bananapeels::StepOnEffect(character* Stepper)
 
 void scrolloftaming::FinishReading(character* Reader)
 {
-  // First find all characters in the squares around Reader
+  // First find all tameable characters in the squares around Reader
 
   character* CharacterNear[8];
   int Index = 0;
@@ -591,7 +591,7 @@ void scrolloftaming::FinishReading(character* Reader)
     {
       character* Char = GetNearSquare(Test)->GetCharacter();
 
-      if(Char && Char->IsCharmable() && Char->GetTeam() != Reader->GetTeam())
+      if(Char && Char->CanTameWithScroll(Reader) && Char->GetTeam() != Reader->GetTeam())
 	CharacterNear[Index++] = Char;
     }
   }
@@ -969,9 +969,11 @@ truth itemcontainer::Open(character* Opener)
   switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
   {
    case 't':
+   case 'T':
     Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
     break;
    case 'p':
+   case 'P':
     Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), GetID());
     break;
    default:
@@ -2265,9 +2267,9 @@ truth charmlyre::Apply(character* Charmer)
 	character* Char = Square->GetCharacter();
 
 	if(Char)
-	  if(Char->IsCharmable() && Char->CanHear())
+	  if(Char->CanHear())
 	  {
-	    if(Charmer->GetRelativeDanger(Char) > 4.0)
+	    if(Char->CanTameWithLyre(Charmer))
 	    {
 	      if(Char->GetTeam() == Charmer->GetTeam())
 		ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));

@@ -2573,6 +2573,14 @@ lobhsetorso /* largetorso-> */
 {
 }
 
+battorso /* normaltorso-> */
+{
+}
+
+spidertorso /* normaltorso-> */
+{
+}
+
 whistle
 {
   Possibility = 50;

@@ -190,8 +190,8 @@ void dulcis::PrayGoodEffect()
       character* Char = Square->GetCharacter();
 
       if(Char)
-	if(Char->IsCharmable())
-	  if(PLAYER->GetRelativeDanger(Char) > 2.0)
+	if(Char->CanHear())
+	  if(Char->CanTameWithDulcis(PLAYER))
 	  {
 	    if(Char->GetTeam() == PLAYER->GetTeam())
 	      ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_DESCRIPTION(DEFINITE));

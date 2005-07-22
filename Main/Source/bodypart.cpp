@@ -3538,6 +3538,20 @@ void bodypart::AddDamageID(int SrcID, int Amount)
 
 int arm::GetCurrentSWeaponSkillBonus() const
 {
-  return *GetCurrentSWeaponSkill() ? 
-      (*GetCurrentSWeaponSkill())->GetBonus() : 1;
+  return (*GetCurrentSWeaponSkill()
+      ? (*GetCurrentSWeaponSkill())->GetBonus() : 1);
+}
+
+v2 battorso::GetBitmapPos(int Frame) const
+{
+  v2 BasePos = torso::GetBitmapPos(Frame);
+  Frame &= 0xF;
+  return v2(BasePos.X + ((Frame &~ 3) << 2), BasePos.Y);
+}
+
+v2 spidertorso::GetBitmapPos(int Frame) const
+{
+  v2 BasePos = torso::GetBitmapPos(Frame);
+  Frame &= 0xF;
+  return v2(BasePos.X + ((Frame &~ 7) << 1), BasePos.Y);
 }

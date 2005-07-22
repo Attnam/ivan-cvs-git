@@ -6,13 +6,25 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
-May 27 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Charming is now more dependent on attributes etc.
+  * Animated bats, spiders & magpie added to char.pcx by Kahvi
+  * Mola Mola added to char.pcx by Kahvi
+  * Bats and spiders are now animated
+
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Biting a large hedgehog now works correctly
+  * Big T and P work in container UI
+  * IVAN might work better on machines with a different graphics bitorder
+
+May 27 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Code works. But it is certain that the functionality of certain changed
     functions from Timo's update on May 10 may not work.
 
-	
 May 11 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Some code related to mind worms added. Sadly the code hardly functions.	
@@ -75,6 +87,7 @@ April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
   * BugFix: Mirror and clone crashed
 
 April 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
   * fixes to look mode and holy handgrenade in the world map	
 
 April 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
