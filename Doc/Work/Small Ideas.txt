@@ -524,4 +524,6 @@ Some way to disarm mines.
 You should only be able to wish for materials which you have seen.
 Bleeding could detract from your health even further.
 On April 1st, the game should occasionally generate a valpurium plate mail +5, which would disappear with a msg "April Fool!" when picked up.
+Eating a kamikaze dwarf's head should reveal his god's rituals.
 The eyes of certain characters should shine in the dark.
+Walking on blood etc. should spill the liquid to boots/legs.
