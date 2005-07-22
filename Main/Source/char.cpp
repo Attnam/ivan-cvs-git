@@ -9826,11 +9826,13 @@ truth character::MindWormCanPenetrateSkull(mindworm*) const
 
 truth character::CanTameWithDulcis(const character* Tamer) const
 {
-  if(GetAttachedGod() == DULCIS)
-    return true;
+  int TamingDifficulty = GetTamingDifficulty();
 
   if(TamingDifficulty == NO_TAMING)
     return false;
+
+  if(GetAttachedGod() == DULCIS)
+    return true;
 
   int Modifier = Tamer->GetAttribute(WISDOM) + Tamer->GetAttribute(CHARISMA);
 
@@ -9838,8 +9840,6 @@ truth character::CanTameWithDulcis(const character* Tamer) const
     Modifier += game::GetGod(DULCIS)->GetRelation() / 20;
   else if(Tamer->GetAttachedGod() == DULCIS)
     Modifier += 50;
-
-  int TamingDifficulty = GetTamingDifficulty();
 
   if(TamingDifficulty == 0)
     if(!IgnoreDanger())
