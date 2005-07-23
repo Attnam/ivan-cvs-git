@@ -2242,6 +2242,7 @@ petrusswife
   AttachedGod = DULCIS;
   WillCarryItems = false;
   IsExtraFragile = true;
+  Belt = chastitybelt(OCTAGONAL_LOCK);
 
   Config 1;
   {

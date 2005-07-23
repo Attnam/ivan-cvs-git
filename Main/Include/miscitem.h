@@ -17,6 +17,54 @@
 #include "game.h" /// check
 #include "trap.h"
 
+class lockitembase
+{
+ public:
+  lockitembase() : Locked(false) { }
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  virtual truth TryKey(item*, character*);
+ protected:
+  virtual void PostConstruct();
+  truth Locked;
+};
+
+template <class base>
+class lockable : public base, public lockitembase
+{
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual truth IsOpenable(ccharacter*) const { return true; }
+  virtual truth HasLock(ccharacter*) const { return true; }
+  virtual truth IsLocked() const { return Locked; }
+  virtual void SetIsLocked(truth What) { Locked = What; }
+  virtual void Lock() { Locked = true; }
+ protected:
+  virtual void PostConstruct();
+};
+
+template <class base>
+inline void lockable<base>::Load(inputfile& SaveFile)
+{
+  base::Load(SaveFile);
+  lockitembase::Load(SaveFile);
+}
+
+template <class base>
+inline void lockable<base>::Save(outputfile& SaveFile) const
+{
+  base::Save(SaveFile);
+  lockitembase::Save(SaveFile);
+}
+
+template <class base>
+inline void lockable<base>::PostConstruct()
+{
+  lockitembase::PostConstruct();
+  base::PostConstruct();
+}
+
 ITEM(materialcontainer, item)
 {
  public:
@@ -385,20 +433,13 @@ ITEM(magicalwhistle, whistle)
   ulong LastUsed;
 };
 
-ITEM(itemcontainer, item)
+ITEM(itemcontainer, lockable<item>)
 {
  public:
   itemcontainer();
   itemcontainer(const itemcontainer&);
   virtual ~itemcontainer();
   virtual truth Open(character*);
-  virtual truth IsOpenable(ccharacter*) const { return true; }
-  virtual truth TryKey(item*, character*);
-  virtual truth HasLock(ccharacter*) const { return true; }
-  virtual void Lock() { Locked = true; }
-  virtual truth IsLocked() const { return Locked; }
-  virtual void SetIsLocked(truth What) { Locked = What; }
-  virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual truth Polymorph(character*, stack*);
@@ -423,11 +464,11 @@ ITEM(itemcontainer, item)
   virtual int GetTeleportPriority() const;
   virtual void SetParameters(int);
   virtual void Disappear();
+  virtual stack* GetContained() const { return Contained; }
  protected:
   virtual col16 GetMaterialColorB(int) const;
   virtual void PostConstruct();
   stack* Contained;
-  truth Locked;
 };
 
 ITEM(beartrap, itemtrap<item>)

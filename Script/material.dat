@@ -1175,6 +1175,7 @@ organic /* substances that spoil but are not flesh */
     AttachedGod = MORTIFER;
     HardenedMaterial = OMMEL_BONE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    NaturalForm = bone;
   }
 
   Config BREAD;

@@ -9840,7 +9840,7 @@ truth character::CanTameWithDulcis(const character* Tamer) const
 
   if(TamingDifficulty == 0)
     if(!IgnoreDanger())
-      TamingDifficulty = 10 * GetRelativeDanger(Tamer);
+      TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
     else
       TamingDifficulty = 10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1);
 
@@ -9856,7 +9856,7 @@ truth character::CanTameWithLyre(const character* Tamer) const
 
   if(TamingDifficulty == 0)
     if(!IgnoreDanger())
-      TamingDifficulty = 10 * GetRelativeDanger(Tamer);
+      TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
     else
       TamingDifficulty = 10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1);
 

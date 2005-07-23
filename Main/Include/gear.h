@@ -365,4 +365,10 @@ ITEM(acidshield, shield)
   virtual void BlockEffect(character*, character*, item*, int Type);
 }; 
 
+ITEM(chastitybelt, belt)
+{
+ public:
+  virtual int GetFormModifier() const { return item::GetFormModifier(); }
+};
+
 #endif

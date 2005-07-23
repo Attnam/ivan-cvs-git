@@ -3641,14 +3641,32 @@ gorovitscopyoflenin /* item-> */
   DefaultSecondaryVolume = 100; /* clothes */
   MainMaterialConfig == LEAD; 
   SecondaryMaterialConfig == FABRIC;
-
   Adjective = "Gorovits family life-size";
-  NameSingular = "copy of Lenin's mummy";
-  NamePlural = "copies of Lenin's mummy";
+  NameSingular = "copy";
+  NamePlural = "copies";
+  PostFix = "of Lenin's mummy";
   FormModifier = 15;
   AttachedGod = SOPHOS;
   BitmapPos = 80, 48;
   Possibility = 0;
   Price = 50;
+}
 
+chastitybelt
+{
+  DefaultSize = 40;
+  Possibility = 0;
+  WeaponCategory = UNCATEGORIZED;
+  DefaultMainVolume = 125;
+  StrengthModifier = 60;
+  BitmapPos = 80, 80;
+  Adjective = "chastity";
+  MainMaterialConfig == IRON;
+  Roundness = 50;
+  WieldedBitmapPos = 160, 128;
+  BeltBitmapPos = 48, 432;
+  CanBeBroken = false;
+  DamageFlags = BLUNT;
+  CreateLockConfigurations = true;
+  /*IsAbstract = true;*/
 }

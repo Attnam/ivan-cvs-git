@@ -853,35 +853,9 @@ itemcontainer::itemcontainer()
 
 void itemcontainer::PostConstruct()
 {
+  lockable<item>::PostConstruct();
   SetIsLocked(RAND_N(3));
   long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
-
-  /* Terrible gum solution! */
-
-  if(!(GetConfig() & LOCK_BITS))
-  {
-    int NormalLockTypes = 0;
-    const database*const* ConfigData = GetProtoType()->GetConfigData();
-    int c, ConfigSize = GetProtoType()->GetConfigSize();
-
-    for(c = 0; c < ConfigSize; ++c)
-      if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID))
-	++NormalLockTypes;
-
-    int ChosenLock = RAND() % NormalLockTypes;
-
-    for(c = 0; c < ConfigSize; ++c)
-      if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID)
-	 && !ChosenLock--)
-      {
-	SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
-	break;
-      }
-  }
 
   for(int c = 0; c < ItemNumber; ++c)
   {
@@ -900,44 +874,6 @@ void itemcontainer::PostConstruct()
     else
       delete NewItem;
   }
-}
-
-truth itemcontainer::TryKey(item* Key, character* Applier)
-{
-  if(GetConfig() & BROKEN_LOCK)
-  {
-    ADD_MESSAGE("The lock is broken.");
-    return true;
-  }
-
-  if(Key->CanOpenLockType(GetConfig()&LOCK_BITS))
-  {
-    if(IsLocked())
-    {
-      if(Applier->IsPlayer())
-	ADD_MESSAGE("You unlock %s.", CHAR_DESCRIPTION(DEFINITE));
-      else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
-    }
-    else
-    {
-      if(Applier->IsPlayer())
-	ADD_MESSAGE("You lock %s.", CHAR_DESCRIPTION(DEFINITE));
-      else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
-    }
-
-    SetIsLocked(!IsLocked());
-  }
-  else
-  {
-    if(Applier->IsPlayer())
-      ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
-    else if(Applier->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
-  }
-
-  return true;
 }
 
 void materialcontainer::GenerateMaterials()
@@ -988,16 +924,13 @@ truth itemcontainer::Open(character* Opener)
 
 void itemcontainer::Save(outputfile& SaveFile) const
 {
-  item::Save(SaveFile);
-  Contained->Save(SaveFile);
-  SaveFile << Locked;
-}
+  lockable<item>::Save(SaveFile);
+  Contained->Save(SaveFile);}
 
 void itemcontainer::Load(inputfile& SaveFile)
 {
-  item::Load(SaveFile);
+  lockable<item>::Load(SaveFile);
   Contained->Load(SaveFile);
-  SaveFile >> Locked;
 }
 
 truth itemcontainer::Polymorph(character* Polymorpher, stack* CurrentStack)
@@ -1327,7 +1260,7 @@ materialcontainer::materialcontainer(const materialcontainer& MC) : mybase(MC)
   CopyMaterial(MC.SecondaryMaterial, SecondaryMaterial);
 }
 
-itemcontainer::itemcontainer(const itemcontainer& Container) : mybase(Container), Locked(Container.Locked)
+itemcontainer::itemcontainer(const itemcontainer& Container) : mybase(Container)
 {
   Contained = new stack(0, this, HIDDEN);
   CalculateAll();
@@ -2941,4 +2874,82 @@ col16 pantheonbook::GetMaterialColorA(int) const
 col16 gorovitscopyoflenin::GetMaterialColorB(int) const
 {
   return MakeRGB16(30, 30, 30);
+}
+
+void lockitembase::PostConstruct()
+{
+  /* Terrible gum solution! */
+
+  if(!(GetConfig() & LOCK_BITS))
+  {
+    int NormalLockTypes = 0;
+    const database*const* ConfigData = GetProtoType()->GetConfigData();
+    int c, ConfigSize = GetProtoType()->GetConfigSize();
+
+    for(c = 0; c < ConfigSize; ++c)
+      if(ConfigData[c]->Config & LOCK_BITS
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	 && !(ConfigData[c]->Config & S_LOCK_ID))
+	++NormalLockTypes;
+
+    int ChosenLock = RAND() % NormalLockTypes;
+
+    for(c = 0; c < ConfigSize; ++c)
+      if(ConfigData[c]->Config & LOCK_BITS
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	 && !(ConfigData[c]->Config & S_LOCK_ID)
+	 && !ChosenLock--)
+      {
+	SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+	break;
+      }
+  }
+}
+
+truth lockitembase::TryKey(item* Key, character* Applier)
+{
+  if(GetConfig() & BROKEN_LOCK)
+  {
+    ADD_MESSAGE("The lock is broken.");
+    return true;
+  }
+
+  if(Key->CanOpenLockType(GetConfig()&LOCK_BITS))
+  {
+    if(IsLocked())
+    {
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("You unlock %s.", CHAR_DESCRIPTION(DEFINITE));
+      else if(Applier->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("You lock %s.", CHAR_DESCRIPTION(DEFINITE));
+      else if(Applier->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    SetIsLocked(!IsLocked());
+  }
+  else
+  {
+    if(Applier->IsPlayer())
+      ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
+    else if(Applier->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
+  }
+
+  return true;
+}
+
+void lockitembase::Save(outputfile& SaveFile) const
+{
+  SaveFile << Locked;
+}
+
+void lockitembase::Load(inputfile& SaveFile)
+{
+  SaveFile >> Locked;
 }
