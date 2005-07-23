@@ -9639,15 +9639,14 @@ truth character::ForgetRandomThing()
   {
     /* hopefully this code isn't some where else */
     std::vector<god*> Known;
+
     for(int c = 0; c < GODS; ++c)
-    {
       if(game::GetGod(c)->IsKnown())
-      {
 	Known.push_back(game::GetGod(c));
-      }
-    }
+
     if(Known.empty())
       return false;
+
     int RandomGod = RAND_N(Known.size());
     Known.at(RAND_N(Known.size()))->SetIsKnown(false);
     ADD_MESSAGE("You forget how to pray to %s.", Known.at(RandomGod)->GetName());
@@ -9666,13 +9665,9 @@ void character::ApplyAllGodsKnownBonus()
   stack* AddPlace = GetStackUnder();
 
   if(game::IsInWilderness())
-  {
     AddPlace = GetStack();
-  }
   else
-  {
     AddPlace = GetStackUnder();
-  }
 
   pantheonbook* NewBook = pantheonbook::Spawn();
   AddPlace->AddItem(NewBook);
@@ -9687,7 +9682,6 @@ void character::ReceiveSirenSong(character* Siren)
   if(Siren->GetTeam() == GetTeam())
     return;
 
-
   if(!RAND_N(4))
   {
     if(IsPlayer())
@@ -9695,6 +9689,7 @@ void character::ReceiveSirenSong(character* Siren)
 		  Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.");
+
     Stamina -= (1 + RAND_N(4)) * 10000;
     return;
   }
@@ -9704,13 +9699,13 @@ void character::ReceiveSirenSong(character* Siren)
     ChangeTeam(Siren->GetTeam());
     ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), 
 		Siren->CHAR_NAME(DEFINITE));
-
     return;
   }
 
   if(!RAND_N(4))
   {
     item* What = GiveMostExpensiveItem(Siren);
+
     if(What)
     {
       if(IsPlayer())
@@ -9740,29 +9735,30 @@ void character::ReceiveSirenSong(character* Siren)
 }
 
 // return 0, if no item found
+
 item* character::FindMostExpensiveItem() const
 {
-  int MaxPrice=-1;
+  int MaxPrice = -1;
   item* MostExpensive = 0;
+
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-  {
     if((*i)->GetPrice() > MaxPrice)
     {
       MaxPrice = (*i)->GetPrice();
       MostExpensive = (*i);
     }
-      
-  }
 
   for(int c = 0; c < GetEquipments(); ++c)
   {
     item* Equipment = GetEquipment(c);
+
     if(Equipment && Equipment->GetPrice() > MaxPrice)
     {
       MaxPrice = Equipment->GetPrice();
       MostExpensive = Equipment;
     }
   }
+
   return MostExpensive;
 }
 
@@ -9770,6 +9766,7 @@ item* character::FindMostExpensiveItem() const
 item* character::GiveMostExpensiveItem(character* ToWhom)
 {
   item* ToGive = FindMostExpensiveItem();
+
   if(!ToGive)
     return 0;
 
@@ -9787,9 +9784,7 @@ item* character::GiveMostExpensiveItem(character* ToWhom)
 void character::ReceiveItemAsPresent(item* Present)
 {
   if(TestForPickup(Present))
-  {
     GetStack()->AddItem(Present);
-  }
   else
     GetStackUnder()->AddItem(Present);
 } 
@@ -9817,6 +9812,7 @@ character* character::GetNearestEnemy() const
 	  }
 	}
     }
+
   return NearestEnemy;
 }
 
@@ -9870,9 +9866,9 @@ truth character::CanTameWithLyre(const character* Tamer) const
 truth character::CanTameWithScroll(const character* Tamer) const
 {
   int TamingDifficulty = GetTamingDifficulty();
-
-  if(TamingDifficulty == NO_TAMING)
-    return false;
-
-  return TamingDifficulty == 0 || Tamer->GetAttribute(INTELLIGENCE) * 4 + Tamer->GetAttribute(CHARISMA) >= TamingDifficulty * 5;
+  return (TamingDifficulty != NO_TAMING
+	  && (TamingDifficulty == 0
+	      || Tamer->GetAttribute(INTELLIGENCE) * 4
+	      + Tamer->GetAttribute(CHARISMA)
+	      >= TamingDifficulty * 5));
 }

@@ -1010,7 +1010,6 @@ solid
     InteractionFlags = CAN_BURN;
   }
 
-
   Config LEAD;
   {
     StrengthValue = 110;
@@ -1026,6 +1025,19 @@ solid
     CommonFlags = Base;
     CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config BLACK_GRANITE;
+  {
+    StrengthValue = 60;
+    ConsumeType = CT_MINERAL;
+    Density = 2700;
+    Color = rgb16(60, 60, 60);
+    NameStem = "black granite";
+    AttachedGod = TERRA;
+    NaturalForm = stone;
+    HardenedMaterial = MILKY_QUARTZ;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 }
 

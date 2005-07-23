@@ -56,11 +56,11 @@ void bodypartslot::Empty()
 
 void gearslot::Empty()
 {
-  col24 Emitation = Item->GetEmitation();
-  SignalVolumeAndWeightChange();
-  GetBodyPart()->SignalEquipmentRemoval(this, Item);
+  citem* Old = Item;
   Item = 0;
-
+  col24 Emitation = Old->GetEmitation();
+  SignalVolumeAndWeightChange();
+  GetBodyPart()->SignalEquipmentRemoval(this, Old);
   SignalEmitationDecrease(Emitation);
 }
 

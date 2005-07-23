@@ -33,10 +33,10 @@ int Main(int, char**);
 
 int main(int argc, char* argv[])
 {
-  try
-  {
+  /*try
+  {*/
     return Main(argc, argv);
-  }
+  /*}
   catch(...)
   {
     cchar* Msg = "Fatal Error: Unknown exception thrown.";
@@ -57,5 +57,5 @@ int main(int argc, char* argv[])
     exit(3);
   }
 
-  exit(0);
+  exit(0);*/
 }

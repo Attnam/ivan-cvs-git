@@ -1008,7 +1008,7 @@ darkknight
     CWeaponSkillHits == 5000;
     RightSWeaponSkillHits = 2000;
     PanicLevel = 0;
-    TamingDifficulty = NO_TAMING;
+    TamingDifficulty = 40;
     IsUnique = true;
     CanBeWished = true;
     DefaultName = "Golgor Dhan";
@@ -1410,6 +1410,7 @@ skeleton
     ClassStates = GAS_IMMUNITY|TELEPORT_CONTROL;
     IsImmuneToItemTeleport = true;
     IsExtraFragile = false;
+    TamingDifficulty = NO_TAMING;
   }
 }
 
@@ -1522,6 +1523,7 @@ goblin
     FireResistance = 30;
     ElectricityResistance = 30;
     EnergyResistance = 30;
+    TamingDifficulty = 20;
   }
 }
 
@@ -1671,6 +1673,7 @@ golem
     CanBeConfused = false;
     Frequency = 10000;
     IsImmuneToItemTeleport = true;
+    TamingDifficulty = 35;
   }
 
   Config ACIDOUS_BLOOD;
@@ -1951,7 +1954,7 @@ communist /* Ivan */
     "\"Why AK not invented?\"",
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
-    "\"Vodka strong, but meat rotten.\"",
+    "\"Vodka strong, meat rotten.\"",
     "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"";
   }
   AttachedGod = LORICATUS;
@@ -2712,7 +2715,7 @@ mistress
     NameSingular = "mistress queen";
     PanicLevel = 0;
     ClassStates = INVISIBLE|HASTE|INFRA_VISION|ESP;
-    TamingDifficulty = NO_TAMING;
+    TamingDifficulty = 50;
     IsUnique = true;
     CanBeWished = true;
     DefaultName = "Sherarax";
@@ -2893,6 +2896,7 @@ kobold
     ElectricityResistance = 20;
     EnergyResistance = 20;
     IsExtraFragile = false;
+    TamingDifficulty = 15;
   }
 }
 
@@ -3007,7 +3011,7 @@ angel
   DefaultWisdom = 35;
   DefaultCharisma = 50;
   DefaultMana = 35;
-  TamingDifficulty = NO_TAMING;
+  TamingDifficulty = 30;
   Sex = FEMALE;
   TotalVolume = 60000;
   TorsoBitmapPos = 432, 0;
@@ -3556,6 +3560,7 @@ orc
     IsImmuneToItemTeleport = true;
     IsEnormous = true;
     AllowUnconsciousness = false;
+    TamingDifficulty = 35;
   }
 }
 
@@ -4293,7 +4298,7 @@ darkmage
     TotalSize = 150;
     IsUnique = true;
     PanicLevel = 0;
-    TamingDifficulty = NO_TAMING;
+    TamingDifficulty = 50;
     IsNameable = false;
     CanBeCloned = false;
     IsPolymorphable = false;
@@ -5334,46 +5339,6 @@ lobhse
   AllowUnconsciousness = false;
 }
 
-tailor
-{
-  DefaultArmStrength = 15;
-  DefaultLegStrength = 15;
-  DefaultDexterity = 35;
-  DefaultAgility = 15;
-  DefaultEndurance = 20;
-  DefaultPerception = 27;
-  DefaultIntelligence = 15;
-  DefaultWisdom = 15;
-  DefaultCharisma = 15;
-  DefaultMana = 10;
-  TotalVolume = 70000;
-  TotalSize = 180;
-  NameSingular = "tailor";
-  Cloak = LEATHER cloak { Enchantment = 1; }
-  BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-  RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
-  RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-  RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
-  KnownCWeaponSkills == BLUNT_WEAPONS;
-  CWeaponSkillHits == 500;
-  RightSWeaponSkillHits = 200;
-  LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 48;
-  HeadBitmapPos = 96, 0;
-  ArmBitmapPos = 64, 16;
-  LegBitmapPos = 0, 0;
-  ClothColor = rgb16(200, 200, 200);
-  LegMainColor = rgb16(111, 64, 37);
-  CanRead = true;
-  /* Replies overridden */
-  IsUnique = true;
-  IsNameable = false;
-  CanBeCloned = false;
-  DefaultName = "Mirvo";
-  TamingDifficulty = NO_TAMING;
-  AttachedGod = SOPHOS;
-}
-
 siren
 {
   DefaultArmStrength = 3;
@@ -5462,6 +5427,7 @@ mindworm
     TotalSize = 7;
     NameSingular = "mind worm hatchling";
   }
+
   Config BOIL;
   {
     TotalVolume = 30;

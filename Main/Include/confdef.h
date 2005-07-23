@@ -83,6 +83,8 @@
 #define JASPER (SOLID_ID + 62)
 #define ROCK_CRYSTAL (SOLID_ID + 63)
 #define DARK_GRASS (SOLID_ID + 64)
+#define LEAD (SOLID_ID + 65)
+#define BLACK_GRANITE (SOLID_ID + 66)
 
 #define ORGANIC_ID (2 << 12)
 

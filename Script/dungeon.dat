@@ -1292,7 +1292,55 @@ Dungeon ELPURI_CAVE;
 
 Dungeon ATTNAM;
 {
-  Levels = 1;
+  Levels = 5;
+
+  LevelDefault
+  {
+    Description = "Attnamese catacombs";
+    ShortDescription = "AC";
+    Size = 30, 30;
+    GenerateMonsters = false;
+    Rooms = 10;
+    Items = 0;
+    IsOnGround = false;
+    TeamDefault = ATTNAM_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    CanGenerateBone = false;
+    DifficultyBase = 150;
+    DifficultyDelta = 0;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = GRAY_FRACTAL;
+    FillSquare = GRANITE solidterrain(GROUND), BLACK_GRANITE earth;
+    TunnelSquare = GRANITE solidterrain(GROUND), 0;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      WallSquare = GRANITE solidterrain(GROUND), BLACK_GRANITE wall(BRICK_OLD);
+      FloorSquare = GRANITE solidterrain(GROUND), 0;
+      DoorSquare = GRANITE solidterrain(GROUND), 0;
+
+      Size = 4:11,4:11;
+      AltarPossible = false;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = false;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
 
   Level 0;
   {
@@ -2061,6 +2109,54 @@ Dungeon ATTNAM;
       Character = spider { Team = MONSTER_TEAM; }
       Times = 3;
     }*/
+  }
+
+  Level 1;
+  {
+    Description = Cellar;
+    ShortDescription = Cellar;
+    Size = 30, 30;
+    GenerateMonsters = false;
+    Rooms = 10;
+    Items = 0;
+    IsOnGround = false;
+    TeamDefault = ATTNAM_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    CanGenerateBone = false;
+    DifficultyBase = 150;
+    DifficultyDelta = 0;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = GRAY_FRACTAL;
+    FillSquare = solidterrain(GROUND), MORAINE earth;
+    TunnelSquare = solidterrain(GROUND), 0;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      WallSquare = solidterrain(GROUND), FIR_WOOD wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), FIR_WOOD door;
+
+      Size = 4:11,4:11;
+      AltarPossible = false;
+      GenerateDoor = true;
+      DivineMaster = VALPURUS;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
   }
 }
 

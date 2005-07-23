@@ -2835,6 +2835,6 @@ bool lsquare::TeleportAllTrapsAway()
 
 void lsquare::AddSpecialCursors()
 {
-  if((LastSeen || game::GetSeeWholeMapCheatMode()) && OLTerrain)
+  if((FowMemorized || game::GetSeeWholeMapCheatMode()) && OLTerrain)
     OLTerrain->AddSpecialCursors();
 }

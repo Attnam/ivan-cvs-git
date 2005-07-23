@@ -7,6 +7,14 @@
 
 -----------------------------------------------------------------------------
 
+July 23 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added some undeground levels to Attnam
+
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a bug in the equipment removal code
+
 July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Bug in taming corrected
