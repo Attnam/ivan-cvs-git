@@ -853,7 +853,7 @@ itemcontainer::itemcontainer()
 
 void itemcontainer::PostConstruct()
 {
-  lockable<item>::PostConstruct();
+  lockableitem::PostConstruct();
   SetIsLocked(RAND_N(3));
   long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
@@ -924,12 +924,12 @@ truth itemcontainer::Open(character* Opener)
 
 void itemcontainer::Save(outputfile& SaveFile) const
 {
-  lockable<item>::Save(SaveFile);
+  lockableitem::Save(SaveFile);
   Contained->Save(SaveFile);}
 
 void itemcontainer::Load(inputfile& SaveFile)
 {
-  lockable<item>::Load(SaveFile);
+  lockableitem::Load(SaveFile);
   Contained->Load(SaveFile);
 }
 
@@ -2876,19 +2876,19 @@ col16 gorovitscopyoflenin::GetMaterialColorB(int) const
   return MakeRGB16(30, 30, 30);
 }
 
-void lockitembase::PostConstruct()
+void itemlock::PostConstruct()
 {
   /* Terrible gum solution! */
 
-  if(!(GetItemConfig() & LOCK_BITS))
+  if(!(GetVirtualConfig() & LOCK_BITS))
   {
     int NormalLockTypes = 0;
-    const itemdatabase*const* ConfigData = GetItemProtoType()->GetConfigData();
-    int c, ConfigSize = GetItemProtoType()->GetConfigSize();
+    const itemdatabase*const* ConfigData = GetVirtualProtoType()->GetConfigData();
+    int c, ConfigSize = GetVirtualProtoType()->GetConfigSize();
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetItemConfig()
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
 	 && !(ConfigData[c]->Config & S_LOCK_ID))
 	++NormalLockTypes;
 
@@ -2896,39 +2896,39 @@ void lockitembase::PostConstruct()
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetItemConfig()
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
 	 && !(ConfigData[c]->Config & S_LOCK_ID)
 	 && !ChosenLock--)
       {
-	SetItemConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+	SetVirtualConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
 	break;
       }
   }
 }
 
-truth lockitembase::TryKey(item* Key, character* Applier)
+truth itemlock::TryKey(item* Key, character* Applier)
 {
-  if(GetItemConfig() & BROKEN_LOCK)
+  if(GetVirtualConfig() & BROKEN_LOCK)
   {
     ADD_MESSAGE("The lock is broken.");
     return true;
   }
 
-  if(Key->CanOpenLockType(GetItemConfig()&LOCK_BITS))
+  if(Key->CanOpenLockType(GetVirtualConfig()&LOCK_BITS))
   {
     if(Locked)
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You unlock %s.", GetItemDescription(DEFINITE).CStr());
+	ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetItemDescription(DEFINITE).CStr());
+	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
     else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You lock %s.", GetItemDescription(DEFINITE).CStr());
+	ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetItemDescription(DEFINITE).CStr());
+	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
 
     Locked = !Locked;
@@ -2944,12 +2944,12 @@ truth lockitembase::TryKey(item* Key, character* Applier)
   return true;
 }
 
-void lockitembase::Save(outputfile& SaveFile) const
+void itemlock::Save(outputfile& SaveFile) const
 {
   SaveFile << Locked;
 }
 
-void lockitembase::Load(inputfile& SaveFile)
+void itemlock::Load(inputfile& SaveFile)
 {
   SaveFile >> Locked;
 }

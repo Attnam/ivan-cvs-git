@@ -17,26 +17,28 @@
 #include "game.h" /// check
 #include "trap.h"
 
-class lockitembase
+class itemlock
 {
  public:
-  lockitembase() : Locked(false) { }
+  typedef itemprototype prototype;
+  itemlock() : Locked(false) { }
   void Save(outputfile&) const;
   void Load(inputfile&);
   virtual truth TryKey(item*, character*);
-  virtual int GetItemConfig() const = 0;
-  virtual void SetItemConfig(int, int = 0) = 0;
-  virtual const itemprototype* GetItemProtoType() const = 0;
-  virtual festring GetItemDescription(int) const = 0;
+  virtual int GetVirtualConfig() const = 0;
+  virtual void SetVirtualConfig(int, int = 0) = 0;
+  virtual const prototype* GetVirtualProtoType() const = 0;
+  virtual festring GetVirtualDescription(int) const = 0;
  protected:
   virtual void PostConstruct();
   truth Locked;
 };
 
-template <class base>
-class lockable : public base, public lockitembase
+template <class base, class lockbase>
+class lockable : public base, public lockbase
 {
  public:
+  typedef typename lockbase::prototype prototype;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual truth IsOpenable(ccharacter*) const { return true; }
@@ -44,34 +46,37 @@ class lockable : public base, public lockitembase
   virtual truth IsLocked() const { return Locked; }
   virtual void SetIsLocked(truth What) { Locked = What; }
   virtual void Lock() { Locked = true; }
-  virtual int GetItemConfig() const { return GetConfig(); }
-  virtual void SetItemConfig(int What, int Flags = 0) { SetConfig(What, Flags); }
-  virtual const itemprototype* GetItemProtoType() const { return GetProtoType(); }
-  virtual festring GetItemDescription(int Case) const { return GetDescription(Case); }
+  virtual int GetVirtualConfig() const { return base::GetConfig(); }
+  virtual void SetVirtualConfig(int What, int F = 0) { base::SetConfig(What, F); }
+  virtual const prototype* GetVirtualProtoType() const { return base::GetProtoType(); }
+  virtual festring GetVirtualDescription(int Case) const { return base::GetDescription(Case); }
+  virtual truth TryKey(item* K, character* C) { return lockbase::TryKey(K, C); }
  protected:
   virtual void PostConstruct();
 };
 
-template <class base>
-inline void lockable<base>::Load(inputfile& SaveFile)
-{
-  base::Load(SaveFile);
-  lockitembase::Load(SaveFile);
-}
-
-template <class base>
-inline void lockable<base>::Save(outputfile& SaveFile) const
+template <class base, class lockbase>
+inline void lockable<base, lockbase>::Save(outputfile& SaveFile) const
 {
   base::Save(SaveFile);
-  lockitembase::Save(SaveFile);
+  lockbase::Save(SaveFile);
 }
 
-template <class base>
-inline void lockable<base>::PostConstruct()
+template <class base, class lockbase>
+inline void lockable<base, lockbase>::Load(inputfile& SaveFile)
 {
-  lockitembase::PostConstruct();
+  base::Load(SaveFile);
+  lockbase::Load(SaveFile);
+}
+
+template <class base, class lockbase>
+inline void lockable<base, lockbase>::PostConstruct()
+{
+  lockbase::PostConstruct();
   base::PostConstruct();
 }
+
+typedef lockable<item, itemlock> lockableitem;
 
 ITEM(materialcontainer, item)
 {
@@ -441,7 +446,7 @@ ITEM(magicalwhistle, whistle)
   ulong LastUsed;
 };
 
-ITEM(itemcontainer, lockable<item>)
+ITEM(itemcontainer, lockableitem)
 {
  public:
   itemcontainer();
