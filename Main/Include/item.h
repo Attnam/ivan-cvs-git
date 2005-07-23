@@ -18,6 +18,7 @@
 #include "object.h"
 #include "lsquare.h"
 #include "slot.h"
+#include "lock.h"
 
 class felist;
 class head;
@@ -56,6 +57,25 @@ struct idholder
 
 outputfile& operator<<(outputfile&, const idholder*);
 inputfile& operator>>(inputfile&, idholder*&);
+
+class itemlock
+{
+ public:
+  typedef itemprototype prototype;
+  itemlock() : Locked(false) { }
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  virtual truth TryKey(item*, character*);
+  virtual int GetVirtualConfig() const = 0;
+  virtual void SetVirtualConfig(int, int = 0) = 0;
+  virtual const prototype* GetVirtualProtoType() const = 0;
+  virtual festring GetVirtualDescription(int) const = 0;
+ protected:
+  virtual void PostConstruct();
+  truth Locked;
+};
+
+typedef lockable<item, itemlock> lockableitem;
 
 struct itemdatabase : public databasebase
 {

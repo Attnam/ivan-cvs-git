@@ -1594,10 +1594,89 @@ ccharacter* item::FindCarrier() const
 }
 
 /* returns 0 if not worn or wielded else the wearer */
+
 const character* item::GetWearer() const
 {
   if(!GetSlot()->IsGearSlot())
     return 0;
   
   return FindCarrier();
+}
+
+void itemlock::PostConstruct()
+{
+  /* Terrible gum solution! */
+
+  if(!(GetVirtualConfig() & LOCK_BITS))
+  {
+    int NormalLockTypes = 0;
+    const itemdatabase*const* ConfigData = GetVirtualProtoType()->GetConfigData();
+    int c, ConfigSize = GetVirtualProtoType()->GetConfigSize();
+
+    for(c = 0; c < ConfigSize; ++c)
+      if(ConfigData[c]->Config & LOCK_BITS
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
+	 && !(ConfigData[c]->Config & S_LOCK_ID))
+	++NormalLockTypes;
+
+    int ChosenLock = RAND() % NormalLockTypes;
+
+    for(c = 0; c < ConfigSize; ++c)
+      if(ConfigData[c]->Config & LOCK_BITS
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
+	 && !(ConfigData[c]->Config & S_LOCK_ID)
+	 && !ChosenLock--)
+      {
+	SetVirtualConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+	break;
+      }
+  }
+}
+
+truth itemlock::TryKey(item* Key, character* Applier)
+{
+  if(GetVirtualConfig() & BROKEN_LOCK)
+  {
+    ADD_MESSAGE("The lock is broken.");
+    return true;
+  }
+
+  if(Key->CanOpenLockType(GetVirtualConfig()&LOCK_BITS))
+  {
+    if(Locked)
+    {
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
+      else if(Applier->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+    }
+    else
+    {
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
+      else if(Applier->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+    }
+
+    Locked = !Locked;
+  }
+  else
+  {
+    if(Applier->IsPlayer())
+      ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
+    else if(Applier->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
+  }
+
+  return true;
+}
+
+void itemlock::Save(outputfile& SaveFile) const
+{
+  SaveFile << Locked;
+}
+
+void itemlock::Load(inputfile& SaveFile)
+{
+  SaveFile >> Locked;
 }

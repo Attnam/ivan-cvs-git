@@ -278,6 +278,8 @@ ITEM(belt, armor)
   virtual col16 GetMaterialColorB(int Frame) const { return GetMaterialColorA(Frame); }
 };
 
+typedef lockable<belt, itemlock> lockablebelt;
+
 ITEM(ring, item)
 {
  public:
@@ -365,7 +367,7 @@ ITEM(acidshield, shield)
   virtual void BlockEffect(character*, character*, item*, int Type);
 }; 
 
-ITEM(chastitybelt, belt)
+ITEM(chastitybelt, lockablebelt)
 {
  public:
   virtual int GetFormModifier() const { return item::GetFormModifier(); }
