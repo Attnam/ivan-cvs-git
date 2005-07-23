@@ -1244,3 +1244,59 @@ void stairs::AddSpecialCursors()
 {
   game::AddSpecialCursor(GetPos(), YELLOW_CURSOR|TARGET);
 }
+
+truth coffin::Open(character* Opener)
+{
+  if(!Opener->IsPlayer())
+    return false;
+
+
+  if(!game::TruthQuestion(
+	 CONST_S("Disturbing the dead might not be wise... Continue? [y/N]")))
+    return false;
+  truth Success = olterraincontainer::Open(Opener);
+  if(Success)
+  {
+    game::DoEvilDeed(25);
+    for(int c = 0; c < RAND_N(10); ++c)
+    {
+      v2 Pos = GetLevel()->GetRandomSquare();
+      if(Pos != ERROR_V2)
+	GenerateGhost(GetLevel()->GetLSquare(Pos));
+    }
+  }
+  return Success;
+}
+
+void coffin::Break()
+{
+  for(int c = 0; c < 9; ++c)
+  {
+    lsquare* Neighbour = GetLSquareUnder()->GetNeighbourLSquare(c);
+
+    if(!RAND_4 && Neighbour && Neighbour->IsFlyable())
+    {
+      GenerateGhost(Neighbour);
+    }
+  }
+  olterraincontainer::Break();
+}
+
+
+void coffin::GenerateGhost(lsquare* Square)
+{
+  v2 Pos = Square->GetPos();
+  character* Char = ghost::Spawn();
+  Char->SetTeam(game::GetTeam(MONSTER_TEAM));
+  if((!Square->GetRoomIndex()
+      || !Square->GetRoom()->DontGenerateMonsters()))
+  {
+    Char->PutTo(Pos);
+    Char->SignalGeneration();
+
+    if(Char->CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s appears.", Char->CHAR_NAME(DEFINITE));
+    }
+  }
+}

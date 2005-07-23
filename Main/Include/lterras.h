@@ -15,6 +15,8 @@
 
 #include "lterra.h"
 
+class ghost;
+
 OLTERRAIN(wall, olterrain)
 {
 };
@@ -225,4 +227,12 @@ OLTERRAIN(monsterportal, olterrain)
   virtual v2 GetBitmapPos(int) const;
 };
 
+OLTERRAIN(coffin, olterraincontainer)
+{
+ public:
+  virtual truth Open(character*);
+  virtual void coffin::Break();
+ protected:
+  virtual void GenerateGhost(lsquare*);
+};
 #endif

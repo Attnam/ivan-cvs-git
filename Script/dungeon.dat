@@ -2237,6 +2237,7 @@ Dungeon NEW_ATTNAM;
           c = decoration(COUCH);
           d = EBONY_WOOD door;
           o = EBONY_WOOD wall(BRICK_FINE|WINDOW);
+	  C = coffin;
         }
       }
       {
@@ -2254,7 +2255,7 @@ Dungeon NEW_ATTNAM;
         #....$$___$$....#
         o.....$___$.....o
         #.....$___$.....#
-        #.....$___$.....#
+        #....C$___$.....#
         #.....$___$.....#
         o...............o
         ##.............##
