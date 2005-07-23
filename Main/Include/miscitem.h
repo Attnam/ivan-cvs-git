@@ -24,6 +24,10 @@ class lockitembase
   void Save(outputfile&) const;
   void Load(inputfile&);
   virtual truth TryKey(item*, character*);
+  virtual int GetItemConfig() const = 0;
+  virtual void SetItemConfig(int, int = 0) = 0;
+  virtual const itemprototype* GetItemProtoType() const = 0;
+  virtual festring GetItemDescription(int) const = 0;
  protected:
   virtual void PostConstruct();
   truth Locked;
@@ -40,6 +44,10 @@ class lockable : public base, public lockitembase
   virtual truth IsLocked() const { return Locked; }
   virtual void SetIsLocked(truth What) { Locked = What; }
   virtual void Lock() { Locked = true; }
+  virtual int GetItemConfig() const { return GetConfig(); }
+  virtual void SetItemConfig(int What, int Flags = 0) { SetConfig(What, Flags); }
+  virtual const itemprototype* GetItemProtoType() const { return GetProtoType(); }
+  virtual festring GetItemDescription(int Case) const { return GetDescription(Case); }
  protected:
   virtual void PostConstruct();
 };

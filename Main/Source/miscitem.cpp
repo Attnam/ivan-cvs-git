@@ -2880,15 +2880,15 @@ void lockitembase::PostConstruct()
 {
   /* Terrible gum solution! */
 
-  if(!(GetConfig() & LOCK_BITS))
+  if(!(GetItemConfig() & LOCK_BITS))
   {
     int NormalLockTypes = 0;
-    const database*const* ConfigData = GetProtoType()->GetConfigData();
-    int c, ConfigSize = GetProtoType()->GetConfigSize();
+    const itemdatabase*const* ConfigData = GetItemProtoType()->GetConfigData();
+    int c, ConfigSize = GetItemProtoType()->GetConfigSize();
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetItemConfig()
 	 && !(ConfigData[c]->Config & S_LOCK_ID))
 	++NormalLockTypes;
 
@@ -2896,11 +2896,11 @@ void lockitembase::PostConstruct()
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetItemConfig()
 	 && !(ConfigData[c]->Config & S_LOCK_ID)
 	 && !ChosenLock--)
       {
-	SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+	SetItemConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
 	break;
       }
   }
@@ -2908,30 +2908,30 @@ void lockitembase::PostConstruct()
 
 truth lockitembase::TryKey(item* Key, character* Applier)
 {
-  if(GetConfig() & BROKEN_LOCK)
+  if(GetItemConfig() & BROKEN_LOCK)
   {
     ADD_MESSAGE("The lock is broken.");
     return true;
   }
 
-  if(Key->CanOpenLockType(GetConfig()&LOCK_BITS))
+  if(Key->CanOpenLockType(GetItemConfig()&LOCK_BITS))
   {
-    if(IsLocked())
+    if(Locked)
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You unlock %s.", CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("You unlock %s.", GetItemDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetItemDescription(DEFINITE).CStr());
     }
     else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You lock %s.", CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("You lock %s.", GetItemDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetItemDescription(DEFINITE).CStr());
     }
 
-    SetIsLocked(!IsLocked());
+    Locked = !Locked;
   }
   else
   {
