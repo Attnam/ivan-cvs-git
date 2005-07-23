@@ -638,4 +638,10 @@ CHARACTER(siren, humanoid)
  protected:
   virtual truth TryToSing();
 };
+
+
+CHARACTER(punisher, humanoid)
+{
+
+};
 #endif

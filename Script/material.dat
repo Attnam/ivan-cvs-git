@@ -1039,6 +1039,20 @@ solid
     HardenedMaterial = MILKY_QUARTZ;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
+
+  Config BLACK_LEATHER;
+  {
+    StrengthValue = 20;
+    ConsumeType = CT_MISC_ORGANIC;
+    Density = 800;
+    Color = rgb16(40, 40, 40);
+    NameStem = "black leather";
+    Flexibility = 10;
+    AttachedGod = SILVA;
+    HardenedMaterial = HARDENED_LEATHER;
+    CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
+    InteractionFlags = CAN_BURN;
+  }
 }
 
 organic /* substances that spoil but are not flesh */

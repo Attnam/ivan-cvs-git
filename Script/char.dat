@@ -5436,3 +5436,40 @@ mindworm
     NameSingular = "mind worm boil";
   }
 }
+
+punisher
+{
+  DefaultArmStrength = 15;
+  DefaultLegStrength = 10;
+  DefaultDexterity = 10;
+  DefaultAgility = 10;
+  DefaultEndurance = 15;
+  DefaultPerception = 21;
+  DefaultIntelligence = 15;
+  DefaultWisdom = 7;
+  DefaultCharisma = 10;
+  DefaultMana = 0;
+  HeadBitmapPos = 96, 352;
+  TorsoBitmapPos = 48, 48;
+  ArmBitmapPos = 64, 256;
+  LegBitmapPos = 0, 48;
+
+  CapColor = rgb16(200, 200, 10);
+  TorsoMainColor = rgb16(30, 30, 30);
+  LegMainColor = rgb16(30,30,30);
+  SkinColor = rgb16(255, 222, 202);
+  TotalVolume = 95000;
+  TotalSize = 175;
+  NameSingular = "punisher";
+  Belt = BLACK_LEATHER belt;
+  RightWielded = BLACK_LEATHER whip;
+  RightBoot = BLACK_LEATHER boot;
+  KnownCWeaponSkills = { 2, KICK, WHIPS; }
+  CWeaponSkillHits = { 2, 200, 200; }
+  RightSWeaponSkillHits = 200;
+  AttackStyle = USE_ARMS|USE_LEGS;
+  TamingDifficulty = NO_TAMING;
+  HostileReplies == "\"You are now about to enter a world of pain!\"";
+  AttachedGod = CRUENTUS;
+  FriendlyReplies == "\"My cousin a banana encourager in New Attnam\"";
+}
