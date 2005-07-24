@@ -1160,7 +1160,7 @@ int door::GetWalkability() const
 
 truth door::IsTransparent() const
 {
-  return Opened || MainMaterial->IsTransparent();
+  return Opened || MainMaterial->IsTransparent() || DataBase->IsAlwaysTransparent;
 }
 
 truth liquidterrain::DipInto(item* ToBeDipped, character* Who)

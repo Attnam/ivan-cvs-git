@@ -384,6 +384,7 @@
 #define BRICK_PRIMITIVE_PROPAGANDA 5
 #define STONE_WALL 6
 #define ICE_WALL 7
+#define BROKEN_WALL 8
 
 #define PINE 1
 #define FIR 2
@@ -412,8 +413,11 @@
 #define SUMO_ARENA_EXIT 800
 
 #define BOOK_CASE 1
+#define CHEST_OF_DRAWERS 2
+#define SHELF 3
 
 #define BROKEN_BARWALL 1
+#define SECRET_DOOR 2
 
 #define ROOM_NORMAL 1
 #define ROOM_SHOP 2
