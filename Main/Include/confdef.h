@@ -413,6 +413,8 @@
 
 #define BOOK_CASE 1
 
+#define BROKEN_BARWALL 1
+
 #define ROOM_NORMAL 1
 #define ROOM_SHOP 2
 #define ROOM_CATHEDRAL 3

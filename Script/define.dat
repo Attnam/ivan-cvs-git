@@ -699,6 +699,10 @@
 #define BOOK_CASE 1
 #define CHEST_OF_DRAWERS 2
 
+#define BROKEN_BARWALL 1
+
+#define BARDOOR 1
+
 #define WORLD_MAP 255
 
 #define DEFAULT_TEAM 255

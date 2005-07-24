@@ -235,4 +235,12 @@ OLTERRAIN(coffin, olterraincontainer)
  protected:
   virtual void GenerateGhost(lsquare*);
 };
+
+OLTERRAIN(barwall, olterrain)
+{
+ public:
+  void Break();
+};
+
+
 #endif

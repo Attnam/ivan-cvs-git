@@ -405,6 +405,10 @@ door /* olterrain-> */
   HPModifier = 20;
   CreateLockConfigurations = true;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
+  Config BARDOOR;
+  {
+	BitmapPos = 16, 96;
+  }
 }
 
 stairs /* olterrain-> */
@@ -531,6 +535,10 @@ brokendoor /* olterrain->door-> */
   Adjective = "broken";
   BitmapPos = 0, 160;
   CreateLockConfigurations = true;
+  Config BARDOOR;
+  {
+    BitmapPos = 32,96;
+  }
 }
 
 boulder /* olterrain-> */
@@ -627,4 +635,31 @@ coffin /* olterrain->decoration->olterraincontainer */
   StorageVolume = 100000;
   AttachedGod = MORTIFER;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
+}
+
+barwall
+{
+  CanBeDestroyed = true;
+  IsSafeToCreateDoor = true;
+  Walkability = ETHEREAL;
+  IsAlwaysTransparent = true;
+  BorderTilePriority = 100;
+  CreateWindowConfigurations = false;
+  MaterialColorC = rgb16(140, 96, 48);
+  MaterialColorD = rgb16(180, 180, 255);
+  ShowThingsUnder = true;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
+  IsWall = true;
+
+  DigMessage = "The wall is pretty hard, but you still manage to go through it.";
+  MainMaterialConfig == IRON;
+  NameSingular = "bars";
+  BitmapPos = 16, 112;
+  HPModifier = 25;
+  Config BROKEN_BARWALL;
+  {
+    BitmapPos = 32, 112;
+    Adjective = "broken";
+    Walkability = ANY_MOVE;
+  }
 }

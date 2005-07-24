@@ -24,7 +24,7 @@ class lockable : public base, public lockbase
   virtual truth HasLock(ccharacter*) const { return true; }
   virtual truth IsLocked() const { return lockbase::Locked; }
   virtual void SetIsLocked(truth What) { lockbase::Locked = What; }
-  virtual void Lock() { Locked = true; }
+  virtual void Lock() { lockbase::Locked = true; }
   virtual int GetVirtualConfig() const { return base::GetConfig(); }
   virtual void SetVirtualConfig(int What, int F = 0) { base::SetConfig(What, F); }
   virtual const prototype* GetVirtualProtoType() const { return base::GetProtoType(); }
