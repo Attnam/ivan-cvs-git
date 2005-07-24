@@ -750,6 +750,7 @@ banana /* materialcontainer-> */
   WieldedBitmapPos = 160, 320;
   AllowEquip = false;
   IsValuable = false;
+  IsSadistWeapon = true;
 
   Config BROKEN;
   {

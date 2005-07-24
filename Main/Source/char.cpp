@@ -2679,7 +2679,7 @@ truth character::Displace(character* Who, truth Forced)
     Danger /= 1 << -PriorityDifference;
 
   if(IsSmall() && Who->IsSmall()
-     && (Forced || Danger > 1. || !Who->IsBadPath(GetPos()))
+     && (Forced || Danger > 1. || !(Who->IsPlayer() || Who->IsBadPath(GetPos())))
      && !IsStuck() && !Who->IsStuck()
      && (!Who->GetAction() || Who->GetAction()->TryDisplace())
      && CanMove() && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
@@ -2736,16 +2736,18 @@ truth character::Displace(character* Who, truth Forced)
 
 void character::SetNP(long What)
 {
-  int OldGetHungerState = GetHungerState();
+  int OldState = GetHungerState();
   NP = What;
 
   if(IsPlayer())
   {
-    if(GetHungerState() == STARVING && OldGetHungerState > STARVING)
+    int NewState = GetHungerState();
+
+    if(NewState == STARVING && OldState > STARVING)
       DeActivateVoluntaryAction(CONST_S("You are getting really hungry."));
-    else if(GetHungerState() == VERY_HUNGRY && OldGetHungerState > VERY_HUNGRY)
+    else if(NewState == VERY_HUNGRY && OldState > VERY_HUNGRY)
       DeActivateVoluntaryAction(CONST_S("You are getting very hungry."));
-    else if(GetHungerState() == HUNGRY && OldGetHungerState > HUNGRY)
+    else if(NewState == HUNGRY && OldState > HUNGRY)
       DeActivateVoluntaryAction(CONST_S("You are getting hungry."));
   }
 }

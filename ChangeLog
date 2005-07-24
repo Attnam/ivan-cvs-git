@@ -7,6 +7,11 @@
 
 -----------------------------------------------------------------------------
 
+July 25 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed an animation bug which occured over memorized stairs outside LOS
+  * Fixed a bug in the displacement code
+
 July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Sadism and masochism work quite well

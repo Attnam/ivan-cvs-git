@@ -1171,6 +1171,8 @@ void level::Draw(truth AnimationDraw) const
 
 	  if(Square->LastSeen == LOSTick)
 	    Square->Draw(BlitData);
+	  else if(Square->Flags & STRONG_BIT)
+	    Square->DrawMemorized(BlitData);
 	  else
 	  {
 	    ccharacter* C = Square->Character;

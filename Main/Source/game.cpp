@@ -240,22 +240,16 @@ truth game::Init(cfestring& Name)
 
 #ifdef WIN32
   _mkdir("Save");
-#endif
-
-#ifdef __DJGPP__
-  mkdir("Save", S_IWUSR);
-#endif
-
-#ifdef LINUX
-  mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
-#endif
-
-#ifdef WIN32
   _mkdir("Bones");
 #endif
 
 #ifdef __DJGPP__
+  mkdir("Save", S_IWUSR);
   mkdir("Bones", S_IWUSR);
+#endif
+
+#ifdef LINUX
+  mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;

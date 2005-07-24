@@ -22,7 +22,7 @@ Rolling pin.
 Frying pan.
 Clothes peg.
 Showel.
-Sausage.
+//Sausage.
 Fungi.
 Nomad.
 Cactus.
@@ -31,7 +31,7 @@ Skis.
 Female character.
 //Tailor.
 M-colored explosions.
-Iron maiden.
+//Iron maiden.
 Victory screen background, etc.
 Tentacle limbs.
 Piano.

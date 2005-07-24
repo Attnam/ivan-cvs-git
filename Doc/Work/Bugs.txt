@@ -99,5 +99,6 @@ If you try to open a (closed) chest that stands on the place of open door, the g
 Floating eyes can vomit.
 Selling activated holy grenades should be handled.
 The script seems not to accept '§' character.
-Patheon book of Mellis etc.
+//Patheon book of Mellis etc.
 The Static Whore Insects of Unholy Solar Eclipse.
+The Ultra-Difficult Hell-Freezing Death Exception Bug.
