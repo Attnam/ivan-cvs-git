@@ -349,10 +349,12 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
-    return false;
-
-  if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
+  if(IsPlayer())
+  {
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+      return false;
+  }
+  else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
   if(GetBurdenState() == OVER_LOADED)
@@ -381,7 +383,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   switch(Chosen)
   {
    case USE_ARMS:
-    if(CanAttackWithAnArm())
+    if(CanAttackWithAnArm() && (!(Flags & SADIST_HIT) || HasSadistWeapon()))
     {
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
@@ -401,7 +403,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
       int Strength = Max(GetAttribute(ARM_STRENGTH), 1);
 
-      if(FirstArm && FirstArm->GetDamage())
+      if(FirstArm && FirstArm->GetDamage() && (!(Flags & SADIST_HIT) || FirstArm->HasSadistWeapon()))
       {
 	FirstAPCost = FirstArm->GetAPCost();
 	FirstArm->Hit(Enemy, HitPos, Direction, Flags);
@@ -410,7 +412,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 	  DropBodyPart(FirstArm->GetBodyPartIndex());
       }
 
-      if(!GetAction() && IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
+      if(!GetAction() && IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage() && (!(Flags & SADIST_HIT) || SecondArm->HasSadistWeapon()))
       {
 	SecondAPCost = SecondArm->GetAPCost();
 	SecondArm->Hit(Enemy, HitPos, Direction, Flags);
@@ -430,7 +432,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
     {
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      Kick(GetNearLSquare(HitPos), Direction, Flags & MASOCHIST_HIT);
+      Kick(GetNearLSquare(HitPos), Direction, Flags & SADIST_HIT);
 
       if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 	DropBodyPart(RAND_2 ? RIGHT_LEG_INDEX : LEFT_LEG_INDEX);
@@ -443,7 +445,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
     {
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      Bite(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
+      Bite(Enemy, HitPos, Direction, Flags & SADIST_HIT);
       msgsystem::LeaveBigMessageMode();
       return true;
     }
@@ -3322,6 +3324,9 @@ void darkmage::GetAICommand()
   if(CheckForDoors())
     return;
 
+  if(CheckSadism())
+    return;
+
   if(MoveRandomly())
     return;
 
@@ -3971,6 +3976,9 @@ void necromancer::GetAICommand()
   }
 
   if(CheckForDoors())
+    return;
+
+  if(CheckSadism())
     return;
 
   if(MoveRandomly())
@@ -5045,7 +5053,7 @@ void siren::GetAICommand()
   if(TryToSing())
     return;
 
-  character::GetAICommand();
+  humanoid::GetAICommand();
 }
 
 truth siren::TryToSing()
@@ -5076,5 +5084,17 @@ truth humanoid::MindWormCanPenetrateSkull(mindworm* Worm) const
       return RAND_2;
     }
   }
+
   return RAND_2;
+}
+
+truth humanoid::HasSadistWeapon() const
+{
+  arm* Right = GetRightArm(), * Left = GetLeftArm();
+  return (Right && Right->HasSadistWeapon()) || (Left && Left->HasSadistWeapon());
+}
+
+truth humanoid::LooksLikeSadist() const
+{
+  return HasSadistWeapon() || IsUsingLegs();
 }

@@ -257,10 +257,12 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
-    return false;
-
-  if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
+  if(IsPlayer())
+  {
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+      return false;
+  }
+  else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
   if(GetBurdenState() == OVER_LOADED)
@@ -303,19 +305,19 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
    case USE_ARMS:
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
-    UnarmedHit(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
+    UnarmedHit(Enemy, HitPos, Direction, Flags & SADIST_HIT);
     msgsystem::LeaveBigMessageMode();
     return true;
    case USE_LEGS:
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
-    Kick(GetNearLSquare(HitPos), Direction, Flags & MASOCHIST_HIT);
+    Kick(GetNearLSquare(HitPos), Direction, Flags & SADIST_HIT);
     msgsystem::LeaveBigMessageMode();
     return true;
    case USE_HEAD:
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
-    Bite(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
+    Bite(Enemy, HitPos, Direction, Flags & SADIST_HIT);
     msgsystem::LeaveBigMessageMode();
     return true;
    default:
@@ -910,8 +912,11 @@ int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
 truth eddy::Hit(character* Enemy, v2, int, int)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
-    return false;
+  if(IsPlayer())
+  {
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+      return false;
+  }
 
   Hostility(Enemy);
 
@@ -1046,10 +1051,12 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
-    return false;
-
-  if(!IsPlayer() && GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
+  if(IsPlayer())
+  {
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+      return false;
+  }
+  else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
   if(GetBurdenState() == OVER_LOADED)
@@ -1062,7 +1069,7 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
   Hostility(Enemy);
   msgsystem::EnterBigMessageMode();
-  Bite(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
+  Bite(Enemy, HitPos, Direction, Flags & SADIST_HIT);
   v2 Pos[MAX_NEIGHBOUR_SQUARES];
   character* Char[MAX_NEIGHBOUR_SQUARES];
   int Index = 0;
@@ -1086,7 +1093,7 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(Index)
   {
     int ChosenIndex = RAND() % Index;
-    Bite(Char[ChosenIndex], Pos[ChosenIndex], game::GetDirectionForVector(Pos[ChosenIndex] - GetPos()), Flags & MASOCHIST_HIT);
+    Bite(Char[ChosenIndex], Pos[ChosenIndex], game::GetDirectionForVector(Pos[ChosenIndex] - GetPos()), Flags & SADIST_HIT);
   }
 
   msgsystem::LeaveBigMessageMode();
@@ -1835,7 +1842,12 @@ truth mommo::Hit(character* Enemy, v2 Pos, int, int)
   if(CheckIfTooScaredToHit(Enemy))
     return false;
 
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(IsPlayer())
+  {
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+      return false;
+  }
+  else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
     return false;
 
   Hostility(Enemy);

@@ -1107,6 +1107,6 @@ cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
 #define NO_TAMING -1
 
-#define MASOCHIST_HIT 1
+#define SADIST_HIT 1
 
 #endif

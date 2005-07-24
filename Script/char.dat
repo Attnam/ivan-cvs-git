@@ -4629,6 +4629,7 @@ hedgehog
   FleshMaterial = HEDGEHOG_FLESH;
   AttachedGod = SILVA;
   AutomaticallySeen = true;
+  CanOpen = false;
 }
 
 bunny

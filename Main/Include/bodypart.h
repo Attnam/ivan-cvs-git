@@ -351,6 +351,7 @@ ITEM(arm, bodypart)
   double GetDexterityExperience() const { return DexterityExperience; }
   virtual void SignalPossibleUsabilityChange();
   virtual truth IsAnimated() const;
+  truth HasSadistWeapon() const;
  protected:
   virtual sweaponskill** GetCurrentSWeaponSkill() const { return 0; }
   void UpdateArmArmorPictures(graphicdata&, graphicdata&, int) const;

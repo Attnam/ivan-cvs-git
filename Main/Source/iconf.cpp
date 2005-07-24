@@ -53,6 +53,9 @@ truthoption ivanconfig::LookZoom(	  "LookZoom",
 truthoption ivanconfig::UseAlternativeKeys("UseAlternativeKeys",
 					   "use alternative direction keys",
 					   false);
+truthoption ivanconfig::BeNice(		  "BeNice",
+					  "be nice to pets",
+					  true);
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(	  "FullScreenMode",
 					  "run the game in full screen mode",
@@ -196,6 +199,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&UseAlternativeKeys);
+  configsystem::AddOption(&BeNice);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
 #endif

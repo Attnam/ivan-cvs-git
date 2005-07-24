@@ -9,6 +9,11 @@
 
 July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
+  * Sadism and masochism work quite well
+  * Fixed a fatal bug in the head shot code
+
+July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
   * Humanoid.pcx modified, ready for Kahvi's addition of broken armor pics
   * Sadism yet incomplete -> bugs
 

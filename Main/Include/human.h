@@ -166,6 +166,8 @@ CHARACTER(humanoid, character)
   virtual cchar* GetNormalDeathMessage() const;
   virtual void ApplySpecialAttributeBonuses();
   virtual truth MindWormCanPenetrateSkull(mindworm*) const;
+  truth HasSadistWeapon() const;
+  virtual truth LooksLikeSadist() const;
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;
@@ -564,23 +566,24 @@ CHARACTER(encourager, humanoid)
  protected:
   virtual void GetAICommand();
   ulong LastHit;*/
+ protected:
+  virtual void GetAICommand() { StandIdleAI(); }
 };
 
 CHARACTER(darkmage, humanoid)
 {
- public:
-  virtual void GetAICommand();
  protected:
+  virtual void GetAICommand();
   int GetSpellAPCost() const;
 };
 
 CHARACTER(necromancer, humanoid)
 {
  public:
-  virtual void GetAICommand();
   virtual truth TryToRaiseZombie();
   virtual void RaiseSkeleton();
  protected:
+  virtual void GetAICommand();
   int GetSpellAPCost() const;
 };
 

@@ -784,12 +784,18 @@ truth commandsystem::Kick(character* Char)
   if(!Square->CheckKick(Char))
     return false;
 
-  if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
+  character* Enemy = Square->GetCharacter();
+
+  if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    return false;
+
+  /*if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
     if(!game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
       return false;
     else
-      Char->Hostility(Square->GetCharacter());
+      */
 
+  Char->Hostility(Square->GetCharacter());
   Char->Kick(Square, Dir);
   return true;
 }

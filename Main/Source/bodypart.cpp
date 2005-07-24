@@ -904,7 +904,7 @@ void arm::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
     THW = TwoHandWieldIsActive();
   }
 
-  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), Flags & MASOCHIST_HIT))
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), Flags & SADIST_HIT))
   {
    case HAS_HIT:
    case HAS_BLOCKED:
@@ -3554,4 +3554,10 @@ v2 spidertorso::GetBitmapPos(int Frame) const
   v2 BasePos = torso::GetBitmapPos(Frame);
   Frame &= 0xF;
   return v2(BasePos.X + ((Frame &~ 7) << 1), BasePos.Y);
+}
+
+truth arm::HasSadistWeapon() const
+{
+  item* Wielded = GetWielded();
+  return Wielded && Wielded->IsSadistWeapon();
 }

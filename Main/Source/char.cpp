@@ -972,6 +972,9 @@ void character::GetAICommand()
   if(CheckForDoors())
     return;
 
+  if(CheckSadism())
+    return;
+
   if(MoveRandomly())
     return;
 
@@ -1187,114 +1190,121 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	    return false;
 
       if(Pets == 1)
-	return Important
-	  && (CanMoveOn(MoveToSquare[0])
-	      || (IsPlayer()
-		  && game::GoThroughWallsCheatIsActive()))
-	  && Displace(Pet[0]);
-      else if(Pets)
-	return false;
-
-      if(CanMove()
-	 && CanMoveOn(MoveToSquare[0])
-	 || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
       {
-	Move(MoveTo, false, Run);
+	if(IsPlayer() && !ivanconfig::GetBeNice()
+	   && Pet[0]->IsMasochist() && LooksLikeSadist()
+	   && game::TruthQuestion("Do you want to punish " + Pet[0]->GetObjectPronoun() + "? [y/N]"))
+	  return Hit(Pet[0], PetPos[0], Direction, SADIST_HIT);
+	else
+	  return (Important
+		  && (CanMoveOn(MoveToSquare[0])
+		      || (IsPlayer()
+			  && game::GoThroughWallsCheatIsActive()))
+		  && Displace(Pet[0]));
+    }
+    else if(Pets)
+      return false;
 
-	if(IsEnabled() && GetPos() == GoingTo)
-	  TerminateGoingTo();
+    if(CanMove()
+       && CanMoveOn(MoveToSquare[0])
+       || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
+    {
+      Move(MoveTo, false, Run);
 
-	return true;
-      }
-      else
-	for(int c = 0; c < Squares; ++c)
+      if(IsEnabled() && GetPos() == GoingTo)
+	TerminateGoingTo();
+
+      return true;
+    }
+    else
+      for(int c = 0; c < Squares; ++c)
+      {
+	olterrain* Terrain = MoveToSquare[c]->GetOLTerrain();
+
+	if(Terrain && Terrain->CanBeOpened())
 	{
-	  olterrain* Terrain = MoveToSquare[c]->GetOLTerrain();
-
-	  if(Terrain && Terrain->CanBeOpened())
+	  if(CanOpen())
 	  {
-	    if(CanOpen())
+	    if(Terrain->IsLocked())
 	    {
-	      if(Terrain->IsLocked())
+	      if(IsPlayer())
 	      {
-		if(IsPlayer())
-		{
-		  ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
-		  return false;
-		}
-		else if(Important && CheckKick())
-		{
-		  room* Room = MoveToSquare[c]->GetRoom();
-
-		  if(!Room || Room->AllowKick(this, MoveToSquare[c]))
-		  {
-		    int HP = Terrain->GetHP();
-
-		    if(CanBeSeenByPlayer())
-		      ADD_MESSAGE("%s kicks %s.", CHAR_NAME(DEFINITE), Terrain->CHAR_NAME(DEFINITE));
-
-		    Kick(MoveToSquare[c], Direction);
-		    olterrain* NewTerrain = MoveToSquare[c]->GetOLTerrain();
-
-		    if(NewTerrain == Terrain && Terrain->GetHP() == HP) // BUG!
-		    {
-		      Illegal.insert(MoveTo);
-		      CreateRoute();
-		    }
-
-		    return true;
-		  }
-		}
+		ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
+		return false;
 	      }
-	      else
+	      else if(Important && CheckKick())
 	      {
-		if(!IsPlayer() || game::TruthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
-		  return MoveToSquare[c]->Open(this);
-		else
-		  return false;
+		room* Room = MoveToSquare[c]->GetRoom();
+
+		if(!Room || Room->AllowKick(this, MoveToSquare[c]))
+		{
+		  int HP = Terrain->GetHP();
+
+		  if(CanBeSeenByPlayer())
+		    ADD_MESSAGE("%s kicks %s.", CHAR_NAME(DEFINITE), Terrain->CHAR_NAME(DEFINITE));
+
+		  Kick(MoveToSquare[c], Direction);
+		  olterrain* NewTerrain = MoveToSquare[c]->GetOLTerrain();
+
+		  if(NewTerrain == Terrain && Terrain->GetHP() == HP) // BUG!
+		  {
+		    Illegal.insert(MoveTo);
+		    CreateRoute();
+		  }
+
+		  return true;
+		}
 	      }
 	    }
 	    else
 	    {
-	      if(IsPlayer())
-	      {
-		ADD_MESSAGE("This monster type cannot open doors.");
+	      if(!IsPlayer() || game::TruthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
+		return MoveToSquare[c]->Open(this);
+	      else
 		return false;
-	      }
-	      else if(Important)
-	      {
-		Illegal.insert(MoveTo);
-		return CreateRoute();
-	      }
+	    }
+	  }
+	  else
+	  {
+	    if(IsPlayer())
+	    {
+	      ADD_MESSAGE("This monster type cannot open doors.");
+	      return false;
+	    }
+	    else if(Important)
+	    {
+	      Illegal.insert(MoveTo);
+	      return CreateRoute();
 	    }
 	  }
 	}
-
-      return false;
-    }
-    else
-    {
-      if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::TruthQuestion(CONST_S("Do you want to leave ") + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
-      {
-	if(HasPetrussNut() && !HasGoldenEagleShirt())
-	{
-	  game::TextScreen(CONST_S("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!"));
-	  game::GetCurrentArea()->SendNewDrawRequest();
-	  game::DrawEverything();
-	  ShowAdventureInfo();
-	  festring Msg = CONST_S("killed Petrus and became the Avatar of Chaos");
-	  PLAYER->AddScoreEntry(Msg, 3, false);
-	  game::End(Msg);
-	  return true;
-	}
-
-	if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
-	  return true;
       }
 
-      return false;
-    }
+    return false;
   }
+  else
+  {
+    if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::TruthQuestion(CONST_S("Do you want to leave ") + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
+    {
+      if(HasPetrussNut() && !HasGoldenEagleShirt())
+      {
+	game::TextScreen(CONST_S("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!"));
+	game::GetCurrentArea()->SendNewDrawRequest();
+	game::DrawEverything();
+	ShowAdventureInfo();
+	festring Msg = CONST_S("killed Petrus and became the Avatar of Chaos");
+	PLAYER->AddScoreEntry(Msg, 3, false);
+	game::End(Msg);
+	return true;
+      }
+
+      if(game::TryTravel(WORLD_MAP, WORLD_MAP, game::GetCurrentDungeonIndex()))
+	return true;
+    }
+
+    return false;
+  }
+}
   else
   {
     /** No multitile support */
@@ -2329,6 +2339,9 @@ void character::StandIdleAI()
     return;
 
   if(MoveTowardsHomePos())
+    return;
+
+  if(CheckSadism())
     return;
 
   EditAP(-1000);
@@ -9649,7 +9662,7 @@ truth character::ForgetRandomThing()
     /* hopefully this code isn't some where else */
     std::vector<god*> Known;
 
-    for(int c = 0; c < GODS; ++c)
+    for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
 	Known.push_back(game::GetGod(c));
 
@@ -9772,6 +9785,7 @@ item* character::FindMostExpensiveItem() const
 }
 
 // returns 0 if no items available
+
 item* character::GiveMostExpensiveItem(character* ToWhom)
 {
   item* ToGive = FindMostExpensiveItem();
@@ -9798,8 +9812,8 @@ void character::ReceiveItemAsPresent(item* Present)
     GetStackUnder()->AddItem(Present);
 } 
 
-
 /* returns 0 if no enemies in sight */
+
 character* character::GetNearestEnemy() const
 {
   character* NearestEnemy = 0;
@@ -9897,15 +9911,10 @@ truth character::CheckSadism()
       {
 	character* Char = Square->GetCharacter();
 
-	if(Char && Char->IsMasochist() && GetRelation(Char) == FRIEND && Char->GetHP() * 3 >= Char->GetMaxHP() * 2)
+	if(Char && Char->IsMasochist() && GetRelation(Char) == FRIEND && Char->GetHP() * 3 >= Char->GetMaxHP() * 2 && Hit(Char, Square->GetPos(), d, SADIST_HIT))
 	{
-	  /*if(
-
-	  if(CheckKick())*/
-
-
-	  if(Hit(Char, Square->GetPos(), d, MASOCHIST_HIT))
-	    TerminateGoingTo();
+	  TerminateGoingTo();
+	  return true;
 	}
       }
     }

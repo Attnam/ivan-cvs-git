@@ -120,6 +120,7 @@ item
   DamageFlags = BLUNT;
   IsKamikazeWeapon = false;
   FlexibilityIsEssential = false;
+  IsSadistWeapon = false;
 }
 
 materialcontainer
@@ -1040,6 +1041,10 @@ goldeneagleshirt /* armor->bodyarmor-> */
   CanBeEnchanted = false;
   AttachedGod = VALPURUS;
   IsQuestItem = true;
+  TorsoArmorBitmapPos = 32, 416;
+  ArmArmorBitmapPos = 80, 416;
+  AthleteArmArmorBitmapPos = 80, 448;
+  LegArmorBitmapPos = 16, 416;
 }
 
 potion /* materialcontainer-> */
@@ -1622,6 +1627,7 @@ whip /* meleeweapon-> */
   EnchantmentPlusChance = 30;
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
+  IsSadistWeapon = true;
 
   Config RUNED_WHIP;
   {
@@ -2184,6 +2190,7 @@ belt /* armor-> */
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
   DamageFlags = SLASH;
+  IsSadistWeapon = true;
 
   Config BROKEN;
   {
@@ -2438,6 +2445,7 @@ bodypart
   CanBeWished = false; /* temporary */
   AttachedGod = NONE;
   IsValuable = false;
+  IsSadistWeapon = true;
 }
 
 head /* bodypart-> */
@@ -3682,6 +3690,7 @@ gorovitscopyoflenin /* item-> */
   BitmapPos = 80, 48;
   Possibility = 0;
   Price = 50;
+  Alias == "Lenin";
 }
 
 chastitybelt

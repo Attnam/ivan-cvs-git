@@ -191,6 +191,7 @@ struct itemdatabase : public databasebase
   int TeleportPriority;
   int DamageFlags;
   festring BreakMsg;
+  truth IsSadistWeapon;
 };
 
 class itemprototype
@@ -401,6 +402,7 @@ class item : public object
   DATA_BASE_VALUE(int, DamageFlags);
   DATA_BASE_TRUTH(FlexibilityIsEssential);
   DATA_BASE_VALUE(cfestring&, BreakMsg);
+  DATA_BASE_TRUTH(IsSadistWeapon);
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
