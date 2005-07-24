@@ -3622,7 +3622,7 @@ weepblade
 acidshield /* armor ->*/
 {
   DefaultSize = 60;
-  Possibility = 250;
+  Possibility = 5;
   Category = SHIELD;
   DefaultMainVolume = 350;
   StrengthModifier = 150;
@@ -3667,7 +3667,7 @@ pantheonbook /* holybook-> */
   Price = 500;
   Roundness = 70;
   IsTwoHanded = true;
-  CreateDivineConfigurations = true;
+  CreateDivineConfigurations = false;
   AttachedGod = VALPURUS;
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
