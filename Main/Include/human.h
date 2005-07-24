@@ -167,7 +167,7 @@ CHARACTER(humanoid, character)
   virtual void ApplySpecialAttributeBonuses();
   virtual truth MindWormCanPenetrateSkull(mindworm*) const;
   truth HasSadistWeapon() const;
-  virtual truth LooksLikeSadist() const;
+  virtual truth HasSadistAttackMode() const;
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;

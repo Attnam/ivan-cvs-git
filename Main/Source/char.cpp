@@ -1192,7 +1192,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
       if(Pets == 1)
       {
 	if(IsPlayer() && !ivanconfig::GetBeNice()
-	   && Pet[0]->IsMasochist() && LooksLikeSadist()
+	   && Pet[0]->IsMasochist() && HasSadistAttackMode()
 	   && game::TruthQuestion("Do you want to punish " + Pet[0]->GetObjectPronoun() + "? [y/N]"))
 	  return Hit(Pet[0], PetPos[0], Direction, SADIST_HIT);
 	else
@@ -9627,12 +9627,14 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
 	SetLastAcidMsgMin(Minute);
 
 	if(IsPlayer())
-	  ADD_MESSAGE("Mustard gas dissolves the skin of your %s.", BodyPart->GetBodyPartName().CStr());
+	  ADD_MESSAGE("Mustard gas dissolves the skin of your %s.",
+		      BodyPart->GetBodyPartName().CStr());
 	else
 	  ADD_MESSAGE("Mustard gas dissolves %s.", CHAR_NAME(DEFINITE));
       }
 
-      ReceiveBodyPartDamage(0, Damage, MUSTARD_GAS_DAMAGE, BodyPartIndex, YOURSELF, false, false, false);
+      ReceiveBodyPartDamage(0, Damage, MUSTARD_GAS_DAMAGE,
+			    BodyPartIndex, YOURSELF, false, false, false);
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
     }
   }
@@ -9671,13 +9673,16 @@ truth character::ForgetRandomThing()
 
     int RandomGod = RAND_N(Known.size());
     Known.at(RAND_N(Known.size()))->SetIsKnown(false);
-    ADD_MESSAGE("You forget how to pray to %s.", Known.at(RandomGod)->GetName());
+    ADD_MESSAGE("You forget how to pray to %s.",
+		Known.at(RandomGod)->GetName());
     return true;
   }
   return false;
 }
 
-int character::CheckForBlock(character* Enemy, item* Weapon, double ToHitValue, int Damage, int Success, int Type)
+int character::CheckForBlock(character* Enemy, item* Weapon,
+			     double ToHitValue, int Damage,
+			     int Success, int Type)
 {
   return Damage; 
 };
@@ -9826,9 +9831,12 @@ character* character::GetNearestEnemy() const
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X),
+					abs((*i)->GetPos().Y - Pos.Y));
 
-	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+	  if((ThisDistance < NearestEnemyDistance
+	      || (ThisDistance == NearestEnemyDistance && !(RAND() % 3)))
+	     && (*i)->CanBeSeenBy(this))
 	  {
 	    NearestEnemy = *i;
 	    NearestEnemyDistance = ThisDistance;
@@ -9865,7 +9873,8 @@ truth character::CanTameWithDulcis(const character* Tamer) const
     if(!IgnoreDanger())
       TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
     else
-      TamingDifficulty = 10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1);
+      TamingDifficulty = 10 * GetHPRequirementForGeneration()
+			 / Max(Tamer->GetHP(), 1);
 
   return Modifier >= TamingDifficulty * 3;
 }
@@ -9881,7 +9890,8 @@ truth character::CanTameWithLyre(const character* Tamer) const
     if(!IgnoreDanger())
       TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
     else
-      TamingDifficulty = 10 * GetHPRequirementForGeneration() / Max(Tamer->GetHP(), 1);
+      TamingDifficulty = 10 * GetHPRequirementForGeneration()
+			 / Max(Tamer->GetHP(), 1);
 
   return Tamer->GetAttribute(CHARISMA) >= TamingDifficulty;
 }
@@ -9898,7 +9908,7 @@ truth character::CanTameWithScroll(const character* Tamer) const
 
 truth character::CheckSadism()
 {
-  if(!IsSadist() || !IsSmall()) // gum
+  if(!IsSadist() || !HasSadistAttackMode() || !IsSmall()) // gum
     return false;
 
   if(!RAND_N(10))
@@ -9911,7 +9921,9 @@ truth character::CheckSadism()
       {
 	character* Char = Square->GetCharacter();
 
-	if(Char && Char->IsMasochist() && GetRelation(Char) == FRIEND && Char->GetHP() * 3 >= Char->GetMaxHP() * 2 && Hit(Char, Square->GetPos(), d, SADIST_HIT))
+	if(Char && Char->IsMasochist() && GetRelation(Char) == FRIEND
+	   && Char->GetHP() * 3 >= Char->GetMaxHP() * 2
+	   && Hit(Char, Square->GetPos(), d, SADIST_HIT))
 	{
 	  TerminateGoingTo();
 	  return true;

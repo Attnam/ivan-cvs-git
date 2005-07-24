@@ -1088,6 +1088,7 @@ bananapeels
   WieldedBitmapPos = 160, 112;
   AllowEquip = false;
   IsValuable = false;
+  IsSadistWeapon = true;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -1107,6 +1108,7 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
   WieldedBitmapPos = 160, 128;
   IsValuable = false;
   DamageFlags = PIERCE;
+  IsSadistWeapon = true;
 }
 
 scroll
@@ -1162,6 +1164,7 @@ nut
   AttachedGod = NEFAS;
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
+  IsSadistWeapon = true;
 }
 
 leftnutofpetrus /* nut-> */
@@ -2419,7 +2422,8 @@ amulet
     Price = 1000;
     AttachedGod = LEGIFER;
   }
-Config AMULET_OF_WARDING;
+
+  Config AMULET_OF_WARDING;
   {
     Possibility = 4;
     PostFix = "of elemental protection";
@@ -3558,34 +3562,34 @@ holyhandgrenade
 }
 
 daggerofvenom
-  {
-    DefaultSize = 40;
-    Possibility = 15;
-    WeaponCategory = SMALL_SWORDS;
-    DefaultMainVolume = 25;
-    DefaultSecondaryVolume = 25;
-    BitmapPos = 48, 256;
-    FormModifier = 75;
-    StrengthModifier = 60;
-    NameSingular = "dagger";
-    PostFix = "of venom";
-    MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
-    SecondaryMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
-    MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
-    Roundness = 20;
-    Price = 150;
-    AttachedGod = CLEPTIA;
-    WieldedBitmapPos = 160, 288;
-    EnchantmentPlusChance = 2;
-    DamageFlags = SLASH|PIERCE;
+{
+  DefaultSize = 40;
+  Possibility = 15;
+  WeaponCategory = SMALL_SWORDS;
+  DefaultMainVolume = 25;
+  DefaultSecondaryVolume = 25;
+  BitmapPos = 48, 256;
+  FormModifier = 75;
+  StrengthModifier = 60;
+  NameSingular = "dagger";
+  PostFix = "of venom";
+  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+  SecondaryMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+  Roundness = 20;
+  Price = 150;
+  AttachedGod = CLEPTIA;
+  WieldedBitmapPos = 160, 288;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH|PIERCE;
 
-   Config BROKEN;
-   {
-      Possibility = 10;
-      BitmapPos = 48, 288;
-      WieldedBitmapPos = 176, 288;
-      EnchantmentPlusChance = 4;
-   }
+  Config BROKEN;
+  {
+    Possibility = 10;
+    BitmapPos = 48, 288;
+    WieldedBitmapPos = 176, 288;
+    EnchantmentPlusChance = 4;
+  }
 }
 
 weepblade

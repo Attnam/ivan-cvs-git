@@ -4852,7 +4852,7 @@ void playerkind::PostConstruct()
 
   switch(RAND_N(4))
   {
-   case 0: R = 180; G = 180; B = 40; break;
+   case 0: R = 195; G = 165; B = 40; break;
    case 1: R = 130; G = 30; B = 0; break;
    case 2: R = 30; G = 30; B = 15; break;
    case 3: R = 50; G = 30; B = 5; break;
@@ -5094,7 +5094,7 @@ truth humanoid::HasSadistWeapon() const
   return (Right && Right->HasSadistWeapon()) || (Left && Left->HasSadistWeapon());
 }
 
-truth humanoid::LooksLikeSadist() const
+truth humanoid::HasSadistAttackMode() const
 {
   return HasSadistWeapon() || IsUsingLegs();
 }

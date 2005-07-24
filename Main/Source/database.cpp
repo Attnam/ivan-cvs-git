@@ -131,8 +131,9 @@ template <class type> int databasecreator<type>::CreateDivineConfigurations(cons
   for(int c1 = 1; c1 < protocontainer<god>::GetSize(); ++c1)
   {
     database* ConfigDataBase = 0;
+    int c2;
 
-    for(int c2 = 1; c2 < OldConfigs; ++c2)
+    for(c2 = 1; c2 < OldConfigs; ++c2)
     {
       ConfigDataBase = TempConfig[c2];
 
@@ -142,7 +143,7 @@ template <class type> int databasecreator<type>::CreateDivineConfigurations(cons
 
     truth Created = false;
 
-    if(!ConfigDataBase)
+    if(c2 == OldConfigs)
     {
       ConfigDataBase = new database(**TempConfig);
       ConfigDataBase->InitDefaults(Proto, c1);

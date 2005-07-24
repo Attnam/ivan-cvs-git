@@ -275,8 +275,8 @@ character
   AllowPlayerToChangeEquipment = true;
   DefaultWillPower = 10;
   TamingDifficulty = 0;
-  IsMasochist = false;
   IsSadist = false;
+  IsMasochist = false;
 }
 
 humanoid
@@ -463,6 +463,7 @@ guard
   IsAbstract = true;
   HostileReplies == "\"A fair trial? Hah! Prepare to be executed!\"";
   AttachedGod = LEGIFER;
+  IsSadist = true;
 
   Config ROOKIE;
   {
@@ -690,6 +691,7 @@ shopkeeper
   TamingDifficulty = NO_TAMING;
   AttachedGod = MELLIS;
   CanBeConfused = false;
+  IsSadist = true;
 
   Config NEW_ATTNAM;
   {
@@ -905,6 +907,7 @@ oree
   AllowUnconsciousness = false;
   DisplacePriority = 8;
   VomittingIsUnhealthy = false;
+  IsSadist = true;
 }
 
 darkknight
@@ -937,6 +940,7 @@ darkknight
   FriendlyReplies == "\"Don't bother me unless you need help to die.\"";
   AttachedGod = CRUENTUS;
   IsExtraFragile = true;
+  IsSadist = true;
 
   Config ROOKIE;
   {
@@ -2066,6 +2070,7 @@ hunter
   ScienceTalkWisdomModifier = 1;
   ScienceTalkIntelligenceRequirement = 6;
   ScienceTalkWisdomRequirement = 3;
+  IsSadist = true;
 }
 
 bear
@@ -2646,8 +2651,8 @@ mistress
   ScienceTalkWisdomModifier = 1;
   ScienceTalkIntelligenceRequirement = 6;
   ScienceTalkWisdomRequirement = 3;
-  IsMasochist = true;
   IsSadist = true;
+  IsMasochist = true;
 
   Config TORTURING_CHIEF;
   {
@@ -2903,6 +2908,7 @@ kobold
     EnergyResistance = 20;
     IsExtraFragile = false;
     TamingDifficulty = 15;
+    IsSadist = true;
   }
 }
 
@@ -3055,6 +3061,42 @@ angel
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 20;
   CanChoke = false;
+
+  Config MELLIS;
+  {
+    IsSadist = true;
+  }
+
+  Config CLEPTIA;
+  {
+    IsSadist = true;
+  }
+
+  Config NEFAS;
+  {
+    IsSadist = true;
+    IsMasochist = true;
+  }
+
+  Config SCABIES;
+  {
+    IsSadist = true;
+  }
+
+  Config INFUSCOR;
+  {
+    IsSadist = true;
+  }
+
+  Config CRUENTUS;
+  {
+    IsSadist = true;
+  }
+
+  Config MORTIFER;
+  {
+    IsSadist = true;
+  }
 }
 
 kamikazedwarf
@@ -3187,6 +3229,7 @@ unicorn
     Adjective = "black";
     FleshMaterial = BLACK_UNICORN_FLESH;
     AttachedGod = MORTIFER;
+    IsSadist = true;
   }
 }
 
@@ -3444,6 +3487,7 @@ orc
     "killing", "murder", "rape", "torture", "burns",
     "cannibalism", "slaughtering", "malice", "axes", "blood";
   }
+  IsSadist = true;
 
   Config SLAUGHTERER;
   {
@@ -4174,6 +4218,7 @@ darkmage
   IsAbstract = true;
   KnownCWeaponSkills == BLUNT_WEAPONS;
   IsExtraFragile = true;
+  IsSadist = true;
 
   Config APPRENTICE;
   {
@@ -4797,6 +4842,7 @@ necromancer
   KnownCWeaponSkills == BLUNT_WEAPONS;
   NameSingular = "necromancer";
   IsExtraFragile = true;
+  IsSadist = true;
 
   Config APPRENTICE_NECROMANCER;
   {
@@ -5170,36 +5216,44 @@ archangel
   Config MELLIS;
   {
     DefaultName = "Leguleius";
+    IsSadist = true;
   }
 
   Config CLEPTIA;
   {
     DefaultName = "Latro";
+    IsSadist = true;
   }
 
   Config NEFAS;
   {
     DefaultName = "Rapax";
+    IsSadist = true;
+    IsMasochist = true;
   }
 
   Config SCABIES;
   {
     DefaultName = "Pestilentia";
+    IsSadist = true;
   }
 
   Config INFUSCOR;
   {
     DefaultName = "Sinistra";
+    IsSadist = true;
   }
 
   Config CRUENTUS;
   {
     DefaultName = "Gladius";
+    IsSadist = true;
   }
 
   Config MORTIFER;
   {
     DefaultName = "Erado";
+    IsSadist = true;
   }
 }
 
@@ -5463,7 +5517,6 @@ punisher
   TorsoBitmapPos = 48, 48;
   ArmBitmapPos = 64, 256;
   LegBitmapPos = 0, 48;
-
   CapColor = rgb16(200, 200, 10);
   TorsoMainColor = rgb16(30, 30, 30);
   LegMainColor = rgb16(30,30,30);

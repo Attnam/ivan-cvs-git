@@ -1065,7 +1065,7 @@ class character : public entity, public id
   truth CanTameWithScroll(const character*) const;
   truth IsCharmable() const { return GetTamingDifficulty() != NO_TAMING; }
   truth CheckSadism();
-  virtual truth LooksLikeSadist() const { return IsUsingLegs(); }
+  virtual truth HasSadistAttackMode() const { return IsUsingLegs(); }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
