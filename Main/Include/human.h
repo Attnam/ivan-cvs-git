@@ -24,7 +24,7 @@ CHARACTER(humanoid, character)
   humanoid(const humanoid&);
   virtual ~humanoid();
   virtual truth CanWield() const;
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual int GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEAD_INDEX]); }
   arm* GetRightArm() const { return static_cast<arm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
@@ -304,7 +304,7 @@ CHARACTER(darkknight, humanoid)
 CHARACTER(ennerbeast, humanoid)
 {
  public:
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual truth MustBeRemovedFromBone() const;
  protected:
   virtual bodypart* MakeBodyPart(int) const;
@@ -479,7 +479,7 @@ CHARACTER(angel, humanoid)
 CHARACTER(kamikazedwarf, humanoid)
 {
  public:
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual truth CheckForUsefulItemsOnGround(truth = true) { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(int);
@@ -556,14 +556,14 @@ CHARACTER(elder, humanoid)
 
 CHARACTER(encourager, humanoid)
 {
- public:
+ /*public:
   encourager() : LastHit(0) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void FinalProcessForBone();
  protected:
   virtual void GetAICommand();
-  ulong LastHit;
+  ulong LastHit;*/
 };
 
 CHARACTER(darkmage, humanoid)

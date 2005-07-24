@@ -272,10 +272,6 @@ SOURCE=.\Main\Source\levelset.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\lock.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Source\lsquare.cpp
 # PROP Exclude_From_Build 1
 # End Source File

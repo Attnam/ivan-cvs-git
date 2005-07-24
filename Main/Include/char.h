@@ -235,6 +235,8 @@ struct characterdatabase : public databasebase
   festring RunDescriptionLineTwo;
   truth AllowPlayerToChangeEquipment;
   int TamingDifficulty;
+  truth IsMasochist;
+  truth IsSadist;
 };
 
 class characterprototype
@@ -280,7 +282,7 @@ class character : public entity, public id
   virtual truth Catches(item*) { return false; }
   truth CheckDeath(cfestring&, ccharacter* = 0, ulong = 0);
   truth DodgesFlyingItem(item*, double);
-  virtual truth Hit(character*, v2, int, truth = false) = 0;
+  virtual truth Hit(character*, v2, int, int = 0) = 0;
   truth ReadItem(item*);
   truth TestForPickup(item*) const;
   void ThrowItem(int, item*);
@@ -577,6 +579,8 @@ class character : public entity, public id
   DATA_BASE_TRUTH(VomittingIsUnhealthy);
   DATA_BASE_TRUTH(AllowPlayerToChangeEquipment);
   DATA_BASE_VALUE(int, TamingDifficulty);
+  DATA_BASE_TRUTH(IsMasochist);
+  DATA_BASE_TRUTH(IsSadist);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
@@ -758,7 +762,7 @@ class character : public entity, public id
   truth CanHeal() const;
   void SetGoingTo(v2);
   int GetRelation(ccharacter*) const;
-  void CalculateAttributeBonuses();
+  truth CalculateAttributeBonuses();
   void ApplyEquipmentAttributeBonuses(item*);
   void ReceiveAntidote(long);
   void AddAntidoteConsumeEndMessage() const;
@@ -1060,6 +1064,7 @@ class character : public entity, public id
   truth CanTameWithLyre(const character*) const;
   truth CanTameWithScroll(const character*) const;
   truth IsCharmable() const { return GetTamingDifficulty() != NO_TAMING; }
+  truth CheckSadism();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

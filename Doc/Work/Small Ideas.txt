@@ -527,3 +527,5 @@ On April 1st, the game should occasionally generate a valpurium plate mail +5, w
 Eating a kamikaze dwarf's head should reveal his god's rituals.
 The eyes of certain characters should shine in the dark.
 Walking on blood etc. should spill the liquid to boots/legs.
+Cloth category that can be colored dynamically.
+Peeping through keyholes. (maybe using Ivan3D)

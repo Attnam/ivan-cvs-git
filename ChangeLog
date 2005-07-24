@@ -7,6 +7,15 @@
 
 -----------------------------------------------------------------------------
 
+July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Humanoid.pcx modified, ready for Kahvi's addition of broken armor pics
+  * Sadism yet incomplete -> bugs
+
+July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a bug in the death msg code
+
 July 23 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Added new abstraction for locked items

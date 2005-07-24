@@ -299,7 +299,7 @@ ITEM(arm, bodypart)
   virtual void DropEquipment(stack* = 0);
   double GetUnarmedToHitValue() const;
   double GetUnarmedDamage() const;
-  void Hit(character*, v2, int, truth = false);
+  void Hit(character*, v2, int, int = 0);
   int GetAttribute(int, truth = true) const;
   truth EditAttribute(int, int);
   void EditExperience(int, double, double);

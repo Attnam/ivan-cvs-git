@@ -55,7 +55,7 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-truth ennerbeast::Hit(character* Enemy, v2, int, truth)
+truth ennerbeast::Hit(character* Enemy, v2, int, int)
 {
   if(CheckIfTooScaredToHit(Enemy))
     return false;
@@ -344,7 +344,7 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
+truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 {
   if(CheckIfTooScaredToHit(Enemy))
     return false;
@@ -404,7 +404,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
       if(FirstArm && FirstArm->GetDamage())
       {
 	FirstAPCost = FirstArm->GetAPCost();
-	FirstArm->Hit(Enemy, HitPos, Direction, ForceHit);
+	FirstArm->Hit(Enemy, HitPos, Direction, Flags);
 
 	if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 	  DropBodyPart(FirstArm->GetBodyPartIndex());
@@ -413,7 +413,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
       if(!GetAction() && IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
       {
 	SecondAPCost = SecondArm->GetAPCost();
-	SecondArm->Hit(Enemy, HitPos, Direction, ForceHit);
+	SecondArm->Hit(Enemy, HitPos, Direction, Flags);
 
 	if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 	  DropBodyPart(SecondArm->GetBodyPartIndex());
@@ -430,7 +430,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
     {
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      Kick(GetNearLSquare(HitPos), Direction, ForceHit);
+      Kick(GetNearLSquare(HitPos), Direction, Flags & MASOCHIST_HIT);
 
       if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 	DropBodyPart(RAND_2 ? RIGHT_LEG_INDEX : LEFT_LEG_INDEX);
@@ -443,7 +443,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
     {
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      Bite(Enemy, HitPos, Direction, ForceHit);
+      Bite(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
       msgsystem::LeaveBigMessageMode();
       return true;
     }
@@ -1094,7 +1094,7 @@ void kamikazedwarf::CreateInitialEquipment(int SpecialFlags)
   GetCurrentRightSWeaponSkill()->AddHit(GetWSkillHits());
 }
 
-truth kamikazedwarf::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
+truth kamikazedwarf::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 {
   if(!IsPlayer())
   {
@@ -1116,7 +1116,7 @@ truth kamikazedwarf::Hit(character* Enemy, v2 HitPos, int Direction, truth Force
     }
   }
 
-  return humanoid::Hit(Enemy, HitPos, Direction, ForceHit);
+  return humanoid::Hit(Enemy, HitPos, Direction, Flags);
 }
 
 void kamikazedwarf::GetAICommand()
@@ -2892,7 +2892,7 @@ void elder::CreateBodyParts(int SpecialFlags)
       SetBodyPart(LEFT_LEG_INDEX, 0);
 }
 
-void encourager::GetAICommand()
+/*void encourager::GetAICommand()
 {
   if(CheckForEnemies(true, true, true))
     return;
@@ -2929,9 +2929,9 @@ void encourager::GetAICommand()
     return;
 
   EditAP(-1000);
-}
+}*/
 
-void encourager::Save(outputfile& SaveFile) const
+/*void encourager::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
   SaveFile << LastHit;
@@ -2941,7 +2941,7 @@ void encourager::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> LastHit;
-}
+}*/
 
 long skeleton::GetBodyPartVolume(int I) const
 {
@@ -3569,11 +3569,11 @@ void angel::FinalProcessForBone()
   LastHealed = 0;
 }
 
-void encourager::FinalProcessForBone()
+/*void encourager::FinalProcessForBone()
 {
   humanoid::FinalProcessForBone();
   LastHit = 0;
-}
+}*/
 
 void playerkind::Save(outputfile& SaveFile) const
 {

@@ -2820,9 +2820,12 @@ void character::Hostility(character* Enemy)
   if(Enemy == this || !Enemy || !Team || !Enemy->Team)
     return;
 
+  if(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND)
+    return;
+
   if(!IsAlly(Enemy))
     GetTeam()->Hostility(Enemy->GetTeam());
-  else if(Enemy->IsEnabled() && IsPlayer() && !Enemy->IsPlayer()) // I believe both may be players due to polymorph feature...
+  else if(IsPlayer() && !Enemy->IsPlayer()) // I believe both may be players due to polymorph feature...
   {
     if(Enemy->CanBeSeenByPlayer())
       ADD_MESSAGE("%s becomes enraged.", Enemy->CHAR_NAME(DEFINITE));
@@ -4400,8 +4403,9 @@ void character::SignalEquipmentAdd(int EquipmentIndex)
 void character::SignalEquipmentRemoval(int, citem* Item)
 {
   CalculateEquipmentState();
-  CalculateAttributeBonuses();
-  CheckDeath(festring("lost ") + GetPossessivePronoun(false) + " vital " + Item->GetName(INDEFINITE));
+
+  if(CalculateAttributeBonuses())
+    CheckDeath(festring("lost ") + GetPossessivePronoun(false) + " vital " + Item->GetName(INDEFINITE));
 }
 
 void character::CalculateEquipmentState()
@@ -5931,7 +5935,9 @@ truth (item::*AffectTest[BASE_ATTRIBUTES])() const =
   &item::AffectsMana
 };
 
-void character::CalculateAttributeBonuses()
+/* Returns nonzero if endurance has decreased and death may occur */
+
+truth character::CalculateAttributeBonuses()
 {
   doforbodyparts()(this, &bodypart::CalculateAttributeBonuses);
   int BackupBonus[BASE_ATTRIBUTES];
@@ -5962,12 +5968,6 @@ void character::CalculateAttributeBonuses()
 
   ApplySpecialAttributeBonuses();
 
-  if(!IsInitializing() && AttributeBonus[ENDURANCE] != BackupBonus[ENDURANCE])
-  {
-    CalculateBodyPartMaxHPs();
-    CalculateMaxStamina();
-  }
-
   if(IsPlayer() && !IsInitializing() && AttributeBonus[PERCEPTION] != BackupBonus[PERCEPTION])
     game::SendLOSUpdateRequest();
 
@@ -5975,7 +5975,16 @@ void character::CalculateAttributeBonuses()
     UpdateESPLOS();
 
   if(!IsInitializing() && CarryingBonus != BackupCarryingBonus)
-    CalculateBurdenState(); 
+    CalculateBurdenState();
+
+  if(!IsInitializing() && AttributeBonus[ENDURANCE] != BackupBonus[ENDURANCE])
+  {
+    CalculateBodyPartMaxHPs();
+    CalculateMaxStamina();
+    return AttributeBonus[ENDURANCE] < BackupBonus[ENDURANCE];
+  }
+
+  return false;
 }
 
 void character::ApplyEquipmentAttributeBonuses(item* Equipment)
@@ -9871,4 +9880,36 @@ truth character::CanTameWithScroll(const character* Tamer) const
 	      || Tamer->GetAttribute(INTELLIGENCE) * 4
 	      + Tamer->GetAttribute(CHARISMA)
 	      >= TamingDifficulty * 5));
+}
+
+truth character::CheckSadism()
+{
+  if(!IsSadist() || !IsSmall()) // gum
+    return false;
+
+  if(!RAND_N(10))
+  {
+    for(int d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
+
+      if(Square)
+      {
+	character* Char = Square->GetCharacter();
+
+	if(Char && Char->IsMasochist() && GetRelation(Char) == FRIEND && Char->GetHP() * 3 >= Char->GetMaxHP() * 2)
+	{
+	  /*if(
+
+	  if(CheckKick())*/
+
+
+	  if(Hit(Char, Square->GetPos(), d, MASOCHIST_HIT))
+	    TerminateGoingTo();
+	}
+      }
+    }
+  }
+
+  return false;
 }

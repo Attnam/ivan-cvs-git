@@ -76,7 +76,7 @@ bodypart* mysticfrog::MakeBodyPart(int) const { return mysticfrogtorso::Spawn(0,
 
 bodypart* lobhse::MakeBodyPart(int) const { return lobhsetorso::Spawn(0, NO_MATERIALS); }
 
-truth elpuri::Hit(character* Enemy, v2, int, truth ForceHit)
+truth elpuri::Hit(character* Enemy, v2, int, int Flags)
 {
   if(CheckIfTooScaredToHit(Enemy))
     return false;
@@ -103,7 +103,7 @@ truth elpuri::Hit(character* Enemy, v2, int, truth ForceHit)
 
 	  if(!Abort)
 	  {
-	    nonhumanoid::Hit(ByStander, Square->GetPos(), YOURSELF, ForceHit);
+	    nonhumanoid::Hit(ByStander, Square->GetPos(), YOURSELF, Flags);
 	    ByStander->DamageAllItems(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
 	    EnemyHit[EnemiesHit++] = ByStander;
 	  }
@@ -252,7 +252,7 @@ void nonhumanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
   }
 }
 
-truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
+truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 {
   if(CheckIfTooScaredToHit(Enemy))
     return false;
@@ -303,19 +303,19 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHi
    case USE_ARMS:
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
-    UnarmedHit(Enemy, HitPos, Direction, ForceHit);
+    UnarmedHit(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
     msgsystem::LeaveBigMessageMode();
     return true;
    case USE_LEGS:
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
-    Kick(GetNearLSquare(HitPos), Direction, ForceHit);
+    Kick(GetNearLSquare(HitPos), Direction, Flags & MASOCHIST_HIT);
     msgsystem::LeaveBigMessageMode();
     return true;
    case USE_HEAD:
     msgsystem::EnterBigMessageMode();
     Hostility(Enemy);
-    Bite(Enemy, HitPos, Direction, ForceHit);
+    Bite(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
     msgsystem::LeaveBigMessageMode();
     return true;
    default:
@@ -831,7 +831,7 @@ void floatingeye::GetAICommand()
   EditAP(-1000);
 }
 
-truth floatingeye::Hit(character* Enemy, v2, int, truth)
+truth floatingeye::Hit(character* Enemy, v2, int, int)
 {
   if(IsPlayer())
     ADD_MESSAGE("You stare at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
@@ -908,7 +908,7 @@ int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
   return Return;
 }
 
-truth eddy::Hit(character* Enemy, v2, int, truth)
+truth eddy::Hit(character* Enemy, v2, int, int)
 {
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
@@ -1041,7 +1041,7 @@ void mushroom::SetSpecies(int What)
   UpdatePictures();
 }
 
-truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
+truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 {
   if(CheckIfTooScaredToHit(Enemy))
     return false;
@@ -1062,7 +1062,7 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, truth Forc
 
   Hostility(Enemy);
   msgsystem::EnterBigMessageMode();
-  Bite(Enemy, HitPos, Direction, ForceHit);
+  Bite(Enemy, HitPos, Direction, Flags & MASOCHIST_HIT);
   v2 Pos[MAX_NEIGHBOUR_SQUARES];
   character* Char[MAX_NEIGHBOUR_SQUARES];
   int Index = 0;
@@ -1086,7 +1086,7 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, truth Forc
   if(Index)
   {
     int ChosenIndex = RAND() % Index;
-    Bite(Char[ChosenIndex], Pos[ChosenIndex], game::GetDirectionForVector(Pos[ChosenIndex] - GetPos()), ForceHit);
+    Bite(Char[ChosenIndex], Pos[ChosenIndex], game::GetDirectionForVector(Pos[ChosenIndex] - GetPos()), Flags & MASOCHIST_HIT);
   }
 
   msgsystem::LeaveBigMessageMode();
@@ -1830,7 +1830,7 @@ truth largecreature::PlaceIsIllegal(v2 Pos, v2 Illegal) const
   return false;
 }
 
-truth mommo::Hit(character* Enemy, v2 Pos, int, truth)
+truth mommo::Hit(character* Enemy, v2 Pos, int, int)
 {
   if(CheckIfTooScaredToHit(Enemy))
     return false;

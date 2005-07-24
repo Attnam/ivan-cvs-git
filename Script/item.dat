@@ -901,10 +901,6 @@ bodyarmor /* armor-> */
   CanBeBroken = true;
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 144;
-  TorsoArmorBitmapPos = 32, 416;
-  ArmArmorBitmapPos = 80, 416;
-  AthleteArmArmorBitmapPos = 80, 448;
-  LegArmorBitmapPos = 16, 416;
   TeleportPriority = 200;
 
   Config CHAIN_MAIL;
@@ -935,6 +931,10 @@ bodyarmor /* armor-> */
     MaterialConfigChances = { 6, 50, 25, 20, 25, 5, 5; }
     EnchantmentPlusChance = 20;
     InElasticityPenaltyModifier = 15;
+    TorsoArmorBitmapPos = 32, 512;
+    ArmArmorBitmapPos = 64, 512;
+    AthleteArmArmorBitmapPos = 64, 544;
+    LegArmorBitmapPos = 0, 512;
   }
 
   Config PLATE_MAIL;
@@ -950,6 +950,10 @@ bodyarmor /* armor-> */
     MaterialConfigChances = { 11, 5000, 2500, 250, 1000, 100, 200, 200, 100, 25, 10, 5; }
     InElasticityPenaltyModifier = 20;
     EnchantmentPlusChance = 5;
+    TorsoArmorBitmapPos = 32, 416;
+    ArmArmorBitmapPos = 80, 416;
+    AthleteArmArmorBitmapPos = 80, 448;
+    LegArmorBitmapPos = 16, 416;
   }
 
   Config BROKEN|PLATE_MAIL;
@@ -962,6 +966,10 @@ bodyarmor /* armor-> */
     MaterialConfigChances = { 6, 250, 100, 250, 100, 25, 10; }
     EnchantmentPlusChance = 10;
     InElasticityPenaltyModifier = 25;
+    TorsoArmorBitmapPos = 32, 496;
+    ArmArmorBitmapPos = 80, 496;
+    AthleteArmArmorBitmapPos = 80, 528;
+    LegArmorBitmapPos = 16, 496;
   }
 
   Config ARMOR_OF_GREAT_HEALTH;
@@ -983,6 +991,11 @@ bodyarmor /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SEGES;
     EnchantmentPlusChance = 2;
+    Alias == "AOgH";
+    TorsoArmorBitmapPos = 32, 464;
+    ArmArmorBitmapPos = 80, 464;
+    AthleteArmArmorBitmapPos = 80, 480;
+    LegArmorBitmapPos = 16, 464;
   }
 
   Config BROKEN|ARMOR_OF_GREAT_HEALTH;
@@ -997,6 +1010,10 @@ bodyarmor /* armor-> */
     MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
     EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 50;
+    TorsoArmorBitmapPos = 32, 544;
+    ArmArmorBitmapPos = 80, 544;
+    AthleteArmArmorBitmapPos = 80, 560;
+    LegArmorBitmapPos = 16, 544;
   }
 }
 
@@ -1855,6 +1872,7 @@ cloak /* armor-> */
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
     MaterialConfigChances = { 4, 500, 250, 100, 25; }
     EnchantmentPlusChance = 20;
+    CloakBitmapPos = 48, 496;
   }
 
   Config CLOAK_OF_INVISIBILITY;
@@ -1876,6 +1894,7 @@ cloak /* armor-> */
     Price = 500;
     GearStates = 0;
     EnchantmentPlusChance = 4;
+    CloakBitmapPos = 48, 496;
   }
 
   Config CLOAK_OF_FIRE_RESISTANCE;
@@ -1897,6 +1916,7 @@ cloak /* armor-> */
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
     MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
+    CloakBitmapPos = 48, 496;
   }
 
   Config CLOAK_OF_ELECTRICITY_RESISTANCE;
@@ -1918,6 +1938,7 @@ cloak /* armor-> */
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
     MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
+    CloakBitmapPos = 48, 496;
   }
 
   Config CLOAK_OF_ACID_RESISTANCE;
@@ -1940,6 +1961,7 @@ cloak /* armor-> */
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
     MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
+    CloakBitmapPos = 48, 496;
   }
 }
 
@@ -1974,6 +1996,7 @@ boot /* armor-> */
     MaterialConfigChances = { 9, 100, 500, 100, 25, 10, 10, 25, 5, 1; }
     EnchantmentPlusChance = 20;
     InElasticityPenaltyModifier = 30;
+    BootBitmapPos = 16, 512;
   }
 
   Config BOOT_OF_STRENGTH;
@@ -1999,6 +2022,7 @@ boot /* armor-> */
     Price = 10;
     EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 30;
+    BootBitmapPos = 16, 512;
   }
 
   Config BOOT_OF_AGILITY;
@@ -2025,6 +2049,7 @@ boot /* armor-> */
     Price = 25;
     EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 30;
+    BootBitmapPos = 16, 512;
   }
 
   Config BOOT_OF_KICKING;
@@ -2048,6 +2073,7 @@ boot /* armor-> */
     MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
     EnchantmentPlusChance = 10;
     InElasticityPenaltyModifier = 30;
+    BootBitmapPos = 16, 512;
   }
 }
 
@@ -2083,6 +2109,7 @@ gauntlet /* armor-> */
     BitmapPos = 80, 400;
     EnchantmentPlusChance = 20;
     InElasticityPenaltyModifier = 30;
+    GauntletBitmapPos = 80, 512;
   }
 
   Config GAUNTLET_OF_STRENGTH;
@@ -2108,6 +2135,7 @@ gauntlet /* armor-> */
     Price = 25;
     EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 30;
+    GauntletBitmapPos = 80, 512;
   }
 
   Config GAUNTLET_OF_DEXTERITY;
@@ -2133,6 +2161,7 @@ gauntlet /* armor-> */
     Price = 25;
     EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 30;
+    GauntletBitmapPos = 80, 512;
   }
 }
 
@@ -2164,6 +2193,7 @@ belt /* armor-> */
     MaterialConfigChances = { 5, 500, 250, 100, 25, 10; }
     BitmapPos = 80, 384;
     EnchantmentPlusChance = 20;
+    BeltBitmapPos = 48, 512;
   }
 
   Config BELT_OF_CARRYING;
@@ -2188,6 +2218,7 @@ belt /* armor-> */
     Price = 25;
     BitmapPos = 80, 384;
     EnchantmentPlusChance = 4;
+    BeltBitmapPos = 48, 512;
   }
 
   Config BELT_OF_LEVITATION;
@@ -2208,6 +2239,7 @@ belt /* armor-> */
     GearStates = 0;
     Price = 100;
     BitmapPos = 80, 384;
+    BeltBitmapPos = 48, 512;
   }
 }
 
@@ -2743,7 +2775,7 @@ helmet
     Possibility = 35;
     MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
     MaterialConfigChances = { 7, 100, 25, 25, 25, 25, 10, 5; }
-    HelmetBitmapPos = 96, 448;
+    HelmetBitmapPos = 112, 496;
     EnchantmentPlusChance = 30;
   }
 
@@ -2769,7 +2801,7 @@ helmet
     Possibility = 4;
     MainMaterialConfig = { 7, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
     MaterialConfigChances = { 7, 250, 100, 25, 25, 25, 10, 5; }
-    HelmetBitmapPos = 112, 448;
+    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 20;
   }
 
@@ -2800,7 +2832,7 @@ helmet
     Possibility = 2;
     Price = 25;
     AffectsPerception = false;
-    HelmetBitmapPos = 112, 448;
+    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -2831,7 +2863,7 @@ helmet
     Possibility = 2;
     Price = 25;
     AffectsWisdom = false;
-    HelmetBitmapPos = 112, 448;
+    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -2861,7 +2893,7 @@ helmet
     Possibility = 2;
     Price = 25;
     AffectsIntelligence = false;
-    HelmetBitmapPos = 112, 448;
+    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -2892,7 +2924,7 @@ helmet
     Possibility = 5;
     Price = 25;
     AffectsCharisma = false;
-    HelmetBitmapPos = 112, 448;
+    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 

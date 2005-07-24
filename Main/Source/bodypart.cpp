@@ -890,7 +890,7 @@ leftleg::leftleg()
   BootSlot.Init(this, LEFT_BOOT_INDEX);
 }
 
-void arm::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
+void arm::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 {
   long StrExp = 50, DexExp = 50;
   truth THW = false;
@@ -904,7 +904,7 @@ void arm::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
     THW = TwoHandWieldIsActive();
   }
 
-  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), ForceHit))
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), Flags & MASOCHIST_HIT))
   {
    case HAS_HIT:
    case HAS_BLOCKED:

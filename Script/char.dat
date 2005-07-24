@@ -275,6 +275,8 @@ character
   AllowPlayerToChangeEquipment = true;
   DefaultWillPower = 10;
   TamingDifficulty = 0;
+  IsMasochist = false;
+  IsSadist = false;
 }
 
 humanoid
@@ -2198,6 +2200,7 @@ slave
   }
   AttachedGod = MELLIS;
   Inventory == 0;
+  IsMasochist = true;
 }
 
 petrusswife
@@ -2643,6 +2646,8 @@ mistress
   ScienceTalkWisdomModifier = 1;
   ScienceTalkIntelligenceRequirement = 6;
   ScienceTalkWisdomRequirement = 3;
+  IsMasochist = true;
+  IsSadist = true;
 
   Config TORTURING_CHIEF;
   {
@@ -3657,6 +3662,7 @@ bananagrower
   ScienceTalkWisdomModifier = 25;
   ScienceTalkIntelligenceRequirement = 5;
   ScienceTalkWisdomRequirement = 10;
+  IsMasochist = true;
 }
 
 imperialist
@@ -3780,6 +3786,7 @@ imperialist
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 0;
   ScienceTalkCharismaRequirement = 15;
+  IsSadist = true;
 }
 
 smith
@@ -3954,6 +3961,7 @@ encourager
     "@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouraging workers.\"";
   }
   AutomaticallySeen = true;
+  IsSadist = true;
 }
 
 chameleon
@@ -5473,4 +5481,5 @@ punisher
   HostileReplies == "\"You are now about to enter a world of pain!\"";
   AttachedGod = CRUENTUS;
   FriendlyReplies == "\"My cousin a banana encourager in New Attnam\"";
+  IsSadist = true;
 }

@@ -384,6 +384,8 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(VomittingIsUnhealthy);
   ADD_MEMBER(AllowPlayerToChangeEquipment);
   ADD_MEMBER(TamingDifficulty);
+  ADD_MEMBER(IsMasochist);
+  ADD_MEMBER(IsSadist);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

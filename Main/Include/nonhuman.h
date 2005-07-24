@@ -45,7 +45,7 @@ CHARACTER(nonhumanoid, character)
   long GetKickAPCost() const { return KickAPCost; }
   long GetBiteAPCost() const { return BiteAPCost; }
   virtual void Kick(lsquare*, int, truth = false);
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual void UnarmedHit(character*, v2, int, truth = false);
   virtual void InitSpecialAttributes();
   virtual double GetTimeToKill(ccharacter*, truth) const;
@@ -102,7 +102,7 @@ CHARACTER(mommo, nonhumanoid)
   virtual int GetBodyPartWobbleData(int) const;
   virtual truth CanVomit() const { return true; }
   virtual void CreateCorpse(lsquare*);
-  virtual truth Hit(character*, v2, int, truth);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual void GetAICommand();
 };
 
@@ -235,7 +235,7 @@ CHARACTER(floatingeye, nonhumanoid)
 {
  public:
   floatingeye() : NextWayPoint(0) { }
-  virtual truth Hit(character*, v2, int, truth);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
   virtual void SetWayPoints(const fearray<packv2>&);
   virtual void Save(outputfile&) const;
@@ -251,7 +251,7 @@ CHARACTER(floatingeye, nonhumanoid)
 CHARACTER(eddy, nonhumanoid)
 {
  public:
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
  protected:
   virtual int GetBodyPartWobbleData(int) const;
   virtual bodypart* MakeBodyPart(int) const;
@@ -310,7 +310,7 @@ CHARACTER(ghost, nonhumanoid)
 CHARACTER(twoheadedmoose, nonhumanoid)
 {
  public:
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
 };
 
 CHARACTER(magpie, nonhumanoid)
@@ -370,7 +370,7 @@ CHARACTER(elpuri, largecreature)
   elpuri() : Active(false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual truth Hit(character*, v2, int, truth = false);
+  virtual truth Hit(character*, v2, int, int = 0);
   virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
   virtual truth SpecialEnemySightedReaction(character*);
   virtual truth MustBeRemovedFromBone() const;
@@ -424,7 +424,7 @@ CHARACTER(vladimir, largecreature)
 CHARACTER(hattifattener, nonhumanoid)
 {
  public:
-  truth Hit(character*, v2, int, truth) { return false; }
+  truth Hit(character*, v2, int, int = 0) { return false; }
  protected:
   virtual int GetBodyPartWobbleData(int) const;
   virtual int GetSpecialBodyPartFlags(int) const;
