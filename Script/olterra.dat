@@ -402,6 +402,18 @@ decoration
     BitmapPos = 32, 368;
     HPModifier = 10;
   }
+  Config DWARF_BIRCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You chop the dwarf birch down.";
+    MainMaterialConfig == BIRCH_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(125, 160, 80);
+    MaterialColorC = rgb16(220, 220, 220);
+    NameSingular = "dwarf birch";
+    BitmapPos = 32, 368;
+    HPModifier = 10;
+  }
 }
 
 door /* olterrain-> */
@@ -703,4 +715,14 @@ barwall
     Adjective = "broken";
     Walkability = ANY_MOVE;
   }
+}
+
+ironmaiden
+{
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }	 CanBeDestroyed = true;
+  DigMessage = "The iron maiden falls into pieces.";
+  MainMaterialConfig == IRON;
+  ShowMaterial = false;
+  NameSingular = "iron maiden";
+  HPModifier = 250;
 }

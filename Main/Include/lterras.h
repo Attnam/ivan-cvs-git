@@ -242,5 +242,18 @@ OLTERRAIN(barwall, olterrain)
   void Break();
 };
 
+OLTERRAIN(ironmaiden, olterrain)
+{
+ public:
+  ironmaiden() : Opened(false) {}
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual truth Open(character*);
+  virtual truth CanBeOpened() const { return !Opened; }
+  virtual truth Close(character*);
+ protected:
+  virtual v2 GetBitmapPos(int) const;
+  truth Opened;
+};
 
 #endif
