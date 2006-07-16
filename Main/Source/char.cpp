@@ -1526,7 +1526,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       game::CreateBone();
     }
 
-    game::TextScreen(CONST_S("Unfortunately you died during your journey. The high priest is not happy."));
+    game::TextScreen(CONST_S("Unfortunately you died."), WHITE, true, &game::ShowDeathSmiley);
     game::End(Msg);
   }
 }

@@ -27,7 +27,7 @@ bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
 cchar* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx", "Graphics/Cursor.pcx" };
-cchar* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Symbol.pcx" };
+cchar* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Symbol.pcx", "Graphics/Smiley.pcx" };
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;

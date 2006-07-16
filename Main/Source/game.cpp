@@ -3621,3 +3621,29 @@ void game::AdjustRelationsToAllGods(int Amount)
       GetGod(c)->AdjustRelation(Amount);
   }
 }
+
+void game::ShowDeathSmiley(bitmap* Buffer)
+{
+  static blitdata B = { 0,
+			{ 0, 0 },
+			{ (RES.X >> 1) - 24, RES.Y * 4 / 7 - 24 },
+			{ 48, 48 },
+			{ 0 },
+			TRANSPARENT_COLOR,
+			0 };
+
+  int Tick = globalwindowhandler::UpdateTick();  
+
+  if(((Tick >> 1) & 31) == 1)
+    B.Src.X = 48;
+  else if(((Tick >> 1) & 31) == 2)
+    B.Src.X = 96;
+  else
+    B.Src.X = 0;
+
+  B.Bitmap = Buffer;
+  igraph::GetSmileyGraphic()->NormalBlit(B);
+
+  if(Buffer == DOUBLE_BUFFER)
+    graphics::BlitDBToScreen();
+}

@@ -421,6 +421,7 @@ class game
   static void LearnAbout(god*);
   static truth PlayerKnowsAllGods();
   static void AdjustRelationsToAllGods(int);
+  static void ShowDeathSmiley(bitmap*);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];

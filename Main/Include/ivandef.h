@@ -236,11 +236,12 @@ const name##prototype name::ProtoType
 #define GR_EFFECT 5
 #define GR_CURSOR 6
 
-#define GRAPHIC_TYPES 3
+#define GRAPHIC_TYPES 4
 
 #define GR_WTERRAIN 0
 #define GR_FOW 1
 #define GR_SYMBOL 2
+#define GR_SMILEY 3
 
 /* SpecialFlags for graphics system. No one knows what "ST_" means... */
 

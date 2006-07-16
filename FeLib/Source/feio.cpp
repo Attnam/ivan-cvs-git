@@ -79,7 +79,11 @@ void iosystem::TextScreen(cfestring& Text, col16 Color,
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
-    GET_KEY();
+    if(BitmapEditor)
+      while(!READ_KEY())
+	BitmapEditor(DOUBLE_BUFFER);
+    else
+      GET_KEY();
 }
 
 /* Returns amount of chars cSF in string sSH */
