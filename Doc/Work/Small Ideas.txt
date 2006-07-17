@@ -326,7 +326,7 @@ Wand of change material (change everything in wand path to material of the wand)
 Ability to absorb specific elemental damage.
 Corpse which makes you sober.
 Ivan should buy vodka from player.
-(hs) Big t and p should work when controlling containers.
+//(hs) Big t and p should work when controlling containers.
 There could be possibility to revive a pet by praying (from shvagier (?))
 (hs-) One armed characters should get discounts in Attnamian stores.
 Confuse should affect throwing also.
@@ -453,7 +453,7 @@ Water splashing on the player should remove some of the acid over him.
 It should be possible to dip oneself, for instance by applying a potion in the square where one stands.
 Some of the liquid that is over the player should occasionally drop on the ground, not just disappear.
 Zombies raised from a spesific corpse should retain their old heads.
-Kamikaze dwarves should loudly sing hymns which would warn about their presense in the level.
+/Kamikaze dwarves should loudly sing hymns which would warn about their presense in the level.
 The player's avatar should reflect the broken/intact state of his armours.
 There should be a hint of direction in the enner beast yell msg.
 Different confuse effects for scrolls.
@@ -498,7 +498,7 @@ Previous games should affect the world more, for instance top 10 statues could b
 Mellis could transport his worshippers to a divine bazaar.
 //"What is this 'ommel'?" to extremely frequently asked questions.
 Healing should decrease panic counter somewhat. It is annoying that you must wait years for panic to wear off after drinking a potion of healing.
-Vodka should cure panic.
+//Vodka should cure panic.
 You should be able to cut down balsa walls with an axe.
 Anyone named 'Captain Action' should encounter completely impossible monsters starting from the first level.
 A tin foil hat should make you immune to ESP.
@@ -531,3 +531,17 @@ Cloth category that can be colored dynamically.
 Peeping through keyholes. (maybe using Ivan3D)
 Doublewield information to silhouette.
 Mistresses with lots of experience should have lots of scars.
+Certain weapons (maybe mithril ones?) should shine blue in the presence of orcs.
+A mine planter dwarf sitting on a throne in the middle of the mine field and repeating "It's mine! All mine!".
+Fairy tooth should sometimes offer to exchange ommel tooth items to gold.
+Eating lots of solid food when starving should cause considerable damage.
+Destroying walls should be a difficult action even for Vladimir; it should use stamina and he should be forced to rest between periods of crunching. The A* algorithm should be modified to handle this.
+Being bloated or starving should be displayed in the player graphics.
+If the player is in the bloated state, the child tourist should say "Wow! You're fatter than daddy, too! What a village!"
+Sword of mana absorption - regenerates mana when blocks hits.
+Silva's branch - replaces the palm branches in the Cathedral, regenerates HP and stamina of friendly characters.
+Attnam should be surrounded by barbed wire to make it more difficult for citizens to escape.
+The most dextrous/strongest arm could be shown with a different color in the equipment screen.
+A crutch - decreases the penalty for having just one leg.
+A fountain could give temporary or "permanent" (lasting until the next death) life saving - very easy to implement.
+Again something revealed to me in a dream: There nine thaums, the basic particles of magic (kinda like the six quarks); four thaums have an antithaum except the E-thaum, short for Existence, whose antithaum is Non-Existence, which doesn't exist.
