@@ -328,6 +328,8 @@
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
 
+#define ZOMBIE_OF_KHAZ_ZADM 1
+
 #define TORTURING_CHIEF 1
 #define WHIP_CHAMPION 2
 #define WAR_LADY 3

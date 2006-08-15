@@ -2490,6 +2490,28 @@ zombie
   WieldedPosition = -1, -2;
   IsExtraFragile = true;
   IsCatacombCreature = true;
+
+  Config ZOMBIE_OF_KHAZ_ZADM;
+  {
+    DefaultName = "Khaz-zadm";		
+    TamingDifficulty = NO_TAMING;
+    IsNameable = false;
+    IsUnique = true;
+    DefaultArmStrength = 15;
+    DefaultLegStrength = 15;
+    DefaultDexterity = 10;
+    DefaultAgility = 20;
+    DefaultEndurance = 15;
+    DefaultPerception = 18;
+    DefaultIntelligence = 7;
+    DefaultWisdom = 5;
+    DefaultCharisma = 5;
+    RightWielded = VALPURIUM meleeweapon(HAMMER);
+    ClassStates = LEPROSY;
+    Sex = MALE;
+    IsImmuneToLeprosy = true;
+    CanBeGenerated = false;
+  }	
 }
 
 imp

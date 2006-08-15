@@ -151,7 +151,6 @@ CHARACTER(humanoid, character)
   virtual void DropRandomNonVitalBodypart();
   virtual void DropBodyPart(int);
   virtual void DuplicateEquipment(character*, ulong);
-  truth IsImmuneToLeprosy() const;
   virtual int GetAttributeAverage() const;
   virtual truth CanVomit() const;
   virtual truth CheckApply() const;

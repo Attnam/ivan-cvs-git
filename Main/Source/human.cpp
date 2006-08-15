@@ -2422,8 +2422,13 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
 
 void zombie::CreateBodyParts(int SpecialFlags)
 {
+  bool Anyway = false;
+  if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM) {
+    Anyway = true;
+  } // Khaz-Zadm needs his hands... 
+
   for(int c = 0; c < BodyParts; ++c)
-    if(BodyPartIsVital(c) || RAND() % 3)
+    if(Anyway || (BodyPartIsVital(c) || RAND() % 3))
     {
       bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
       BodyPart->GetMainMaterial()->SetSpoilCounter(2000 + RAND() % 1000);
@@ -4369,6 +4374,11 @@ void darkknight::SpecialBodyPartSeverReaction()
 
 void humanoid::LeprosyHandler()
 {
+  if(IsImmuneToLeprosy())
+  {
+    return;
+  }
+
   if(!RAND_N(1000 * GetAttribute(ENDURANCE)))
     DropRandomNonVitalBodypart();
 
