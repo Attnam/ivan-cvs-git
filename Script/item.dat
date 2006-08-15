@@ -175,8 +175,8 @@ can /* materialcontainer-> */
   NameSingular = "can";
   /* Adjective and PostFix overridden */
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 6, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP, OMMEL_CERUMEN, OMMEL_SNOT; }
-  MaterialConfigChances = { 6, 750, 5, 25, 5, 10, 10; }
+  SecondaryMaterialConfig = { 6, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP, OMMEL_CERUMEN, OMMEL_SNOT, FLOATING_EYE_FLESH, CAT_FLESH, RAT_FLESH, PINEAPPLE_FLESH; }
+  MaterialConfigChances = { 6, 750, 5, 25, 25, 10, 10, 25, 20, 20, 100; }
   Roundness = 60;
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
