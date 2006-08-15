@@ -1339,6 +1339,9 @@ truth ironmaiden::Open(character* Opener)
     truth WasSeenByPlayer = CanBeSeenByPlayer(); 
     Opened = true;
     UpdatePictures();
+    GetLSquareUnder()->SendNewDrawRequest();
+    GetLSquareUnder()->SendMemorizedUpdateRequest();
+
     if(Opener->IsPlayer())
       ADD_MESSAGE("You open %s.", CHAR_NAME(DEFINITE));
     else if(WasSeenByPlayer)
