@@ -387,6 +387,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(TamingDifficulty);
   ADD_MEMBER(IsMasochist);
   ADD_MEMBER(IsSadist);
+  ADD_MEMBER(IsCatacombCreature);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

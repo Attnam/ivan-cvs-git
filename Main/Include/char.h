@@ -237,6 +237,7 @@ struct characterdatabase : public databasebase
   int TamingDifficulty;
   truth IsMasochist;
   truth IsSadist;
+  truth IsCatacombCreature;
 };
 
 class characterprototype
@@ -581,6 +582,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, TamingDifficulty);
   DATA_BASE_TRUTH(IsMasochist);
   DATA_BASE_TRUTH(IsSadist);
+  DATA_BASE_TRUTH(IsCatacombCreature);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);

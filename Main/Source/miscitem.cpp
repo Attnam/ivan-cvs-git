@@ -276,18 +276,7 @@ item* potion::BetterVersion() const
 item* can::BetterVersion() const
 {
   if(!GetSecondaryMaterial())
-  {
-    material* Stuff;
-
-    if(RAND() & 1)
-      Stuff = MAKE_MATERIAL(SCHOOL_FOOD);
-    else
-      Stuff = MAKE_MATERIAL(BANANA_FLESH);
-
-    can* P = can::Spawn(0, NO_MATERIALS);
-    P->InitMaterials(MAKE_MATERIAL(IRON), Stuff);
-    return P;
-  }
+    return can::Spawn();
   else
     return 0;
 }

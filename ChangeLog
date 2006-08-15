@@ -6,6 +6,12 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+
+August 15 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * The rand function is now correct
+  * Monsters are now generated in the catacombs
+
 August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * coffin (looks are bad) added to catacomb

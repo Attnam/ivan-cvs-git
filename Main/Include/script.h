@@ -435,6 +435,7 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(int, EnchantmentPlusChanceBase);
   SCRIPT_MEMBER_WITH_BASE(int, EnchantmentPlusChanceDelta);
   SCRIPT_MEMBER_WITH_BASE(int, BackGroundType);
+  SCRIPT_TRUTH_WITH_BASE(IsCatacomb);
 };
 
 class dungeonscript : public script

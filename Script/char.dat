@@ -277,6 +277,7 @@ character
   TamingDifficulty = 0;
   IsSadist = false;
   IsMasochist = false;
+  IsCatacombCreature = false;
 }
 
 humanoid
@@ -1138,6 +1139,7 @@ frog
     ScienceTalkIntelligenceRequirement = 10;
     ScienceTalkWisdomRequirement = 5;
     FriendlyReplies == "@Dd croaks happily.";
+    IsCatacombCreature = true;
   }
 
   Config GREATER_DARK;
@@ -1167,6 +1169,7 @@ frog
     ScienceTalkIntelligenceRequirement = 15;
     ScienceTalkWisdomRequirement = 10;
     FriendlyReplies == "@Dd croaks happily.";
+    IsCatacombCreature = true;
   }
 
   Config GIANT_DARK;
@@ -1198,6 +1201,7 @@ frog
     ScienceTalkIntelligenceRequirement = 20;
     ScienceTalkWisdomRequirement = 15;
     FriendlyReplies == "@Dd croaks happily.";
+    IsCatacombCreature = true;
   }
 
   Config LIGHT;
@@ -1366,6 +1370,7 @@ skeleton
   WieldedPosition = 0, -1;
   IsExtraFragile = true;
   CanChoke = false;
+  IsCatacombCreature = true;
 
   Config WARRIOR;
   {
@@ -1800,6 +1805,7 @@ spider
   DangerModifier = 25;
   IsAbstract = true;
   TorsoMainColor = rgb16(30, 30, 30);
+  IsCatacombCreature = true;
 
   Config LARGE;
   {
@@ -2483,6 +2489,7 @@ zombie
   ClassStates = GAS_IMMUNITY;
   WieldedPosition = -1, -2;
   IsExtraFragile = true;
+  IsCatacombCreature = true;
 }
 
 imp
@@ -2549,6 +2556,7 @@ bat
   AttachedGod = INFUSCOR;
   BiteCapturesBodyPart = false;
   MoveType = FLY;
+  IsCatacombCreature = true;
 }
 
 mistress
@@ -3009,6 +3017,7 @@ largerat
   FleshMaterial = RAT_FLESH;
   AttachedGod = SCABIES;
   MoveType = WALK|SWIM;
+  IsCatacombCreature = true;
 }
 
 angel
@@ -4843,6 +4852,7 @@ necromancer
   NameSingular = "necromancer";
   IsExtraFragile = true;
   IsSadist = true;
+  IsCatacombCreature = true;
 
   Config APPRENTICE_NECROMANCER;
   {
@@ -5335,6 +5345,7 @@ mysticfrog
     ScienceTalkIntelligenceRequirement = 25;
     ScienceTalkWisdomRequirement = 15;
     FriendlyReplies == "@Dd croaks happily.";
+    IsCatacombCreature = true;
   }
 
   Config LIGHT;

@@ -127,6 +127,7 @@ Dungeon ELPURI_CAVE;
     EnchantmentPlusChanceBase = 5;
     EnchantmentPlusChanceDelta = 5;
     BackGroundType = GRAY_FRACTAL;
+    IsCatacomb = false;
 
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {
@@ -1032,7 +1033,7 @@ Dungeon ELPURI_CAVE;
     Size = 64,36;
     IgnoreDefaultSpecialSquares = true;
     DifficultyBase = 80;
-    MonsterAmountBase = 100;
+    MonsterAmountBase = 50;
     MonsterAmountDelta = 0;
     ItemMinPriceBase = 50;
     Items = 45:90;
@@ -1293,13 +1294,13 @@ Dungeon ELPURI_CAVE;
 Dungeon ATTNAM;
 {
   Levels = 5;
+  Description = "Attnamese catacombs";
+  ShortDescription = "AC";
 
   LevelDefault
   {
-    Description = "Attnamese catacombs";
-    ShortDescription = "AC";
     Size = 30, 30;
-    GenerateMonsters = false;
+    GenerateMonsters = true;
     Rooms = 10;
     Items = 0;
     IsOnGround = false;
@@ -1307,8 +1308,6 @@ Dungeon ATTNAM;
     LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
     CanGenerateBone = false;
-    DifficultyBase = 150;
-    DifficultyDelta = 0;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 0;
@@ -1316,6 +1315,13 @@ Dungeon ATTNAM;
     BackGroundType = GRAY_FRACTAL;
     FillSquare = GRANITE solidterrain(GROUND), BLACK_GRANITE earth;
     TunnelSquare = GRANITE solidterrain(GROUND), 0;
+    IsCatacomb = true;
+    DifficultyBase = 0;
+    DifficultyDelta = 10;
+    MonsterAmountBase = 0;
+    MonsterAmountDelta = 5;
+    MonsterGenerationIntervalBase = 150;
+    MonsterGenerationIntervalDelta = -25;
 
     RoomDefault
     {
@@ -2945,6 +2951,7 @@ Dungeon UNDER_WATER_TUNNEL;
     EnchantmentPlusChanceBase = 1;
     EnchantmentPlusChanceDelta = 1;
     BackGroundType = GRAY_FRACTAL;
+    IsCatacomb = false;
 
     Square, Random;
     {
