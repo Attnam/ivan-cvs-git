@@ -2346,6 +2346,10 @@ Dungeon ATTNAM;
       EntryIndex = STAIRS_UP;
       AttachRequired = true;
     }
+    Square, Random IN_ROOM;
+    {
+	OTerrain = coffin;
+    }
   }
 }
 
