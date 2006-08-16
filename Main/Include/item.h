@@ -205,7 +205,7 @@ class itemprototype
   cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const itemprototype* GetBase() const { return Base; }
-  int CreateSpecialConfigurations(itemdatabase**, int);
+  int CreateSpecialConfigurations(itemdatabase**, int, int);
   const itemdatabase* ChooseBaseForConfig(itemdatabase**, int, int);
   const itemdatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }

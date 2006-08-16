@@ -1820,6 +1820,11 @@ key
     UsesLongAdjectiveArticle = true;
     Adjective = "octagonal";
   }
+  Config HEART_SHAPED_LOCK;
+  {
+    MainMaterialConfig == GOLD;
+    Adjective = "heart shaped";
+  }
 }
 
 shield /* armor-> */

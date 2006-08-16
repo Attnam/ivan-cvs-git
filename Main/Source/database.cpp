@@ -12,18 +12,18 @@
 
 /* Compiled through dataset.cpp */
 
-int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** TempConfig, long* TempTableInfo, int Type, int Configs, int TempTables)
+int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray, long* TempTableInfo, int Type, int Configs, int TempTables)
 {
   memset(ConfigTable, 0, CONFIG_TABLE_SIZE * sizeof(databasebase**));
 
   for(int c = 0; c < Configs; ++c)
   {
-    int Config = TempConfig[c]->Config;
+    int Config = ConfigArray[c]->Config;
     int Hash = Config >> 8 ^ Config & 0xFF;
 
     if((TempTableInfo[Hash] & 0xFFFF) != Type)
     {
-      TempTable[0][Hash] = TempConfig[c];
+      TempTable[0][Hash] = ConfigArray[c];
       TempTableInfo[Hash] = Type | 0x10000;
     }
     else
@@ -33,7 +33,7 @@ int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, da
       if(Conflicts == TempTables)
 	TempTable[TempTables++] = new databasebase*[CONFIG_TABLE_SIZE];
 
-      TempTable[Conflicts][Hash] = TempConfig[c];
+      TempTable[Conflicts][Hash] = ConfigArray[c];
       TempTableInfo[Hash] += 0x10000;
     }
   }
@@ -107,19 +107,44 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
     }
 
     DataBase->PostProcess();
-    Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
+    //Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
     Proto->ConfigData = new database*[Configs];
     Proto->ConfigSize = Configs;
     memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
+  }
+
+  int c1;
+
+  for(c1 = 0; c1 < SPECIAL_CONFIGURATION_GENERATION_LEVELS; ++c1)
+    for(int c2 = 1; c2 < protocontainer<type>::GetSize(); ++c2)
+    {
+      prototype* Proto = protocontainer<type>::GetProtoData()[c2];
+      int Configs = Proto->ConfigSize;
+      memcpy(TempConfig, Proto->ConfigData, Configs * sizeof(database*));
+      Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs, c1);
+
+      if(Proto->ConfigSize != Configs)
+      {
+	delete [] Proto->ConfigData;
+	Proto->ConfigData = new database*[Configs];
+	Proto->ConfigSize = Configs;
+	memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
+      }
+    }
+
+  for(c1 = 1; c1 < protocontainer<type>::GetSize(); ++c1)
+  {
+    prototype* Proto = protocontainer<type>::GetProtoData()[c1];
+
     TempTables =
       CreateConfigTable(reinterpret_cast<databasebase***>(Proto->ConfigTable),
 			TempTable,
-			reinterpret_cast<databasebase**>(TempConfig),
-			TempTableInfo, Type, Configs, TempTables);
+			reinterpret_cast<databasebase**>(Proto->ConfigData),
+			TempTableInfo, c1, Proto->ConfigSize, TempTables);
   }
 
-  for(int c = 1; c < TempTables; ++c)
-    delete [] TempTable[c];
+  for(c1 = 1; c1 < TempTables; ++c1)
+    delete [] TempTable[c1];
 
   GetDataBaseMemberMap().clear();
 }
@@ -388,6 +413,11 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsMasochist);
   ADD_MEMBER(IsSadist);
   ADD_MEMBER(IsCatacombCreature);
+  ADD_MEMBER(CreateUndeadConfigurations);
+  ADD_MEMBER(UndeadVersions);
+  ADD_MEMBER(UndeadAttributeModifier);
+  ADD_MEMBER(UndeadVolumeModifier);
+  ADD_MEMBER(UndeadCopyMaterials);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

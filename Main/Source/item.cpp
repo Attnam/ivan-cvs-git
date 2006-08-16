@@ -1040,8 +1040,11 @@ god* item::GetMasterGod() const
   return game::GetGod(GetConfig());
 }
 
-int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Configs)
+int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Configs, int Level)
 {
+  if(Level)
+    return Configs;
+
   if(TempConfig[0]->CreateDivineConfigurations)
     Configs = databasecreator<item>::CreateDivineConfigurations(this, TempConfig, Configs);
 

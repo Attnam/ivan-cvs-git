@@ -78,7 +78,7 @@ class materialprototype
   cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const materialprototype* GetBase() const { return Base; }
-  int CreateSpecialConfigurations(materialdatabase**, int Configs) { return Configs; }
+  int CreateSpecialConfigurations(materialdatabase**, int Configs, int) { return Configs; }
   const materialdatabase* ChooseBaseForConfig(materialdatabase** TempConfig, int, int) { return *TempConfig; }
   const materialdatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }

@@ -7,15 +7,18 @@
 
 -----------------------------------------------------------------------------
 
-August 15 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+August 16 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added lots of new zombies, skeletons and ghosts
+
+August 15 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * The rand function is now correct
   * Monsters are now generated in the catacombs
 
 August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
 
-  * added zombie of khaz-zadm	
-
+  * added zombie of khaz-zadm
 
 August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
 

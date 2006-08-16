@@ -278,6 +278,11 @@ character
   IsSadist = false;
   IsMasochist = false;
   IsCatacombCreature = false;
+  CreateUndeadConfigurations = false;
+  UndeadVersions = false;
+  UndeadAttributeModifier = 100;
+  UndeadVolumeModifier = 100;
+  UndeadCopyMaterials = true;
 }
 
 humanoid
@@ -305,6 +310,7 @@ humanoid
   IsImmuneToLeprosy = false;
   WillCarryItems = true;
   DisplacePriority = 0;
+  UndeadVersions = true;
 }
 
 nonhumanoid
@@ -334,7 +340,8 @@ playerkind
   NameSingular = "human";
   AttachedGod = SEGES;
   DisplacePriority = 2;
-  Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; } 
+  Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; }
+  UndeadVersions = false;
 }
 
 petrus
@@ -390,6 +397,7 @@ petrus
   IsImmuneToItemTeleport = true;
   AllowUnconsciousness = false;
   DisplacePriority = 10;
+  UndeadVersions = false;
 }
 
 farmer
@@ -656,6 +664,7 @@ guard
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
     DisplacePriority = 4;
+    UndeadVersions = false;
   }
 }
 
@@ -909,6 +918,7 @@ oree
   DisplacePriority = 8;
   VomittingIsUnhealthy = false;
   IsSadist = true;
+  UndeadVersions = false;
 }
 
 darkknight
@@ -1037,6 +1047,7 @@ darkknight
     IsExtraFragile = false;
     AllowUnconsciousness = false;
     DisplacePriority = 8;
+    UndeadVersions = false;
   }
 }
 
@@ -1371,6 +1382,12 @@ skeleton
   IsExtraFragile = true;
   CanChoke = false;
   IsCatacombCreature = true;
+  UndeadVersions = false;
+  CreateUndeadConfigurations = true;
+  UndeadAttributeModifier = 75;
+  UndeadVolumeModifier = 25;
+  UndeadCopyMaterials = false;
+  Frequency = 500;
 
   Config WARRIOR;
   {
@@ -1384,6 +1401,7 @@ skeleton
     EyeColor = rgb16(255, 0, 0);
     ClothColor = rgb16(32, 32, 32);
     CanRead = true;
+    CreateUndeadConfigurations = false;
   }
 
   Config WAR_LORD;
@@ -1422,6 +1440,7 @@ skeleton
     IsImmuneToItemTeleport = true;
     IsExtraFragile = false;
     TamingDifficulty = NO_TAMING;
+    CreateUndeadConfigurations = false;
   }
 }
 
@@ -1535,6 +1554,7 @@ goblin
     ElectricityResistance = 30;
     EnergyResistance = 30;
     TamingDifficulty = 20;
+    UndeadVersions = false;
   }
 }
 
@@ -1659,6 +1679,7 @@ golem
   AlwaysUseMaterialAttributes = true;
   IsEnormous = true;
   CanChoke = false;
+  UndeadVersions = false;
 
   Config VALPURIUM;
   {
@@ -2257,6 +2278,7 @@ petrusswife
   WillCarryItems = false;
   IsExtraFragile = true;
   Belt = chastitybelt(OCTAGONAL_LOCK);
+  UndeadVersions = false;
 
   Config 1;
   {
@@ -2490,6 +2512,10 @@ zombie
   WieldedPosition = -1, -2;
   IsExtraFragile = true;
   IsCatacombCreature = true;
+  CreateUndeadConfigurations = true;
+  UndeadVersions = false;
+  UndeadAttributeModifier = 75;
+  Frequency = 500;
 
   Config ZOMBIE_OF_KHAZ_ZADM;
   {
@@ -2511,7 +2537,8 @@ zombie
     Sex = MALE;
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;
-  }	
+    CreateUndeadConfigurations = false;
+  }
 }
 
 imp
@@ -2546,6 +2573,7 @@ imp
   FireResistance = 1000;
   WillCarryItems = false;
   CanChoke = false;
+  UndeadVersions = false;
 }
 
 bat
@@ -2771,6 +2799,7 @@ mistress
     EnergyResistance = 40;
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
+    UndeadVersions = false;
   }
 }
 
@@ -2807,6 +2836,7 @@ werewolfhuman
   BaseUnarmedStrength = 300;
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
+  UndeadVersions = false;
 }
 
 werewolfwolf
@@ -2844,6 +2874,7 @@ werewolfwolf
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
   WillCarryItems = true;
+  UndeadVersions = false;
 }
 
 kobold
@@ -2939,6 +2970,7 @@ kobold
     IsExtraFragile = false;
     TamingDifficulty = 15;
     IsSadist = true;
+    UndeadVersions = false;
   }
 }
 
@@ -3092,6 +3124,7 @@ angel
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 20;
   CanChoke = false;
+  UndeadVersions = false;
 
   Config MELLIS;
   {
@@ -3304,6 +3337,7 @@ genie
   WieldedPosition = -1, -3;
   CanChoke = false;
   IsImmuneToStickiness = true;
+  UndeadVersions = false;
 }
 
 lion
@@ -3642,6 +3676,7 @@ orc
     IsEnormous = true;
     AllowUnconsciousness = false;
     TamingDifficulty = 35;
+    UndeadVersions = false;
   }
 }
 
@@ -3862,6 +3897,7 @@ imperialist
   ScienceTalkWisdomRequirement = 0;
   ScienceTalkCharismaRequirement = 15;
   IsSadist = true;
+  UndeadVersions = false;
 }
 
 smith
@@ -4411,6 +4447,7 @@ darkmage
     IsImmuneToItemTeleport = true;
     IsExtraFragile = false;
     AllowUnconsciousness = false;
+    UndeadVersions = false;
   }
 }
 
@@ -4451,6 +4488,9 @@ ghost
   MoveType = ETHEREAL;
   CanChoke = false;
   IsImmuneToStickiness = true;
+  CreateUndeadConfigurations = true;
+  UndeadAttributeModifier = 75;
+  UndeadCopyMaterials = false;
 }
 
 twoheadedmoose
@@ -5408,7 +5448,6 @@ lobhse
   NameSingular = "behemoth spider";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 400;
-  CanBeGenerated = true;
   ClassStates = INFRA_VISION;
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 50;
@@ -5570,3 +5609,4 @@ punisher
   FriendlyReplies == "\"My cousin a banana encourager in New Attnam\"";
   IsSadist = true;
 }
+

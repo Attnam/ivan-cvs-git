@@ -2423,15 +2423,16 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
 void zombie::CreateBodyParts(int SpecialFlags)
 {
   bool Anyway = false;
-  if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM) {
+  if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM)
+  {
     Anyway = true;
   } // Khaz-Zadm needs his hands... 
 
   for(int c = 0; c < BodyParts; ++c)
-    if(Anyway || (BodyPartIsVital(c) || RAND() % 3))
+    if(Anyway || BodyPartIsVital(c) || RAND_N(3) || (c == HEAD_INDEX && !RAND_N(3)))
     {
       bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
-      BodyPart->GetMainMaterial()->SetSpoilCounter(2000 + RAND() % 1000);
+      BodyPart->GetMainMaterial()->SetSpoilCounter(2000 + RAND_N(1000));
     }
 }
 
@@ -4325,10 +4326,12 @@ character* humanoid::CreateZombie() const
   return Zombie;
 }
 
-void zombie::AddPostFix(festring& String, int) const
+void zombie::AddPostFix(festring& String, int Case) const
 {
   if(!Description.IsEmpty())
     String << Description;
+  else
+    humanoid::AddPostFix(String, Case);
 }
 
 void zombie::Save(outputfile& SaveFile) const

@@ -545,3 +545,4 @@ The most dextrous/strongest arm could be shown with a different color in the equ
 A crutch - decreases the penalty for having just one leg.
 A fountain could give temporary or "permanent" (lasting until the next death) life saving - very easy to implement.
 Again something revealed to me in a dream: There nine thaums, the basic particles of magic (kinda like the six quarks); four thaums have an antithaum except the E-thaum, short for Existence, whose antithaum is Non-Existence, which doesn't exist.
+It should be easier to define secondary colors of items.

@@ -353,6 +353,38 @@ truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
 cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
 
+int characterdatabase::* ExpPtr[ATTRIBUTES] =
+{
+  &characterdatabase::DefaultEndurance,
+  &characterdatabase::DefaultPerception,
+  &characterdatabase::DefaultIntelligence,
+  &characterdatabase::DefaultWisdom,
+  &characterdatabase::DefaultWillPower,
+  &characterdatabase::DefaultCharisma,
+  &characterdatabase::DefaultMana,
+  &characterdatabase::DefaultArmStrength,
+  &characterdatabase::DefaultLegStrength,
+  &characterdatabase::DefaultDexterity,
+  &characterdatabase::DefaultAgility
+};
+
+contentscript<item> characterdatabase::* EquipmentDataPtr[EQUIPMENT_DATAS] =
+{
+  &characterdatabase::Helmet,
+  &characterdatabase::Amulet,
+  &characterdatabase::Cloak,
+  &characterdatabase::BodyArmor,
+  &characterdatabase::Belt,
+  &characterdatabase::RightWielded,
+  &characterdatabase::LeftWielded,
+  &characterdatabase::RightRing,
+  &characterdatabase::LeftRing,
+  &characterdatabase::RightGauntlet,
+  &characterdatabase::LeftGauntlet,
+  &characterdatabase::RightBoot,
+  &characterdatabase::LeftBoot
+};
+
 character::character(ccharacter& Char)
 : entity(Char), id(Char), NP(Char.NP), AP(Char.AP),
   TemporaryState(Char.TemporaryState&~POLYMORPHED),
@@ -3859,12 +3891,14 @@ void character::LoadDataBaseStats()
     if(Hits.Size == 1)
     {
       for(uint c = 0; c < Skills.Size; ++c)
-	CWeaponSkill[Skills[c]].AddHit(Hits[0] * 100);
+	if(Skills[c] < AllowedWeaponSkillCategories)
+	  CWeaponSkill[Skills[c]].AddHit(Hits[0] * 100);
     }
     else if(Hits.Size == Skills.Size)
     {
       for(uint c = 0; c < Skills.Size; ++c)
-	CWeaponSkill[Skills[c]].AddHit(Hits[c] * 100);
+	if(Skills[c] < AllowedWeaponSkillCategories)
+	  CWeaponSkill[Skills[c]].AddHit(Hits[c] * 100);
     }
     else
       ABORT("Illegal weapon skill hit array size detected!");
@@ -5553,12 +5587,88 @@ long character::GetRandomState(int Flags) const
   return NumberOfOKStates ? OKStates[RAND() % NumberOfOKStates] : 0;
 }
 
-int characterprototype::CreateSpecialConfigurations(characterdatabase** TempConfig, int Configs)
+int characterprototype::CreateSpecialConfigurations(characterdatabase** TempConfig, int Configs, int Level)
 {
-  if(TempConfig[0]->CreateDivineConfigurations)
+  if(Level == 0 && TempConfig[0]->CreateDivineConfigurations)
     Configs = databasecreator<character>::CreateDivineConfigurations(this, TempConfig, Configs);
 
-  if(TempConfig[0]->CreateGolemMaterialConfigurations)
+  if(Level == 1 && TempConfig[0]->CreateUndeadConfigurations)
+    for(int c = 1; c < protocontainer<character>::GetSize(); ++c)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c);
+      const character::database*const* CharacterConfigData = Proto->GetConfigData();
+      const character::database*const* End = CharacterConfigData + Proto->GetConfigSize();
+
+      for(++CharacterConfigData; CharacterConfigData != End; ++CharacterConfigData)
+      {
+	const character::database* CharacterDataBase = *CharacterConfigData;
+
+	if(CharacterDataBase->UndeadVersions)
+	{
+	  character::database* ConfigDataBase = new character::database(**TempConfig);
+	  ConfigDataBase->InitDefaults(this, (c << 8) | CharacterDataBase->Config);
+	  ConfigDataBase->PostFix << "of ";
+
+	  if(CharacterDataBase->Adjective.GetSize())
+	  {
+	    if(CharacterDataBase->UsesLongAdjectiveArticle)
+	      ConfigDataBase->PostFix << "an ";
+	    else
+	      ConfigDataBase->PostFix << "a ";
+
+	    ConfigDataBase->PostFix << CharacterDataBase->Adjective << ' ';
+	  }
+	  else
+	  {
+	    if(CharacterDataBase->UsesLongArticle)
+	      ConfigDataBase->PostFix << "an ";
+	    else
+	      ConfigDataBase->PostFix << "a ";
+	  }
+
+	  ConfigDataBase->PostFix << CharacterDataBase->NameSingular;
+
+	  if(CharacterDataBase->PostFix.GetSize())
+	    ConfigDataBase->PostFix << ' ' << CharacterDataBase->PostFix;
+
+	  int P1 = TempConfig[0]->UndeadAttributeModifier;
+	  int P2 = TempConfig[0]->UndeadVolumeModifier;
+	  int c2;
+
+	  for(c2 = 0; c2 < ATTRIBUTES; ++c2)
+	      ConfigDataBase->*ExpPtr[c2] = CharacterDataBase->*ExpPtr[c2] * P1 / 100;
+
+	  for(c2 = 0; c2 < EQUIPMENT_DATAS; ++c2)
+	      ConfigDataBase->*EquipmentDataPtr[c2] = contentscript<item>();
+
+	  ConfigDataBase->DefaultIntelligence = 5;
+	  ConfigDataBase->DefaultWisdom = 5;
+	  ConfigDataBase->TotalSize = CharacterDataBase->TotalSize;
+	  ConfigDataBase->Sex = CharacterDataBase->Sex;
+	  ConfigDataBase->AttributeBonus = CharacterDataBase->AttributeBonus;
+	  ConfigDataBase->TotalVolume = CharacterDataBase->TotalVolume * P2 / 100;
+
+	  if(TempConfig[0]->UndeadCopyMaterials)
+	  {
+	    ConfigDataBase->HeadBitmapPos = CharacterDataBase->HeadBitmapPos;
+	    ConfigDataBase->HairColor = CharacterDataBase->HairColor;
+	    ConfigDataBase->EyeColor = CharacterDataBase->EyeColor;
+	    ConfigDataBase->CapColor = CharacterDataBase->CapColor;
+	    ConfigDataBase->FleshMaterial = CharacterDataBase->FleshMaterial;
+	    ConfigDataBase->BloodMaterial = CharacterDataBase->BloodMaterial;
+	    ConfigDataBase->VomitMaterial = CharacterDataBase->VomitMaterial;
+	    ConfigDataBase->SweatMaterial = CharacterDataBase->SweatMaterial;
+	  }
+
+	  ConfigDataBase->KnownCWeaponSkills = CharacterDataBase->KnownCWeaponSkills;
+	  ConfigDataBase->CWeaponSkillHits = CharacterDataBase->CWeaponSkillHits;
+	  ConfigDataBase->PostProcess();
+	  TempConfig[Configs++] = ConfigDataBase;
+	}
+      }
+    }
+
+  if(Level == 0 && TempConfig[0]->CreateGolemMaterialConfigurations)
     for(int c = 1; c < protocontainer<material>::GetSize(); ++c)
     {
       const material::prototype* Proto = protocontainer<material>::GetProto(c);
@@ -7716,21 +7826,6 @@ int character::GetAttribute(int Identifier, truth AllowBonus) const
 
   return A && AllowBonus ? Max(A + AttributeBonus[Identifier], 1) : A;
 }
-
-int characterdatabase::* ExpPtr[ATTRIBUTES] =
-{
-  &characterdatabase::DefaultEndurance,
-  &characterdatabase::DefaultPerception,
-  &characterdatabase::DefaultIntelligence,
-  &characterdatabase::DefaultWisdom,
-  &characterdatabase::DefaultWillPower,
-  &characterdatabase::DefaultCharisma,
-  &characterdatabase::DefaultMana,
-  &characterdatabase::DefaultArmStrength,
-  &characterdatabase::DefaultLegStrength,
-  &characterdatabase::DefaultDexterity,
-  &characterdatabase::DefaultAgility
-};
 
 void characterdatabase::PostProcess()
 {

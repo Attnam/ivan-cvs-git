@@ -71,7 +71,7 @@ template <class type> inline fearray<type>::~fearray<type>()
 template <class type>
 inline fearray<type>& fearray<type>::operator=(const fearray<type>& A)
 {
-  if(Data)
+  if(A.Data)
     ++REFS(Data = A.Data);
 
   Size = A.Size;
@@ -107,6 +107,8 @@ template <class type> inline void fearray<type>::Allocate(sizetype What)
   for(sizetype c = 0; c < What; ++c)
     new(&Data[c]) type;
 }
+
+/* Don't use unless necessary */
 
 template <class type> inline void fearray<type>::Add(const type& Type)
 {

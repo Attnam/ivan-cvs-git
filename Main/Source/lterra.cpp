@@ -293,8 +293,11 @@ truth olterrain::CanBeDestroyed() const
 
 //extern itemprototype key_ProtoType;
 
-int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConfig, int Configs)
+int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConfig, int Configs, int Level)
 {
+  if(Level)
+    return Configs;
+
   if(TempConfig[0]->CreateDivineConfigurations)
     Configs = databasecreator<olterrain>::CreateDivineConfigurations(this, TempConfig, Configs);
 

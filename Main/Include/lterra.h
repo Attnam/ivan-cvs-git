@@ -132,7 +132,7 @@ class glterrainprototype
   cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const glterrainprototype* GetBase() const { return Base; }
-  int CreateSpecialConfigurations(glterraindatabase**, int Configs) { return Configs; }
+  int CreateSpecialConfigurations(glterraindatabase**, int Configs, int) { return Configs; }
   const glterraindatabase* ChooseBaseForConfig(glterraindatabase** TempConfig, int, int) { return *TempConfig; }
   const glterraindatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }
@@ -229,7 +229,7 @@ class olterrainprototype
   cchar* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const olterrainprototype* GetBase() const { return Base; }
-  int CreateSpecialConfigurations(olterraindatabase**, int);
+  int CreateSpecialConfigurations(olterraindatabase**, int, int);
   const olterraindatabase* ChooseBaseForConfig(olterraindatabase** TempConfig, int, int) { return *TempConfig; }
   const olterraindatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }

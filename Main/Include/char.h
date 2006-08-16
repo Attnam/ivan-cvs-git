@@ -238,6 +238,11 @@ struct characterdatabase : public databasebase
   truth IsMasochist;
   truth IsSadist;
   truth IsCatacombCreature;
+  truth CreateUndeadConfigurations;
+  truth UndeadVersions;
+  int UndeadAttributeModifier;
+  int UndeadVolumeModifier;
+  truth UndeadCopyMaterials;
 };
 
 class characterprototype
@@ -252,7 +257,7 @@ class characterprototype
   int GetIndex() const { return Index; }
   const characterprototype* GetBase() const { return Base; }
   cchar* GetClassID() const { return ClassID; }
-  int CreateSpecialConfigurations(characterdatabase**, int);
+  int CreateSpecialConfigurations(characterdatabase**, int, int);
   const characterdatabase* ChooseBaseForConfig(characterdatabase** TempConfig, int, int) { return *TempConfig; }
   const characterdatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }
@@ -583,6 +588,11 @@ class character : public entity, public id
   DATA_BASE_TRUTH(IsMasochist);
   DATA_BASE_TRUTH(IsSadist);
   DATA_BASE_TRUTH(IsCatacombCreature);
+  DATA_BASE_TRUTH(CreateUndeadConfigurations);
+  DATA_BASE_TRUTH(UndeadVersions);
+  DATA_BASE_VALUE(int, UndeadAttributeModifier);
+  DATA_BASE_VALUE(int, UndeadVolumeModifier);
+  DATA_BASE_TRUTH(UndeadCopyMaterials);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
