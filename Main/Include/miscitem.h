@@ -602,4 +602,12 @@ ITEM(gorovitscopyoflenin, item)
  protected:
   virtual col16 GetMaterialColorB(int) const;
 };
+
+ITEM(firstbornchild, item)
+{
+ public:
+  virtual bool SpecialOfferEffect(int);
+ protected:
+  virtual col16 GetMaterialColorB(int) const;
+};
 #endif

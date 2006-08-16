@@ -570,6 +570,7 @@ class item : public object
   virtual void BlockEffect(character*, character*, item*, int type) { } 
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
+  virtual bool SpecialOfferEffect(int) { return false; }
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

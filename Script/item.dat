@@ -3721,3 +3721,33 @@ chastitybelt
   CreateLockConfigurations = true;
   /*IsAbstract = true;*/
 }
+
+firstbornchild
+{
+  DefaultSize = 60;
+  Possibility = 0;
+  WeaponCategory = UNCATEGORIZED;
+  DefaultMainVolume = 3000;
+
+  DefaultSecondaryVolume = 75; /* cloth */
+  SecondaryMaterialConfig == FABRIC;
+
+  StrengthModifier = 40;
+  BitmapPos = 80, 144;
+  MainMaterialConfig == HUMAN_FLESH;
+  Roundness = 60;
+  CanBeBroken = false;
+  DamageFlags = BLUNT;
+  IsAbstract = true;
+  Adjective = "first-born";    
+  AttachedGod = SILVA;
+
+  Config MALE;
+  {
+    NameSingular = "son";
+  } 
+  Config FEMALE;
+  {
+    NameSingular = "daughter";
+  }
+}

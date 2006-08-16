@@ -291,6 +291,11 @@ void god::PrintRelation() const
 
 truth god::ReceiveOffer(item* Sacrifice)
 {
+  if(Sacrifice->SpecialOfferEffect(GetType()))
+  {
+    return true;
+  }
+
   int OfferValue = Sacrifice->GetOfferValue(GetType());
 
   if(OfferValue)
