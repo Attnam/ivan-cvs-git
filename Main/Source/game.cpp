@@ -772,7 +772,10 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
   for(c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
+    {
       igraph::DrawCursor(CalculateScreenCoordinates(SpecialCursorPos[c]), SpecialCursorData[c]);
+      GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
+    }
 }
 
 truth game::Save(cfestring& SaveName)
