@@ -243,6 +243,7 @@ struct characterdatabase : public databasebase
   int UndeadAttributeModifier;
   int UndeadVolumeModifier;
   truth UndeadCopyMaterials;
+  truth CanBeGeneratedOnlyInTheCatacombs;
 };
 
 class characterprototype
@@ -593,6 +594,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, UndeadAttributeModifier);
   DATA_BASE_VALUE(int, UndeadVolumeModifier);
   DATA_BASE_TRUTH(UndeadCopyMaterials);
+  DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);

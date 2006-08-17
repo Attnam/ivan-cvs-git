@@ -779,7 +779,7 @@ void priest::BeTalkedTo()
 void skeleton::BeTalkedTo()
 {
   if(GetHead())
-    character::BeTalkedTo();
+    humanoid::BeTalkedTo();
   else
     ADD_MESSAGE("The headless %s remains silent.", PLAYER->CHAR_DESCRIPTION(UNARTICLED));
 }
@@ -5055,10 +5055,10 @@ void humanoid::ApplySpecialAttributeBonuses()
   if(GetHead())
   {
     AttributeBonus[CHARISMA] -= GetHead()->
-				CalculateScarAttributePenalty(GetAttribute(CHARISMA,false));
+				CalculateScarAttributePenalty(GetAttribute(CHARISMA, false));
   }
   else
-    AttributeBonus[CHARISMA] -= GetAttribute(CHARISMA,false) - 1;
+    AttributeBonus[CHARISMA] -= GetAttribute(CHARISMA, false) - 1;
 }
 
 void siren::GetAICommand()
@@ -5110,4 +5110,48 @@ truth humanoid::HasSadistWeapon() const
 truth humanoid::HasSadistAttackMode() const
 {
   return HasSadistWeapon() || IsUsingLegs();
+}
+
+void petrusswife::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << GiftTotal;
+}
+
+void petrusswife::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> GiftTotal;
+}
+
+void petrusswife::BeTalkedTo()
+{
+  itemvector Item;
+
+  if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsLuxuryItem)
+     || Item.empty())
+    humanoid::BeTalkedTo();
+
+  int Accepted = 0;
+  truth RefusedSomething = false;
+
+  for(int c = 0; c < Item.size(); ++c)
+    if(!MakesBurdened(GetCarriedWeight() + Item[c]->GetWeight()))
+    {
+      ++Accepted;
+      GiftTotal += Item[c]->GetTruePrice();
+      Item[c]->RemoveFromSlot();
+      GetStack()->AddItem(Item[c]);
+    }
+    else
+    {
+      RefusedSomething = true;
+      break;
+    }
+
+  if(Accepted)
+    ADD_MESSAGE("\"I thank you for your little gift%s.\"", Accepted == 1 ? "" : "s");
+
+  if(RefusedSomething)
+    ADD_MESSAGE("\"Unfortunately I cannot carry any more of your gifts. I'm a delicate woman, you see.\"");
 }

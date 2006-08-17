@@ -285,6 +285,7 @@ ITEM(ring, item)
  public:
   virtual truth IsRing(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
+  virtual truth IsLuxuryItem(ccharacter*) const { return true; }
  protected:
   virtual col16 GetMaterialColorB(int) const;
 };
@@ -294,6 +295,7 @@ ITEM(amulet, item)
  public:
   virtual truth IsAmulet(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
+  virtual truth IsLuxuryItem(ccharacter*) const { return true; }
  protected:
   virtual col16 GetMaterialColorB(int) const;
 };

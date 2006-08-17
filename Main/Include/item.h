@@ -294,7 +294,8 @@ class item : public object
   virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
   virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
-  virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
+  virtual truth IsLuxuryItem(ccharacter*) const { return false; }
+  virtual truth MaterialIsChangeable(ccharacter*) const { return false; }
   virtual truth CanBeHardened(ccharacter*) const;
   virtual truth HasLock(ccharacter*) const { return false; }
   virtual truth IsOnGround() const;

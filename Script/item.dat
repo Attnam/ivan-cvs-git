@@ -1062,7 +1062,7 @@ potion /* materialcontainer-> */
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
   SecondaryMaterialConfig = { 11, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
-  MaterialConfigChances = { 11, 100, 75, 5, 50, 1, 10, 5, 25, 5, 5, 25; }
+  MaterialConfigChances = { 11, 75, 50, 5, 50, 1, 10, 5, 25, 5, 5, 25; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;
@@ -3246,7 +3246,7 @@ gorovitssickle
 
 scrollofrepair /* scroll-> */
 {
-  Possibility = 75;
+  Possibility = 50;
   Price = 250;
   PostFix = "of repair";
   Alias == "scroll of repairing";

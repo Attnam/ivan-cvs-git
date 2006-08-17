@@ -1177,8 +1177,13 @@ void level::Draw(truth AnimationDraw) const
 	  {
 	    ccharacter* C = Square->Character;
 
-	    if(C && C->CanBeSeenByPlayer())
-	      Square->DrawMemorizedCharacter(BlitData);
+	    if(C)
+	    {
+	      if(C->CanBeSeenByPlayer())
+		Square->DrawMemorizedCharacter(BlitData);
+	      else
+		Square->DrawMemorized(BlitData);
+	    }
 	  }
 	}
       }

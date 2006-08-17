@@ -548,4 +548,4 @@ Again something revealed to me in a dream: There nine thaums, the basic particle
 Teleporting version of magpie. Really annoying.
 Polymorph grenade.
 It should be easier to define secondary colors of items.
-
+Doors of shops shouldn't be locked.

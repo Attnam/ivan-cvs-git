@@ -42,8 +42,10 @@ character* protosystem::BalancedCreateMonster()
 	     && DataBase->Flags & HAS_BEEN_GENERATED)
 	    continue;
 
-	  if(*game::GetCurrentLevel()->GetLevelScript()->IsCatacomb()
-	     && !DataBase->IsCatacombCreature)
+	  truth IsCatacomb = *game::GetCurrentLevel()->GetLevelScript()->IsCatacomb();
+
+	  if((IsCatacomb && !DataBase->IsCatacombCreature)
+	     || (!IsCatacomb && DataBase->CanBeGeneratedOnlyInTheCatacombs))
 	    continue;
 
 	  configid ConfigID(Type, ConfigData[c]->Config);

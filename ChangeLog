@@ -6,6 +6,7 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+
 August 16 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Added first-born sons and daughters
@@ -16,7 +17,7 @@ August 16 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 August 15 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
-  * The rand function is now correct
+  * The RAND_N function is now correct
   * Monsters are now generated in the catacombs
 
 August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>

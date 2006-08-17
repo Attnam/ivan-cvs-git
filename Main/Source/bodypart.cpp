@@ -1905,8 +1905,8 @@ void arm::CalculateAttributeBonuses()
 
   if(!UseMaterialAttributes())
   {
-    StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH,false));
-    DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY,false)) ; 
+    StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH, false));
+    DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY, false)) ; 
   }
 }
 
@@ -1932,8 +1932,8 @@ void leg::CalculateAttributeBonuses()
 
   if(!UseMaterialAttributes())
   {
-    StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH,false));
-    AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY,false)) ; 
+    StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH, false));
+    AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY, false)) ; 
   }
 }
 

@@ -323,6 +323,7 @@ ITEM(stone, item)
 {
  public:
   virtual long GetTruePrice() const;
+  virtual truth IsLuxuryItem(ccharacter*) const { return GetTruePrice() > 0; }
  protected:
   virtual truth WeightIsIrrelevant() const { return true; }
 };

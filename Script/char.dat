@@ -283,6 +283,7 @@ character
   UndeadAttributeModifier = 100;
   UndeadVolumeModifier = 100;
   UndeadCopyMaterials = true;
+  CanBeGeneratedOnlyInTheCatacombs = false;
 }
 
 humanoid
@@ -4491,6 +4492,9 @@ ghost
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
   UndeadCopyMaterials = false;
+  CanBeGenerated = true;
+  CanBeGeneratedOnlyInTheCatacombs = true;
+  IsCatacombCreature = true;
 }
 
 twoheadedmoose

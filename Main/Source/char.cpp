@@ -5643,6 +5643,7 @@ int characterprototype::CreateSpecialConfigurations(characterdatabase** TempConf
 
 	  ConfigDataBase->DefaultIntelligence = 5;
 	  ConfigDataBase->DefaultWisdom = 5;
+	  ConfigDataBase->DefaultCharisma = 5;
 	  ConfigDataBase->TotalSize = CharacterDataBase->TotalSize;
 	  ConfigDataBase->Sex = CharacterDataBase->Sex;
 	  ConfigDataBase->AttributeBonus = CharacterDataBase->AttributeBonus;

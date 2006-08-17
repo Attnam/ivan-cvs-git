@@ -378,8 +378,14 @@ CHARACTER(slave, playerkind)
 CHARACTER(petrusswife, humanoid)
 {
  public:
+  petrusswife() : GiftTotal(0) { }
   virtual truth MoveRandomly() { return MoveRandomlyInRoom(); }
   virtual truth SpecialEnemySightedReaction(character*);
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void BeTalkedTo();
+ protected:
+  int GiftTotal;
 };
 
 CHARACTER(housewife, humanoid)
