@@ -3049,7 +3049,30 @@ void guard::GetAICommand()
     GoingTo = WayPoints[NextWayPoint];
   }
 
-  StandIdleAI();
+  SeekLeader(GetLeader());
+
+  if(CheckForEnemies(true, true, true))
+    return;
+
+  if(CheckForUsefulItemsOnGround())
+    return;
+
+  if(FollowLeader(GetLeader()))
+    return;
+
+  if(CheckForDoors())
+    return;
+
+  if(MoveTowardsHomePos())
+    return;
+
+  if(CheckSadism())
+    return;
+
+  if(CheckForBeverage())
+    return;
+
+  EditAP(-1000);
 }
 
 truth mistress::ReceiveDamage(character* Damager, int Damage, int Type, int TargetFlags, int Direction, truth Divide, truth PenetrateArmor, truth Critical, truth ShowMsg)
@@ -5154,4 +5177,19 @@ void petrusswife::BeTalkedTo()
 
   if(RefusedSomething)
     ADD_MESSAGE("\"Unfortunately I cannot carry any more of your gifts. I'm a delicate woman, you see.\"");
+}
+
+void guard::BeTalkedTo()
+{
+  itemvector Item;
+
+  if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
+     || Item.empty())
+    humanoid::BeTalkedTo();
+
+  for(int c = 0; c < Item.size(); ++c)
+  {
+    Item[c]->RemoveFromSlot();
+    GetStack()->AddItem(Item[c]);
+  }
 }

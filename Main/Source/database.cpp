@@ -419,6 +419,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(UndeadVolumeModifier);
   ADD_MEMBER(UndeadCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
+  ADD_MEMBER(IsAlcoholic);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

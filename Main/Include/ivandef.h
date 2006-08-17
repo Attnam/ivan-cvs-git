@@ -1067,6 +1067,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define IS_SPARKLING 8
 #define IS_SCARY 16
 #define IS_GOLEM_MATERIAL 32
+#define IS_BEVERAGE 64
 
 /* BodyFlags */
 #define IS_ALIVE 1

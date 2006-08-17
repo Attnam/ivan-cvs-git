@@ -530,11 +530,15 @@ void item::CalculateVolumeAndWeight()
   Volume = Weight = 0;
 
   for(int c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
+  {
+    cmaterial* Material = GetMaterial(c);
+
+    if(Material)
     {
-      Volume += GetMaterial(c)->GetVolume();
-      Weight += GetMaterial(c)->GetWeight();
+      Volume += Material->GetVolume();
+      Weight += Material->GetWeight();
     }
+  }
 }
 
 void item::SignalEmitationIncrease(col24 EmitationUpdate)
@@ -1682,4 +1686,17 @@ void itemlock::Save(outputfile& SaveFile) const
 void itemlock::Load(inputfile& SaveFile)
 {
   SaveFile >> Locked;
+}
+
+truth item::IsBeverage(ccharacter*) const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+  {
+    cmaterial* Material = GetMaterial(c);
+
+    if(Material && (Material->GetCategoryFlags() & IS_BEVERAGE))
+      return true;
+  }
+
+  return false;
 }

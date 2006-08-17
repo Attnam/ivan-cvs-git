@@ -296,6 +296,7 @@ class item : public object
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
   virtual truth MaterialIsChangeable(ccharacter*) const { return false; }
+  virtual truth IsBeverage(ccharacter*) const;
   virtual truth CanBeHardened(ccharacter*) const;
   virtual truth HasLock(ccharacter*) const { return false; }
   virtual truth IsOnGround() const;

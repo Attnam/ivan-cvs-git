@@ -5958,14 +5958,7 @@ truth character::TryToEquip(item* Item)
 
 truth character::TryToConsume(item* Item)
 {
-  if(Item->CanBeEatenByAI(this)
-     && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
-  {
-    ConsumeItem(Item, Item->GetConsumeMaterial(this)->GetConsumeVerb());
-    return true;
-  }
-  else
-    return false;
+  return Item->CanBeEatenByAI(this) && ConsumeItem(Item, Item->GetConsumeMaterial(this)->GetConsumeVerb());
 }
 
 void character::UpdateESPLOS() const
@@ -10029,6 +10022,21 @@ truth character::CheckSadism()
       }
     }
   }
+
+  return false;
+}
+
+truth character::CheckForBeverage()
+{
+  if(StateIsActivated(PANIC) || !IsEnabled() || !UsesNutrition() || CheckIfSatiated())
+    return false;
+
+  itemvector ItemVector;
+  GetStack()->FillItemVector(ItemVector);
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->IsBeverage(this) && TryToConsume(ItemVector[c]))
+      return true;
 
   return false;
 }

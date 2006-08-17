@@ -301,7 +301,7 @@ long material::GetTotalNutritionValue() const
 
 truth material::CanBeEatenByAI(ccharacter* Eater) const
 {
-  return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit()
+  return (Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() || (Eater->IsAlcoholic() && (GetCategoryFlags() & IS_BEVERAGE)))
     && !GetSpoilLevel() && !Eater->CheckCannibalism(this);
 }
 

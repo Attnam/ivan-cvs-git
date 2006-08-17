@@ -1557,6 +1557,7 @@ liquid
     AttachedGod = NEFAS;
     EffectStrength = 150;
     CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = CAN_EXPLODE|EFFECT_IS_GOOD;
   }
 
@@ -1591,6 +1592,7 @@ liquid
     PriceModifier = 500;
     AttachedGod = NEFAS;
     CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = CAN_EXPLODE|EFFECT_IS_GOOD;
     DisablesPanicWhenConsumed = true;
   }

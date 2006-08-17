@@ -259,6 +259,7 @@ CHARACTER(guard, humanoid)
   virtual void GetAICommand();
   virtual void SetWayPoints(const fearray<packv2>&);
   virtual truth MoveTowardsHomePos();
+  virtual void BeTalkedTo();
  protected:
   std::vector<v2> WayPoints;
   uint NextWayPoint;

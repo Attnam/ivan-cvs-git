@@ -244,6 +244,7 @@ struct characterdatabase : public databasebase
   int UndeadVolumeModifier;
   truth UndeadCopyMaterials;
   truth CanBeGeneratedOnlyInTheCatacombs;
+  truth IsAlcoholic;
 };
 
 class characterprototype
@@ -595,6 +596,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, UndeadVolumeModifier);
   DATA_BASE_TRUTH(UndeadCopyMaterials);
   DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
+  DATA_BASE_TRUTH(IsAlcoholic);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
@@ -1080,6 +1082,7 @@ class character : public entity, public id
   truth IsCharmable() const { return GetTamingDifficulty() != NO_TAMING; }
   truth CheckSadism();
   virtual truth HasSadistAttackMode() const { return IsUsingLegs(); }
+  truth CheckForBeverage();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

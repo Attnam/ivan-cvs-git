@@ -284,6 +284,7 @@ character
   UndeadVolumeModifier = 100;
   UndeadCopyMaterials = true;
   CanBeGeneratedOnlyInTheCatacombs = false;
+  IsAlcoholic = false;
 }
 
 humanoid
@@ -474,6 +475,7 @@ guard
   HostileReplies == "\"A fair trial? Hah! Prepare to be executed!\"";
   AttachedGod = LEGIFER;
   IsSadist = true;
+  IsAlcoholic = true;
 
   Config ROOKIE;
   {
@@ -2008,6 +2010,7 @@ communist /* Ivan */
   ScienceTalkWisdomModifier = 25;
   ScienceTalkIntelligenceRequirement = 3;
   ScienceTalkWisdomRequirement = 3;
+  IsAlcoholic = true;
 }
 
 hunter
