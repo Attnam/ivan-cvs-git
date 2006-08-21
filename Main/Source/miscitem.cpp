@@ -1396,7 +1396,7 @@ void materialcontainer::Be()
   item::Be();
 
   if(Exists() && SecondaryMaterial)
-    SecondaryMaterial->Be();
+    SecondaryMaterial->Be(ItemFlags);
 }
 
 int materialcontainer::GetSparkleFlags() const

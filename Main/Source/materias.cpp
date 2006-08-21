@@ -20,13 +20,20 @@ truth powder::IsExplosive() const { return !Wetness && material::IsExplosive(); 
 
 truth ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
 
-void organic::Be()
+void organic::Be(ulong Flags)
 {
   if(SpoilCheckCounter++ >= 50)
   {
     if(MotherEntity->AllowSpoil())
     {
-      if((SpoilCounter += 25) < GetSpoilModifier())
+      if(Flags & HASTE)
+	SpoilCounter += 125;
+      else if(Flags & SLOW)
+	SpoilCounter += 5;
+      else
+	SpoilCounter += 25;
+
+      if(SpoilCounter < GetSpoilModifier())
       {
 	if(SpoilCounter << 1 >= GetSpoilModifier())
 	{
@@ -87,7 +94,7 @@ void flesh::Load(inputfile& SaveFile)
   SaveFile >> SkinColor >> SkinColorSparkling >> InfectedByLeprosy;
 }
 
-void powder::Be()
+void powder::Be(ulong)
 {
   if(Wetness > 0)
     --Wetness;

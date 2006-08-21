@@ -100,8 +100,9 @@ Floating eyes can vomit.
 Selling activated holy grenades should be handled.
 The script seems not to accept '§' character.
 //Patheon book of Mellis etc.
-The Static Whore Insects of Unholy Solar Eclipse.
+The Static Whore Insects of the Unholy Solar Eclipse.
 The Ultra-Difficult Hell-Freezing Death Exception Bug.
 Glittering slaves.
 Since "fainting" is a proportional alertion state of stamina, great increases in stamina may trigger it. Ie. wearing an AoGH may cause you to become fainting, although probably not to actually faint.
 "The levitating ostrich begins to float."
+There may be some bug in the full screen mode activation.

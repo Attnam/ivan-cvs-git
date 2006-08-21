@@ -1083,6 +1083,8 @@ class character : public entity, public id
   truth CheckSadism();
   virtual truth HasSadistAttackMode() const { return IsUsingLegs(); }
   truth CheckForBeverage();
+  void Haste();
+  void Slow();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

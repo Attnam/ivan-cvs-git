@@ -1311,3 +1311,15 @@ ccharacter* stack::FindCarrier() const
 {
   return MotherEntity ? MotherEntity->FindCarrier() : 0;
 }
+
+void stack::Haste()
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->Haste();
+}
+
+void stack::Slow()
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->Slow();
+}

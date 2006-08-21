@@ -115,7 +115,7 @@ class material
   long GetRawPrice() const;
   truth CanBeDug(material* ShovelMaterial) const;
   virtual truth HasBe() const { return false; }
-  virtual void Be() { }
+  virtual void Be(ulong) { }
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddConsumeEndMessage(character*) const;
   DATA_BASE_VALUE(const prototype*, ProtoType);

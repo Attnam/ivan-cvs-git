@@ -112,7 +112,7 @@ ITEM(can, materialcontainer)
   virtual truth IsDipDestination(ccharacter*) const;
   virtual liquid* CreateDipLiquid();
   virtual truth AllowSpoil() const { return false; } // temporary
-  virtual truth WillSpoil() const { return false; } // temporary
+  virtual truth Spoils() const { return false; } // temporary
   virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
  protected:
   virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
@@ -608,7 +608,10 @@ ITEM(firstbornchild, item)
 {
  public:
   virtual bool SpecialOfferEffect(int);
+  virtual truth AllowSpoil() const { return false; } // temporary
+  virtual truth Spoils() const { return false; } // temporary
  protected:
   virtual col16 GetMaterialColorB(int) const;
 };
+
 #endif

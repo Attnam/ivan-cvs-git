@@ -390,7 +390,7 @@ void meleeweapon::Be()
   item::Be();
 
   if(Exists() && SecondaryMaterial->GetVolume())
-    SecondaryMaterial->Be();
+    SecondaryMaterial->Be(ItemFlags);
 }
 
 long whipofthievery::GetPrice() const

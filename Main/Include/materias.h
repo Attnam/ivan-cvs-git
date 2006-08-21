@@ -24,7 +24,7 @@ MATERIAL(solid, material)
 MATERIAL(organic, solid)
 {
  public:
-  virtual void Be();
+  virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -85,7 +85,7 @@ MATERIAL(powder, liquid)
   virtual truth IsPowder() const { return true; }
   virtual truth IsExplosive() const;
   virtual void AddWetness(long What) { Wetness += What; }
-  virtual void Be();
+  virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

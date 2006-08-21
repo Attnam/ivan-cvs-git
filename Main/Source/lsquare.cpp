@@ -1550,16 +1550,18 @@ truth lsquare::Teleport(const beamdata& Beam)
 
 truth lsquare::Haste(const beamdata&)
 {
+  GetStack()->Haste();
   character* Dude = GetCharacter();
 
   if(Dude)
-    Dude->BeginTemporaryState(HASTE, 500 + RAND() % 1000);
+    Dude->Haste();
 
   return false;
 }
 
 truth lsquare::Slow(const beamdata& Beam)
 {
+  GetStack()->Slow();
   character* Dude = GetCharacter();
 
   if(Dude)
@@ -1567,7 +1569,7 @@ truth lsquare::Slow(const beamdata& Beam)
     if(Beam.Owner)
       Beam.Owner->Hostility(Dude);
 
-    Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+    Dude->Slow();
   }
 
   return false;

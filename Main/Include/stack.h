@@ -151,6 +151,8 @@ class stack
   truth Necromancy(character*);
   void CalculateEnchantments();
   ccharacter* FindCarrier() const;
+  void Haste();
+  void Slow();
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, ccharacter*, cfestring&, int, int, sorter) const;

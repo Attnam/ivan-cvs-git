@@ -295,7 +295,7 @@ class item : public object
   virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
-  virtual truth MaterialIsChangeable(ccharacter*) const { return false; }
+  virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
   virtual truth IsBeverage(ccharacter*) const;
   virtual truth CanBeHardened(ccharacter*) const;
   virtual truth HasLock(ccharacter*) const { return false; }
@@ -561,7 +561,7 @@ class item : public object
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
   truth HasID(ulong What) const { return ID == What; }
-  virtual truth WillSpoil() const;
+  virtual truth Spoils() const;
   int GetMaxSpoilPercentage() const;
   truth HasPrice() const;
   virtual void Disappear();
@@ -573,6 +573,9 @@ class item : public object
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
   virtual bool SpecialOfferEffect(int) { return false; }
+  void Haste();
+  void Slow();
+  void SendMemorizedUpdateRequest() const;
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
@@ -584,6 +587,7 @@ class item : public object
   virtual truth AllowSparkling() const { return !Fluid; }
   virtual truth WeightIsIrrelevant() const { return false; }
   virtual const prototype* FindProtoType() const { return &ProtoType; }
+  virtual truth AddStateDescription(festring&, truth) const;
   static const prototype ProtoType;
   slot** Slot;
   int Size;
@@ -595,6 +599,7 @@ class item : public object
   fluid** Fluid;
   int SquaresUnder;
   int LifeExpectancy;
+  ulong ItemFlags;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

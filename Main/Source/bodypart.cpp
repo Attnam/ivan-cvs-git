@@ -1750,7 +1750,7 @@ void bodypart::Be()
     }
 
     if(Master->AllowSpoil() || !Master->IsEnabled())
-      MainMaterial->Be();
+      MainMaterial->Be(ItemFlags);
 
     if(Exists() && LifeExpectancy)
       if(LifeExpectancy == 1)
@@ -3560,4 +3560,37 @@ truth arm::HasSadistWeapon() const
 {
   item* Wielded = GetWielded();
   return Wielded && Wielded->IsSadistWeapon();
+}
+
+truth corpse::AddStateDescription(festring& Name, truth Articled) const
+{
+  if(!Spoils())
+    return false;
+
+  truth Hasted = true, Slowed = true;
+
+  for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
+  {
+    bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      if(!(BodyPart->ItemFlags & HASTE))
+	Hasted = false;
+
+      if(!(BodyPart->ItemFlags & SLOW))
+	Slowed = false;
+    }
+  }
+
+  if((Hasted | Slowed) && Articled)
+    Name << "a ";
+
+  if(Hasted)
+    Name << "hasted ";
+
+  if(Slowed)
+    Name << "slowed ";
+
+  return true;
 }

@@ -19,7 +19,7 @@ itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, ite
 
 truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
-item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0) { }
+item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0) { }
 truth item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 truth item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 double item::GetBaseDamage() const { return sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus(); }
@@ -48,7 +48,7 @@ void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeM
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
-item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
+item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
@@ -295,7 +295,7 @@ void item::Save(outputfile& SaveFile) const
   object::Save(SaveFile);
   SaveFile << (ushort)GetConfig();
   SaveFile << (ushort)Flags;
-  SaveFile << Size << ID << LifeExpectancy;
+  SaveFile << Size << ID << LifeExpectancy << ItemFlags;
   SaveLinkedList(SaveFile, CloneMotherID);
 
   if(Fluid)
@@ -314,7 +314,7 @@ void item::Load(inputfile& SaveFile)
   object::Load(SaveFile);
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
-  SaveFile >> Size >> ID >> LifeExpectancy;
+  SaveFile >> Size >> ID >> LifeExpectancy >> ItemFlags;
   LoadLinkedList(SaveFile, CloneMotherID);
 
   if(LifeExpectancy)
@@ -730,16 +730,17 @@ item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 
 truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
-  return GetType() == Item->GetType()
-    && GetConfig() == Item->GetConfig()
-		    && (WeightIsIrrelevant() || Weight == Item->Weight)
-		    && MainMaterial->IsSameAs(Item->MainMaterial)
- && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
- && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
- && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
- && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
-		    && !Fluid && !Item->Fluid
- && !LifeExpectancy == !Item->LifeExpectancy;
+  return (GetType() == Item->GetType()
+	  && GetConfig() == Item->GetConfig()
+	  && ItemFlags == Item->ItemFlags
+	  && (WeightIsIrrelevant() || Weight == Item->Weight)
+	  && MainMaterial->IsSameAs(Item->MainMaterial)
+	  && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
+	  && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
+	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
+	  && !Fluid && !Item->Fluid
+	  && !LifeExpectancy == !Item->LifeExpectancy);
 }
 
 void item::Break(character* Breaker, int)
@@ -769,7 +770,7 @@ void item::Break(character* Breaker, int)
 
 void item::Be()
 {
-  MainMaterial->Be();
+  MainMaterial->Be(ItemFlags);
 
   if(Exists() && LifeExpectancy)
     if(LifeExpectancy == 1)
@@ -946,7 +947,7 @@ long item::GetTruePrice() const
 
   long Price = Max(GetPrice(), GetMaterialPrice());
 
-  if(WillSpoil())
+  if(Spoils())
     Price = Price * (100 - GetMaxSpoilPercentage()) / 500;
 
   return Price;
@@ -1511,7 +1512,7 @@ void item::AddTrapName(festring& String, int Amount) const
   }
 }
 
-truth item::WillSpoil() const
+truth item::Spoils() const
 {
   for(int c = 0; c < GetMaterials(); ++c)
   {
@@ -1699,4 +1700,46 @@ truth item::IsBeverage(ccharacter*) const
   }
 
   return false;
+}
+
+void item::Haste()
+{
+  ItemFlags |= HASTE;
+  ItemFlags &= ~SLOW;
+  SendMemorizedUpdateRequest();
+}
+
+void item::Slow()
+{
+  ItemFlags |= SLOW;
+  ItemFlags &= ~HASTE;
+  SendMemorizedUpdateRequest();
+}
+
+void item::SendMemorizedUpdateRequest() const
+{
+  if(!game::IsInWilderness())
+    for(int c = 0; c < SquaresUnder; ++c)
+      if(Slot[c])
+      {
+	lsquare* Square = GetLSquareUnder(c);
+	Square->SendMemorizedUpdateRequest();
+      }
+}
+
+truth item::AddStateDescription(festring& Name, truth Articled) const
+{
+  if(!Spoils())
+    return false;
+
+  if((ItemFlags & (HASTE|SLOW)) && Articled)
+    Name << "a ";
+
+  if(ItemFlags & HASTE)
+    Name << "hasted ";
+
+  if(ItemFlags & SLOW)
+    Name << "slowed ";
+
+  return true;
 }

@@ -7,6 +7,12 @@
 
 -----------------------------------------------------------------------------
 
+August 21 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Children no longer spoil
+  * Items can now be hasted and slowed to speed or slow their spoiling
+  * Corrected a bug in the scroll of change material code
+
 August 17 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Implemented alcoholic guards
@@ -93,7 +99,7 @@ July 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
 July 23 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
-  * Added some undeground levels to Attnam
+  * Added some underground levels to Attnam
 
 July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
