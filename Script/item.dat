@@ -3482,6 +3482,9 @@ decosadshirt /* armor->bodyarmor-> */
   InElasticityPenaltyModifier = 30;
   AttachedGod = MELLIS;
   TorsoArmorBitmapPos = 32, 448;
+  ArmArmorBitmapPos = 80, 416;
+  AthleteArmArmorBitmapPos = 80, 448;
+  LegArmorBitmapPos = 16, 416;
   Price = 0;
 }
 

@@ -1238,7 +1238,7 @@ organic /* substances that spoil but are not flesh */
     AttachedGod = SOPHOS;
     Density = 500;
     ConsumeType = CT_PROCESSED;
-    CommonFlags = Base|IS_VALUABLE&~CAN_BE_MIRRORED;
+    CommonFlags = Base|IS_VALUABLE&~(CAN_BE_WISHED|CAN_BE_MIRRORED);
     NameFlags = Base|USE_AN;
     InteractionFlags = Base|EFFECT_IS_GOOD;
   }

@@ -9,6 +9,11 @@
 
 August 21 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
+  * Corrected a crash which occurred while wearing a Decos ad shirt
+  * Ommel cerumen can no longer be wished
+
+August 21 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
   * Children no longer spoil
   * Items can now be hasted and slowed to speed or slow their spoiling
   * Corrected a bug in the scroll of change material code
