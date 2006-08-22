@@ -48,7 +48,7 @@ void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeM
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
-item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(ItemFlags)
+item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);

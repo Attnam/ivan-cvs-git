@@ -245,6 +245,7 @@ struct characterdatabase : public databasebase
   truth UndeadCopyMaterials;
   truth CanBeGeneratedOnlyInTheCatacombs;
   truth IsAlcoholic;
+  truth IsImmuneToWhipOfThievery;
 };
 
 class characterprototype
@@ -597,6 +598,7 @@ class character : public entity, public id
   DATA_BASE_TRUTH(UndeadCopyMaterials);
   DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
   DATA_BASE_TRUTH(IsAlcoholic);
+  DATA_BASE_TRUTH(IsImmuneToWhipOfThievery);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);

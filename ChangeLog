@@ -7,6 +7,14 @@
 
 -----------------------------------------------------------------------------
 
+August 22 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a bug in the dagger of venom code
+  * Fixed a fatal bug in the fly code
+  * Whip of thievery is now less powerful when thrown
+  * Some of the best monsters are now immune to thievery
+  * Lines cut in materia.cpp
+
 August 21 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Corrected a crash which occurred while wearing a Decos ad shirt

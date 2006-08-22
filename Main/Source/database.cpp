@@ -420,6 +420,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(UndeadCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
+  ADD_MEMBER(IsImmuneToWhipOfThievery);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

@@ -12,11 +12,19 @@
 
 /* Compiled through materset.cpp */
 
-materialprototype::materialprototype(const materialprototype* Base, materialspawner Spawner, materialcloner Cloner, cchar* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
+materialprototype::materialprototype(const materialprototype* Base,
+				     materialspawner Spawner,
+				     materialcloner Cloner,
+				     cchar* ClassID)
+: Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID)
+{ Index = protocontainer<material>::Add(this); }
 
-long material::GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
-truth material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
-long material::GetTotalExplosivePower() const { return long(double(Volume) * GetExplosivePower() / 1000000); }
+long material::GetRawPrice() const
+{ return GetPriceModifier() * GetWeight() / 10000; }
+truth material::CanBeDug(material* ShovelMaterial) const
+{ return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
+long material::GetTotalExplosivePower() const
+{ return long(double(Volume) * GetExplosivePower() / 1000000); }
 cchar* material::GetConsumeVerb() const { return "eating"; }
 
 materialpredicate TrueMaterialPredicate = &material::True;
@@ -81,7 +89,9 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_PEPSI: Char->ReceivePepsi(Amount); break;
    case EFFECT_KOBOLD_FLESH: Char->ReceiveKoboldFlesh(Amount); break;
    case EFFECT_HEAL: Char->ReceiveHeal(Amount); break;
-   case EFFECT_LYCANTHROPY: Char->BeginTemporaryState(LYCANTHROPY, Amount); break;
+   case EFFECT_LYCANTHROPY:
+    Char->BeginTemporaryState(LYCANTHROPY, Amount);
+    break;
    case EFFECT_SCHOOL_FOOD: Char->ReceiveSchoolFood(Amount); break;
    case EFFECT_ANTIDOTE: Char->ReceiveAntidote(Amount); break;
    case EFFECT_CONFUSE: Char->BeginTemporaryState(CONFUSED, Amount); break;
@@ -91,21 +101,26 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_MAGIC_MUSHROOM:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Char->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount,
+				Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
-   case EFFECT_TRAIN_PERCEPTION: Char->EditExperience(PERCEPTION, Amount, 1 << 14); break;
+   case EFFECT_TRAIN_PERCEPTION:
+    Char->EditExperience(PERCEPTION, Amount, 1 << 14);
+    break;
    case EFFECT_HOLY_BANANA: Char->ReceiveHolyBanana(Amount); break;
    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Char->ActivateRandomState(SRC_EVIL, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_EVIL, Amount,
+				Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Char->ActivateRandomState(SRC_GOOD, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_GOOD, Amount,
+				Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_PEA_SOUP: Char->ReceivePeaSoup(Amount); break;
@@ -116,7 +131,8 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_MUSHROOM:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Char->ActivateRandomState(SRC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_MUSHROOM, Amount,
+				Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_OMMEL_CERUMEN: Char->ReceiveOmmelCerumen(Amount); break;
@@ -159,18 +175,22 @@ material* material::EatEffect(character* Eater, long Amount)
 
     if(Head && Amount >= 8)
     {
-      Head->AddFluid(static_cast<liquid*>(SpawnMore(Amount >> 3)), CONST_S("throat"), 0, true);
+      Head->AddFluid(static_cast<liquid*>(SpawnMore(Amount >> 3)),
+		     CONST_S("throat"), 0, true);
       NewAmount -= Amount >> 3;
     }
 
-    Eater->GetTorso()->AddFluid(static_cast<liquid*>(SpawnMore(NewAmount)), CONST_S("stomach"), 0, true);
+    Eater->GetTorso()->AddFluid(static_cast<liquid*>(SpawnMore(NewAmount)),
+				CONST_S("stomach"), 0, true);
   }
   else
   {
     Effect(Eater, TORSO_INDEX, Amount);
 
     if(IsLiquid())
-      Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina() / Eater->GetBodyVolume()), false);
+      Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina()
+			     / Eater->GetBodyVolume()),
+			 false);
   }
 
   if(Volume != Amount)
@@ -207,7 +227,8 @@ truth material::HitEffect(character* Enemy, bodypart* BodyPart)
   {
     if(BodyPart)
     {
-      BodyPart->AddFluid(static_cast<liquid*>(SpawnMore(Amount)), CONST_S(""), 0, true);
+      BodyPart->AddFluid(static_cast<liquid*>(SpawnMore(Amount)),
+			 CONST_S(""), 0, true);
       Success = true;
     }
     else
@@ -242,9 +263,15 @@ void material::AddConsumeEndMessage(character* Eater) const
    case CEM_ESP: Eater->AddESPConsumeMessage(); break;
    case CEM_HOLY_BANANA: Eater->AddHolyBananaConsumeEndMessage(); break;
    case CEM_PEA_SOUP: Eater->AddPeaSoupConsumeEndMessage(); break;
-   case CEM_BLACK_UNICORN_FLESH: Eater->AddBlackUnicornConsumeEndMessage(); break;
-   case CEM_GRAY_UNICORN_FLESH: Eater->AddGrayUnicornConsumeEndMessage(); break;
-   case CEM_WHITE_UNICORN_FLESH: Eater->AddWhiteUnicornConsumeEndMessage(); break;
+   case CEM_BLACK_UNICORN_FLESH:
+    Eater->AddBlackUnicornConsumeEndMessage();
+    break;
+   case CEM_GRAY_UNICORN_FLESH:
+    Eater->AddGrayUnicornConsumeEndMessage();
+    break;
+   case CEM_WHITE_UNICORN_FLESH:
+    Eater->AddWhiteUnicornConsumeEndMessage();
+    break;
    case CEM_OMMEL_BONE: Eater->AddOmmelBoneConsumeEndMessage(); break;
   }
 }
@@ -272,7 +299,8 @@ material* material::MakeMaterial(int Config, long Volume)
    case IRON_ALLOY_ID >> 12: return ironalloy::Spawn(Config, Volume);
   }
 
-  ABORT("Odd material configuration number %d of volume %ld requested!", Config, Volume);
+  ABORT("Odd material configuration number %d of volume %ld requested!",
+	Config, Volume);
   return 0;
 }
 
@@ -301,8 +329,9 @@ long material::GetTotalNutritionValue() const
 
 truth material::CanBeEatenByAI(ccharacter* Eater) const
 {
-  return (Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() || (Eater->IsAlcoholic() && (GetCategoryFlags() & IS_BEVERAGE)))
-    && !GetSpoilLevel() && !Eater->CheckCannibalism(this);
+  return ((Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit()
+	   || (Eater->IsAlcoholic() && (GetCategoryFlags() & IS_BEVERAGE)))
+	  && !GetSpoilLevel() && !Eater->CheckCannibalism(this));
 }
 
 truth material::BreatheEffect(character* Enemy)
@@ -352,7 +381,8 @@ void materialdatabase::InitDefaults(const materialprototype* NewProtoType, int N
 
 item* material::CreateNaturalForm(int Config, long Volume)
 {
-  item* Item = GetDataBase(Config)->NaturalForm.Instantiate(NO_MATERIALS|NO_PIC_UPDATE);
+  item* Item = GetDataBase(Config)->NaturalForm.Instantiate(NO_MATERIALS
+							    |NO_PIC_UPDATE);
   Item->InitMaterials(MAKE_MATERIAL(Config, Volume));
   return Item;
 }

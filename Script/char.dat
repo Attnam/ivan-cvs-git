@@ -285,6 +285,7 @@ character
   UndeadCopyMaterials = true;
   CanBeGeneratedOnlyInTheCatacombs = false;
   IsAlcoholic = false;
+  IsImmuneToWhipOfThievery = false;
 }
 
 humanoid
@@ -400,6 +401,7 @@ petrus
   AllowUnconsciousness = false;
   DisplacePriority = 10;
   UndeadVersions = false;
+  IsImmuneToWhipOfThievery = true;
 }
 
 farmer
@@ -1051,6 +1053,7 @@ darkknight
     AllowUnconsciousness = false;
     DisplacePriority = 8;
     UndeadVersions = false;
+    IsImmuneToWhipOfThievery = true;
   }
 }
 
@@ -2804,6 +2807,7 @@ mistress
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
     UndeadVersions = false;
+    IsImmuneToWhipOfThievery = true;
   }
 }
 
@@ -3681,6 +3685,7 @@ orc
     AllowUnconsciousness = false;
     TamingDifficulty = 35;
     UndeadVersions = false;
+    IsImmuneToWhipOfThievery = true;
   }
 }
 

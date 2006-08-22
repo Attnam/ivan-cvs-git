@@ -208,8 +208,16 @@ truth flamingsword::HitEffect(character* Enemy, character* Hitter, v2 HitPos, in
 
   if(Enemy->IsEnabled() && RAND() & 1)
   {
-    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("The sword burns %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), FIRE, BodyPartIndex, Direction) || BaseSuccess;
   }
@@ -223,11 +231,19 @@ truth mjolak::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int Body
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
   {
-    if(Hitter->IsPlayer())
-      game::DoEvilDeed(10);
+    if(Hitter)
+    {
+      if(Hitter->IsPlayer())
+	game::DoEvilDeed(10);
 
-    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("A burst of Mjolak's unholy energy fries %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
   }
@@ -241,8 +257,16 @@ truth vermis::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int Body
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
   {
-    if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("Vermis sends %s on a sudden journey.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
 
     Enemy->TeleportRandomly();
     return true;
@@ -257,8 +281,16 @@ truth turox::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyP
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
   {
-    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("Turox is smashed against %s with full force.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
 
     if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("A magical explosion is triggered!");
@@ -274,18 +306,18 @@ truth whipofthievery::HitEffect(character* Enemy, character* Hitter, v2 HitPos, 
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
+  if(Enemy->IsEnabled() && Hitter && CleptiaHelps(Enemy, Hitter))
   {
-    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));
-
     if(Hitter->IsPlayer())
     {
       game::DoEvilDeed(10);
       game::GetGod(CLEPTIA)->AdjustRelation(10);
     }
 
-    Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));
+
+    Enemy->GetMainWielded()->MoveTo(GetLSquareUnder()->GetStack());
     return true;
   }
   else
@@ -304,12 +336,7 @@ meleeweapon::meleeweapon(const meleeweapon& MW) : mybase(MW), Enchantment(MW.Enc
 
 truth whipofthievery::CleptiaHelps(ccharacter* Enemy, ccharacter* Hitter) const
 {
-  /* TERRIBLE gum solution! */
-
-  if(Enemy->GetType() == petrus::ProtoType.GetIndex())
-    return false;
-
-  if(!Enemy->GetMainWielded() || GetMainMaterial()->GetFlexibility() <= 5)
+  if(Enemy->IsImmuneToWhipOfThievery() || !Enemy->GetMainWielded() || GetMainMaterial()->GetFlexibility() <= 5)
     return false;
 
   if(Hitter->IsPlayer())
@@ -317,10 +344,10 @@ truth whipofthievery::CleptiaHelps(ccharacter* Enemy, ccharacter* Hitter) const
     if(game::GetGod(CLEPTIA)->GetRelation() < 0)
       return false;
     else
-      return !(RAND() % (10 - game::GetGod(CLEPTIA)->GetRelation() / 200));
+      return !RAND_N(10 - game::GetGod(CLEPTIA)->GetRelation() / 200);
   }
   else
-    return !(RAND() % 10);
+    return !RAND_N(10);
 }
 
 void meleeweapon::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
@@ -950,21 +977,23 @@ col16 meleeweapon::GetMaterialColorC(int Frame) const
 
 void daggerofvenom::Be()
 {
-   meleeweapon::Be();
+  meleeweapon::Be();
 
-   if(!IsBroken() && (*Slot)->IsGearSlot()  && !RAND_N(10))
-   {
-      fluidvector FluidVector;
-      FillFluidVector(FluidVector);
-      uint volume=0;
-      for(uint c = 0; c < FluidVector.size(); ++c)
-      {
-         liquid* L = FluidVector[c]->GetLiquid();
-         volume+=L->GetVolume();      //I imagine that there is a function I don't know to do this...
-      }
-      if (volume < 90)
-         SpillFluid(0, liquid::Spawn(POISON_LIQUID, 10));
-   }
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot()  && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();      //I imagine that there is a function I don't know to do this...
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(POISON_LIQUID, 10));
+  }
 }
 
 truth weepblade::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)

@@ -2079,11 +2079,11 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
     ADD_MESSAGE("%s hits %s.", Thingy->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
   int BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
-  int WeaponSkillHits = CalculateWeaponSkillHits(Thrower);
+  int WeaponSkillHits = Thrower ? CalculateWeaponSkillHits(Thrower) : 0;
   int DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, Thingy->GetPos(), THROW_ATTACK, BodyPart, Direction, !DoneDamage)) || DoneDamage;
 
-  if(Succeeded)
+  if(Succeeded && Thrower)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK, WeaponSkillHits);
 
   festring DeathMsg = CONST_S("killed by a flying ") + Thingy->GetName(UNARTICLED);
@@ -2091,10 +2091,15 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
   if(CheckDeath(DeathMsg, Thrower))
     return;
 
-  if(Thrower->CanBeSeenByPlayer())
-    DeActivateVoluntaryAction(CONST_S("The attack of ") + Thrower->GetName(DEFINITE) + CONST_S(" interrupts you."));
+  if(Thrower)
+  {
+    if(Thrower->CanBeSeenByPlayer())
+      DeActivateVoluntaryAction(CONST_S("The attack of ") + Thrower->GetName(DEFINITE) + CONST_S(" interrupts you."));
+    else
+      DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
+  }
   else
-    DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
+    DeActivateVoluntaryAction(CONST_S("The hit interrupts you."));
 }
 
 truth character::DodgesFlyingItem(item* Item, double ToHitValue)
