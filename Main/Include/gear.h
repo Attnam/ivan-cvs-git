@@ -145,18 +145,7 @@ ITEM(whipofthievery, whip)
   virtual truth CleptiaHelps(ccharacter*, ccharacter*) const;
 };
 
-ITEM(gorovitshammer, meleeweapon)
-{
- public:
-  virtual truth IsGorovitsFamilyRelic() const { return true; }
-  virtual truth AllowAlphaEverywhere() const { return true; }
- protected:
-  virtual int GetClassAnimationFrames() const { return 32; }
-  virtual col16 GetOutlineColor(int) const;
-  virtual alpha GetOutlineAlpha(int) const;
-};
-
-ITEM(gorovitssickle, meleeweapon)
+ITEM(gorovitsweapon, meleeweapon)
 {
  public:
   virtual truth IsGorovitsFamilyRelic() const { return true; }

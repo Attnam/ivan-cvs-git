@@ -9,6 +9,12 @@
 
 August 22 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
+  * Coffin added to OLTerra.pcx by Kahvi
+  * Pregnant wife of Petrus torso added to Humanoid.pcx by Kahvi
+  * Fixed a bug in the weaponskill code
+
+August 22 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
   * Fixed a bug in the dagger of venom code
   * Fixed a fatal bug in the fly code
   * Whip of thievery is now less powerful when thrown

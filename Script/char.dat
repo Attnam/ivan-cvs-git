@@ -314,6 +314,8 @@ humanoid
   WillCarryItems = true;
   DisplacePriority = 0;
   UndeadVersions = true;
+  KnownCWeaponSkills == UNARMED;
+  CWeaponSkillHits == 19000;
 }
 
 nonhumanoid
@@ -1964,8 +1966,8 @@ communist /* Ivan */
   Cloak = OMMEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 2; }
   BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
   Belt = TROLL_HIDE belt { Enchantment = 2; }
-  RightWielded = gorovitshammer;
-  LeftWielded = gorovitssickle;
+  RightWielded = gorovitsweapon(GOROVITS_HAMMER);
+  LeftWielded = gorovitsweapon(GOROVITS_SICKLE);
   RightRing = ring(RING_OF_FIRE_RESISTANCE);
   LeftRing = ring(RING_OF_POISON_RESISTANCE);
   KnownCWeaponSkills = { 5, UNARMED, SMALL_SWORDS, BLUNT_WEAPONS, AXES, POLE_ARMS; }

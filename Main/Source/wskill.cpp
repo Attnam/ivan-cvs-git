@@ -106,7 +106,7 @@ truth weaponskill::AddHit(int AddHits)
 
   int OldLevel = Level;
 
-  while(Hits >= GetLevelMap(Level + 1))
+  while(Level < 20 && Hits >= GetLevelMap(Level + 1))
     ++Level;
 
   return Level != OldLevel;

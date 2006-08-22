@@ -29,9 +29,7 @@ col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
 
-col16 gorovitshammer::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
-
-col16 gorovitssickle::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
+col16 gorovitsweapon::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int thunderhammer::GetSpecialFlags() const { return !IsBroken() ? meleeweapon::GetSpecialFlags()|ST_LIGHTNING : meleeweapon::GetSpecialFlags(); }
 
@@ -692,13 +690,7 @@ alpha neercseulb::GetOutlineAlpha(int Frame) const
   return 50 + (Frame * (31 - Frame) >> 1);
 }
 
-alpha gorovitshammer::GetOutlineAlpha(int Frame) const
-{
-  Frame &= 31;
-  return 50 + (Frame * (31 - Frame) >> 1);
-}
-
-alpha gorovitssickle::GetOutlineAlpha(int Frame) const
+alpha gorovitsweapon::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);

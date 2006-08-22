@@ -3191,57 +3191,79 @@ skull
   IsValuable = false;
 }
 
-gorovitshammer
+gorovitsweapon
 {
-  DefaultSize = 90;
-  Possibility = 0;
-  WeaponCategory = BLUNT_WEAPONS;
-  DefaultMainVolume = 300;
-  DefaultSecondaryVolume = 600;
-  StrengthModifier = 125;
-  BitmapPos = 48, 160;
-  FormModifier = 125;
   Adjective = "Gorovits family";
-  NameSingular = "hammer";
-  MainMaterialConfig == MITHRIL;
-  SecondaryMaterialConfig == FIR_WOOD;
-  Roundness = 20;
-  IsTwoHanded = true;
-  CanBeUsedBySmith = true;
   CanBeBroken = false;
   CanBeWished = false;
-  BaseEnchantment = 3;
   ArticleMode = FORCE_THE;
-  Price = 250;
-  AttachedGod = LORICATUS;
-  WieldedBitmapPos = 176, 16;
   IsQuestItem = true;
-}
+  IsAbstract = true;
 
-gorovitssickle
-{
-  DefaultSize = 60;
-  Possibility = 0;
-  WeaponCategory = SMALL_SWORDS;
-  DefaultMainVolume = 125;
-  DefaultSecondaryVolume = 50;
-  BitmapPos = 48, 144;
-  FormModifier = 110;
-  StrengthModifier = 50;
-  Adjective = "Gorovits family";
-  NameSingular = "sickle";
-  MainMaterialConfig == MITHRIL;
-  SecondaryMaterialConfig == FIR_WOOD;
-  Roundness = 50;
-  CanBeBroken = false;
-  CanBeWished = false;
-  BaseEnchantment = 3;
-  ArticleMode = FORCE_THE;
-  Price = 250;
-  AttachedGod = SEGES;
-  WieldedBitmapPos = 176, 32;
-  IsQuestItem = true;
-  DamageFlags = SLASH;
+  Config GOROVITS_HAMMER;
+  {
+    DefaultSize = 90;
+    Possibility = 0;
+    WeaponCategory = BLUNT_WEAPONS;
+    DefaultMainVolume = 300;
+    DefaultSecondaryVolume = 600;
+    StrengthModifier = 125;
+    BitmapPos = 48, 160;
+    FormModifier = 125;
+    NameSingular = "hammer";
+    MainMaterialConfig == MITHRIL;
+    SecondaryMaterialConfig == FIR_WOOD;
+    Roundness = 20;
+    IsTwoHanded = true;
+    CanBeUsedBySmith = true;
+    BaseEnchantment = 3;
+    Price = 250;
+    AttachedGod = LORICATUS;
+    WieldedBitmapPos = 176, 16;
+  }
+
+  Config GOROVITS_SICKLE;
+  {
+    DefaultSize = 60;
+    Possibility = 0;
+    WeaponCategory = SMALL_SWORDS;
+    DefaultMainVolume = 125;
+    DefaultSecondaryVolume = 50;
+    BitmapPos = 48, 144;
+    FormModifier = 110;
+    StrengthModifier = 50;
+    NameSingular = "sickle";
+    MainMaterialConfig == MITHRIL;
+    SecondaryMaterialConfig == FIR_WOOD;
+    Roundness = 50;
+    BaseEnchantment = 3;
+    Price = 250;
+    AttachedGod = SEGES;
+    WieldedBitmapPos = 176, 32;
+    DamageFlags = SLASH;
+  }
+
+  Config GOROVITS_SCIMITAR;
+  {
+    DefaultSize = 150;
+    Possibility = 0;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 450;
+    DefaultSecondaryVolume = 150;
+    StrengthModifier = 180;
+    BitmapPos = 0, 16;
+    FormModifier = 170;
+    NameSingular = "scimitar";
+    MainMaterialConfig == METEORIC_STEEL;
+    SecondaryMaterialConfig == METEORIC_STEEL;
+    Roundness = 15;
+    IsTwoHanded = true;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 176, 112;
+    DamageFlags = SLASH;
+    BaseEnchantment = 2;
+    Price = 300;
+  }
 }
 
 scrollofrepair /* scroll-> */
@@ -3754,3 +3776,4 @@ firstbornchild
     NameSingular = "daughter";
   }
 }
+
