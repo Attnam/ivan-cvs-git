@@ -35,6 +35,7 @@ bitmap* igraph::Menu;
 bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
 rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(TILE_V2), new rawbitmap(TILE_V2) };
 bitmap* igraph::Cursor[CURSOR_TYPES];
+bitmap* igraph::BigCursor[CURSOR_TYPES];
 col16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(40, 40, 40),
 					    MakeRGB16(255, 0, 0),
 					    MakeRGB16(100, 100, 255),
@@ -87,10 +88,13 @@ void igraph::Init()
 
     for(c = 0; c < CURSOR_TYPES; ++c)
     {
+      packcol16 Color = CursorColor[c];
       Cursor[c] = new bitmap(v2(48, 16), TRANSPARENT_COLOR);
       Cursor[c]->CreateAlphaMap(255);
-      packcol16 Color = CursorColor[c];
       GetCursorRawGraphic()->MaskedBlit(Cursor[c], ZERO_V2, ZERO_V2, v2(48, 16), &Color);
+      BigCursor[c] = new bitmap(v2(96, 32), TRANSPARENT_COLOR);
+      BigCursor[c]->CreateAlphaMap(255);
+      GetCursorRawGraphic()->MaskedBlit(BigCursor[c], v2(0, 16), ZERO_V2, v2(96, 32), &Color);
     }
   }
 }
@@ -111,7 +115,7 @@ void igraph::DeInit()
   delete BackGround;
 }
 
-void igraph::DrawCursor(v2 Pos, int CursorData)
+void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
 {
   /* Inefficient gum solution */
 
@@ -123,15 +127,25 @@ void igraph::DrawCursor(v2 Pos, int CursorData)
 			TRANSPARENT_COLOR,
 			0 };
 
-  bitmap* CursorBitmap = Cursor[CursorData&~(TARGET|FLASH)];
+  bitmap* CursorBitmap;
+  int SrcX = 0;
 
-  if(!(CursorData & (TARGET|FLASH)))
+  if(CursorData & CURSOR_BIG)
+  {
+    CursorBitmap = BigCursor[CursorData&~CURSOR_FLAGS];
+    BlitData.Src.X = SrcX = (Index & 1) << 4;
+    BlitData.Src.Y = (Index & 2) << 3;
+  }
+  else
+    CursorBitmap = Cursor[CursorData&~CURSOR_FLAGS];
+
+  if(!(CursorData & (CURSOR_FLASH|CURSOR_TARGET)))
   {
     CursorBitmap->LuminanceMaskedBlit(BlitData);
     return;
   }
 
-  if(!(CursorData & TARGET))
+  if(!(CursorData & CURSOR_TARGET))
   {
     int Tick = GET_TICK() & 31;
     CursorBitmap->FillAlpha(95 + 10 * abs(Tick - 16));
@@ -141,10 +155,12 @@ void igraph::DrawCursor(v2 Pos, int CursorData)
 
   int Tick = (GET_TICK() << 2) / 3;
   int Frame = (Tick >> 4) % 3;
-  BlitData.Src.X = Frame << 4;
+  int Base = Frame << 4;
+  BlitData.Src.X = SrcX + (CursorData & CURSOR_BIG ? Base << 1 : Base);
   CursorBitmap->FillAlpha(255 - (Tick & 0xF) * 16);
   CursorBitmap->AlphaLuminanceBlit(BlitData);
-  BlitData.Src.X = ((Frame + 1) % 3) << 4;
+  Base = ((Frame + 1) % 3) << 4;
+  BlitData.Src.X = SrcX + (CursorData & CURSOR_BIG ? Base << 1 : Base);
   CursorBitmap->FillAlpha((Tick & 0xF) * 16);
   CursorBitmap->AlphaLuminanceBlit(BlitData);
 }

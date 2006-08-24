@@ -192,9 +192,9 @@ void door::MakeWalkable()
 {
   SetIsOpened(true);
   UpdatePictures();
+  GetLSquareUnder()->CalculateIsTransparent();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->CalculateIsTransparent();
   GetLevel()->ForceEmitterEmitation(GetLSquareUnder()->GetEmitter(),
 				    GetLSquareUnder()->GetSunEmitter());
   GetLSquareUnder()->CalculateLuminance();
@@ -211,9 +211,9 @@ void door::MakeNotWalkable()
   GetLevel()->ForceEmitterNoxify(EmitterBackup);
   SetIsOpened(false);
   UpdatePictures();
+  GetLSquareUnder()->CalculateIsTransparent();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->CalculateIsTransparent();
   GetLevel()->ForceEmitterEmitation(EmitterBackup,
 				    GetLSquareUnder()->GetSunEmitter(),
 				    FORCE_ADD);
@@ -1242,7 +1242,7 @@ void liquidterrain::AddLocationDescription(festring& String) const
 
 void stairs::AddSpecialCursors()
 {
-  game::AddSpecialCursor(GetPos(), YELLOW_CURSOR|TARGET);
+  game::AddSpecialCursor(GetPos(), YELLOW_CURSOR|CURSOR_TARGET);
 }
 
 truth coffin::Open(character* Opener)

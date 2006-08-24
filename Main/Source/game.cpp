@@ -733,10 +733,10 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
   if(OnScreen(CursorPos))
   {
-    v2 ScreenCordinates = CalculateScreenCoordinates(CursorPos);
+    v2 ScreenCoord = CalculateScreenCoordinates(CursorPos);
     blitdata B = { DOUBLE_BUFFER,
 		   { 0, 0 },
-		   { ScreenCordinates.X, ScreenCordinates.Y },
+		   { ScreenCoord.X, ScreenCoord.Y },
 		   { TILE_SIZE, TILE_SIZE },
 		   { 0 },
 		   TRANSPARENT_COLOR,
@@ -759,21 +759,39 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       DOUBLE_BUFFER->StretchBlit(B);
     }
 
-    igraph::DrawCursor(ScreenCordinates, CursorData);
+    igraph::DrawCursor(ScreenCoord, CursorData);
   }
 
   if(Player->IsEnabled())
-  {
-    v2 Pos = Player->GetPos();
+    if(Player->IsSmall())
+    {
+      v2 Pos = Player->GetPos();
 
-    if(OnScreen(Pos))
-      igraph::DrawCursor(CalculateScreenCoordinates(Pos), Player->GetCursorData());
-  }
+      if(OnScreen(Pos))
+      {
+	v2 ScreenCoord = CalculateScreenCoordinates(Pos);
+	igraph::DrawCursor(ScreenCoord, Player->GetCursorData());
+      }
+    }
+    else
+    {
+      for(c = 0; c < Player->GetSquaresUnder(); ++c)
+      {
+	v2 Pos = Player->GetPos(c);
+
+	if(OnScreen(Pos))
+	{
+	  v2 ScreenCoord = CalculateScreenCoordinates(Pos);
+	  igraph::DrawCursor(ScreenCoord, Player->GetCursorData()|CURSOR_BIG, c);
+	}
+      }
+    }
 
   for(c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
     {
-      igraph::DrawCursor(CalculateScreenCoordinates(SpecialCursorPos[c]), SpecialCursorData[c]);
+      v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);
+      igraph::DrawCursor(ScreenCoord, SpecialCursorData[c]);
       GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
     }
 }
@@ -3266,7 +3284,7 @@ void game::PetHandler(v2 CursorPos)
   character* Char = CurrentArea->GetSquare(CursorPos)->GetCharacter();
 
   if(Char && Char->CanBeSeenByPlayer() && Char->IsPet() && !Char->IsPlayer())
-    CursorData = RED_CURSOR|TARGET;
+    CursorData = RED_CURSOR|CURSOR_TARGET;
   else
     CursorData = RED_CURSOR;
 
@@ -3477,9 +3495,9 @@ void game::InitAttributeMemory()
 void game::TeleportHandler(v2 CursorPos)
 {
   if((CursorPos - Player->GetPos()).GetLengthSquare() > Player->GetTeleportRangeSquare())
-    CursorData = BLUE_CURSOR|TARGET;
+    CursorData = BLUE_CURSOR|CURSOR_TARGET;
   else
-    CursorData = RED_CURSOR|TARGET;
+    CursorData = RED_CURSOR|CURSOR_TARGET;
 }
 
 double game::GetGameSituationDanger()

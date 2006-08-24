@@ -101,7 +101,7 @@ class igraph
   static const rawbitmap* GetCursorRawGraphic() { return RawGraphic[GR_CURSOR]; }
   static cbitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
-  static void DrawCursor(v2, int);
+  static void DrawCursor(v2, int, int = 0);
   static tilemap::iterator AddUser(const graphicid&);
   static void RemoveUser(tilemap::iterator);
   static const rawbitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
@@ -138,6 +138,7 @@ class igraph
   static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
   static rawbitmap* ColorizeBuffer[2];
   static bitmap* Cursor[CURSOR_TYPES];
+  static bitmap* BigCursor[CURSOR_TYPES];
   static col16 CursorColor[CURSOR_TYPES];
   static bitmap* BackGround;
   static int CurrentColorType;

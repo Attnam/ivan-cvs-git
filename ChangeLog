@@ -7,6 +7,13 @@
 
 -----------------------------------------------------------------------------
 
+August 24 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Small bugfixes
+  * The cursor is now shown properly if you are a 32x32 monster (not
+    possible in the real game though)
+  * Lines cut in rooms.cpp
+
 August 22 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Coffin added to OLTerra.pcx by Kahvi

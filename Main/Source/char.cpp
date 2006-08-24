@@ -8987,14 +8987,14 @@ int character::GetCursorData() const
 
       if((BodyPartIsVital(c) && !ConditionColorIndex)
 	 || (ConditionColorIndex <= 1 && ++Bad == 2))
-	return Color|FLASH;
+	return Color|CURSOR_FLASH;
     }
     else if(++Bad == 2)
-      return Color|FLASH;
+      return Color|CURSOR_FLASH;
   }
 
   Color = game::PlayerIsRunning() ? YELLOW_CURSOR : RED_CURSOR;
-  return Bad ? Color|FLASH : Color;
+  return Bad ? Color|CURSOR_FLASH : Color;
 }
 
 void character::TryToName()
