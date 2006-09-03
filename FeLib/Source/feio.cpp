@@ -43,8 +43,9 @@
    waits for keypress. BitmapEditor is a pointer to function that is
    called during every fade tick. */
 
-void iosystem::TextScreen(cfestring& Text, col16 Color,
-			  truth GKey, void (*BitmapEditor)(bitmap*))
+void iosystem::TextScreen(cfestring& Text, v2 Disp,
+			  col16 Color, truth GKey, truth Fade,
+			  bitmapeditor BitmapEditor)
 {
   bitmap Buffer(RES, 0);
   Buffer.ActivateFastFlag();
@@ -63,8 +64,8 @@ void iosystem::TextScreen(cfestring& Text, col16 Color,
     if(Text[c] == '\n')
     {
       Line[c - LastBeginningOfLine] = 0;
-      v2 PrintPos((RES.X >> 1) - (strlen(Line) << 2),
-		  (RES.Y << 1) / 5 - (LineNumber - Lines) * 15);
+      v2 PrintPos((RES.X >> 1) - (strlen(Line) << 2) + Disp.X,
+		  (RES.Y << 1) / 5 - (LineNumber - Lines) * 15 + Disp.Y);
       FONT->Printf(&Buffer, PrintPos, Color, Line);
       ++Lines;
       LastBeginningOfLine = c + 1;
@@ -73,15 +74,23 @@ void iosystem::TextScreen(cfestring& Text, col16 Color,
       Line[c - LastBeginningOfLine] = Text[c];
 
   Line[c - LastBeginningOfLine] = 0;
-  v2 PrintPos((RES.X >> 1) - (strlen(Line) << 2),
-	      (RES.Y << 1) / 5 - (LineNumber - Lines) * 15);
+  v2 PrintPos((RES.X >> 1) - (strlen(Line) << 2) + Disp.X,
+	      (RES.Y << 1) / 5 - (LineNumber - Lines) * 15 + Disp.Y);
   FONT->Printf(&Buffer, PrintPos, Color, Line);
-  Buffer.FadeToScreen(BitmapEditor);
+
+  if(Fade)
+    Buffer.FadeToScreen(BitmapEditor);
+  else
+  {
+    BitmapEditor(&Buffer, true);
+    Buffer.FastBlit(DOUBLE_BUFFER);
+    graphics::BlitDBToScreen();
+  }
 
   if(GKey)
     if(BitmapEditor)
       while(!READ_KEY())
-	BitmapEditor(DOUBLE_BUFFER);
+	BitmapEditor(DOUBLE_BUFFER, false);
     else
       GET_KEY();
 }
@@ -640,7 +649,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   /* No file found */
   if(hFile == -1L)
   {
-    TextScreen(CONST_S("You don't have any previous saves."), TopicColor);
+    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
     return "";
   }
 
@@ -686,7 +695,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
     if(List.IsEmpty())
     {
-      TextScreen(CONST_S("You don't have any previous saves."), TopicColor);
+      TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
       return "";
     }
     else
@@ -718,7 +727,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
   if(Check)
   {
-    TextScreen(CONST_S("You don't have any previous saves."), TopicColor);
+    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
     return "";
   }
 

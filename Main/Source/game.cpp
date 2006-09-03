@@ -164,6 +164,8 @@ ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
 std::vector<v2> game::SpecialCursorPos;
 std::vector<int> game::SpecialCursorData;
+cbitmap* game::EnterImage;
+v2 game::EnterTextDisplacement;
 
 void game::AddCharacterID(character* Char, ulong ID) {
   if(CharacterIDMap.find(ID) != CharacterIDMap.end())
@@ -304,7 +306,7 @@ truth game::Init(cfestring& Name)
       globalwindowhandler::InstallControlLoop(AnimationController);
       SetIsRunning(true);
       InWilderness = true;
-      iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), WHITE, false, &BusyAnimation);
+      iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), ZERO_V2, WHITE, false, true, &BusyAnimation);
       igraph::CreateBackGround(GRAY_FRACTAL);
       NextCharacterID = 1;
       NextItemID = 1;
@@ -1331,25 +1333,41 @@ void game::CreateGods()
 
 void game::BusyAnimation()
 {
-  BusyAnimation(DOUBLE_BUFFER);
+  BusyAnimation(DOUBLE_BUFFER, false);
 }
 
-void game::BusyAnimation(bitmap* Buffer)
+void game::BusyAnimation(bitmap* Buffer, truth ForceDraw)
 {
   static clock_t LastTime = 0;
   static int Frame = 0;
-  static blitdata B = { 0,
-			{ 0, 0 },
-			{ (RES.X >> 1) - 100, (RES.Y << 1) / 3 - 100 },
-			{ 200, 200 },
-			{ 0 },
-			0,
-			0 };
+  static blitdata B1 = { 0,
+			 { 0, 0 },
+			 { 0, 0 },
+			 { RES.X, RES.Y },
+			 { 0 },
+			 0,
+			 0 };
+  static blitdata B2 = { 0,
+			 { 0, 0 },
+			 { (RES.X >> 1) - 100, (RES.Y << 1) / 3 - 100 },
+			 { 200, 200 },
+			 { 0 },
+			 0,
+			 0 };
 
-  if(clock() - LastTime > CLOCKS_PER_SEC / 25)
+  if(ForceDraw || clock() - LastTime > CLOCKS_PER_SEC / 25)
   {
-    B.Bitmap = Buffer;
-    BusyAnimationCache[Frame]->NormalBlit(B);
+    B2.Bitmap = Buffer;
+    B2.Dest.X = (RES.X >> 1) - 100 + EnterTextDisplacement.X;
+    B2.Dest.Y = (RES.Y << 1) / 3 - 100 + EnterTextDisplacement.Y;
+
+    if(EnterImage)
+    {
+      B1.Bitmap = Buffer;
+      EnterImage->NormalMaskedBlit(B1);
+    }
+
+    BusyAnimationCache[Frame]->NormalBlit(B2);
 
     if(Buffer == DOUBLE_BUFFER)
       graphics::BlitDBToScreen();
@@ -1570,10 +1588,10 @@ void game::InitGlobalValueMap()
   }
 }
 
-void game::TextScreen(cfestring& Text, col16 Color, truth GKey, void (*BitmapEditor)(bitmap*))
+void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color, truth GKey, truth Fade, bitmapeditor BitmapEditor)
 {
   globalwindowhandler::DisableControlLoops();
-  iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
+  iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
   globalwindowhandler::EnableControlLoops();
 }
 
@@ -3614,7 +3632,7 @@ void game::LearnAbout(god* Who)
 {
   Who->SetIsKnown(true);
 
-  /* slighltly slow, but doesen't matter since
+  /* slightly slow, but doesn't matter since
      this is run so rarely */
 
   if(PlayerKnowsAllGods() && !game::PlayerHasReceivedAllGodsKnownBonus)
@@ -3627,10 +3645,8 @@ void game::LearnAbout(god* Who)
 truth game::PlayerKnowsAllGods()
 {
   for(int c = 1; c <= GODS; ++c)
-  {
     if(!GetGod(c)->IsKnown())
       return false;
-  }
 
   return true;
 }
@@ -3638,12 +3654,10 @@ truth game::PlayerKnowsAllGods()
 void game::AdjustRelationsToAllGods(int Amount)
 {
   for(int c = 1; c <= GODS; ++c)
-  {
-      GetGod(c)->AdjustRelation(Amount);
-  }
+    GetGod(c)->AdjustRelation(Amount);
 }
 
-void game::ShowDeathSmiley(bitmap* Buffer)
+void game::ShowDeathSmiley(bitmap* Buffer, truth)
 {
   static blitdata B = { 0,
 			{ 0, 0 },

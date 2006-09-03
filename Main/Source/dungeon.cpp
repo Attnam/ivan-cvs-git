@@ -17,6 +17,7 @@
 #include "game.h"
 #include "save.h"
 #include "femath.h"
+#include "bitmap.h"
 
 dungeon::dungeon() { }
 
@@ -87,10 +88,25 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
     level* NewLevel = Level[Index] = new level;
     NewLevel->SetDungeon(this);
     NewLevel->SetIndex(Index);
-    NewLevel->SetLevelScript(GetLevelScript(Index));
+    const levelscript* LevelScript = GetLevelScript(Index);
+    NewLevel->SetLevelScript(LevelScript);
 
     if(Visual)
-      game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), WHITE, false, &game::BusyAnimation);
+    {
+      if(LevelScript->GetEnterImage())
+      {
+	cbitmap* EnterImage = new bitmap(game::GetGameDir() + "Graphics/" + *LevelScript->GetEnterImage());
+	game::SetEnterImage(EnterImage);
+	v2 Displacement = *LevelScript->GetEnterTextDisplacement();
+	game::SetEnterTextDisplacement(Displacement);
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), Displacement, WHITE, false, true, &game::BusyAnimation);
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nPress any key to continue."), Displacement, WHITE, true, false, &game::BusyAnimation);
+	game::SetEnterImage(0);
+	delete EnterImage;
+      }
+      else
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+    }
 
     NewLevel->Generate(Index);
     game::SetCurrentLSquareMap(NewLevel->GetMap());

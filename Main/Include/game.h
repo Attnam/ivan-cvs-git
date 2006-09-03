@@ -54,6 +54,7 @@ typedef std::map<festring, long> valuemap;
 typedef truth (*stringkeyhandler)(int, festring&);
 typedef v2 (*positionkeyhandler)(v2, int);
 typedef void (*positionhandler)(v2);
+typedef void (*bitmapeditor)(bitmap*, truth);
 
 struct homedata
 {
@@ -257,7 +258,7 @@ class game
   static int GetScreenYSize() { return 26; }
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
-  static void BusyAnimation(bitmap*);
+  static void BusyAnimation(bitmap*, truth);
   static v2 PositionQuestion(cfestring&, v2, positionhandler = 0, positionkeyhandler = 0, truth = true);
   static void LookHandler(v2);
   static int AskForKeyPress(cfestring&);
@@ -266,7 +267,7 @@ class game
   static void InitScript();
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
-  static void TextScreen(cfestring&, col16 = 0xFFFF, truth = true, void (*)(bitmap*) = 0);
+  static void TextScreen(cfestring&, v2 = ZERO_V2, col16 = 0xFFFF, truth = true, truth = true, bitmapeditor = 0);
   static void SetCursorPos(v2 What) { CursorPos = What; }
   static truth DoZoom() { return Zoom; }
   static void SetDoZoom(truth What) { Zoom = What; }
@@ -421,7 +422,12 @@ class game
   static void LearnAbout(god*);
   static truth PlayerKnowsAllGods();
   static void AdjustRelationsToAllGods(int);
-  static void ShowDeathSmiley(bitmap*);
+  static void ShowDeathSmiley(bitmap*, truth);
+  static void SetEnterImage(cbitmap* What) { EnterImage = What; }
+  static void SetEnterTextDisplacement(v2 What)
+  {
+    EnterTextDisplacement = What;
+  }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -526,6 +532,8 @@ class game
   static std::vector<v2> SpecialCursorPos;
   static std::vector<int> SpecialCursorData;
   static truth PlayerHasReceivedAllGodsKnownBonus;
+  static cbitmap* EnterImage;
+  static v2 EnterTextDisplacement;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

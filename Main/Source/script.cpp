@@ -876,6 +876,8 @@ void levelscript::InitDataMap()
   INIT_ENTRY(EnchantmentPlusChanceDelta);
   INIT_ENTRY(BackGroundType);
   INIT_ENTRY(IsCatacomb);
+  INIT_ENTRY(EnterImage);
+  INIT_ENTRY(EnterTextDisplacement);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)

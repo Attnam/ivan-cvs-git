@@ -21,7 +21,7 @@ class outputfile;
 class inputfile;
 class festring;
 
-typedef void (*bitmapeditor)(bitmap*);
+typedef void (*bitmapeditor)(bitmap*, truth);
 
 struct blitdata
 {

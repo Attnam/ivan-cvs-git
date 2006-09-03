@@ -1171,7 +1171,7 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
     Backup.LuminanceMaskedBlit(B);
 
     if(BitmapEditor)
-      BitmapEditor(this);
+      BitmapEditor(this, true);
 
     SimpleAlphaBlit(DOUBLE_BUFFER, c * 50, 0);
     graphics::BlitDBToScreen();
@@ -1181,7 +1181,7 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   DOUBLE_BUFFER->ClearToColor(0);
 
   if(BitmapEditor)
-    BitmapEditor(this);
+    BitmapEditor(this, true);
 
   B.Flags = 0;
   NormalMaskedBlit(B);

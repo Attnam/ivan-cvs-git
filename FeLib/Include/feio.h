@@ -19,6 +19,7 @@
 class bitmap;
 
 typedef truth (*stringkeyhandler)(int, festring&);
+typedef void (*bitmapeditor)(bitmap*, truth);
 
 class iosystem
 {
@@ -36,8 +37,9 @@ class iosystem
 		  cfestring&, col16,
 		  cfestring& = CONST_S(""),
 		  cfestring& = CONST_S(""));
-  static void TextScreen(cfestring&, col16 = 0xFFFF,
-			 truth = true, void (*)(bitmap*) = 0);
+  static void TextScreen(cfestring&, v2 Disp = ZERO_V2,
+			 col16 = 0xFFFF, truth = true,
+			 truth = true, bitmapeditor = 0);
   static truth IsAcceptableForStringQuestion(char);
 };
 

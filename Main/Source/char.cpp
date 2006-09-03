@@ -1558,7 +1558,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       game::CreateBone();
     }
 
-    game::TextScreen(CONST_S("Unfortunately you died."), WHITE, true, &game::ShowDeathSmiley);
+    game::TextScreen(CONST_S("Unfortunately you died."), ZERO_V2, WHITE, true, true, &game::ShowDeathSmiley);
     game::End(Msg);
   }
 }
